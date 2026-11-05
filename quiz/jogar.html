@@ -143,7 +143,7 @@ function telaPergunta(){
   }
   app.innerHTML=`<div class="barra-jogo"><span class="tag">${e.idx+1}/${e.total}</span><span style="flex:1"></span><div class="relogio" id="relogio"><span id="seg">${e.tempo}</span></div></div>
     ${p.texto?`<div class="enunc ${(p.texto.length>420?'aluno-t3':p.texto.length>140?'aluno-t2':'')}" style="font-size:clamp(20px,5.4vw,28px);padding:16px">${esc(p.texto).replace(/\n/g,'<br>')}</div>`:''}
-    ${p.img?`<div class="img-aluno" data-zoom><img src="${p.img}" alt="Imagem da pergunta"></div>`:''}
+    ${p.img?`<div class="img-aluno" data-zoom><img src="${p.img}" alt="Imagem da pergunta"></div>`:(p.temImg?`<div class="retorno" style="margin:0 0 12px;text-align:center;background:#F5F0FF;border-color:#DDD0FB"><span class="t">👀 Olhe a imagem no telão</span>Esta pergunta tem uma imagem na tela do professor.</div>`:'')}
     <div class="alt-aluno ${p.opcoes.some(o=>o&&o.length>50)?'longas':''}">${p.opcoes.map((o,j)=>o?`<button class="alternativa c${j+1}" data-r="${j+1}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span></button>`:'').join('')}</div>`;
   const tic=()=>{ if(typeof e.inicio!=='number') return; const resta=Math.max(0,(e.inicio+e.tempo*1000-R.agora())/1000);
     const s=$('#seg'), rel=$('#relogio'); if(!s) return; s.textContent=Math.ceil(resta); rel.style.setProperty('--p',(100*resta/e.tempo)+'%'); rel.classList.toggle('urgente',resta<=5);

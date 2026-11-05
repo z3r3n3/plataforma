@@ -181,7 +181,7 @@ function telaInicio(){
     const txt=await lerArquivo(f); let titulo=f.name.replace(/(\.quiz)?\.(csv|txt|json)$/i,''), ps=[];
     if(/\.json$/i.test(f.name)||/^\s*\{/.test(txt)){
       try{ const j=JSON.parse(txt); titulo=j.titulo||titulo;
-        ps=(j.perguntas||[]).map(p=>({texto:String(p.texto||''), opcoes:[0,1,2,3].map(k=>String((p.opcoes||[])[k]||'')), correta:Math.min(4,Math.max(1,+p.correta||1)), tempo:p.tempo>0?Math.min(+p.tempo,180):null, img:(typeof p.img==='string'&&p.img.startsWith('data:image/'))?p.img:null}))
+        ps=(j.perguntas||[]).map(p=>({texto:String(p.texto||''), opcoes:[0,1,2,3].map(k=>String((p.opcoes||[])[k]||'')), correta:Math.min(4,Math.max(1,+p.correta||1)), tempo:p.tempo>0?Math.min(+p.tempo,180):null, img:(typeof p.img==='string'&&p.img.startsWith('data:image/'))?p.img:null, imgCel:!!p.imgCel}))
           .filter(p=>(p.texto||p.img)&&p.opcoes[p.correta-1]);
       }catch(err){ ps=[]; }
     } else ps=lerCSV(txt);
@@ -207,7 +207,9 @@ function desenharEditor(){
         <button class="btn pequeno" data-mover="-1" ${i===0?'disabled':''} aria-label="Subir">↑</button><button class="btn pequeno" data-mover="1" ${i===ED.perguntas.length-1?'disabled':''} aria-label="Descer">↓</button>
         <button class="btn pequeno perigo" data-tirar="1" ${ED.perguntas.length<2?'disabled':''} aria-label="Remover">🗑</button></div>
       <textarea data-campo="texto" rows="${Math.min(12,Math.max(3,Math.ceil((p.texto||'').length/90)+(p.texto||'').split('\n').length))}" placeholder="Digite a pergunta. Pode colar um texto inteiro para leitura.">${esc(p.texto)}</textarea>
-      <div class="img-q">${p.img?`<img src="${p.img}" alt="Imagem da pergunta ${i+1}"><div><button class="btn pequeno" data-trocar-img="1">🔁 Trocar imagem</button> <button class="btn pequeno perigo" data-tirar-img="1">Remover imagem</button></div>`
+      <div class="img-q">${p.img?`<img src="${p.img}" alt="Imagem da pergunta ${i+1}"><div><button class="btn pequeno" data-trocar-img="1">🔁 Trocar imagem</button> <button class="btn pequeno perigo" data-tirar-img="1">Remover imagem</button>
+        <label class="mini" style="display:flex;gap:6px;align-items:center;margin-top:8px;cursor:pointer"><input type="checkbox" data-campo="imgcel" ${p.imgCel?'checked':''} style="width:18px;height:18px;accent-color:#7C3AED">📱 Mostrar também no celular dos estudantes</label>
+        <span class="mini" style="display:block;max-width:360px">Sem marcar, a imagem aparece só no telão (economiza internet e a cota grátis).</span></div>`
         :`<label class="btn pequeno" style="cursor:pointer">🖼️ Adicionar imagem<input type="file" accept="image/*" data-img hidden></label><span class="mini">ou copie uma imagem e cole aqui com Ctrl+V</span>`}</div>
       <div class="alts">${[0,1,2,3].map(j=>`<label class="alt a${j+1}"><span class="forma">${FORMAS[j]}</span><input type="text" data-op="${j}" placeholder="Alternativa ${j+1}${j>1?' (opcional)':''}" value="${esc(p.opcoes[j]||'')}"><input type="radio" name="c${i}" value="${j+1}" ${p.correta===j+1?'checked':''} aria-label="Marcar como correta" title="Correta"></label>`).join('')}</div>
       <p class="mini" style="margin:6px 0 0">Marque a bolinha da alternativa correta.</p></div>`).join('')}</div>
@@ -217,6 +219,7 @@ function lerEditor(){
   ED.titulo=$('#ed-tit').value.trim();
   document.querySelectorAll('.q-ed').forEach(div=>{ const i=+div.dataset.q, p=ED.perguntas[i];
     p.texto=$('[data-campo="texto"]',div).value.trim(); p.tempo=+$('[data-campo="tempo"]',div).value||null;
+    const ic=$('[data-campo="imgcel"]',div); if(ic) p.imgCel=ic.checked;
     p.opcoes=[0,1,2,3].map(j=>$(`[data-op="${j}"]`,div).value.trim());
     const r=$('input[type=radio]:checked',div); p.correta=r?+r.value:1; });
 }
@@ -288,7 +291,7 @@ async function mandarPergunta(i){
   const p=QUIZ.perguntas[i];
   const part={}; Object.keys(ENTRADA).forEach(u=>part[u]=true);
   const opcoes=p.opcoes.map(o=>o||'');
-  await R.update('salas/'+PIN, {estado:{fase:'pergunta', idx:i, total:QUIZ.perguntas.length, tempo:tempoDe(p), inicio:TS, pergunta:{texto:p.texto, opcoes, img:p.img||null}, part}});
+  await R.update('salas/'+PIN, {estado:{fase:'pergunta', idx:i, total:QUIZ.perguntas.length, tempo:tempoDe(p), inicio:TS, pergunta:{texto:p.texto, opcoes, img:(p.img&&p.imgCel)?p.img:null, temImg:!!p.img}, part}});
   FASE='pergunta'; telaPergunta();
   if(ouvResp) ouvResp();
   ouvResp=R.on('salas/'+PIN+'/respostas/'+i, v=>{ RESP=v||{}; atualizarRespostas(); });
