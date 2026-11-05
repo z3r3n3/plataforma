@@ -68,6 +68,11 @@ const JOGOS = [
     descricao: 'Fontes históricas, povos indígenas de MS, Guerra do Paraguai, ervais, ferrovia, Era Vargas e criação do estado, numa linha do tempo.',
     habilidades: ['MS.EF06HI01', 'MS.EF06HI02', 'MS.EF06HI00.n.10', 'MS.EF08HI00.n.23', 'MS.EF09HI00.n.25'] },
 
+  { arquivo: 'explorador-ms.html', titulo: 'Explorador MS', componente: 'geo', anos: [6,7],
+    tipo: 'Mapa interativo', icone: '🧭',
+    descricao: 'Rosa dos ventos com as cidades de MS, estados e países vizinhos, cidades-gêmeas, bacias do Paraguai e do Paraná e paisagens do estado.',
+    habilidades: ['MS.EF06GE00.n.05', 'MS.EF07GE00.n.01', 'MS.EF06GE12', 'MS.EF06GE05'] },
+
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
     descricao: 'Monte a situação-problema peça por peça, confira se tem todos os dados, planeje e resolva.',

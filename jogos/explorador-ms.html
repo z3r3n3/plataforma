@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explorador MS</title>
+<meta name="description" content="Jogo de Geografia de Mato Grosso do Sul (6º e 7º ano): pontos cardeais e colaterais no mapa de MS, estados e países vizinhos, bacias do Paraguai e do Paraná e paisagens do Pantanal, Cerrado e Mata Atlântica.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--agua:#0C4A6E;--agua2:#0369A1;--mata2:#15803D;--terra:#0369A1}
+body{background:linear-gradient(180deg,#DFF1F9 0%,#F7F3EA 100%)}
+.topo{background:#EEF8FCee;border-bottom-color:#C7E3EF}
+.trilho{background:#CFE6F0}
+.trilho i,.bar i{background:var(--mata2)}
+.selo{background:#0369A114}
+
+.mapa-box{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:8px;margin-bottom:14px}
+.mapa-box svg{display:block;width:100%;max-width:520px;height:auto;margin:auto}
+.mapa-box .leg{text-align:center;font-size:14px;color:var(--suave);margin:4px 0 0}
+.reg{stroke:#8A8070;stroke-width:1}
+.reg.ms{fill:#FDE68A;stroke:#92400E;stroke-width:2}
+.reg.uf{fill:#EFE9DD}
+.reg.pais{fill:#F6E3D3}
+.reg.alvo{fill:#FCA5A5;stroke:#B91C1C;stroke-width:2.5;animation:pulsa 1.2s ease-in-out infinite}
+@keyframes pulsa{50%{fill:#FECACA}}
+.rio{fill:none;stroke:#38BDF8;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rio.alvo{stroke:#0369A1;stroke-width:6;animation:pisca 1.1s ease-in-out infinite}
+@keyframes pisca{50%{stroke:#7DD3FC}}
+.rot{font:700 12px var(--texto);fill:#57534E;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:3px}
+.cid{font:700 12px var(--texto);fill:#1C1917;paint-order:stroke;stroke:#fff;stroke-width:3.5px}
+
+.bussola{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:380px;margin:0 auto}
+.bussola button{border:2px solid var(--borda);background:#fff;border-radius:16px;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--titulo);font-weight:800;font-size:22px;line-height:1;transition:transform .1s}
+.bussola button small{font-family:var(--texto);font-weight:400;font-size:12px;color:var(--suave);margin-top:3px}
+.bussola button:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.bussola button.certa{border-color:var(--ok);background:var(--ok-f)}
+.bussola button.errada{border-color:var(--erro);background:var(--erro-f);opacity:.7}
+.bussola .centro{border:0;background:none;font-size:40px;pointer-events:none}
+.bussola button:disabled{cursor:default}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duas button{border:0;border-radius:16px;min-height:78px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 5px 0 #0003;padding:6px}
+.duas button small{font-family:var(--texto);font-weight:400;font-size:13px;opacity:.95}
+.duas .py{background:#0E7490}.duas .pr{background:#4338CA}
+.duas button:disabled{opacity:.4;cursor:default}
+.duas button.marcado{opacity:1;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--ok)}
+.duas button.errado{opacity:1;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--erro)}
+.tipos3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tipo3{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:17px;transition:transform .1s}
+.tipo3 .em{font-size:34px}
+.tipo3:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.tipo3.certa{border-color:var(--ok);background:var(--ok-f)}
+.tipo3.errada{border-color:var(--erro);background:var(--erro-f);opacity:.75}
+.tipo3:disabled{cursor:default}
+.lado-a-lado{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+@media (max-width:820px){
+  .lado-a-lado{grid-template-columns:1fr}
+  .bussola button{min-height:60px;font-size:20px}
+  .tipo3{font-size:15px;padding:10px 6px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   EXPLORADOR MS — JRM • Aventuras Educativas
+   Geografia · 6º e 7º ano
+   MS.EF06GE00.n.05 pontos cardeais e colaterais, elementos do mapa
+   MS.EF07GE00.n.01 limites e fronteiras
+   MS.EF06GE12      bacias hidrográficas do Paraguai e do Paraná
+   MS.EF06GE05      paisagens de MS (Pantanal, Cerrado, Mata Atlântica)
+   Mapa: limites do IBGE (via click_that_hood) e Natural Earth, simplificados.
+   ========================================================= */
+const MAPA = {"W":434,"H":403,"reg":{"GO":"M427.7,6.0 426.0,107.2 419.8,109.1 409.8,107.2 407.1,110.5 397.2,111.7 388.6,122.7 387.4,130.2 381.3,132.0 375.3,138.9 372.8,145.0 374.9,148.0 370.2,147.1 363.7,139.8 356.6,138.2 349.4,133.2 339.2,131.9 327.0,124.1 323.8,124.8 316.6,118.6 309.6,117.4 305.1,111.4 300.6,109.8 292.2,111.4 285.0,109.0 283.0,104.5 291.8,95.6 283.6,93.2 280.1,95.7 277.1,93.8 275.3,83.3 278.2,81.9 278.4,79.0 270.8,65.4 272.0,47.3 279.0,36.8 280.9,27.0 283.5,27.2 284.3,24.5 290.6,21.7 292.3,16.6 293.6,17.0 292.6,14.7 297.1,13.0 298.4,9.0 295.0,6.0 427.7,6.0Z","MG":"M427.5,167.7 410.0,168.2 406.1,165.9 395.3,165.3 390.2,161.4 382.2,167.2 371.4,171.3 367.5,175.5 365.5,159.1 368.0,152.7 370.8,152.1 369.1,147.9 374.9,148.0 372.8,145.0 375.3,138.9 381.3,132.0 387.4,130.2 388.6,122.7 397.2,111.7 407.1,110.5 409.8,107.2 419.8,109.1 427.7,104.8 427.5,167.7Z","MS":"M243.9,76.0 248.1,79.6 251.6,80.2 253.0,78.5 254.9,78.6 256.0,80.2 261.1,81.4 262.9,78.8 265.0,80.0 271.2,79.9 273.9,81.5 278.3,81.4 275.3,83.3 277.1,93.8 278.4,95.4 280.3,95.7 283.6,93.2 289.1,93.9 291.8,95.6 290.1,98.7 286.8,99.3 286.5,101.0 283.0,104.5 285.0,109.0 292.2,111.4 298.9,111.3 301.6,109.8 305.1,111.4 310.1,117.7 316.6,118.6 320.9,123.3 322.5,123.3 323.8,124.8 327.0,124.1 330.7,127.9 339.2,131.9 342.6,131.5 349.4,133.2 351.6,135.7 354.2,135.6 356.6,138.2 358.7,137.6 365.0,140.7 366.7,143.2 366.2,144.0 368.1,144.5 370.1,146.6 369.1,148.6 370.7,151.3 370.6,152.6 368.0,152.7 365.5,159.1 367.5,167.3 366.6,169.8 367.4,176.0 364.5,183.1 361.0,185.5 352.7,187.9 346.0,197.7 342.2,200.8 340.2,206.3 340.8,214.5 338.8,216.2 336.3,216.7 333.5,222.3 329.8,223.8 329.6,226.7 331.0,229.8 330.1,233.8 325.8,240.7 321.1,241.3 320.0,243.3 322.3,247.2 321.2,250.5 317.5,253.0 316.2,256.5 311.2,261.4 309.6,266.4 306.9,270.1 303.2,273.7 290.1,281.0 287.5,283.9 281.5,286.3 277.9,289.3 276.9,292.2 272.7,297.1 266.2,299.3 257.9,304.5 255.3,307.3 254.1,309.5 254.0,315.3 250.0,324.2 248.2,326.7 239.1,330.7 235.1,344.7 234.9,350.5 232.8,354.8 226.0,358.8 224.6,356.0 220.6,353.7 219.6,351.3 213.9,349.8 213.2,348.2 212.1,348.7 209.5,346.9 208.0,349.3 205.7,349.0 201.8,351.3 200.1,350.9 197.9,353.9 195.4,353.6 192.8,355.2 190.7,353.9 186.5,355.6 181.9,353.8 180.4,355.3 176.8,352.9 176.6,342.6 175.5,342.4 174.6,339.1 172.2,338.4 172.8,335.7 171.2,331.5 173.6,326.9 171.4,324.3 171.5,322.4 172.8,321.5 171.8,319.7 172.8,318.6 172.0,316.8 169.7,316.6 166.7,302.7 167.3,300.0 168.8,298.9 168.9,293.8 164.3,289.0 163.0,285.5 163.5,281.7 161.4,281.4 158.8,276.7 143.3,276.3 142.0,274.4 138.7,273.6 136.7,271.4 135.4,267.0 130.7,268.0 128.3,272.6 124.8,274.8 125.0,275.7 122.1,273.6 121.3,275.6 120.2,274.4 119.0,275.5 118.2,274.7 117.7,276.7 116.1,277.5 114.2,274.9 113.3,275.9 109.4,273.8 105.8,275.1 104.8,274.0 101.4,274.4 100.8,273.3 98.9,275.1 96.7,273.6 95.6,274.8 93.3,274.2 92.7,273.0 90.0,272.2 84.5,271.7 82.9,267.9 78.9,267.8 77.6,268.3 77.4,269.9 75.8,269.4 74.8,270.5 73.7,269.1 72.3,269.8 69.5,269.2 68.9,267.5 66.6,267.8 66.1,265.1 67.6,264.0 68.5,259.0 70.0,258.0 67.6,256.5 70.0,254.0 70.2,253.0 68.6,251.8 71.3,249.3 69.1,247.5 68.9,246.2 70.0,244.8 68.1,243.5 67.7,241.8 72.5,233.2 72.6,232.2 69.7,230.5 72.7,227.7 72.2,224.0 72.9,222.1 72.0,219.5 74.1,216.7 74.0,214.9 72.1,215.1 70.9,213.2 69.4,212.9 72.3,209.6 71.0,208.0 68.0,207.9 69.1,205.9 72.2,205.7 69.7,202.1 68.2,203.9 66.9,203.9 67.5,201.1 65.7,199.8 66.4,197.9 65.5,195.2 66.4,191.6 62.6,188.7 62.2,183.3 59.3,183.7 59.3,181.9 61.0,180.6 59.1,179.5 62.4,176.5 64.2,176.4 65.2,174.3 66.9,174.2 68.0,172.6 70.4,173.5 72.3,170.2 60.6,160.5 75.6,127.1 78.8,127.0 79.4,126.1 78.4,124.5 78.3,120.9 76.3,120.9 85.3,90.6 89.8,90.2 84.6,85.6 78.3,71.7 79.9,71.7 79.9,70.7 78.3,69.1 78.8,67.2 75.9,63.8 75.1,59.4 76.9,59.5 78.0,57.9 78.7,58.6 80.5,64.5 79.9,66.5 81.7,66.6 83.3,70.6 84.5,70.4 86.3,72.8 88.7,73.1 89.8,75.1 90.1,73.8 93.1,71.6 99.3,70.9 98.5,70.1 103.0,68.9 104.3,69.5 107.4,67.2 111.0,61.7 110.1,61.7 110.1,60.3 114.6,58.1 115.2,55.8 116.8,54.7 116.7,51.6 118.5,51.4 120.7,47.8 124.5,49.2 124.5,48.2 125.2,49.0 129.7,48.3 130.7,46.8 133.2,48.8 137.0,45.9 137.9,46.9 139.5,46.3 141.5,43.7 143.3,44.0 144.3,42.3 146.3,42.4 147.5,41.3 150.1,42.2 150.4,41.5 152.1,43.0 151.9,44.6 154.4,45.1 154.9,46.3 155.5,45.4 157.2,45.8 156.5,46.2 157.2,46.7 157.7,45.9 161.6,48.8 165.2,49.9 167.1,49.1 167.6,50.1 167.8,49.2 170.2,50.8 170.2,53.0 172.8,55.7 179.1,57.3 180.3,58.8 182.8,58.5 185.8,62.0 189.9,63.6 190.7,62.6 195.7,62.9 197.8,61.6 201.3,62.3 205.7,59.6 206.2,57.6 213.4,55.1 217.7,56.0 218.3,57.9 221.9,59.9 221.7,62.6 225.4,64.0 230.7,61.3 235.1,61.9 236.8,56.0 240.4,54.7 243.6,50.8 245.6,49.9 246.1,47.1 250.9,44.1 252.2,45.2 251.0,64.0 246.7,64.5 243.2,68.0 240.3,74.2 240.6,76.1 243.9,76.0ZM243.7,75.8 243.9,75.8 243.9,76.0 243.7,75.8Z","MT":"M295.3,6.5 298.4,9.0 297.1,13.0 292.6,14.7 293.6,17.0 292.3,16.6 290.6,21.7 284.3,24.5 283.5,27.2 280.9,27.0 279.0,36.8 272.0,47.3 270.8,65.4 274.2,68.8 278.3,81.4 262.9,78.8 261.1,81.4 254.9,78.6 251.6,80.2 244.4,76.0 244.0,76.2 242.8,75.4 240.6,76.1 244.6,65.9 251.0,64.0 250.9,44.1 240.4,54.7 236.8,56.0 234.7,62.1 230.7,61.3 223.9,64.0 217.7,56.0 213.4,55.1 206.2,57.6 201.3,62.3 189.9,63.6 182.8,58.5 172.8,55.7 167.8,49.2 154.9,46.3 150.4,41.5 147.5,41.3 133.2,48.8 130.7,46.8 124.5,49.2 120.7,47.8 116.7,51.6 114.6,58.1 110.1,60.3 111.0,61.7 107.4,67.2 93.1,71.6 89.8,75.1 79.9,66.5 78.0,57.9 76.9,59.5 71.3,54.3 66.5,57.2 55.3,49.8 49.3,42.0 48.0,33.1 45.9,30.5 46.3,17.6 51.5,11.4 51.3,6.0 295.3,6.5ZM243.9,75.8 243.7,75.8 243.9,76.0 243.9,75.8Z","PR":"M319.0,287.5 343.4,295.6 348.3,293.6 356.1,294.4 360.8,298.2 372.2,300.2 376.4,304.7 375.8,306.8 378.6,307.8 382.0,304.8 388.8,307.1 394.1,305.2 395.9,307.2 402.6,307.5 411.1,304.9 414.7,309.5 414.3,311.9 422.3,314.6 427.7,326.3 427.7,397.0 220.3,397.0 224.4,386.0 223.9,378.6 227.3,372.3 223.7,361.5 234.1,353.1 239.1,330.7 248.2,326.7 254.0,315.3 254.1,309.5 257.9,304.5 282.6,289.8 294.3,292.4 299.2,289.6 302.8,292.7 313.7,291.9 314.8,294.6 317.7,293.2 319.0,287.5Z","SP":"M427.6,349.5 427.7,349.1 427.7,349.6 427.6,349.5ZM427.3,348.8 427.7,348.6 427.7,349.0 427.3,348.8ZM427.7,348.1 427.6,348.3 427.4,348.2 427.7,348.1ZM427.7,339.6 426.8,337.5 427.7,335.1 427.7,339.6ZM427.7,334.9 427.5,334.5 427.7,334.2 427.7,334.9ZM427.7,331.5 426.5,333.1 427.1,331.3 427.7,331.5ZM427.6,331.2 427.7,330.9 427.7,331.4 427.6,331.2ZM427.6,330.3 427.7,330.2 427.7,330.5 427.6,330.3ZM427.7,328.3 427.5,328.1 427.7,328.0 427.7,328.3ZM427.6,327.2 426.9,327.8 426.8,327.5 427.6,327.2ZM427.2,325.9 424.3,317.2 421.6,314.1 414.3,311.9 414.7,309.5 411.1,304.9 402.6,307.5 395.9,307.2 394.1,305.2 388.8,307.1 382.0,304.8 378.6,307.8 375.8,306.8 376.4,304.7 372.2,300.2 360.8,298.2 356.1,294.4 336.6,294.4 335.1,292.0 329.9,292.5 319.8,287.3 317.7,293.2 314.8,294.6 313.7,291.9 302.8,292.7 299.2,289.6 294.3,292.4 284.7,289.6 277.6,293.9 276.7,291.8 281.5,286.3 303.2,273.7 308.2,268.5 311.2,261.4 321.2,250.5 322.3,247.2 320.4,242.3 325.8,240.7 330.1,233.8 329.8,223.8 340.8,214.5 340.2,206.3 341.8,201.4 352.4,188.3 362.0,185.0 368.9,173.2 390.2,161.4 395.3,165.3 406.1,165.9 410.0,168.2 427.7,167.7 427.2,325.9Z","PY":"M60.3,182.5 66.1,193.0 67.1,201.8 69.9,203.4 70.5,211.8 73.5,217.5 71.7,233.9 68.6,240.3 69.8,249.8 66.9,265.7 68.1,268.6 74.0,270.1 78.2,268.2 84.8,272.0 99.0,272.6 112.0,276.1 125.1,274.4 133.0,267.1 141.7,275.8 158.8,277.8 168.8,294.5 167.3,304.4 173.0,328.7 172.2,336.3 175.6,341.2 177.4,353.4 187.0,356.4 196.1,354.4 211.4,347.0 228.0,357.8 224.7,361.5 226.3,369.7 220.3,397.0 48.3,397.0 35.1,391.8 6.0,375.1 6.0,138.9 19.3,138.8 58.5,163.2 60.3,182.5Z","BO":"M51.1,6.5 51.2,10.2 45.7,19.8 49.2,44.4 66.6,57.2 73.5,57.2 84.0,85.2 87.9,89.5 84.6,92.4 75.6,121.7 77.8,121.8 78.4,127.6 74.8,129.3 60.6,159.8 72.2,170.7 59.4,179.2 58.5,163.2 19.3,138.8 6.0,138.9 6.0,6.0 51.1,6.5Z"},"lab":{"GO":[351,72],"MG":[401,142],"MT":[213,43],"PR":[332,342],"SP":[374,245],"PY":[37,268],"BO":[43,107]},"rios":{"miranda":"M158.6,255.2 154.3,254.1 148.2,248.6 147.3,246.4 148.5,243.1 148.3,240.8 145.2,235.9 145.4,230.3 144.6,227.1 145.1,226.3 144.3,225.9 144.0,223.1 144.6,220.9 145.8,220.5 145.0,218.5 145.5,215.9 144.6,213.2 146.4,214.1 144.9,211.9 146.0,210.9 146.1,209.3 148.8,210.7 146.8,208.0 147.1,206.8 148.6,206.3 147.6,204.1 147.0,204.4 146.9,202.5 145.8,201.3 146.4,200.3 146.1,199.3 145.2,199.7 143.8,198.6 143.4,200.4 141.0,199.8 139.9,197.5 137.9,196.0 135.5,191.2 135.4,187.8 136.1,187.4 135.8,183.2 133.1,181.1 131.8,181.0 130.7,178.2 131.4,176.7 130.3,177.0 128.8,173.7 120.9,172.7 120.0,170.0 117.5,167.8 118.4,166.3 115.2,162.6 115.7,160.5 116.8,159.8 120.6,160.2 120.8,158.3 117.3,159.6 116.4,159.3 113.5,155.7 111.5,155.8 109.9,154.5 109.6,150.6 108.2,150.2 106.9,148.4 101.9,147.0 101.0,147.7 97.1,147.6 96.9,146.6 94.5,144.2","verde":"M254.3,121.2 254.8,126.2 256.4,129.1 257.3,132.7 255.5,137.1 260.8,149.9 260.3,154.7 261.1,155.5 262.3,161.0 265.7,166.9 267.5,167.6 269.0,170.7 272.5,172.9 273.9,176.3 276.1,178.3 276.9,183.4 277.9,185.7 281.6,189.1 284.7,190.8 298.0,203.0 300.9,207.0 308.8,212.3 310.9,215.1 315.9,216.9 330.1,226.4","taquari":"M265.8,73.8 264.0,78.9 261.5,80.2 256.5,79.3 250.1,80.0 240.9,76.3 238.2,76.7 235.8,78.2 231.5,83.0 214.8,88.5 213.6,89.5 209.8,97.4 209.1,101.6 206.9,103.2 206.0,103.2 204.6,100.8 202.2,99.5 198.7,100.1 195.8,99.1 193.6,96.6 192.1,93.4 188.5,90.4 186.5,90.0 179.3,91.4 176.1,90.1 159.3,90.0 154.3,91.1 150.9,93.1 143.3,93.8 125.1,99.8 113.4,108.6 102.8,120.7 100.6,124.1 99.4,128.3 99.7,134.2 95.8,143.0","paranaiba":"M389.4,126.5 388.9,122.4 396.6,112.5 399.1,111.3 405.7,110.1 409.7,108.0 419.6,107.9M427.7,104.2 425.8,105.2 425.9,107.0 423.2,106.5 422.2,107.6 420.9,107.1 419.6,107.9","paraguai":"M152.2,6.0 149.5,7.8 144.3,8.9 140.7,8.5 140.0,9.7 136.3,11.5 133.3,16.3 132.8,19.2 130.8,22.8 125.5,27.0 124.8,32.1 126.7,35.0 126.9,36.7 126.0,39.8 123.3,41.6 118.3,50.6 116.0,52.2 115.4,56.2 110.5,60.3 109.9,64.0 104.4,69.5 100.7,70.1 91.4,73.3 89.7,75.3 88.9,77.4 89.5,78.2 89.7,83.1 92.0,85.7 92.5,89.7 91.6,92.7 92.6,93.5 92.7,96.2 93.5,97.3 92.4,98.9 92.6,99.9 93.7,100.7 92.4,102.3 89.2,103.7 89.6,105.4 88.0,105.7 86.3,107.3 85.4,110.8 86.5,112.2 83.4,115.9 83.6,117.1 84.5,117.4 81.7,118.9 81.4,120.5 79.8,119.9 79.2,121.5 79.5,123.5 81.1,124.3 80.9,125.9 82.7,125.6 86.4,127.2 93.0,128.1 93.0,130.6 95.1,131.1 96.0,133.6 96.6,138.0 95.4,142.0 95.8,143.0 91.6,147.0 90.4,149.6 92.7,150.5 90.9,153.3 88.3,155.5 88.6,157.1 86.4,156.8 84.5,158.7 81.4,159.3 82.2,160.5 81.8,162.1 77.7,164.8 76.2,167.8 74.7,168.6 70.7,172.7 68.0,172.8 61.8,178.2 59.4,179.2 61.1,181.5 59.5,182.0 59.5,183.6 62.1,184.1 62.6,188.9 66.7,191.5 65.8,194.6 66.6,200.1 67.4,201.5 67.0,203.5 68.1,204.3 68.5,202.6 69.7,202.4 72.2,205.2 72.0,206.0 68.8,208.1 71.0,208.7 72.3,209.9 72.4,210.7 70.1,212.2 69.9,213.3 72.8,215.6 73.3,214.8 74.1,215.5 73.7,217.5 72.6,219.3 73.5,223.4 73.4,225.6 72.8,227.5 70.3,230.2 71.3,232.1 72.4,232.8 68.4,241.0 68.8,242.8 70.0,243.5 69.0,247.1 70.7,249.3 68.8,252.3 69.0,254.9 68.1,256.7 69.4,259.2 66.7,265.8 67.7,270.4 67.2,273.3 67.7,275.4 70.7,276.4 73.5,281.0 73.1,282.0","ivinheima":"M182.7,227.9 182.8,230.9 184.4,234.7 188.0,238.1 188.0,239.7 188.9,239.7 189.9,242.0 192.7,243.0 192.4,243.8 193.6,243.1 194.9,245.5 196.2,246.0 196.9,249.2 197.7,249.7 197.2,250.9 197.9,252.4 200.3,254.5 199.5,256.1 201.5,255.5 203.9,260.2 207.5,257.4 208.9,259.2 207.7,260.6 209.5,262.1 209.2,261.1 211.2,260.2 213.9,260.4 215.0,258.6 216.9,260.2 218.3,258.6 221.7,261.3 223.2,260.8 224.9,262.3 227.8,260.5 230.3,261.4 231.0,260.2 233.1,260.5 234.1,259.4 237.8,258.9 238.1,260.1 239.4,259.1 240.2,259.6 241.0,258.0 245.0,259.6 246.8,261.9 248.0,262.1 248.0,263.3 250.5,264.6 251.4,267.6 255.0,270.0 254.6,270.6 256.1,272.8 255.7,274.0 257.8,278.6 257.3,279.1 259.6,284.9 258.1,288.0 256.9,288.9 259.2,290.4 258.1,291.1 258.6,291.9 257.3,294.2 257.9,297.7 259.1,298.3 260.5,298.0 253.4,305.9 254.0,310.0","parana":"M367.6,156.3 366.6,157.7 366.3,160.3 367.7,176.3 366.2,180.3 362.6,184.6 353.4,188.3 350.4,191.9M350.4,191.9 350.4,191.9 350.4,191.9M350.4,191.9 350.4,191.9M327.2,237.0 326.1,239.9 322.7,240.2 321.1,241.5 322.3,246.8 321.8,247.8 317.1,251.5 314.6,255.6 311.2,259.1 307.7,266.7 305.7,269.4 301.7,272.7 288.2,279.1 283.1,284.5M219.9,397.0 220.8,393.4 222.4,390.9 224.5,384.5 223.9,378.4 227.1,372.1 227.1,370.8 224.8,366.4 223.9,362.4 224.4,361.0 226.9,358.6M389.4,126.5 387.0,130.6 385.2,131.3 382.3,130.7 381.5,131.2 378.4,134.0 377.8,135.9 374.7,138.4 372.6,144.5 374.4,146.9 373.0,148.0 371.1,146.7 369.5,146.7 369.0,148.4 370.2,150.9 367.9,152.4 367.6,156.3M350.4,191.9 350.4,191.9M350.4,191.9 345.3,198.0 342.5,199.0 340.8,203.8 340.3,211.9 335.4,217.4 333.3,221.7 330.0,224.2 330.8,231.3 330.1,233.4 327.2,237.0M283.1,284.5 280.8,287.9 279.3,288.4 276.7,293.3 274.2,295.9 260.7,301.8 256.2,305.1 254.6,308.8 253.8,314.5 250.2,323.2 249.0,324.7 239.7,330.0 235.4,347.2 235.0,353.3 227.8,357.9M247.2,325.9 243.6,330.1 242.7,335.3 237.4,349.2 237.2,354.1 232.8,357.6 230.4,358.2 227.8,357.9M227.8,357.9 226.9,358.6"}};
+
+/* projeção usada para desenhar o mapa (equiretangular) */
+const PC=Math.cos(20.7*Math.PI/180);
+const proj=(lon,lat)=>[(lon+59.4)*46*PC+6, (-16.4-lat)*46+6];
+
+const CIDADES = {
+  'Campo Grande':[-54.62,-20.47], 'Corumbá':[-57.65,-19.01], 'Dourados':[-54.81,-22.22], 'Três Lagoas':[-51.70,-20.79],
+  'Ponta Porã':[-55.73,-22.54], 'Coxim':[-54.76,-18.51], 'Bonito':[-56.48,-21.13], 'Naviraí':[-54.19,-23.06],
+  'Paranaíba':[-51.19,-19.68], 'Porto Murtinho':[-57.88,-21.70], 'Mundo Novo':[-54.27,-23.94], 'Chapadão do Sul':[-52.62,-18.79],
+  'Aquidauana':[-55.79,-20.47], 'Nova Andradina':[-53.34,-22.23], 'Jardim':[-56.15,-21.48], 'Costa Rica':[-53.13,-18.54],
+  'Maracaju':[-55.17,-21.61], 'Amambai':[-55.23,-23.10], 'Cassilândia':[-51.73,-19.11], 'Bataguassu':[-52.42,-21.71],
+  'Bela Vista':[-56.52,-22.11], 'Coronel Sapucaia':[-55.53,-23.27], 'Ribas do Rio Pardo':[-53.76,-20.44], 'Ivinhema':[-53.82,-22.30],
+  'Miranda':[-56.38,-20.24]
+};
+const DIRS = [
+  {s:'N', n:'Norte'},{s:'NE', n:'Nordeste'},{s:'L', n:'Leste'},{s:'SE', n:'Sudeste'},
+  {s:'S', n:'Sul'},{s:'SO', n:'Sudoeste'},{s:'O', n:'Oeste'},{s:'NO', n:'Noroeste'}
+];
+const GRADE = ['NO','N','NE','O','*','L','SO','S','SE'];
+function rumo(a,b){ const [x1,y1]=CIDADES[a], [x2,y2]=CIDADES[b];
+  const dx=(x2-x1)*PC, dy=(y2-y1); let ang=Math.atan2(dx,dy)*180/Math.PI; if(ang<0) ang+=360;
+  const k=Math.round(ang/45)%8; return {k, desvio:Math.abs(((ang-k*45+540)%360)-180), dist:Math.hypot(dx,dy)}; }
+
+/* ---------- MISSÃO 2: vizinhos ---------- */
+const VIZ = {
+  MT:{n:'Mato Grosso', t:'estado', x:'Ao norte fica Mato Grosso. Até 1977, MS e MT eram um estado só.'},
+  GO:{n:'Goiás', t:'estado', x:'Goiás fica a nordeste de Mato Grosso do Sul.'},
+  MG:{n:'Minas Gerais', t:'estado', x:'Minas Gerais encosta em MS no leste, do outro lado do rio Paranaíba.'},
+  SP:{n:'São Paulo', t:'estado', x:'São Paulo fica a leste, do outro lado do rio Paraná. Três Lagoas fica bem na divisa.'},
+  PR:{n:'Paraná', t:'estado', x:'O estado do Paraná fica a sudeste. Mundo Novo fica perto da divisa.'},
+  PY:{n:'Paraguai', t:'país', x:'O Paraguai é o país vizinho com a maior fronteira: pelo rio Paraguai, pelo rio Apa e por fronteira seca, como em Ponta Porã.'},
+  BO:{n:'Bolívia', t:'país', x:'A Bolívia fica a oeste, no Pantanal, perto de Corumbá.'}
+};
+const GEMEAS = [
+  {c:'Ponta Porã', g:'Pedro Juan Caballero', p:'Paraguai', x:'As duas cidades são separadas só por uma avenida: é uma fronteira seca, sem rio.'},
+  {c:'Corumbá', g:'Puerto Quijarro', p:'Bolívia', x:'Corumbá e Ladário fazem fronteira com Puerto Quijarro e Puerto Suárez, na Bolívia.'},
+  {c:'Mundo Novo', g:'Salto del Guairá', p:'Paraguai', x:'Mundo Novo fica no extremo sul de MS, quase no encontro com o estado do Paraná e o Paraguai.'},
+  {c:'Bela Vista', g:'Bella Vista Norte', p:'Paraguai', x:'As duas cidades têm quase o mesmo nome e são separadas pelo rio Apa.'},
+  {c:'Porto Murtinho', g:'Carmelo Peralta', p:'Paraguai', x:'Entre as duas cidades foi construída a grande ponte da Rota Bioceânica, sobre o rio Paraguai.'},
+  {c:'Coronel Sapucaia', g:'Capitán Bado', p:'Paraguai', x:'Mais uma fronteira seca: as cidades ficam lado a lado.'}
+];
+
+/* ---------- MISSÃO 3: rios ---------- */
+const BACIAS = {py:{n:'Bacia do Paraguai', d:'águas que vão para o rio Paraguai, a oeste'}, pr:{n:'Bacia do Paraná', d:'águas que vão para o rio Paraná, a leste'}};
+const RIOS = [
+  {n:'Rio Paraguai', c:'Corumbá', r:'paraguai', b:'py', x:'É o rio principal da bacia. Atravessa o Pantanal e faz fronteira com a Bolívia e o Paraguai.'},
+  {n:'Rio Taquari', c:'Coxim', r:'taquari', b:'py', x:'O Taquari nasce no planalto, passa por Coxim e desce para o Pantanal até o rio Paraguai.'},
+  {n:'Rio Miranda', c:'Miranda', r:'miranda', b:'py', x:'O Miranda recebe as águas da região de Bonito e deságua no rio Paraguai.'},
+  {n:'Rio Aquidauana', c:'Aquidauana', r:null, b:'py', x:'O Aquidauana corre para oeste e encontra o rio Miranda, no Pantanal.'},
+  {n:'Rio Apa', c:'Bela Vista', r:null, b:'py', x:'O Apa faz a fronteira com o Paraguai e deságua no rio Paraguai.'},
+  {n:'Rio Formoso', c:'Bonito', r:null, b:'py', x:'O Formoso, de águas transparentes, deságua no rio Miranda, que vai para o rio Paraguai.'},
+  {n:'Rio Paraná', c:'Três Lagoas', r:'parana', b:'pr', x:'É o rio principal da bacia. Faz a divisa com São Paulo e o estado do Paraná e tem grandes usinas hidrelétricas.'},
+  {n:'Rio Ivinhema', c:'Ivinhema', r:'ivinheima', b:'pr', x:'O Ivinhema recebe rios como o Dourados e o Brilhante e deságua no rio Paraná.'},
+  {n:'Rio Verde', c:null, r:'verde', b:'pr', x:'Esse rio Verde corre para sudeste e deságua no rio Paraná.'},
+  {n:'Rio Pardo', c:'Ribas do Rio Pardo', r:null, b:'pr', x:'O rio Pardo corre para leste e deságua no rio Paraná.'},
+  {n:'Rio Dourados', c:'Dourados', r:null, b:'pr', x:'O rio Dourados encontra o Brilhante, que vai para o Ivinhema e depois para o Paraná.'},
+  {n:'Rio Amambai', c:'Amambai', r:null, b:'pr', x:'O Amambai corre para leste e deságua no rio Paraná.'},
+  {n:'Rio Anhanduí', c:'Campo Grande', r:null, b:'pr', x:'O Anhanduí nasce em Campo Grande e deságua no rio Pardo, que vai para o Paraná.'}
+];
+const USOS = [
+  {t:'Barcaças levam minério de ferro e manganês de Corumbá pela hidrovia de qual rio?', e:'🚢', o:['Rio Paraguai','Rio Paraná','Rio Anhanduí','Rio Formoso'], x:'A hidrovia do rio Paraguai leva o minério do Maciço do Urucum, em Corumbá, até os portos do sul.'},
+  {t:'A usina hidrelétrica de Jupiá, em Três Lagoas, usa a força de qual rio?', e:'⚡', o:['Rio Paraná','Rio Paraguai','Rio Taquari','Rio Apa'], x:'O rio Paraná tem grandes usinas, como Jupiá e Ilha Solteira, que geram energia para o país.'},
+  {t:'Por que os rios de Bonito, como o Formoso e o rio da Prata, têm água tão transparente?', e:'🐠', o:['O calcário do solo faz a sujeira se depositar no fundo','Alguém limpa os rios todos os dias','A água vem do mar','Os peixes comem toda a terra'], x:'O calcário faz as partículas se juntarem e afundarem. Por isso a água fica cristalina, e o turismo ajuda a cuidar dela.'},
+  {t:'O que separa as águas que correm para o rio Paraguai das que correm para o rio Paraná?', e:'⛰️', o:['Terras mais altas, como a Serra de Maracaju, que funcionam como divisor de águas','Um muro construído pelo governo','A cidade de São Paulo','O Oceano Atlântico'], x:'A chuva que cai de um lado das serras escorre para o oeste (Paraguai); do outro lado, escorre para o leste (Paraná).'},
+  {t:'Por que muitas áreas do Pantanal ficam alagadas parte do ano?', e:'🌊', o:['Na época das chuvas os rios transbordam e a água se espalha pela planície, que é muito plana','Porque o mar invade o Pantanal','Porque as usinas soltam água no Pantanal todo dia','Porque lá nunca para de chover'], x:'O Pantanal é uma planície de inundação. As cheias e as secas fazem parte da vida do bioma e das pessoas que vivem lá.'},
+  {t:'Um bairro joga esgoto sem tratamento no córrego. Qual é o problema?', e:'🚱', o:['Polui a água, prejudica os peixes e pode causar doenças','Deixa o córrego mais limpo','Não faz diferença nenhuma','Faz o córrego secar na hora'], x:'Saneamento básico é um direito. Sem tratamento de esgoto, quem mora perto dos córregos é quem mais sofre.'}
+];
+
+/* ---------- MISSÃO 4: paisagens ---------- */
+const BIOMAS = {pant:{n:'Pantanal', e:'🦜'}, cerr:{n:'Cerrado', e:'🌳'}, mata:{n:'Mata Atlântica', e:'🌲'}};
+const PAISAGENS = [
+  {t:'Uma grande planície baixa que fica alagada na época das cheias.', e:'🌊', r:'pant', x:'O relevo do Pantanal é uma planície. Quando chove, a água demora a escoar e se espalha pelos campos.'},
+  {t:'Ocupa o oeste do estado, nas regiões de Corumbá, Aquidauana e Miranda.', e:'🗺️', r:'pant', x:'O Pantanal fica na parte mais baixa do estado, ao longo do rio Paraguai.'},
+  {t:'O peão pantaneiro toca a comitiva de gado pelos campos alagados.', e:'🐄', r:'pant', x:'A pecuária tradicional pantaneira acompanha o ritmo das cheias e das secas.'},
+  {t:'Árvores baixas, de galhos tortos e casca grossa, que resistem ao fogo.', e:'🌳', r:'cerr', x:'No Cerrado, a casca grossa protege as árvores do fogo e as raízes profundas buscam água na seca.'},
+  {t:'Planaltos e chapadas onde hoje há grandes lavouras de soja e milho.', e:'🌱', r:'cerr', x:'Grande parte do Cerrado de MS virou lavoura e pastagem. Isso traz riqueza, mas também desmatamento e erosão.'},
+  {t:'É chamado de "berço das águas", porque nele nascem muitos rios.', e:'💧', r:'cerr', x:'Muitas nascentes que abastecem o Pantanal e o rio Paraná ficam no Cerrado. Proteger o Cerrado protege o Pantanal.'},
+  {t:'É o bioma que cobre a maior parte do território de Mato Grosso do Sul.', e:'📏', r:'cerr', x:'O Cerrado ocupa a maior parte do estado. O Pantanal vem em segundo lugar.'},
+  {t:'Floresta mais fechada, com árvores altas, no sul e no leste do estado, perto do rio Paraná.', e:'🌲', r:'mata', x:'A Mata Atlântica em MS fica principalmente no sul e no leste, na bacia do rio Paraná.'},
+  {t:'Foi muito derrubada no sul do estado, e hoje restam só pedaços dela.', e:'🪓', r:'mata', x:'Boa parte da Mata Atlântica de MS virou lavoura e pastagem. Os pedaços que restam precisam ser protegidos.'}
+];
+
+const MISSOES = [
+  {id:'m1', tipo:'rumo', titulo:'Rosa dos ventos', ic:'🧭', hab:'MS.EF06GE00.n.05', desc:'Saindo de uma cidade de MS, para que lado fica a outra? Use os pontos cardeais e colaterais.'},
+  {id:'m2', tipo:'viz', titulo:'Vizinhos de MS', ic:'🗺️', hab:'MS.EF07GE00.n.01', desc:'Descubra os estados e os países que fazem fronteira com MS e as cidades-gêmeas.'},
+  {id:'m3', tipo:'rio', titulo:'Caminho das águas', ic:'🏞️', hab:'MS.EF06GE12', desc:'Bacia do Paraguai ou do Paraná? Descubra para onde corre cada rio e como usamos a água.'},
+  {id:'m4', tipo:'pais', titulo:'Paisagens de MS', ic:'🌳', hab:'MS.EF06GE05', desc:'Pantanal, Cerrado ou Mata Atlântica? Leia a paisagem pelo relevo, pela vegetação e pelo uso.'}
+];
+MISSOES.forEach((m,i)=>m.idx=i);
+const CATS = {
+  rumo:'Pontos cardeais e colaterais (MS.EF06GE00.n.05)', viz:'Estados e países vizinhos (MS.EF07GE00.n.01)', gem:'Cidades de fronteira (MS.EF07GE00.n.01)',
+  bacia:'Bacias do Paraguai e do Paraná (MS.EF06GE12)', uso:'Usos da água e saneamento (MS.EF06GE12)', bioma:'Paisagens de MS (MS.EF06GE05)'
+};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='exploradorMS.v1';
+function padrao(){ return {nome:'',turma:'',missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const MAXEST=MISSOES.length*3;
+function patente(){ const e=totalEst(); return e>=11?'🏅 Geógrafo(a)':e>=8?'🗺️ Cartógrafo(a)':e>=4?'🧭 Explorador(a)':'🎒 Aprendiz de mapas'; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={toc:[[620,.04]],ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- MAPA (SVG) ---------- */
+/* o = {alvo:'MT'|..., nomes:true, rios:true, rioAlvo:'taquari', pins:[{c,cor,rot}], seta:[a,b], cidades:true} */
+function mapa(o={}){
+  const W=MAPA.W, H=MAPA.H;
+  const regs=['BO','PY','MT','GO','MG','SP','PR','MS'].map(k=>{
+    const cls=['reg', k==='MS'?'ms':(k==='PY'||k==='BO')?'pais':'uf', o.alvo===k?'alvo':''].join(' ');
+    return `<path class="${cls}" d="${MAPA.reg[k]}"/>`; }).join('');
+  const rios=o.rios? Object.entries(MAPA.rios).map(([k,d])=>`<path class="rio ${o.rioAlvo===k?'alvo':''}" d="${d}"/>`).join('') : '';
+  const nomes=Object.entries(MAPA.lab).map(([k,[x,y]])=>{ if(!o.nomes&&o.alvo!==k) return ''; const t=o.alvo===k&&!o.revela?'?':(o.nomes||o.revela?k:''); return t?`<text class="rot" x="${x.toFixed(0)}" y="${y.toFixed(0)}" style="${o.alvo===k?'font-size:20px;fill:#991B1B':''}">${t}</text>`:''; }).join('');
+  let extra='';
+  if(o.seta){ const [x1,y1]=proj(...CIDADES[o.seta[0]]), [x2,y2]=proj(...CIDADES[o.seta[1]]);
+    extra+=`<defs><marker id="pt" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#15803D"/></marker></defs><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#15803D" stroke-width="4" stroke-dasharray="8 5" marker-end="url(#pt)"/>`; }
+  (o.pins||[]).forEach(p=>{ const [x,y]=proj(...CIDADES[p.c]); const dir=x>W*0.72?-1:1;
+    extra+=`<circle cx="${x}" cy="${y}" r="7" fill="${p.cor||'#DC2626'}" stroke="#fff" stroke-width="2.5"/><text class="cid" x="${x+dir*10}" y="${y+4}" text-anchor="${dir>0?'start':'end'}">${esc(p.rot||p.c)}</text>`; });
+  const rosa=`<g transform="translate(${W-40} ${H-44})"><circle r="26" fill="#fff" stroke="#0369A1" stroke-width="2" opacity=".92"/><path d="M0 -22 L6 0 L0 22 L-6 0Z" fill="#0369A1"/><path d="M-22 0 L0 -5 L22 0 L0 5Z" fill="#7DD3FC"/><text y="-28" text-anchor="middle" class="rot" style="fill:#0369A1;font-size:13px">N</text></g>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa de Mato Grosso do Sul e vizinhos"><rect width="${W}" height="${H}" fill="#CDEAF5"/>${regs}${rios}${nomes}${extra}${rosa}</svg>`;
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+
+function telaHome(){
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · GEOGRAFIA</span>
+    <h1>Explorador <span>MS</span></h1>
+    <p class="lead">Pegue a bússola e explore Mato Grosso do Sul pelo mapa: direções entre as cidades, vizinhos e fronteiras, o caminho das águas e as paisagens do Pantanal, do Cerrado e da Mata Atlântica.</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 6º C" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">Começar a exploração 🧭</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena" style="background:#fff">${mapa({nomes:true, rios:true, pins:[{c:'Campo Grande',cor:'#15803D'}]})}</div></div>
+  <div class="info"><div><b>4</b>missões</div><div><b>25</b>cidades no mapa</div><div><b>7</b>vizinhos de MS</div><div><b>${patente()}</b>★ ${totalEst()}/${MAXEST}</div></div>
+  <p class="rodape">Geografia · 6º e 7º ano · Habilidades <b>MS.EF06GE00.n.05</b> (pontos cardeais e colaterais e elementos do mapa) · <b>MS.EF07GE00.n.01</b> (limites e fronteiras) · <b>MS.EF06GE12</b> (bacias hidrográficas de MS) · <b>MS.EF06GE05</b> (paisagens de MS) · Mapa simplificado a partir de dados do IBGE e Natural Earth · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Roteiro de exploração</h2><small>${patente()}</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">MISSÃO ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma missão para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function rodadasRumo(){
+  const nomes=Object.keys(CIDADES), pares=[];
+  nomes.forEach(a=>nomes.forEach(b=>{ if(a===b) return; const r=rumo(a,b); if(r.desvio<=13&&r.dist>=1.3) pares.push({a,b,k:r.k}); }));
+  const cont=Array(8).fill(0), escolhidos=[];
+  const doCG=embaralhar(pares.filter(p=>p.a==='Campo Grande'));
+  for(const p of doCG){ if(escolhidos.length>=3) break; if(cont[p.k]) continue; escolhidos.push(p); cont[p.k]++; }
+  for(const p of embaralhar(pares)){ if(escolhidos.length>=10) break; if(cont[p.k]>=2||escolhidos.some(q=>q.a===p.a&&q.b===p.b)) continue; escolhidos.push(p); cont[p.k]++; }
+  return escolhidos;
+}
+function iniciar(idx){
+  const m=MISSOES[idx]; let itens;
+  if(m.tipo==='rumo') itens=rodadasRumo();
+  else if(m.tipo==='viz'){ const ks=Object.keys(VIZ);
+    itens=[...embaralhar(ks).map(k=>({tipo:'viz', k, ops:embaralhar([k,...embaralhar(ks.filter(x=>x!==k)).slice(0,3)])})),
+           ...embaralhar(GEMEAS).slice(0,4).map(g=>({tipo:'gem', ...g, ops:embaralhar([g.g,...embaralhar(GEMEAS.filter(x=>x.g!==g.g).map(x=>x.g)).slice(0,3)])}))]; }
+  else if(m.tipo==='rio') itens=[...embaralhar(RIOS).slice(0,8).map(r=>({tipo:'bacia',...r})), ...embaralhar(USOS).slice(0,4).map(u=>({tipo:'uso',...u, ordem:embaralhar([0,1,2,3])}))];
+  else itens=embaralhar(PAISAGENS).map(p=>({...p}));
+  M={m, itens, i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  const intro={
+    rumo:`<p>A <b>rosa dos ventos</b> mostra as direções. Os <b>pontos cardeais</b> são Norte, Sul, Leste e Oeste. Entre eles ficam os <b>colaterais</b>: Nordeste, Sudeste, Sudoeste e Noroeste.</p><p>No mapa, o <b>norte fica para cima</b>. Imagine que você está na cidade verde: para que lado precisa ir para chegar na cidade vermelha?</p>`,
+    viz:`<p>Mato Grosso do Sul faz divisa com <b>5 estados</b> e fronteira com <b>2 países</b>. Descubra quem é quem e conheça as <b>cidades-gêmeas</b>: cidades de países diferentes que ficam coladinhas na fronteira.</p>`,
+    rio:`<p>Uma <b>bacia hidrográfica</b> é toda a área cujas águas escorrem para o mesmo rio principal. Em MS existem duas grandes bacias:</p><div class="lista"><div>🌊 <b>Bacia do Paraguai</b>: a oeste, passa pelo Pantanal.</div><div>⚡ <b>Bacia do Paraná</b>: a leste, com grandes usinas hidrelétricas.</div></div><p class="mini">Dica: olhe no mapa onde fica a cidade por onde o rio passa.</p>`,
+    pais:`<p>Uma paisagem junta <b>relevo</b>, <b>clima</b>, <b>solo</b>, <b>vegetação</b> e o que as pessoas fazem nela. MS tem três grandes biomas:</p><div class="lista">${Object.values(BIOMAS).map(b=>`<div>${b.e} <b>${b.n}</b></div>`).join('')}</div>`
+  }[m.tipo];
+  abrirModal(`<span class="selo">MISSÃO ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${intro}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Vamos lá! 🧭</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>Missão ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+function desenhar(){
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  ({rumo:desenharRumo, viz:desenharViz, rio:desenharRio, pais:desenharPais})[M.m.tipo]();
+  const b=$('[data-acao="seguir"]'); if(b) b.focus();
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir missão ✔'}</button></div>`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const item=()=>M.itens[M.i];
+
+/* --- 1. rosa dos ventos --- */
+function desenharRumo(){
+  const it=item(), feito=!!it.feito, D=DIRS[it.k];
+  const bt=GRADE.map(s=>{ if(s==='*') return `<button class="centro" tabindex="-1" aria-hidden="true">🧭</button>`;
+    const j=DIRS.findIndex(d=>d.s===s), er=(it.err||[]).includes(j);
+    return `<button class="${er?'errada':''} ${feito&&j===it.k?'certa':''}" data-dir="${j}" ${er||feito?'disabled':''} aria-label="${DIRS[j].n}">${s}<small>${DIRS[j].n}</small></button>`; }).join('');
+  $('#area').innerHTML=`<div class="lado-a-lado"><div class="mapa-box">${mapa({pins:[{c:it.a,cor:'#15803D'},{c:it.b,cor:'#DC2626'}], seta:feito?[it.a,it.b]:null})}</div>
+    <div><p class="enunciado">Saindo de <b style="color:#15803D">${esc(it.a)}</b>, em que direção fica <b style="color:#DC2626">${esc(it.b)}</b>?</p>
+    <div class="bussola">${bt}</div>
+    <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ ${D.n}!</span>${esc(it.b)} fica a ${D.n.toLowerCase()} de ${esc(it.a)}.</div>${botaoSeguir()}`:(it.msg||'')}</div></div></div>`;
+}
+function responderDir(j){ const it=item();
+  if(j===it.k){ registrar('r'+M.i,'rumo',true); som('ok'); it.feito=true; }
+  else { registrar('r'+M.i,'rumo',false); som('erro'); it.err=(it.err||[]).concat(j);
+    const vert=[0,1,7].includes(it.k)?'para cima (norte)':[3,4,5].includes(it.k)?'para baixo (sul)':'nem para cima nem para baixo';
+    const hor=[1,2,3].includes(it.k)?'para a direita (leste)':[5,6,7].includes(it.k)?'para a esquerda (oeste)':'nem para a direita nem para a esquerda';
+    it.msg=`<div class="retorno no"><span class="t">Não é ${DIRS[j].n.toLowerCase()}.</span>Olhe o mapa: da cidade verde até a vermelha você vai ${vert} e ${hor}.</div>`; }
+  desenharRumo();
+}
+
+/* --- 2. vizinhos --- */
+function desenharViz(){
+  const it=item(), feito=!!it.feito; let h;
+  if(it.tipo==='viz'){
+    h=`<div class="lado-a-lado"><div class="mapa-box">${mapa({alvo:it.k, revela:feito})}<p class="leg">Mato Grosso do Sul está em amarelo.</p></div><div>
+      <p class="enunciado">Quem é este vizinho de MS?</p>
+      <div class="opcoes">${it.ops.map((k,j)=>{ const er=(it.err||[]).includes(k);
+        return `<button class="op ${er?'errada':''} ${feito&&k===it.k?'certa':''}" data-viz="${k}" ${er||feito?'disabled':''}><b>${'ABCD'[j]}</b><span>${VIZ[k].n} <small style="color:var(--suave)">(${VIZ[k].t})</small></span></button>`; }).join('')}</div>
+      <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ ${VIZ[it.k].n}!</span>${esc(VIZ[it.k].x)}</div>${botaoSeguir()}`:(it.msg||'')}</div></div></div>`;
+  } else {
+    h=`<div class="lado-a-lado"><div class="mapa-box">${mapa({nomes:true, pins:[{c:it.c}]})}</div><div>
+      <p class="enunciado">🤝 Cidades-gêmeas</p><p class="pergunta">${esc(it.c)} fica colada em qual cidade do outro lado da fronteira?</p>
+      <div class="opcoes">${it.ops.map((g,j)=>{ const er=(it.err||[]).includes(g);
+        return `<button class="op ${er?'errada':''} ${feito&&g===it.g?'certa':''}" data-gem="${esc(g)}" ${er||feito?'disabled':''}><b>${'ABCD'[j]}</b><span>${esc(g)}</span></button>`; }).join('')}</div>
+      <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ ${esc(it.g)} (${it.p})!</span>${esc(it.x)}</div>${botaoSeguir()}`:(it.msg||'')}</div></div></div>`;
+  }
+  $('#area').innerHTML=h;
+}
+function responderViz(k){ const it=item();
+  if(k===it.k){ registrar('v'+M.i,'viz',true); som('ok'); it.feito=true; }
+  else { registrar('v'+M.i,'viz',false); som('erro'); it.err=(it.err||[]).concat(k);
+    it.msg=`<div class="retorno no"><span class="t">Não é ${VIZ[k].n}.</span>Use a rosa dos ventos: o vizinho fica ao norte, ao sul, a leste ou a oeste de MS?</div>`; }
+  desenharViz();
+}
+function responderGem(g){ const it=item();
+  if(g===it.g){ registrar('g'+M.i,'gem',true); som('ok'); it.feito=true; }
+  else { registrar('g'+M.i,'gem',false); som('erro'); it.err=(it.err||[]).concat(g);
+    it.msg=`<div class="retorno no"><span class="t">Não é essa.</span>Veja no mapa de que país ${esc(it.c)} está perto.</div>`; }
+  desenharViz();
+}
+
+/* --- 3. rios --- */
+function desenharRio(){
+  const it=item(), feito=!!it.feito; let h;
+  if(it.tipo==='bacia'){
+    const bt=Object.entries(BACIAS).map(([k,b])=>`<button class="${k} ${it.resp&&k===it.b?'marcado':''} ${it.resp===k&&k!==it.b?'errado':''}" data-bacia="${k}" ${it.resp?'disabled':''}>${b.n}<small>${b.d}</small></button>`).join('');
+    h=`<div class="lado-a-lado"><div class="mapa-box">${mapa({nomes:true, rios:true, rioAlvo:it.r, pins:it.c?[{c:it.c, cor:'#0369A1', rot:it.c}]:[]})}<p class="leg">${it.r?'O rio está piscando no mapa.':'O rio passa pela cidade marcada.'}</p></div><div>
+      <p class="enunciado">🏞️ ${esc(it.n)}</p><p class="pergunta">${it.c?`Passa por ${esc(it.c)}. `:''}Para qual bacia correm as suas águas?</p>
+      <div class="duas">${bt}</div>
+      ${it.resp?`<div class="retorno ${it.resp===it.b?'ok':'no'}"><span class="t">${it.resp===it.b?'✅ Isso!':'❌ Não é bem assim.'} ${BACIAS[it.b].n}.</span>${esc(it.x)}</div>${botaoSeguir()}`:''}</div></div>`;
+  } else {
+    h=`<p class="enunciado">Água em MS</p><div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt" style="font-size:clamp(18px,2.6vw,22px)">${esc(it.t)}</span></div>
+      <div class="opcoes">${it.ordem.map((j,pos)=>{ const er=(it.err||[]).includes(j), ok=feito&&j===0;
+        return `<button class="op ${er?'errada':''} ${ok?'certa':''}" data-uso="${j}" ${er||feito?'disabled':''}><b>${'ABCD'[pos]}</b><span>${esc(it.o[j])}</span></button>`; }).join('')}</div>
+      <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ Isso mesmo!</span>${esc(it.x)}</div>${botaoSeguir()}`:(it.msg||'')}</div>`;
+  }
+  $('#area').innerHTML=h;
+}
+function responderBacia(k){ const it=item(); it.resp=k; const ok=k===it.b; registrar('b'+M.i,'bacia',ok); som(ok?'ok':'erro'); desenharRio(); }
+function responderUso(j){ const it=item();
+  if(j===0){ registrar('u'+M.i,'uso',true); som('ok'); it.feito=true; }
+  else { registrar('u'+M.i,'uso',false); som('erro'); it.err=(it.err||[]).concat(j); it.msg=`<div class="retorno no"><span class="t">Pense de novo.</span>Elimine as respostas impossíveis e releia a pergunta.</div>`; }
+  desenharRio();
+}
+
+/* --- 4. paisagens --- */
+function desenharPais(){
+  const it=item(), feito=!!it.feito;
+  $('#area').innerHTML=`<p class="enunciado">Que paisagem é esta?</p><div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt">${esc(it.t)}</span></div>
+    <div class="tipos3">${Object.entries(BIOMAS).map(([k,b])=>{ const er=(it.err||[]).includes(k);
+      return `<button class="tipo3 ${er?'errada':''} ${feito&&k===it.r?'certa':''}" data-bioma="${k}" ${er||feito?'disabled':''}><span class="em" aria-hidden="true">${b.e}</span>${b.n}</button>`; }).join('')}</div>
+    <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ ${BIOMAS[it.r].n}!</span>${esc(it.x)}</div>${botaoSeguir()}`:(it.msg||'')}</div>`;
+}
+function responderBioma(k){ const it=item();
+  if(k===it.r){ registrar('p'+M.i,'bioma',true); som('ok'); it.feito=true; }
+  else { registrar('p'+M.i,'bioma',false); som('erro'); it.err=(it.err||[]).concat(k);
+    it.msg=`<div class="retorno no"><span class="t">Não é ${BIOMAS[k].n}.</span>Pense no relevo (planície ou planalto?), na vegetação e em que parte do estado fica.</div>`; }
+  desenharPais();
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">Missão concluída! 🧭</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn ipe" data-acao="prox" data-foco>Próxima missão ➔</button>':'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['EXPLORADOR MS — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${MAXEST} · Missões: ${f}/${MISSOES.length}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">🧭 Missões</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${f}/${MISSOES.length}</b>missões</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Faça algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as missões','Para o professor escolher a missão da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="lista">
+    <div>🧭 <b>Rosa dos ventos:</b> saindo da cidade verde, escolha a direção da cidade vermelha.</div>
+    <div>🗺️ <b>Vizinhos de MS:</b> descubra o estado ou país que está piscando no mapa e as cidades-gêmeas.</div>
+    <div>🏞️ <b>Caminho das águas:</b> diga se o rio é da bacia do Paraguai ou do Paraná.</div>
+    <div>🌳 <b>Paisagens de MS:</b> reconheça o Pantanal, o Cerrado e a Mata Atlântica.</div>
+    <div>⭐ As estrelas contam os acertos de primeira e sobem o seu título.</div></div>
+    <div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-dir]')){ responderDir(+el.dataset.dir); return; }
+  if(el=q('[data-viz]')){ responderViz(el.dataset.viz); return; }
+  if(el=q('[data-gem]')){ responderGem(el.dataset.gem); return; }
+  if(el=q('[data-bacia]')){ responderBacia(el.dataset.bacia); return; }
+  if(el=q('[data-uso]')){ responderUso(+el.dataset.uso); return; }
+  if(el=q('[data-bioma]')){ responderBioma(el.dataset.bioma); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modalAberto()) fecharModal(); });
+
+telaHome();
+</script>
+</body>
+</html>
