@@ -75,6 +75,10 @@ const JOGOS = [
     tipo: 'Mapa e missões', icone: '🗞️',
     descricao: 'Iluministas, Revolução Industrial e Francesa, independências no mapa, Brasil de 1808 a 1889, abolição, Guerra do Paraguai e os Guaicuru.',
     habilidades: ['MS.EF08HI01', 'MS.EF08HI03', 'MS.EF08HI13', 'MS.EF08HI15', 'MS.EF08HI20', 'MS.EF08HI00.n.28'] },
+  { arquivo: 'manchetes-do-seculo.html', titulo: 'Manchetes do Século XX', componente: 'his', anos: [9],
+    tipo: 'Jornal e mapa', icone: '📰',
+    descricao: 'Revoltas da Primeira República, manchetes de Vargas à Constituição de 1988, guerras e Guerra Fria no mapa, e direitos e protagonismos em MS.',
+    habilidades: ['MS.EF09HI01', 'MS.EF09HI06', 'MS.EF09HI10', 'MS.EF09HI19', 'MS.EF09HI23', 'MS.EF09HI00.n.05', 'MS.EF09HI00.n.41'] },
 
   { arquivo: 'explorador-ms.html', titulo: 'Explorador MS', componente: 'geo', anos: [6,7],
     tipo: 'Mapa interativo', icone: '🧭',
