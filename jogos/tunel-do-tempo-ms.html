@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Túnel do Tempo MS</title>
+<meta name="description" content="Jogo de História de Mato Grosso do Sul (6º ao 9º ano): fontes históricas, povos indígenas de MS, Guerra do Paraguai, erva-mate, ferrovia e criação do estado, numa linha do tempo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--agua:#7C2D12;--agua2:#9A3412;--mata2:#B45309;--terra:#9A3412}
+body{background:linear-gradient(180deg,#FCE7D2 0%,#F7F3EA 100%)}
+.topo{background:#FDF1E4ee;border-bottom-color:#F1D3B4}
+.trilho{background:#F3DCC3}
+.trilho i{background:var(--mata2)}
+.bar i{background:var(--mata2)}
+.voltar-plat{color:var(--agua2)}
+.selo{background:#9A341214}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #B4530933}
+
+.tipos4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tipo4{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:12px;font-weight:700;text-align:left;display:flex;gap:10px;align-items:center;font-size:17px;transition:transform .1s}
+.tipo4 .em{font-size:30px;flex:none}
+.tipo4 small{display:block;font-weight:400;color:var(--suave);font-size:13px}
+.tipo4:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.tipo4.certa{border-color:var(--ok);background:var(--ok-f)}
+.tipo4.errada{border-color:var(--erro);background:var(--erro-f);opacity:.75}
+.tipo4:disabled{cursor:default}
+
+/* quem sou eu */
+.pistas{display:grid;gap:8px;margin-bottom:14px}
+.pista{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px;font-size:18px;line-height:1.45;display:flex;gap:10px}
+.pista.nova{animation:surge2 .35s ease}
+.pista b{font-family:var(--titulo);color:var(--agua2);flex:none}
+.pista.oculta{background:repeating-linear-gradient(45deg,#F6EBDD,#F6EBDD 8px,#FBF3EA 8px,#FBF3EA 16px);color:var(--suave);font-size:15px;animation:none}
+@keyframes surge2{from{opacity:0;transform:translateY(6px)}}
+.povos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.povos .op{justify-content:center;text-align:center;font-weight:700}
+
+/* linha do tempo */
+.linha{position:relative;display:grid;gap:8px;margin:6px 0 14px;padding-left:26px}
+.linha::before{content:"";position:absolute;left:9px;top:8px;bottom:8px;width:4px;border-radius:4px;background:linear-gradient(#B45309,#7C2D12)}
+.vaga{position:relative;min-height:62px;border:3px dashed #E5C9A8;border-radius:14px;background:#fff;display:flex;align-items:center;gap:10px;padding:8px 12px;text-align:left;font-weight:700;font-size:16px;width:100%}
+.vaga::before{content:"";position:absolute;left:-23px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:#fff;border:3px solid #B45309}
+.vaga .em{font-size:28px;flex:none}
+.vaga .vz{color:#D9B48C;font-weight:400}
+.vaga .ano{margin-left:auto;max-width:104px;text-align:center;line-height:1.15;font-family:var(--titulo);font-weight:800;color:#fff;background:var(--agua2);border-radius:20px;padding:2px 10px;font-size:15px;flex:none}
+.vaga.cheia{border-style:solid;border-color:var(--agua2)}
+.vaga.certa{border-color:var(--ok);background:var(--ok-f)}
+.vaga.errada{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.rot{font-size:13px;font-weight:700;color:var(--suave);margin:0 0 0 26px}
+.monte{display:grid;gap:8px;padding:12px;border-radius:18px;background:#FDF1E4;border:2px solid #F1D3B4}
+.monte[hidden]{display:none}
+.evento{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:10px 12px;display:flex;gap:10px;align-items:center;text-align:left;font-weight:700;font-size:16px;box-shadow:0 3px 0 #E2D6BB}
+.evento .em{font-size:28px;flex:none}
+.evento:disabled{display:none}
+
+@media (max-width:820px){
+  .tipos4{grid-template-columns:1fr}
+  .povos{grid-template-columns:repeat(2,1fr)}
+  .pista{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   TÚNEL DO TEMPO MS — JRM • Aventuras Educativas
+   História de Mato Grosso do Sul · 6º ao 9º ano
+   MS.EF06HI01 tempo e cronologia · MS.EF06HI02 fontes históricas
+   MS.EF06HI00.n.10 povos indígenas de MS
+   MS.EF08HI00.n.21–23 Guerra do Paraguai e pós-guerra em MS
+   MS.EF09HI00.n.08 Era Vargas em MS · MS.EF09HI00.n.25 criação do estado
+   ========================================================= */
+
+/* ---------- MISSÃO 1: fontes históricas ---------- */
+const FONTES = {
+  mat:{n:'Fonte material', e:'🏺', d:'objetos e restos feitos ou usados pelas pessoas'},
+  esc:{n:'Fonte escrita', e:'📜', d:'textos: leis, cartas, livros, jornais'},
+  ora:{n:'Fonte oral', e:'🗣️', d:'memórias e histórias contadas de viva voz'},
+  img:{n:'Fonte visual', e:'🖼️', d:'imagens: pinturas, desenhos, fotografias'}
+};
+const PISTAS_FONTE = [
+  {t:'Pedaços de cerâmica encontrados num aterro do Pantanal, feitos há muitos séculos.', e:'🏺', r:'mat', x:'Os aterros do Pantanal são montes de terra erguidos por povos antigos. Os cacos de cerâmica que estão neles são fontes materiais.'},
+  {t:'Pontas de flecha de pedra lascada achadas numa escavação.', e:'🏹', r:'mat', x:'Ferramentas são objetos: fontes materiais estudadas pela arqueologia.'},
+  {t:'Um vaso de cerâmica Kadiwéu com desenhos geométricos.', e:'⚱️', r:'mat', x:'A cerâmica Kadiwéu é um objeto e também mostra a arte e os saberes desse povo.'},
+  {t:'Pinturas e gravuras feitas nas rochas, em sítios arqueológicos como os de Alcinópolis.', e:'🪨', r:'img', x:'A arte rupestre é uma fonte visual: imagens deixadas por povos que viveram aqui há muito tempo.'},
+  {t:'Uma fotografia antiga da estação ferroviária de Campo Grande.', e:'📷', r:'img', x:'Fotografias mostram como eram os lugares, as roupas e as pessoas de outra época.'},
+  {t:'Uma pintura que mostra soldados na Retirada da Laguna.', e:'🎨', r:'img', x:'Pinturas são fontes visuais. Mas atenção: o artista escolhe o que mostrar, e isso também precisa ser analisado.'},
+  {t:'O livro "A Retirada da Laguna", escrito por Taunay, que participou da guerra.', e:'📕', r:'esc', x:'É um relato escrito por alguém que viveu os fatos. É uma fonte importante, mas mostra o ponto de vista de um oficial do exército.'},
+  {t:'A Lei Complementar nº 31, de 1977, que criou Mato Grosso do Sul.', e:'⚖️', r:'esc', x:'Leis e documentos oficiais são fontes escritas.'},
+  {t:'Um jornal de 1977 noticiando a divisão de Mato Grosso.', e:'📰', r:'esc', x:'Jornais registram como os fatos foram contados na época.'},
+  {t:'Uma anciã Terena conta as histórias que ouviu dos seus avós.', e:'👵', r:'ora', x:'A memória contada de geração em geração é uma fonte oral, muito importante para os povos indígenas.'},
+  {t:'Um ex-ferroviário conta como era trabalhar no trem da Noroeste.', e:'🚂', r:'ora', x:'Entrevistas com quem viveu a época são fontes orais.'},
+  {t:'Cantos e narrativas guarani passados de pais para filhos.', e:'🎶', r:'ora', x:'Os Guarani e Kaiowá guardam sua história e seus saberes na tradição oral.'}
+];
+
+/* ---------- MISSÃO 2: povos indígenas de MS ---------- */
+const POVOS = {
+  terena:'Terena', kadiweu:'Kadiwéu', guato:'Guató', gk:'Guarani e Kaiowá', ofaie:'Ofaié', kini:'Kinikinau'
+};
+const ENIGMAS = [
+  {p:'terena', e:'🌽', pistas:['Nossa língua é da família Aruák.','Somos conhecidos como grandes agricultores.','Lutamos na Guerra do Paraguai e, depois dela, perdemos boa parte das nossas terras.','Muitas das nossas aldeias ficam em Aquidauana, Miranda e Sidrolândia.'],
+   x:'Os Terena são um dos povos indígenas mais numerosos de MS. Hoje também vivem nas cidades, como Campo Grande, e lutam pela retomada de suas terras.'},
+  {p:'kadiweu', e:'🐎', pistas:['Nossos antepassados, os Mbayá-Guaikuru, dominavam a montaria e eram chamados de "índios cavaleiros".','Participamos da Guerra do Paraguai ao lado do Brasil.','Nossa cerâmica e nossas pinturas corporais têm desenhos geométricos famosos no mundo inteiro.','Nossa terra fica na região de Porto Murtinho e da Serra da Bodoquena.'],
+   x:'Os Kadiwéu são herdeiros dos Guaikuru, um povo guerreiro e cavaleiro. Sua arte é estudada até hoje.'},
+  {p:'guato', e:'🛶', pistas:['Já disseram que nós estávamos extintos, mas continuamos aqui!','Nossa vida acompanha as cheias e as secas.','Somos o povo canoeiro do Pantanal: vivemos da pesca e das águas.','Lutamos pela nossa terra na Ilha Ínsua, perto de Corumbá.'],
+   x:'Os Guató chegaram a ser considerados extintos, mas reafirmaram sua identidade e conquistaram o direito à Ilha Ínsua. Sofreram muito com os incêndios no Pantanal.'},
+  {p:'gk', e:'🌿', pistas:['Chamamos de tekoha o lugar onde podemos viver do nosso jeito.','Nossa língua é da família Tupi-Guarani.','Muitos dos nossos antepassados foram levados a trabalhar nos ervais da Companhia Matte Larangeira.','Vivemos principalmente no sul do estado, em lugares como Dourados, Amambai e Caarapó.'],
+   x:'Os Guarani e Kaiowá formam a maior população indígena de MS. Foram confinados em pequenas reservas no século XX e ainda lutam para recuperar seus tekoha.'},
+  {p:'ofaie', e:'🍯', pistas:['Somos um povo pequeno, que quase foi exterminado.','Fomos tirados das nossas terras várias vezes.','Somos conhecidos como o "povo do mel".','Nossa aldeia fica em Brasilândia, no leste do estado.'],
+   x:'Os Ofaié resistiram e hoje lutam para manter viva a sua língua, que tem poucos falantes.'},
+  {p:'kini', e:'🏺', pistas:['Muita gente pensou que nós tínhamos desaparecido, mas mantivemos nossa identidade.','Nossa língua é parente da língua Terena.','Somos conhecidos pela cerâmica.','Muitos de nós vivem na aldeia São João, dentro da Terra Indígena Kadiwéu.'],
+   x:'Os Kinikinau também foram dados como "desaparecidos", mas seguem afirmando sua cultura e seu direito a um território próprio.'}
+];
+
+/* ---------- MISSÃO 3: fatos ---------- */
+const FATOS = [
+  {t:'Em dezembro de 1864, tropas paraguaias invadiram o sul de Mato Grosso. Por que a região era tão importante na guerra?', e:'🗺️', o:['O rio Paraguai era o principal caminho para chegar a Cuiabá','Ali ficava a capital do Brasil','A região tinha grandes portos no mar','Ali estavam as minas de ouro de Minas Gerais'], x:'Sem estradas, o rio Paraguai ligava a província de Mato Grosso ao resto do Brasil. Por isso o sul da província foi palco da guerra.'},
+  {t:'Quem foi Antônio João Ribeiro?', e:'🎖️', o:['O comandante da Colônia Militar de Dourados, que resistiu à invasão com poucos soldados e morreu em 1864','O primeiro governador de Mato Grosso do Sul','O fundador de Campo Grande','O dono da Companhia Matte Larangeira'], x:'O tenente Antônio João enfrentou tropas muito maiores. A cidade de Antônio João, na fronteira, tem o seu nome.'},
+  {t:'O que foi a Retirada da Laguna, em 1867?', e:'🥾', o:['O recuo de tropas brasileiras que sofreram com fome, doença e ataques, guiadas por José Francisco Lopes, o Guia Lopes','Uma festa pelo fim da guerra','A mudança da capital para Campo Grande','A viagem do primeiro trem da Noroeste'], x:'A coluna brasileira entrou no Paraguai, mas teve de recuar. A cólera matou muitos soldados. O episódio foi registrado por Taunay.'},
+  {t:'Terena, Kadiwéu e outros povos indígenas participaram da guerra. O que aconteceu com muitos deles depois?', e:'🏹', o:['Perderam terras para fazendas e foram empurrados para áreas menores','Receberam todas as terras do sul de Mato Grosso','Mudaram-se para a Europa','Viraram donos dos ervais'], x:'Mesmo tendo lutado ao lado do Brasil, muitos povos indígenas perderam territórios com o avanço das fazendas depois da guerra.'},
+  {t:'Em 1882, Thomaz Larangeira recebeu do governo imperial a concessão dos ervais nativos do sul de Mato Grosso. Onde ficavam esses ervais?', e:'🧉', o:['Em terras tradicionais dos Guarani e Kaiowá','No litoral de São Paulo','No meio da Amazônia','Em terras sem nenhum morador'], x:'A erva-mate nativa crescia no território Guarani e Kaiowá. A companhia explorou essas terras e o trabalho indígena e paraguaio.'},
+  {t:'Nos ervais, muitos trabalhadores compravam tudo no armazém da companhia e nunca conseguiam pagar a dívida. Isso era…', e:'⛓️', o:['Uma forma de exploração que prendia o trabalhador ao patrão','Um jeito de os trabalhadores ficarem ricos','Uma escola para os filhos dos trabalhadores','Um presente do governo'], x:'O sistema de dívidas no armazém prendia o trabalhador ao erval. Muitas vezes, a única saída era fugir.'},
+  {t:'Em 1914 o trem da Estrada de Ferro Noroeste do Brasil chegou a Campo Grande. O que mudou?', e:'🚂', o:['A cidade cresceu e ficou ligada a São Paulo por terra','A cidade foi abandonada','O rio Paraguai secou','Acabou o comércio de gado'], x:'Com a ferrovia, gado, mercadorias e pessoas passaram a circular mais rápido. Campo Grande virou um polo do sul de Mato Grosso.'},
+  {t:'Em 1932, durante a Revolução Constitucionalista, o sul de Mato Grosso criou o "Estado de Maracaju". O que foi isso?', e:'🏛️', o:['Um governo separado do norte, que durou cerca de três meses','O nome antigo de Mato Grosso do Sul desde 1500','Uma fazenda de erva-mate','Um time de futebol de Campo Grande'], x:'O Estado de Maracaju, governado por Vespasiano Martins, foi uma das primeiras tentativas de separar o sul de Mato Grosso.'},
+  {t:'Na Marcha para o Oeste, o governo Vargas dizia que essas terras eram um "espaço vazio" e criou, em 1943, a Colônia Agrícola Nacional de Dourados. Por que a ideia de "vazio" estava errada?', e:'🌾', o:['Porque as terras já eram habitadas por povos indígenas','Porque não havia nenhuma terra no oeste','Porque a colônia ficava no litoral','Porque o oeste já tinha grandes cidades como São Paulo'], x:'Chamar a região de "vazia" escondia a presença dos Guarani, Kaiowá e Terena, que perderam ainda mais terras com a colonização.'},
+  {t:'A Lei Complementar nº 31, de 11 de outubro de 1977, criou Mato Grosso do Sul. Quem a assinou?', e:'✍️', o:['O presidente Ernesto Geisel, durante a ditadura militar','O imperador Dom Pedro II','O presidente Getúlio Vargas','O primeiro governador do estado'], x:'A divisão aconteceu durante a ditadura militar, por decisão do governo federal, depois de décadas de movimentos divisionistas no sul.'},
+  {t:'Como foi escolhido o primeiro governador de Mato Grosso do Sul, Harry Amorim Costa, em 1979?', e:'🗳️', o:['Foi nomeado pelo presidente, sem eleição direta','Foi eleito pelo voto da população','Foi sorteado entre os prefeitos','Herdou o cargo do pai'], x:'Na ditadura militar não havia eleição direta para governador. Ele tomou posse em 1º de janeiro de 1979, quando o estado foi instalado.'},
+  {t:'No século XVIII, nas monções, como os paulistas atravessavam o atual MS a caminho das minas de Cuiabá?', e:'🛶', o:['Em canoas pelos rios, carregando os barcos por terra no varadouro de Camapuã','De trem, pela Noroeste','De avião','Por uma rodovia asfaltada'], x:'As monções desciam e subiam rios como o Pardo, o Coxim e o Taquari. Em Camapuã, as canoas eram arrastadas por terra de um rio para outro.'}
+];
+
+/* ---------- MISSÃO 4: linha do tempo ---------- */
+const EVENTOS = [
+  {e:'🏹', t:'Povos caçadores, coletores e pescadores vivem no Pantanal', a:'há milênios', o:-8000},
+  {e:'🛶', t:'Monções: canoas paulistas cruzam a região rumo a Cuiabá', a:'século XVIII', o:1720},
+  {e:'⚔️', t:'Tropas paraguaias invadem o sul de Mato Grosso', a:'1864', o:1864},
+  {e:'🥾', t:'Retirada da Laguna', a:'1867', o:1867},
+  {e:'🐄', t:'José Antônio Pereira chega à região onde nasceria Campo Grande', a:'1872', o:1872},
+  {e:'🧉', t:'Thomaz Larangeira recebe a concessão dos ervais', a:'1882', o:1882},
+  {e:'🏘️', t:'Campo Grande se torna município', a:'1899', o:1899},
+  {e:'🚂', t:'O trem da Noroeste chega a Campo Grande', a:'1914', o:1914},
+  {e:'🏛️', t:'Estado de Maracaju, na Revolução de 1932', a:'1932', o:1932},
+  {e:'🌾', t:'Criação da Colônia Agrícola Nacional de Dourados', a:'1943', o:1943},
+  {e:'✍️', t:'Lei Complementar nº 31 cria Mato Grosso do Sul', a:'1977', o:1977},
+  {e:'🎉', t:'Instalação do estado e posse do primeiro governador', a:'1979', o:1979}
+];
+
+const MISSOES = [
+  {id:'m1', tipo:'fonte', titulo:'Pistas do passado', ic:'🔍', hab:'MS.EF06HI02', desc:'Como sabemos o que aconteceu? Classifique as fontes históricas de MS.'},
+  {id:'m2', tipo:'povo', titulo:'Quem somos nós?', ic:'🪶', hab:'MS.EF06HI00.n.10', desc:'Descubra o povo indígena de MS pelas pistas. Quanto menos pistas, melhor!'},
+  {id:'m3', tipo:'fato', titulo:'Arquivo de MS', ic:'🗂️', hab:'MS.EF08HI00.n.21–23 · MS.EF09HI00.n.25', desc:'Guerra do Paraguai, erva-mate, ferrovia, Era Vargas e a criação do estado.'},
+  {id:'m4', tipo:'tempo', titulo:'Linha do tempo', ic:'⏳', hab:'MS.EF06HI01', desc:'Coloque os acontecimentos da história de MS em ordem, do mais antigo ao mais recente.'}
+];
+MISSOES.forEach((m,i)=>m.idx=i);
+const CATS = {
+  fonte:'Tipos de fontes históricas (MS.EF06HI02)', povo:'Povos indígenas de MS (MS.EF06HI00.n.10)',
+  fato:'Fatos da história de MS: guerra, erva-mate, Vargas e divisão (8º e 9º ano)', tempo:'Ordem cronológica (MS.EF06HI01)'
+};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='tunelTempoMS.v1';
+function padrao(){ return {nome:'',turma:'',missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const MAXEST=MISSOES.length*3;
+function patente(){ const e=totalEst(); return e>=11?'🏅 Historiador(a)':e>=8?'📚 Pesquisador(a)':e>=4?'🔍 Detetive do tempo':'🎒 Viajante iniciante'; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={toc:[[620,.04]],ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- CENA DA CAPA ---------- */
+function capa(){
+  const marcos=[['🏹','há milênios'],['🛶','séc. XVIII'],['⚔️','1864'],['🚂','1914'],['🎉','1977']];
+  const W=460, x0=48, dx=(W-2*x0)/(marcos.length-1);
+  return `<svg viewBox="0 0 ${W} 250" role="img" aria-label="Linha do tempo de Mato Grosso do Sul">
+    <defs><linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDBA74"/><stop offset="1" stop-color="#FEF3C7"/></linearGradient></defs>
+    <rect width="${W}" height="250" fill="url(#ceu)"/>
+    <circle cx="380" cy="60" r="30" fill="#FDE68A"/>
+    <path d="M0 170 Q80 140 160 160 T320 150 T${W} 160 V250 H0Z" fill="#A3B18A"/>
+    <path d="M0 195 Q120 175 230 192 T${W} 188 V250 H0Z" fill="#6B8F5E"/>
+    <path d="M0 220 C120 205 240 235 ${W} 215 V250 H0Z" fill="#7DD3FC" opacity=".8"/>
+    <line x1="${x0}" y1="120" x2="${W-x0}" y2="120" stroke="#7C2D12" stroke-width="6" stroke-linecap="round"/>
+    ${marcos.map(([e,a],i)=>`<g transform="translate(${x0+i*dx} 120)"><circle r="22" fill="#fff" stroke="#9A3412" stroke-width="4"/><text y="9" text-anchor="middle" font-size="24">${e}</text><text y="${i%2?52:-34}" text-anchor="middle" font-size="13" font-weight="700" fill="#7C2D12" font-family="Atkinson Hyperlegible, sans-serif">${a}</text></g>`).join('')}
+  </svg>`;
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+
+function telaHome(){
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · HISTÓRIA</span>
+    <h1>Túnel do Tempo <span>MS</span></h1>
+    <p class="lead">Viaje pela história de Mato Grosso do Sul: dos primeiros povos do Pantanal à criação do estado. Investigue as fontes, conheça os povos indígenas e monte a linha do tempo.</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 8º A" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">Entrar no túnel ⏳</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${capa()}</div></div>
+  <div class="info"><div><b>4</b>missões</div><div><b>6</b>povos indígenas</div><div><b>12</b>marcos na linha do tempo</div><div><b>${patente()}</b>★ ${totalEst()}/${MAXEST}</div></div>
+  <p class="rodape">História · 6º ao 9º ano · Habilidades <b>MS.EF06HI01</b> e <b>MS.EF06HI02</b> (tempo e fontes históricas) · <b>MS.EF06HI00.n.10</b> (povos indígenas de MS) · <b>MS.EF08HI00.n.21 a n.23</b> (Guerra do Paraguai e pós-guerra em MS) · <b>MS.EF09HI00.n.08</b> (Era Vargas em MS) · <b>MS.EF09HI00.n.25</b> (criação do estado) · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Estações do túnel</h2><small>${patente()}</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">MISSÃO ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma missão para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function rodadasTempo(){
+  const base=embaralhar(EVENTOS.map((_,i)=>i));
+  const r=[base.slice(0,4),base.slice(4,8),base.slice(8,12)];
+  for(let k=0;k<2;k++) r.push(embaralhar(EVENTOS.map((_,i)=>i)).slice(0,5));
+  return r.map(ids=>({ids, certo:ids.slice().sort((a,b)=>EVENTOS[a].o-EVENTOS[b].o)}));
+}
+function iniciar(idx){
+  const m=MISSOES[idx]; let itens;
+  if(m.tipo==='fonte') itens=embaralhar(PISTAS_FONTE).slice(0,10).map(x=>({...x}));
+  else if(m.tipo==='povo') itens=embaralhar(ENIGMAS).map(x=>({...x, vistas:1}));
+  else if(m.tipo==='fato') itens=embaralhar(FATOS).slice(0,10).map(q=>({...q, ordem:embaralhar(q.o.map((_,j)=>j))}));
+  else itens=rodadasTempo();
+  M={m, itens, i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  const intro={
+    fonte:`<p>Tudo o que nos ajuda a conhecer o passado é uma <b>fonte histórica</b>. O historiador investiga as fontes como um detetive.</p><div class="lista">${Object.values(FONTES).map(f=>`<div>${f.e} <b>${f.n}</b>: ${f.d}.</div>`).join('')}</div>`,
+    povo:`<p>Mato Grosso do Sul tem uma das maiores populações indígenas do Brasil, com vários povos, línguas e culturas.</p><p>Leia a pista e tente adivinhar o povo. Se precisar, peça outra pista, mas <b>acertar com menos pistas vale mais</b>!</p><div class="lista">${Object.values(POVOS).map(n=>`<div>🪶 ${n}</div>`).join('')}</div>`,
+    fato:`<p>Você vai abrir o arquivo da história de MS: a Guerra do Paraguai, os ervais, o trem, a Era Vargas e a criação do estado.</p><p class="mini">Pense também em <b>quem</b> ganhou e <b>quem</b> perdeu com cada acontecimento.</p>`,
+    tempo:`<p>Toque nos acontecimentos para colocá-los na linha do tempo, do <b>mais antigo</b> (em cima) para o <b>mais recente</b> (embaixo).</p><p class="mini">Errou? Toque num acontecimento da linha para tirá-lo de lá.</p>`
+  }[m.tipo];
+  abrirModal(`<span class="selo">MISSÃO ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${intro}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Vamos lá! ⏳</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>Missão ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+function desenhar(){
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  ({fonte:desenharFonte, povo:desenharPovo, fato:desenharFato, tempo:desenharTempo})[M.m.tipo]();
+  const b=$('[data-acao="seguir"]'); if(b) b.focus();
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir missão ✔'}</button></div>`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const item=()=>M.itens[M.i];
+
+/* --- 1. fontes --- */
+function desenharFonte(){
+  const it=item(), feito=!!it.feito;
+  $('#area').innerHTML=`<p class="enunciado">Que tipo de fonte histórica é esta?</p>
+    <div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt">${esc(it.t)}</span></div>
+    <div class="tipos4">${Object.entries(FONTES).map(([k,f])=>{ const er=(it.err||[]).includes(k);
+      return `<button class="tipo4 ${er?'errada':''} ${feito&&k===it.r?'certa':''}" data-fonte="${k}" ${er||feito?'disabled':''}><span class="em" aria-hidden="true">${f.e}</span><span>${f.n}<small>${f.d}</small></span></button>`; }).join('')}</div>
+    <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ ${FONTES[it.r].n}!</span>${esc(it.x)}</div>${botaoSeguir()}`:(it.msg||'')}</div>`;
+}
+function responderFonte(k){ const it=item();
+  if(k===it.r){ registrar('f'+M.i,'fonte',true); som('ok'); it.feito=true; }
+  else { registrar('f'+M.i,'fonte',false); som('erro'); it.err=(it.err||[]).concat(k);
+    it.msg=`<div class="retorno no"><span class="t">Não é ${FONTES[k].n.toLowerCase()}.</span>Pergunte-se: isso é um objeto, um texto, uma imagem ou algo que alguém conta?</div>`; }
+  desenharFonte();
+}
+
+/* --- 2. povos --- */
+function desenharPovo(){
+  const it=item(), n=it.pistas.length, feito=!!it.feito;
+  const pistas=it.pistas.map((p,k)=> k<it.vistas||feito ? `<div class="pista ${k===it.vistas-1&&!feito?'nova':''}"><b>Pista ${k+1}</b><span>${esc(p)}</span></div>` : `<div class="pista oculta"><b>Pista ${k+1}</b><span>escondida</span></div>`).join('');
+  const pts = feito? Math.max(1, 5-it.usadas) : 0;
+  $('#area').innerHTML=`<p class="enunciado">Quem somos nós?</p><div class="pistas">${pistas}</div>
+    ${feito?'':`<p class="pergunta">Qual é o povo?</p>`}
+    <div class="povos">${Object.entries(POVOS).map(([k,nm])=>{ const er=(it.err||[]).includes(k);
+      return `<button class="op ${er?'errada':''} ${feito&&k===it.p?'certa':''}" data-povo="${k}" ${er||feito?'disabled':''}>${nm}</button>`; }).join('')}</div>
+    ${feito?`<div class="retorno ok"><span class="t">${it.e} ${POVOS[it.p]}! ${'⭐'.repeat(pts)}</span>Você acertou com ${it.usadas} pista${it.usadas>1?'s':''}. ${esc(it.x)}</div>${botaoSeguir()}`
+      :`<div id="ret">${it.msg||''}</div><div class="seguir"><button class="btn" data-acao="pista" ${it.vistas>=n?'disabled':''}>💡 Mais uma pista</button></div>`}`;
+}
+function maisPista(){ const it=item(); if(it.vistas<it.pistas.length){ it.vistas++; it.msg=''; som('toc'); desenharPovo(); } }
+function responderPovo(k){ const it=item();
+  if(k===it.p){ registrar('p'+M.i,'povo',true); som('ok'); it.feito=true; it.usadas=it.vistas; }
+  else { registrar('p'+M.i,'povo',false); som('erro'); it.err=(it.err||[]).concat(k);
+    if(it.vistas<it.pistas.length) it.vistas++;
+    it.msg=`<div class="retorno no"><span class="t">Não somos os ${POVOS[k]}.</span>Ganhou mais uma pista. Leia todas de novo!</div>`; }
+  desenharPovo();
+}
+
+/* --- 3. fatos --- */
+function desenharFato(){
+  const it=item();
+  $('#area').innerHTML=`<p class="enunciado">Arquivo de MS</p><div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt" style="font-size:clamp(18px,2.6vw,22px)">${esc(it.t)}</span></div>
+    <div class="opcoes">${it.ordem.map((j,pos)=>{ const er=(it.err||[]).includes(j), ok=it.feito&&j===0;
+      return `<button class="op ${er?'errada':''} ${ok?'certa':''}" data-fato="${j}" ${er||it.feito?'disabled':''}><b>${'ABCD'[pos]}</b><span>${esc(it.o[j])}</span></button>`; }).join('')}</div>
+    <div id="ret">${it.feito?`<div class="retorno ok"><span class="t">✅ Isso mesmo!</span>${esc(it.x)}</div>${botaoSeguir()}`:(it.msg||'')}</div>`;
+}
+function responderFato(j){ const it=item();
+  if(j===0){ registrar('a'+M.i,'fato',true); som('ok'); it.feito=true; }
+  else { registrar('a'+M.i,'fato',false); som('erro'); it.err=(it.err||[]).concat(j); it.msg=`<div class="retorno no"><span class="t">Pense de novo.</span>Releia a pergunta com atenção e elimine as respostas que não combinam com a época.</div>`; }
+  desenharFato();
+}
+
+/* --- 4. linha do tempo --- */
+function desenharTempo(){
+  const it=item(); const n=it.ids.length;
+  if(!it.slots){ it.slots=Array(n).fill(null); it.erradas=[]; it.pool=embaralhar(it.ids); }
+  const fim=!!it.feito, cheio=it.slots.every(s=>s!=null);
+  const vagas=it.slots.map((s,k)=>{ const ev=s!=null?EVENTOS[s]:null;
+    const cls=['vaga', ev?'cheia':'', fim?'certa':'', it.erradas.includes(k)?'errada':''].filter(Boolean).join(' ');
+    return `<button class="${cls}" data-vaga="${k}" ${fim||!ev?'disabled':''} aria-label="Posição ${k+1}${ev?': '+ev.t:': vazia'}">${ev?`<span class="em" aria-hidden="true">${ev.e}</span><span>${esc(ev.t)}</span>${fim?`<span class="ano">${ev.a}</span>`:''}`:`<span class="vz">${k+1}º · toque num acontecimento abaixo</span>`}</button>`; }).join('');
+  $('#area').innerHTML=`<p class="enunciado">${fim?'Linha do tempo completa!':'Do mais antigo para o mais recente'}</p>
+    <p class="rot">⬆ mais antigo</p><div class="linha">${vagas}</div><p class="rot" style="margin-top:-8px;margin-bottom:12px">⬇ mais recente</p>
+    ${fim?`<div class="retorno ok"><span class="t">✅ Ordem certa!</span>Veja as datas de cada acontecimento.</div>${botaoSeguir()}`:
+     `<div class="monte" ${cheio?'hidden':''}>${it.pool.map(s=>`<button class="evento" data-ev="${s}" ${it.slots.includes(s)?'disabled':''}><span class="em" aria-hidden="true">${EVENTOS[s].e}</span><span>${esc(EVENTOS[s].t)}</span></button>`).join('')}</div>
+      <div id="ret">${it.msg||''}</div>
+      <div class="seguir"><button class="btn" data-acao="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir" ${cheio?'':'disabled'}>✔ Conferir</button></div>`}`;
+}
+function colocarEv(s){ const it=item(); const k=it.slots.indexOf(null); if(k<0) return; it.slots[k]=s; it.erradas=[]; it.msg=''; som('toc'); desenharTempo(); }
+function tirarEv(k){ const it=item(); if(it.slots[k]==null) return; it.slots[k]=null; it.erradas=[]; it.msg=''; desenharTempo(); }
+function conferirTempo(){ const it=item();
+  const err=it.slots.map((s,k)=>s===it.certo[k]?-1:k).filter(k=>k>=0);
+  if(!err.length){ registrar('t'+M.i,'tempo',true); som('ok'); it.feito=true; it.msg=''; }
+  else { registrar('t'+M.i,'tempo',false); som('erro'); it.erradas=err;
+    it.msg=`<div class="retorno no"><span class="t">Quase! ${err.length===1?'Um acontecimento está':'Alguns acontecimentos estão'} fora do lugar.</span>Dica: o que precisou acontecer antes? Por exemplo, a cidade precisa existir antes de o trem chegar nela. Os espaços em vermelho precisam mudar.</div>`; }
+  desenharTempo();
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">Missão concluída! ⏳</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn ipe" data-acao="prox" data-foco>Próxima missão ➔</button>':'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['TÚNEL DO TEMPO MS — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${MAXEST} · Missões: ${f}/${MISSOES.length}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">⏳ Missões</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${f}/${MISSOES.length}</b>missões</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Faça algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as missões','Para o professor escolher a missão da aula (ex.: só a missão 3 com o 8º ou 9º ano).')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="lista">
+    <div>🔍 <b>Pistas do passado:</b> diga se a fonte é material, escrita, oral ou visual.</div>
+    <div>🪶 <b>Quem somos nós?</b> Descubra o povo indígena de MS com o menor número de pistas.</div>
+    <div>🗂️ <b>Arquivo de MS:</b> responda sobre a guerra, os ervais, o trem, a Era Vargas e a criação do estado.</div>
+    <div>⏳ <b>Linha do tempo:</b> coloque os acontecimentos em ordem e descubra as datas.</div>
+    <div>⭐ As estrelas contam os acertos de primeira e sobem o seu título.</div></div>
+    <div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-fonte]')){ responderFonte(el.dataset.fonte); return; }
+  if(el=q('[data-povo]')){ responderPovo(el.dataset.povo); return; }
+  if(el=q('[data-fato]')){ responderFato(+el.dataset.fato); return; }
+  if(el=q('[data-ev]')){ colocarEv(+el.dataset.ev); return; }
+  if(el=q('[data-vaga]')){ tirarEv(+el.dataset.vaga); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='pista') maisPista();
+  else if(a==='conferir') conferirTempo();
+  else if(a==='limpar'){ const it=item(); it.slots=it.slots.map(()=>null); it.erradas=[]; it.msg=''; desenharTempo(); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modalAberto()) fecharModal(); });
+
+telaHome();
+</script>
+</body>
+</html>

@@ -63,6 +63,11 @@ const JOGOS = [
     descricao: 'Da célula ao organismo, o comando do sistema nervoso, a clínica do olhar com lentes corretivas e o movimento de ossos e músculos.',
     habilidades: ['MS.EF06CI06', 'MS.EF06CI07', 'MS.EF06CI08', 'MS.EF06CI09'] },
 
+  { arquivo: 'tunel-do-tempo-ms.html', titulo: 'Túnel do Tempo MS', componente: 'his', anos: [6,7,8,9],
+    tipo: 'Missões', icone: '⏳',
+    descricao: 'Fontes históricas, povos indígenas de MS, Guerra do Paraguai, ervais, ferrovia, Era Vargas e criação do estado, numa linha do tempo.',
+    habilidades: ['MS.EF06HI01', 'MS.EF06HI02', 'MS.EF06HI00.n.10', 'MS.EF08HI00.n.23', 'MS.EF09HI00.n.25'] },
+
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
     descricao: 'Monte a situação-problema peça por peça, confira se tem todos os dados, planeje e resolva.',
