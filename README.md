@@ -30,4 +30,6 @@ Versão on-line do Quiz STE do Prof. José Rene: o professor abre `quiz/` e proj
 - `rede.js`: conexão com o Firebase Realtime Database (ou modo de teste local com `?teste=1`).
 - `config.js`: configuração do app Web do Firebase (não é senha).
 - `regras-firebase.json`: regras de segurança, para colar em Realtime Database → Regras.
-- CSV aceito: `pergunta;alt1;alt2;alt3;alt4;correta(1-4);tempo(opcional)`, em UTF-8 ou no formato do Excel.
+- CSV aceito: `pergunta;alt1;alt2;alt3;alt4;correta(1-4);tempo(opcional, até 180)`, em UTF-8 ou no formato do Excel.
+- Arquivo `.quiz.json`: leva o quiz completo, com imagens (exportado pelo botão ⬇ do painel).
+- Os quizzes ficam no IndexedDB do navegador do professor; as imagens são comprimidas (JPEG, até ~140 KB) antes de ir para os celulares.

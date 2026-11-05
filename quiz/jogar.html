@@ -142,8 +142,9 @@ function telaPergunta(){
     app.innerHTML=`<section class="card centro"><div class="grande-icone pulsa">${FORMAS[respondida[e.idx]-1]}</div><h2 style="margin:10px 0">Resposta enviada!</h2><p class="muted">Aguarde o tempo acabar para ver se acertou.</p><p class="mini">Pergunta ${e.idx+1} de ${e.total}</p></section>`; return;
   }
   app.innerHTML=`<div class="barra-jogo"><span class="tag">${e.idx+1}/${e.total}</span><span style="flex:1"></span><div class="relogio" id="relogio"><span id="seg">${e.tempo}</span></div></div>
-    <div class="enunc" style="font-size:clamp(20px,5.4vw,28px);padding:16px">${esc(p.texto)}</div>
-    <div class="alt-aluno">${p.opcoes.map((o,j)=>o?`<button class="alternativa c${j+1}" data-r="${j+1}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span></button>`:'').join('')}</div>`;
+    ${p.texto?`<div class="enunc ${(p.texto.length>420?'aluno-t3':p.texto.length>140?'aluno-t2':'')}" style="font-size:clamp(20px,5.4vw,28px);padding:16px">${esc(p.texto).replace(/\n/g,'<br>')}</div>`:''}
+    ${p.img?`<div class="img-aluno" data-zoom><img src="${p.img}" alt="Imagem da pergunta"></div>`:''}
+    <div class="alt-aluno ${p.opcoes.some(o=>o&&o.length>50)?'longas':''}">${p.opcoes.map((o,j)=>o?`<button class="alternativa c${j+1}" data-r="${j+1}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span></button>`:'').join('')}</div>`;
   const tic=()=>{ if(typeof e.inicio!=='number') return; const resta=Math.max(0,(e.inicio+e.tempo*1000-R.agora())/1000);
     const s=$('#seg'), rel=$('#relogio'); if(!s) return; s.textContent=Math.ceil(resta); rel.style.setProperty('--p',(100*resta/e.tempo)+'%'); rel.classList.toggle('urgente',resta<=5);
     if(resta<=0){ clearInterval(timerId); document.querySelectorAll('[data-r]').forEach(b=>b.disabled=true); s.textContent='0'; } };
@@ -193,7 +194,11 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden) registrar
 window.addEventListener('blur',()=>registrarSaida('perdeu_foco'));
 async function pedirTelaAcesa(){ try{ if('wakeLock' in navigator && !document.hidden) wake=await navigator.wakeLock.request('screen'); }catch(e){} }
 
-document.addEventListener('click',e=>{ const b=e.target.closest('[data-r]'); if(b&&!b.disabled) responder(+b.dataset.r); });
+document.addEventListener('click',e=>{
+  const z=e.target.closest('[data-zoom]');
+  if(z){ const d=document.createElement('div'); d.className='zoom'; d.innerHTML=`<img src="${z.querySelector('img').src}" alt="Imagem ampliada"><span>✕ fechar</span>`; d.onclick=()=>d.remove(); document.body.appendChild(d); return; }
+  const b=e.target.closest('[data-r]'); if(b&&!b.disabled) responder(+b.dataset.r);
+});
 
 /* ---------- Início ---------- */
 (async()=>{

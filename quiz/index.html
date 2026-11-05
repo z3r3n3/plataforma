@@ -52,7 +52,7 @@ $('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharMo
 const CH_Q='quizSTE.quizzes', CH_CFG='quizSTE.cfg', CH_SESSAO='quizSTE.sessao';
 const ler=(k,p)=>{ try{ const v=JSON.parse(localStorage.getItem(k)); return v??p; }catch(e){ return p; } };
 const gravar=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ toast('Não foi possível salvar neste navegador.'); } };
-let QUIZZES=ler(CH_Q,null);
+let QUIZZES=[];
 let CFG=Object.assign({tempo:30}, ler(CH_CFG,{}));
 const EXEMPLO={id:'exemplo', titulo:'Quiz de exemplo — Mato Grosso do Sul', atualizado:Date.now(), perguntas:[
   {texto:'Qual é a capital de Mato Grosso do Sul?', opcoes:['Dourados','Campo Grande','Corumbá','Três Lagoas'], correta:2, tempo:null},
@@ -61,8 +61,55 @@ const EXEMPLO={id:'exemplo', titulo:'Quiz de exemplo — Mato Grosso do Sul', at
   {texto:'Quanto é 7 × 8?', opcoes:['54','56','48','64'], correta:2, tempo:20},
   {texto:'Qual destes animais é símbolo do Pantanal?', opcoes:['Pinguim','Camelo','Urso-polar','Tuiuiú'], correta:4, tempo:null}
 ]};
-if(!Array.isArray(QUIZZES)){ QUIZZES=[EXEMPLO]; gravar(CH_Q,QUIZZES); }
-const salvarQuizzes=()=>gravar(CH_Q,QUIZZES);
+/* Os quizzes ficam no IndexedDB do navegador (cabe muito mais que o localStorage, inclusive imagens). */
+const IDB={ db:null,
+  abrir(){ return new Promise((ok,erro)=>{ const r=indexedDB.open('quizSTE',1); r.onupgradeneeded=()=>r.result.createObjectStore('quizzes',{keyPath:'id'}); r.onsuccess=()=>{ this.db=r.result; ok(); }; r.onerror=()=>erro(r.error); }); },
+  todos(){ return new Promise((ok,erro)=>{ const q=this.db.transaction('quizzes').objectStore('quizzes').getAll(); q.onsuccess=()=>ok(q.result||[]); q.onerror=()=>erro(q.error); }); },
+  por(v){ return new Promise((ok,erro)=>{ const tx=this.db.transaction('quizzes','readwrite'); tx.objectStore('quizzes').put(v); tx.oncomplete=()=>ok(); tx.onerror=()=>erro(tx.error); tx.onabort=()=>erro(tx.error); }); },
+  apagar(id){ return new Promise((ok,erro)=>{ const tx=this.db.transaction('quizzes','readwrite'); tx.objectStore('quizzes').delete(id); tx.oncomplete=()=>ok(); tx.onerror=()=>erro(tx.error); }); }
+};
+const ordenarQuizzes=()=>QUIZZES.sort((a,b)=>(b.atualizado||0)-(a.atualizado||0));
+async function carregarQuizzes(){
+  try{
+    await IDB.abrir(); QUIZZES=await IDB.todos();
+    const antigos=ler(CH_Q,null);                       // versão anterior guardava no localStorage
+    if(Array.isArray(antigos)){ for(const q of antigos) if(!QUIZZES.some(x=>x.id===q.id)){ await IDB.por(q); QUIZZES.push(q); } localStorage.removeItem(CH_Q); }
+    if(!QUIZZES.length && !localStorage.getItem('quizSTE.semExemplo')){ await IDB.por(EXEMPLO); QUIZZES=[EXEMPLO]; }
+  }catch(e){ IDB.db=null; QUIZZES=ler(CH_Q,null)||[EXEMPLO]; }
+  ordenarQuizzes();
+}
+async function salvarQuiz(q){
+  q.atualizado=Date.now();
+  const k=QUIZZES.findIndex(x=>x.id===q.id); if(k>=0) QUIZZES[k]=q; else QUIZZES.unshift(q); ordenarQuizzes();
+  try{ if(IDB.db) await IDB.por(q); else gravar(CH_Q,QUIZZES); return true; }
+  catch(e){ toast('Não foi possível salvar: o armazenamento do navegador está cheio.'); return false; }
+}
+async function apagarQuiz(id){
+  QUIZZES=QUIZZES.filter(q=>q.id!==id);
+  try{ if(IDB.db) await IDB.apagar(id); else gravar(CH_Q,QUIZZES); }catch(e){}
+  if(id==='exemplo') try{ localStorage.setItem('quizSTE.semExemplo','1'); }catch(e){}
+}
+const TEMPOS=[10,15,20,30,45,60,90,120,150,180];
+const rotTempo=t=>t<60?t+' segundos':(t%60?Math.floor(t/60)+' min '+(t%60)+' s':(t/60)+(t===60?' minuto':' minutos'));
+const rotTempoCurto=t=>t<60?t+' s':(t%60?Math.floor(t/60)+'min'+(t%60)+'s':(t/60)+' min');
+
+/* imagem: reduz e comprime para JPEG, para caber bem no celular dos estudantes */
+async function comprimirImagem(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await new Promise((ok,erro)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=erro; i.src=url; });
+    let max=1000, q=.78, out='';
+    for(let k=0;k<6;k++){
+      const s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));
+      const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(img.naturalWidth*s)); c.height=Math.max(1,Math.round(img.naturalHeight*s));
+      const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height);
+      out=c.toDataURL('image/jpeg',q); if(out.length<190000) break; max=Math.round(max*.82); q=Math.max(.5,q-.07);
+    }
+    return out;
+  } finally { URL.revokeObjectURL(url); }
+}
+const comQuebras=t=>esc(t).replace(/\n/g,'<br>');
+const classeTexto=t=>{ const n=String(t||'').length; return n>420?'t3':n>170?'t2':''; };
 const novoId=()=>'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 
 /* CSV no formato do Quiz STE original:
@@ -75,7 +122,7 @@ function lerCSV(txt){
     if(c.length<6) return;
     const correta=parseInt(c[5]); if(!(correta>=1&&correta<=4)) return;   // pula cabeçalho
     const t=parseInt(c[6]);
-    out.push({texto:c[0], opcoes:[c[1],c[2],c[3],c[4]], correta, tempo:(t>0?t:null)});
+    out.push({texto:c[0], opcoes:[c[1],c[2],c[3],c[4]], correta, tempo:(t>0?Math.min(t,180):null)});
   });
   return out.filter(q=>q.texto && q.opcoes[q.correta-1]);
 }
@@ -116,24 +163,30 @@ function telaInicio(){
       <p class="muted" style="margin:0">Projete esta tela, os estudantes entram pelo celular com um PIN e respondem ao vivo. Funciona pela internet, sem precisar de um computador servidor na escola.</p>
       <div class="passos"><div><b>1</b>Escolha ou crie um quiz</div><div><b>2</b>Abra a sala e mostre o QR Code</div><div><b>3</b>Comece e acompanhe o ranking</div></div>
       <label class="campo" for="tempo">Tempo padrão por pergunta</label>
-      <select id="tempo">${[10,15,20,30,45,60,90].map(t=>`<option value="${t}" ${t==CFG.tempo?'selected':''}>${t} segundos</option>`).join('')}</select>
+      <select id="tempo">${TEMPOS.map(t=>`<option value="${t}" ${t==CFG.tempo?'selected':''}>${rotTempo(t)}</option>`).join('')}</select>
       <p class="mini" style="margin-top:6px">Perguntas com tempo próprio no CSV mantêm o tempo delas.</p>
       <div class="linha-acoes"><button class="btn" data-acao="modelo">⬇ Baixar modelo CSV</button><button class="btn" data-acao="ajuda">❓ Como funciona</button></div>
     </section>
     <section class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="flex:1">Meus quizzes</h2>
         <button class="btn roxo pequeno" data-acao="novo">＋ Criar</button>
-        <label class="btn pequeno" style="cursor:pointer">📂 Importar CSV<input type="file" id="csv" accept=".csv,.txt" hidden></label></div>
-      <p class="mini" style="margin:2px 0 0">Ficam salvos neste navegador. Baixe o CSV para levar para outro computador.</p>
-      <div class="quizzes">${QUIZZES.length?QUIZZES.map(q=>`<div class="quiz-item"><span class="ic">📝</span><div class="info2"><b>${esc(q.titulo)}</b><small>${q.perguntas.length} pergunta${q.perguntas.length!==1?'s':''}</small></div>
-        <div class="acoes2"><button class="btn roxo pequeno" data-abrir="${q.id}" ${q.perguntas.length?'':'disabled'}>▶ Abrir sala</button><button class="btn pequeno" data-editar="${q.id}" aria-label="Editar">✏️</button><button class="btn pequeno" data-csv="${q.id}" aria-label="Baixar CSV">⬇</button><button class="btn pequeno perigo" data-apagar="${q.id}" aria-label="Apagar">🗑</button></div></div>`).join('')
+        <label class="btn pequeno" style="cursor:pointer">📂 Importar<input type="file" id="csv" accept=".csv,.txt,.json" hidden></label></div>
+      <p class="mini" style="margin:2px 0 0">Ficam salvos neste navegador. Para levar a outro computador, use ⬇ e depois "Importar". O arquivo .quiz.json leva também as imagens.</p>
+      <div class="quizzes">${QUIZZES.length?QUIZZES.map(q=>`<div class="quiz-item"><span class="ic">📝</span><div class="info2"><b>${esc(q.titulo)}</b><small>${q.perguntas.length} pergunta${q.perguntas.length!==1?'s':''}${q.perguntas.some(p=>p.img)?' · 🖼️ com imagens':''}</small></div>
+        <div class="acoes2"><button class="btn roxo pequeno" data-abrir="${q.id}" ${q.perguntas.length?'':'disabled'}>▶ Abrir sala</button><button class="btn pequeno" data-editar="${q.id}" aria-label="Editar">✏️</button><button class="btn pequeno" data-baixar="${q.id}" aria-label="Baixar">⬇</button><button class="btn pequeno perigo" data-apagar="${q.id}" aria-label="Apagar">🗑</button></div></div>`).join('')
         :'<div class="vazio">Nenhum quiz ainda. Crie um ou importe o seu CSV.</div>'}</div>
     </section></div>`;
   $('#tempo').onchange=e=>{ CFG.tempo=+e.target.value; gravar(CH_CFG,CFG); };
   $('#csv').onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
-    const ps=lerCSV(await lerArquivo(f));
-    if(!ps.length){ toast('Não encontrei perguntas no arquivo. Confira o separador ponto e vírgula.'); return; }
-    QUIZZES.unshift({id:novoId(), titulo:f.name.replace(/\.(csv|txt)$/i,''), perguntas:ps, atualizado:Date.now()}); salvarQuizzes();
+    const txt=await lerArquivo(f); let titulo=f.name.replace(/(\.quiz)?\.(csv|txt|json)$/i,''), ps=[];
+    if(/\.json$/i.test(f.name)||/^\s*\{/.test(txt)){
+      try{ const j=JSON.parse(txt); titulo=j.titulo||titulo;
+        ps=(j.perguntas||[]).map(p=>({texto:String(p.texto||''), opcoes:[0,1,2,3].map(k=>String((p.opcoes||[])[k]||'')), correta:Math.min(4,Math.max(1,+p.correta||1)), tempo:p.tempo>0?Math.min(+p.tempo,180):null, img:(typeof p.img==='string'&&p.img.startsWith('data:image/'))?p.img:null}))
+          .filter(p=>(p.texto||p.img)&&p.opcoes[p.correta-1]);
+      }catch(err){ ps=[]; }
+    } else ps=lerCSV(txt);
+    if(!ps.length){ toast('Não encontrei perguntas no arquivo. Confira o formato (CSV com ponto e vírgula ou .quiz.json).'); return; }
+    await salvarQuiz({id:novoId(), titulo, perguntas:ps});
     toast(`${ps.length} perguntas importadas!`); telaInicio(); };
 }
 
@@ -150,11 +203,13 @@ function desenharEditor(){
     <label class="campo" for="ed-tit">Título (ex.: Revisão de frações — 6º A)</label><input class="inp" id="ed-tit" maxlength="80" value="${esc(ED.titulo)}">
     <div id="ed-qs">${ED.perguntas.map((p,i)=>`<div class="q-ed" data-q="${i}">
       <div class="cab-q"><b>Pergunta ${i+1}</b>
-        <select data-campo="tempo" style="width:auto;padding:6px 8px" aria-label="Tempo"><option value="">Tempo padrão</option>${[10,15,20,30,45,60,90].map(t=>`<option value="${t}" ${p.tempo==t?'selected':''}>${t}s</option>`).join('')}</select>
+        <select data-campo="tempo" style="width:auto;padding:6px 8px" aria-label="Tempo"><option value="">Tempo padrão</option>${TEMPOS.map(t=>`<option value="${t}" ${p.tempo==t?'selected':''}>${rotTempoCurto(t)}</option>`).join('')}</select>
         <button class="btn pequeno" data-mover="-1" ${i===0?'disabled':''} aria-label="Subir">↑</button><button class="btn pequeno" data-mover="1" ${i===ED.perguntas.length-1?'disabled':''} aria-label="Descer">↓</button>
         <button class="btn pequeno perigo" data-tirar="1" ${ED.perguntas.length<2?'disabled':''} aria-label="Remover">🗑</button></div>
-      <textarea data-campo="texto" maxlength="300" placeholder="Digite a pergunta">${esc(p.texto)}</textarea>
-      <div class="alts">${[0,1,2,3].map(j=>`<label class="alt a${j+1}"><span class="forma">${FORMAS[j]}</span><input type="text" data-op="${j}" maxlength="120" placeholder="Alternativa ${j+1}${j>1?' (opcional)':''}" value="${esc(p.opcoes[j]||'')}"><input type="radio" name="c${i}" value="${j+1}" ${p.correta===j+1?'checked':''} aria-label="Marcar como correta" title="Correta"></label>`).join('')}</div>
+      <textarea data-campo="texto" rows="${Math.min(12,Math.max(3,Math.ceil((p.texto||'').length/90)+(p.texto||'').split('\n').length))}" placeholder="Digite a pergunta. Pode colar um texto inteiro para leitura.">${esc(p.texto)}</textarea>
+      <div class="img-q">${p.img?`<img src="${p.img}" alt="Imagem da pergunta ${i+1}"><div><button class="btn pequeno" data-trocar-img="1">🔁 Trocar imagem</button> <button class="btn pequeno perigo" data-tirar-img="1">Remover imagem</button></div>`
+        :`<label class="btn pequeno" style="cursor:pointer">🖼️ Adicionar imagem<input type="file" accept="image/*" data-img hidden></label><span class="mini">ou copie uma imagem e cole aqui com Ctrl+V</span>`}</div>
+      <div class="alts">${[0,1,2,3].map(j=>`<label class="alt a${j+1}"><span class="forma">${FORMAS[j]}</span><input type="text" data-op="${j}" placeholder="Alternativa ${j+1}${j>1?' (opcional)':''}" value="${esc(p.opcoes[j]||'')}"><input type="radio" name="c${i}" value="${j+1}" ${p.correta===j+1?'checked':''} aria-label="Marcar como correta" title="Correta"></label>`).join('')}</div>
       <p class="mini" style="margin:6px 0 0">Marque a bolinha da alternativa correta.</p></div>`).join('')}</div>
     <div class="linha-acoes"><button class="btn" data-acao="add-q">＋ Adicionar pergunta</button></div></section>`;
 }
@@ -165,16 +220,14 @@ function lerEditor(){
     p.opcoes=[0,1,2,3].map(j=>$(`[data-op="${j}"]`,div).value.trim());
     const r=$('input[type=radio]:checked',div); p.correta=r?+r.value:1; });
 }
-function salvarEditor(){
+async function salvarEditor(){
   lerEditor();
   if(!ED.titulo){ toast('Dê um título ao quiz.'); $('#ed-tit').focus(); return; }
   for(let i=0;i<ED.perguntas.length;i++){ const p=ED.perguntas[i];
-    if(!p.texto){ toast(`A pergunta ${i+1} está sem texto.`); return; }
+    if(!p.texto&&!p.img){ toast(`A pergunta ${i+1} está sem texto e sem imagem.`); return; }
     if(p.opcoes.filter(Boolean).length<2){ toast(`A pergunta ${i+1} precisa de pelo menos 2 alternativas.`); return; }
     if(!p.opcoes[p.correta-1]){ toast(`Na pergunta ${i+1}, a alternativa marcada como correta está vazia.`); return; } }
-  ED.atualizado=Date.now();
-  const k=QUIZZES.findIndex(q=>q.id===ED.id); if(k>=0) QUIZZES[k]=ED; else QUIZZES.unshift(ED);
-  salvarQuizzes(); toast('Quiz salvo!'); telaInicio();
+  if(await salvarQuiz(ED)){ toast('Quiz salvo!'); telaInicio(); }
 }
 
 /* ---------- Sala ---------- */
@@ -235,7 +288,7 @@ async function mandarPergunta(i){
   const p=QUIZ.perguntas[i];
   const part={}; Object.keys(ENTRADA).forEach(u=>part[u]=true);
   const opcoes=p.opcoes.map(o=>o||'');
-  await R.update('salas/'+PIN, {estado:{fase:'pergunta', idx:i, total:QUIZ.perguntas.length, tempo:tempoDe(p), inicio:TS, pergunta:{texto:p.texto, opcoes}, part}});
+  await R.update('salas/'+PIN, {estado:{fase:'pergunta', idx:i, total:QUIZ.perguntas.length, tempo:tempoDe(p), inicio:TS, pergunta:{texto:p.texto, opcoes, img:p.img||null}, part}});
   FASE='pergunta'; telaPergunta();
   if(ouvResp) ouvResp();
   ouvResp=R.on('salas/'+PIN+'/respostas/'+i, v=>{ RESP=v||{}; atualizarRespostas(); });
@@ -247,11 +300,11 @@ function telaPergunta(revelada){
   app.innerHTML=`<div class="barra-jogo"><span class="tag">Pergunta ${IDX+1} de ${QUIZ.perguntas.length}</span>
       <div class="respostas-st"><b id="txt-resp">Aguardando respostas…</b><div class="prog"><i id="prog-resp"></i></div></div>
       <div class="relogio" id="relogio"><span id="seg">${tempoDe(p)}</span></div></div>
-    <div class="enunc">${esc(p.texto)}</div>
-    <div class="alternativas">${p.opcoes.map((o,j)=>o?`<div class="alternativa c${j+1} ${revelada?(j+1===p.correta?'correta':'apagada'):''}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span>${revelada?`<span class="qt">${dist[j]||0}</span><span class="bar-d" style="width:${100*(dist[j]||0)/tot}%"></span>`:''}</div>`:'').join('')}</div>
+    <div class="${p.img?'com-img':''}">${p.texto?`<div class="enunc ${classeTexto(p.texto)}">${comQuebras(p.texto)}</div>`:''}${p.img?`<div class="img-telao"><img src="${p.img}" alt="Imagem da pergunta"></div>`:''}</div>
+    <div class="alternativas ${p.opcoes.some(o=>o&&o.length>60)?'longas':''}">${p.opcoes.map((o,j)=>o?`<div class="alternativa c${j+1} ${revelada?(j+1===p.correta?'correta':'apagada'):''}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span>${revelada?`<span class="qt">${dist[j]||0}</span><span class="bar-d" style="width:${100*(dist[j]||0)/tot}%"></span>`:''}</div>`:'').join('')}</div>
     <div class="acoes-jogo">${revelada
       ?`<button class="btn" data-acao="ranking">🏆 Ver ranking</button>${IDX<QUIZ.perguntas.length-1?'<button class="btn roxo grande" data-acao="proxima">Próxima pergunta ➔</button>':'<button class="btn roxo grande" data-acao="final">🏁 Pódio final</button>'}`
-      :'<button class="btn" data-acao="revelar">⏱ Encerrar tempo e mostrar a resposta</button>'}</div>`;
+      :'<button class="btn" data-acao="revelar">⏱ Encerrar tempo e mostrar a resposta</button>'}${IDX<QUIZ.perguntas.length-1?'<button class="btn perigo" data-acao="finalizar">🏁 Finalizar o quiz agora</button>':''}</div>`;
   if(revelada){ $('#seg').textContent='✔'; $('#relogio').style.setProperty('--p','0%'); }
   atualizarRespostas();
   if(!revelada) iniciarRelogio();
@@ -305,17 +358,17 @@ async function telaRanking(final){
   const podio=final&&L.length?`<div class="podio">${[1,0,2].map(k=>L[k]?`<div class="degrau d${k+1}">${avatar(L[k].nome).replace('class="av"','class="av"')}<b>${esc(L[k].nome)}</b><small>${L[k].pontos} pts</small><div class="bloco">${k+1}º</div></div>`:'<div></div>').join('')}</div>`:'';
   app.innerHTML=`<section class="card">
     <div class="centro"><div style="font-size:48px">${final?'🏆':'📊'}</div><h1 style="font-size:clamp(28px,4vw,44px)">${final?'Pódio final':'Ranking da turma'}</h1>
-    <p class="muted" style="margin:4px 0 10px">${final?esc(QUIZ.titulo):`Depois da pergunta ${IDX+1} de ${QUIZ.perguntas.length}`} · ${L.length} participante${L.length!==1?'s':''}</p></div>
+    <p class="muted" style="margin:4px 0 10px">${final?esc(QUIZ.titulo)+(IDX<QUIZ.perguntas.length-1?` · finalizado na pergunta ${IDX+1} de ${QUIZ.perguntas.length}`:''):`Depois da pergunta ${IDX+1} de ${QUIZ.perguntas.length}`} · ${L.length} participante${L.length!==1?'s':''}</p></div>
     ${podio}
     <div class="ranking">${L.map((j,i)=>`<div class="rk ${i<3?'top'+(i+1):''}"><span class="pos">${i+1}º</span>${avatar(j.nome)}<span class="nm">${esc(j.nome)}</span><span class="dl ${j.ultimo&&j.ultimo.pts?'':'zero'}">${j.ultimo&&j.ultimo.pts?'+'+j.ultimo.pts:'+0'}</span><span class="pts">${j.pontos}</span></div>`).join('')||'<p class="muted centro">Ninguém pontuou ainda.</p>'}</div>
     <p class="dicas-proj">Pontos: acerto rápido vale até 1.000; no fim do tempo, 200. Empate: mais acertos e depois menor tempo.</p>
     <div class="acoes-jogo">${final
       ?`<button class="btn" data-acao="exportar">⬇ Baixar resultado (CSV)</button><button class="btn" data-acao="trocar">🔁 Jogar outro quiz com a turma</button><button class="btn perigo" data-acao="encerrar">⏹ Encerrar sala</button>`
-      :(ultimo?'<button class="btn roxo grande" data-acao="final">🏁 Pódio final</button>':'<button class="btn roxo grande" data-acao="proxima">Próxima pergunta ➔</button>')}</div></section>`;
+      :(ultimo?'<button class="btn roxo grande" data-acao="final">🏁 Pódio final</button>':'<button class="btn perigo" data-acao="finalizar">🏁 Finalizar o quiz agora</button><button class="btn roxo grande" data-acao="proxima">Próxima pergunta ➔</button>')}</div></section>`;
 }
 function exportar(){
   const L=ordenar();
-  const linhas=[['Posição','Nome','Pontos','Acertos','Perguntas','Saídas da tela'],...L.map((j,i)=>[i+1,j.nome,j.pontos,j.acertos,QUIZ.perguntas.length,violacoes(j.u)])];
+  const linhas=[['Posição','Nome','Pontos','Acertos','Perguntas jogadas','Saídas da tela'],...L.map((j,i)=>[i+1,j.nome,j.pontos,j.acertos,IDX+1,violacoes(j.u)])];
   baixar(`resultado-${nomeArquivo(QUIZ.titulo)}-${new Date().toISOString().slice(0,10)}.csv`, '﻿'+linhas.map(l=>l.join(';')).join('\r\n'));
 }
 
@@ -376,8 +429,14 @@ document.addEventListener('click', async e=>{
   const d=el.dataset;
   if(d.abrir) return abrirSala(d.abrir);
   if(d.editar) return telaEditor(d.editar);
-  if(d.csv){ const q=QUIZZES.find(x=>x.id===d.csv); return baixar(nomeArquivo(q.titulo)+'.csv', paraCSV(q)); }
-  if(d.apagar){ if(el.dataset.armado){ QUIZZES=QUIZZES.filter(q=>q.id!==d.apagar); salvarQuizzes(); telaInicio(); } else { el.dataset.armado=1; el.textContent='Apagar?'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🗑'; } },3000); } return; }
+  if(d.baixar) return modalBaixar(d.baixar);
+  if(d.fmt){ const q=QUIZZES.find(x=>x.id===d.id); fecharModal();
+    if(d.fmt==='csv') return baixar(nomeArquivo(q.titulo)+'.csv', paraCSV(q));
+    return baixar(nomeArquivo(q.titulo)+'.quiz.json', JSON.stringify({formato:'quizSTE', versao:2, titulo:q.titulo, perguntas:q.perguntas}), 'application/json'); }
+  if(d.tirarImg||d.trocarImg){ lerEditor(); const i=+el.closest('.q-ed').dataset.q;
+    if(d.tirarImg){ ED.perguntas[i].img=null; return desenharEditor(); }
+    const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.onchange=()=>inp.files[0]&&colocarImagem(i,inp.files[0]); inp.click(); return; }
+  if(d.apagar){ if(el.dataset.armado){ await apagarQuiz(d.apagar); telaInicio(); } else { el.dataset.armado=1; el.textContent='Apagar?'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🗑'; } },3000); } return; }
   if(d.remover) return removerJogador(d.remover);
   if(d.trocar) return trocarQuiz(d.trocar);
   if(d.mover||d.tirar){ lerEditor(); const i=+el.closest('.q-ed').dataset.q;
@@ -397,6 +456,7 @@ document.addEventListener('click', async e=>{
   else if(a==='ranking') telaRanking(false);
   else if(a==='proxima') mandarPergunta(IDX+1);
   else if(a==='final') telaRanking(true);
+  else if(a==='finalizar'){ if(el.dataset.armado){ if(FASE==='pergunta') await revelar(); telaRanking(true); } else { el.dataset.armado=1; el.textContent='Clique de novo para finalizar'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🏁 Finalizar o quiz agora'; } },3500); } }
   else if(a==='exportar') exportar();
   else if(a==='alunos') modalAlunos();
   else if(a==='qr') modalQR();
@@ -405,6 +465,30 @@ document.addEventListener('click', async e=>{
   else if(a==='encerrar'){ if(el.dataset.armado){ encerrarSala(); } else { el.dataset.armado=1; el.textContent='Clique de novo para encerrar'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='⏹ Encerrar sala'; } },3500); } }
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharModal(); });
+/* imagens no editor: botão ou Ctrl+V */
+async function colocarImagem(i,file){
+  if(!file||!/^image\//.test(file.type)) return toast('Esse arquivo não é uma imagem.');
+  lerEditor(); toast('Preparando a imagem…');
+  try{ ED.perguntas[i].img=await comprimirImagem(file); desenharEditor(); toast('Imagem adicionada!'); }
+  catch(e){ toast('Não consegui abrir essa imagem.'); }
+}
+document.addEventListener('change',e=>{ const inp=e.target.closest('[data-img]'); if(inp&&inp.files[0]) colocarImagem(+inp.closest('.q-ed').dataset.q, inp.files[0]); });
+let ultimaQ=0;
+document.addEventListener('focusin',e=>{ const q=e.target.closest&&e.target.closest('.q-ed'); if(q) ultimaQ=+q.dataset.q; });
+document.addEventListener('paste',e=>{
+  if(FASE!=='editor') return;
+  const item=[...(e.clipboardData||{}).items||[]].find(it=>it.type&&it.type.startsWith('image/'));
+  if(!item) return;
+  e.preventDefault(); const q=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.q-ed');
+  colocarImagem(q?+q.dataset.q:ultimaQ, item.getAsFile());
+});
+function modalBaixar(id){
+  const q=QUIZZES.find(x=>x.id===id), temImg=q.perguntas.some(p=>p.img);
+  abrirModal(`<h2>Baixar "${esc(q.titulo)}"</h2><div class="quizzes">
+    <div class="quiz-item"><span class="ic">📦</span><div class="info2"><b>Arquivo do quiz (.quiz.json)</b><small>Leva tudo, inclusive as imagens. Use "Importar" em outro computador.</small></div><button class="btn roxo pequeno" data-fmt="json" data-id="${id}">Baixar</button></div>
+    <div class="quiz-item"><span class="ic">📊</span><div class="info2"><b>Planilha CSV</b><small>Abre no Excel. ${temImg?'<b>Não leva as imagens.</b>':'Mesmo formato do Quiz STE original.'}</small></div><button class="btn pequeno" data-fmt="csv" data-id="${id}">Baixar</button></div></div>
+    <div class="acoes"><button class="btn" data-acao="fechar">Fechar</button></div>`);
+}
 window.addEventListener('beforeunload', e=>{ if(PIN&&['pergunta','revelada','ranking'].includes(FASE)){ e.preventDefault(); e.returnValue=''; } });
 
 /* para diagnóstico no console do navegador */
@@ -417,6 +501,7 @@ function semConfig(){
     <p class="mini">Para testar neste navegador, abra <a href="?teste=1">o modo de teste</a> (funciona só entre abas do mesmo computador).</p></section>`;
 }
 (async()=>{
+  await carregarQuizzes();
   telaInicio();
   try{
     R=await conectar();
