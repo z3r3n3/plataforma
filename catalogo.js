@@ -71,6 +71,10 @@ const JOGOS = [
     tipo: 'Mapa e missões', icone: '⛵',
     descricao: 'Povos da América e da África antes dos europeus, rotas das navegações no mapa, colonização, tráfico atlântico, quilombos e linha do tempo.',
     habilidades: ['MS.EF07HI03', 'MS.EF07HI06', 'MS.EF07HI09', 'MS.EF07HI15', 'MS.EF07HI16'] },
+  { arquivo: 'era-das-revolucoes.html', titulo: 'Era das Revoluções', componente: 'his', anos: [8],
+    tipo: 'Mapa e missões', icone: '🗞️',
+    descricao: 'Iluministas, Revolução Industrial e Francesa, independências no mapa, Brasil de 1808 a 1889, abolição, Guerra do Paraguai e os Guaicuru.',
+    habilidades: ['MS.EF08HI01', 'MS.EF08HI03', 'MS.EF08HI13', 'MS.EF08HI15', 'MS.EF08HI20', 'MS.EF08HI00.n.28'] },
 
   { arquivo: 'explorador-ms.html', titulo: 'Explorador MS', componente: 'geo', anos: [6,7],
     tipo: 'Mapa interativo', icone: '🧭',
