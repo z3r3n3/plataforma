@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratório das Misturas</title>
+<meta name="description" content="Jogo de Ciências para o 6º ano: classifique misturas homogêneas e heterogêneas, identifique transformações químicas e escolha o melhor método de separação. Habilidades MS.EF06CI01, MS.EF06CI02 e MS.EF06CI03.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--agua:#4C1D95;--agua2:#6D28D9;--mata2:#7C3AED;--terra:#BE185D}
+body{background:linear-gradient(180deg,#EEE9FF 0%,#F7F3EA 100%)}
+.topo{background:#F5F1FFee;border-bottom-color:#DDD3F7}
+.trilho{background:#E2DAF7}
+.bar i{background:var(--mata2)}
+.voltar-plat{color:var(--agua2)}
+.hero h1 span{color:var(--terra)}
+
+/* bancada */
+.bancada{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:center;margin-bottom:14px}
+.becher{width:200px;margin:auto}
+.becher svg{width:100%;height:auto;display:block}
+.becher.mexe svg{animation:mexe .7s ease}
+@keyframes mexe{20%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}80%{transform:rotate(-3deg)}}
+.ingred{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:20px;font-weight:700}
+.ingred span{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 12px}
+.ingred i{font-style:normal;color:var(--agua2);font-weight:800}
+.obs{font-size:16px;color:var(--suave);margin-top:10px;line-height:1.45}
+.tipos3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tipo3{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:12px;font-weight:700;text-align:left;display:flex;flex-direction:column;gap:2px;font-size:17px;min-height:84px;transition:transform .1s}
+.tipo3 small{font-weight:400;color:var(--suave);font-size:13px}
+.tipo3:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.tipo3.certa{border-color:var(--ok);background:var(--ok-f)}
+.tipo3.errada{border-color:var(--erro);background:var(--erro-f)}
+.tipo3:disabled{cursor:default}
+.metodos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metodo{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:12px;text-align:left;display:flex;gap:10px;align-items:center;font-weight:700;font-size:17px;transition:transform .1s}
+.metodo .em{font-size:32px;flex:none}
+.metodo small{display:block;font-weight:400;color:var(--suave);font-size:13px}
+.metodo:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.metodo.certa{border-color:var(--ok);background:var(--ok-f)}
+.metodo.errada{border-color:var(--erro);background:var(--erro-f);opacity:.75}
+.metodo:disabled{cursor:default}
+.sn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sn button{border:0;border-radius:16px;min-height:80px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:21px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 5px 0 #0003}
+.sn button small{font-family:var(--texto);font-weight:400;font-size:13px;opacity:.95}
+.sn .sim{background:#BE185D}.sn .nao{background:#0E7490}
+.sn button:disabled{opacity:.4;cursor:default}
+.sn button.marcado{opacity:1;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--ok)}
+@media (max-width:820px){
+  .bancada{grid-template-columns:1fr}
+  .becher{width:160px}
+  .tipos3{grid-template-columns:1fr}
+  .tipo3{min-height:0}
+  .metodos{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   LABORATÓRIO DAS MISTURAS — JRM • Aventuras Educativas
+   Ciências · 6º ano
+   Habilidades: MS.EF06CI01 (misturas homogêneas e heterogêneas)
+                MS.EF06CI02 (evidências de transformações químicas)
+                MS.EF06CI03 (métodos de separação de materiais)
+   ---------------------------------------------------------
+   Camadas do béquer (de baixo para cima):
+     {h:altura 0–1, c:cor, t:'liq'|'graos'|'cubos'|'gas'|'rocha'}
+   ========================================================= */
+
+const TIPOS = {
+  ho:{n:'Mistura homogênea', d:'1 fase: não dá para ver as partes'},
+  he:{n:'Mistura heterogênea', d:'2 ou mais fases: dá para ver as partes'},
+  pu:{n:'Substância pura', d:'um material só, sem mistura'}
+};
+const AGUA='#7DD3FC', OLEO='#FACC15', AREIA='#D6B370', BRANCO='#F1F5F9';
+const MISTURAS = [
+  {ing:['💧 água','🧂 1 colher de sal'], cam:[{h:.6,c:AGUA,t:'liq'}], r:'ho', x:'O sal se dissolve e some na água: dá para ver uma fase só. A água é o solvente e o sal é o soluto.'},
+  {ing:['💧 água','🫗 óleo de cozinha'], cam:[{h:.34,c:AGUA,t:'liq'},{h:.24,c:OLEO,t:'liq'}], r:'he', x:'Água e óleo não se misturam. O óleo é menos denso e fica por cima: são 2 fases.'},
+  {ing:['💧 água','🏖️ areia'], cam:[{h:.14,c:AREIA,t:'graos'},{h:.46,c:AGUA,t:'liq'}], r:'he', x:'A areia não se dissolve e vai para o fundo: 2 fases.'},
+  {ing:['💧 água','🧴 álcool'], cam:[{h:.6,c:'#A5E4FD',t:'liq'}], r:'ho', x:'Água e álcool se misturam completamente. Não dá para ver onde termina um e começa o outro.'},
+  {ing:['💧 1 copo de água','🧂 meio pacote de sal'], cam:[{h:.1,c:BRANCO,t:'graos'},{h:.5,c:AGUA,t:'liq'}], r:'he', x:'A água só consegue dissolver uma certa quantidade de sal. O excesso fica no fundo, e a mistura passa a ter 2 fases.'},
+  {ing:['💧 água destilada'], cam:[{h:.6,c:AGUA,t:'liq'}], r:'pu', x:'A água destilada é água pura, sem sais dissolvidos. É uma substância composta (hidrogênio e oxigênio), mas não é uma mistura.'},
+  {ing:['💧 água','🫗 óleo','🏖️ areia'], cam:[{h:.12,c:AREIA,t:'graos'},{h:.28,c:AGUA,t:'liq'},{h:.2,c:OLEO,t:'liq'}], r:'he', x:'Areia no fundo, água no meio e óleo em cima: uma mistura heterogênea de 3 fases.'},
+  {ing:['🧊 gelo','💧 água'], cam:[{h:.5,c:AGUA,t:'liq'},{h:.14,c:'#E0F2FE',t:'cubos'}], r:'pu', x:'Pegadinha! Dá para ver duas fases, mas tudo é água: é uma substância pura em dois estados físicos (sólido e líquido).'},
+  {ing:['🪨 um pedaço de granito'], cam:[{h:.42,c:'#9CA3AF',t:'rocha'}], r:'he', x:'No granito dá para ver grãos de cores diferentes: quartzo, feldspato e mica. É uma mistura heterogênea de sólidos.'},
+  {ing:['💨 ar limpo, sem poeira'], cam:[{h:.9,c:'#C7D2FE',t:'gas'}], r:'ho', x:'O ar é uma mistura de gases, principalmente nitrogênio e oxigênio. Os gases se misturam por completo: é homogênea.'},
+  {ing:['💧 água','🍬 1 colher de açúcar'], cam:[{h:.6,c:'#BAE6FD',t:'liq'}], r:'ho', x:'O açúcar se dissolve na água: 1 fase só. Dá para separar de novo evaporando a água.'},
+  {ing:['🫁 gás oxigênio do cilindro do hospital'], cam:[{h:.9,c:'#BFDBFE',t:'gas'}], r:'pu', x:'O oxigênio medicinal é praticamente oxigênio puro. É uma substância simples, formada por um só elemento químico.'}
+];
+
+const EVID = ['Liberação de gás (bolhas)', 'Mudança de cor', 'Produção de luz e calor', 'Formação de um material novo, com cheiro ou textura diferente'];
+const TRANSF = [
+  {t:'Misturar vinagre com bicarbonato de sódio.', e:'🫧', q:true, ev:[0], x:'As bolhas são de gás carbônico, um material novo que não existia antes da mistura.'},
+  {t:'Assar a massa de um bolo no forno.', e:'🎂', q:true, ev:[3,1], x:'O bolo assado é um material novo: tem cor, cheiro e textura diferentes da massa crua, e não dá para voltar atrás.'},
+  {t:'Um cubo de gelo derretendo na mesa.', e:'🧊', q:false, x:'Só mudou o estado físico: continua sendo água. Se for para o congelador, volta a ser gelo.'},
+  {t:'Uma esponja de aço que ficou molhada e enferrujou.', e:'🧽', q:true, ev:[1,3], x:'A ferrugem é um material novo, alaranjado e quebradiço, formado pelo ferro com o oxigênio e a água.'},
+  {t:'Dissolver açúcar num copo de água.', e:'🥤', q:false, x:'É só uma mistura: o açúcar continua lá. Evaporando a água, ele aparece de novo.'},
+  {t:'Uma vela acesa queimando.', e:'🕯️', q:true, ev:[2], x:'A queima (combustão) produz luz e calor e forma gases novos, como o gás carbônico.'},
+  {t:'Água fervendo na panela.', e:'♨️', q:false, x:'Pegadinha! Tem bolhas, mas elas são de vapor de água. A água só mudou de estado físico.'},
+  {t:'O leite que ficou fora da geladeira e azedou.', e:'🥛', q:true, ev:[3], x:'Microrganismos transformam o leite: surgem cheiro azedo e textura diferente. É um material novo.'},
+  {t:'Amassar uma folha de papel.', e:'📄', q:false, x:'Mudou só a forma. O material continua sendo papel.'},
+  {t:'Uma banana descascada que escureceu.', e:'🍌', q:true, ev:[1], x:'A banana escurece porque substâncias dela reagem com o oxigênio do ar. É uma transformação química.'},
+  {t:'Colocar um comprimido efervescente na água.', e:'💊', q:true, ev:[0], x:'As bolhas são de gás carbônico, que se forma quando as substâncias do comprimido reagem na água.'},
+  {t:'Quebrar um copo de vidro.', e:'🥃', q:false, x:'Os cacos continuam sendo vidro. Mudou só a forma e o tamanho dos pedaços.'}
+];
+
+const METODOS = {
+  catacao:{n:'Catação', e:'✋', d:'separar com as mãos'},
+  peneiracao:{n:'Peneiração', e:'🥣', d:'peneira separa grãos de tamanhos diferentes'},
+  filtracao:{n:'Filtração', e:'☕', d:'o filtro segura o sólido e deixa passar o líquido'},
+  decantacao:{n:'Decantação', e:'⏳', d:'esperar a parte mais densa ir para baixo'},
+  evaporacao:{n:'Evaporação', e:'☀️', d:'o líquido evapora e o sólido fica'},
+  destsimples:{n:'Destilação simples', e:'⚗️', d:'ferver, esfriar o vapor e recolher o líquido'},
+  destfrac:{n:'Destilação fracionada', e:'🏭', d:'separar líquidos que fervem em temperaturas diferentes'},
+  centrifugacao:{n:'Centrifugação', e:'🌀', d:'girar muito rápido para separar as partes'},
+  magnetica:{n:'Separação magnética', e:'🧲', d:'o ímã atrai o material de ferro'},
+  ventilacao:{n:'Ventilação', e:'💨', d:'o vento leva a parte mais leve'}
+};
+const SEPARAR = [
+  {t:'Tirar as pedrinhas do feijão antes de cozinhar.', e:'🫘', m:'catacao', ops:['peneiracao','magnetica','evaporacao'], x:'As pedrinhas são poucas e fáceis de ver: dá para catar com as mãos.'},
+  {t:'Separar a areia fina das pedras numa obra.', e:'🏗️', m:'peneiracao', ops:['filtracao','centrifugacao','destsimples'], x:'A areia passa pelos buracos da peneira e as pedras maiores ficam em cima.'},
+  {t:'Separar o pó de café da água ao fazer o café.', e:'☕', m:'filtracao', ops:['magnetica','evaporacao','catacao'], x:'O coador (filtro de papel ou pano) segura o pó e deixa passar o líquido.'},
+  {t:'Separar a água do óleo depois de misturados.', e:'🫗', m:'decantacao', ops:['filtracao','peneiracao','magnetica'], x:'Depois de um tempo o óleo fica em cima. Num funil de decantação, abre-se a torneira e a água sai primeiro.'},
+  {t:'Produzir sal de cozinha a partir da água do mar.', e:'🌊', m:'evaporacao', ops:['filtracao','catacao','centrifugacao'], x:'Nas salinas, a água do mar fica em tanques rasos. O Sol e o vento evaporam a água, e o sal fica.'},
+  {t:'Obter água pura a partir da água do mar.', e:'💧', m:'destsimples', ops:['evaporacao','filtracao','decantacao'], x:'Para ficar com a água (e não só com o sal), é preciso ferver, esfriar o vapor e recolher a água condensada.'},
+  {t:'Separar gasolina, diesel e gás de cozinha do petróleo.', e:'🛢️', m:'destfrac', ops:['filtracao','decantacao','peneiracao'], x:'Na refinaria, o petróleo é aquecido e cada parte é recolhida numa temperatura diferente.'},
+  {t:'Separar o etanol do caldo de cana fermentado, nas usinas de MS.', e:'🌾', m:'destfrac', ops:['filtracao','evaporacao','magnetica'], x:'O etanol ferve numa temperatura menor que a da água. Nas colunas de destilação das usinas, ele é separado e recolhido.'},
+  {t:'Separar limalha de ferro misturada com areia.', e:'🔩', m:'magnetica', ops:['peneiracao','decantacao','ventilacao'], x:'O ímã atrai o ferro e deixa a areia para trás. Essa separação também é usada em usinas de reciclagem.'},
+  {t:'Separar as partes do sangue num laboratório de exames.', e:'🩸', m:'centrifugacao', ops:['filtracao','decantacao','evaporacao'], x:'A centrífuga gira o tubo muito rápido: as partes mais densas vão para o fundo, e o plasma fica em cima.'},
+  {t:'Tirar a palha do arroz depois de colhido, jogando os grãos para cima.', e:'🍚', m:'ventilacao', ops:['catacao','filtracao','destsimples'], x:'A palha é mais leve que os grãos e o vento leva embora. É um método antigo, ainda usado na roça.'}
+];
+
+const MISSOES = [
+  {id:'m1', tipo:'mistura', titulo:'Homogênea ou heterogênea?', ic:'🧪', hab:'MS.EF06CI01', desc:'Coloque os materiais no béquer, observe e classifique: mistura homogênea, heterogênea ou substância pura.'},
+  {id:'m2', tipo:'transf', titulo:'Transformou ou não?', ic:'🫧', hab:'MS.EF06CI02', desc:'Descubra quando se forma um material novo e qual é a evidência da transformação química.'},
+  {id:'m3', tipo:'separar', titulo:'Hora de separar', ic:'⚗️', hab:'MS.EF06CI03', desc:'Escolha o melhor método para separar cada mistura, da cozinha às usinas e refinarias.'}
+];
+MISSOES.forEach((m,i)=>m.idx=i);
+const CATS = {mistura:'Misturas homogêneas, heterogêneas e substâncias puras (MS.EF06CI01)', transf:'Reconhecer transformações químicas (MS.EF06CI02)', evid:'Evidências de transformação química (MS.EF06CI02)', separar:'Métodos de separação de misturas (MS.EF06CI03)'};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='laboratorioMisturas.v1';
+function padrao(){ return {nome:'',turma:'',missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const $$=(q,el=document)=>Array.from(el.querySelectorAll(q));
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const MAXEST=MISSOES.length*3;
+function patente(){ const e=totalEst(); return e>=9?'🏅 Cientista-chefe':e>=6?'🔬 Cientista':e>=3?'🥼 Assistente de laboratório':'🧑‍🎓 Estagiário(a)'; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={toc:[[620,.04]],blub:[[300,.06],[420,.06],[360,.08]],ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- BÉQUER (SVG) ---------- */
+let semente=1; const rnd=()=>{ semente=(semente*9301+49297)%233280; return semente/233280; };
+function becher(camadas, vazio){
+  semente=7; const X0=38, X1=162, FUNDO=200, ALT=150; let y=FUNDO, partes='';
+  if(!vazio) camadas.forEach(c=>{
+    const h=c.h*ALT;
+    if(c.t==='liq'){ partes+=`<rect x="${X0}" y="${y-h}" width="${X1-X0}" height="${h}" fill="${c.c}" opacity=".85"/><rect x="${X0}" y="${y-h}" width="${X1-X0}" height="3" fill="#fff" opacity=".5"/>`; }
+    else if(c.t==='graos'){ partes+=`<rect x="${X0}" y="${y-h}" width="${X1-X0}" height="${h}" fill="${c.c}"/>`; for(let i=0;i<40;i++) partes+=`<circle cx="${X0+4+rnd()*(X1-X0-8)}" cy="${y-h+3+rnd()*(h-6)}" r="${1.4+rnd()*1.6}" fill="#00000026"/>`; }
+    else if(c.t==='cubos'){ const yy=y-8; for(let i=0;i<3;i++){ const cx=X0+18+i*36+rnd()*8; partes+=`<rect x="${cx}" y="${yy+2-rnd()*6}" width="26" height="22" rx="4" fill="${c.c}" stroke="#93C5FD" stroke-width="2" transform="rotate(${-10+rnd()*20} ${cx+13} ${yy+12})"/>`; } return; }
+    else if(c.t==='gas'){ for(let i=0;i<34;i++) partes+=`<circle cx="${X0+6+rnd()*(X1-X0-12)}" cy="${FUNDO-6-rnd()*h}" r="${2+rnd()*2}" fill="${c.c}"/>`; }
+    else if(c.t==='rocha'){ partes+=`<path d="M${X0+12} ${y} L${X0+6} ${y-h*.6} L${X0+30} ${y-h} L${X1-30} ${y-h+6} L${X1-6} ${y-h*.5} L${X1-14} ${y}Z" fill="${c.c}" stroke="#6B7280" stroke-width="2"/>`;
+      const cores=['#F9FAFB','#F9A8D4','#1F2937']; for(let i=0;i<46;i++) partes+=`<circle cx="${X0+18+rnd()*(X1-X0-36)}" cy="${y-6-rnd()*(h-14)}" r="${1.6+rnd()*2.4}" fill="${cores[i%3]}"/>`; }
+    y-=h;
+  });
+  return `<svg viewBox="0 0 200 220" role="img" aria-label="Béquer">
+    <defs><clipPath id="dentro"><path d="M${X0} 44 V${FUNDO-8} Q${X0} ${FUNDO} ${X0+8} ${FUNDO} H${X1-8} Q${X1} ${FUNDO} ${X1} ${FUNDO-8} V44Z"/></clipPath></defs>
+    <ellipse cx="100" cy="210" rx="78" ry="7" fill="#0000001a"/>
+    <g clip-path="url(#dentro)">${partes}</g>
+    <path d="M30 40 H170 M${X0} 40 V${FUNDO-8} Q${X0} ${FUNDO} ${X0+8} ${FUNDO} H${X1-8} Q${X1} ${FUNDO} ${X1} ${FUNDO-8} V40" fill="none" stroke="#475569" stroke-width="4" stroke-linejoin="round"/>
+    <g stroke="#94A3B8" stroke-width="2">${[80,110,140,170].map(v=>`<line x1="${X1-22}" y1="${v}" x2="${X1-6}" y2="${v}"/>`).join('')}</g>
+    <path d="M${X0+8} 54 V${FUNDO-20}" stroke="#fff" stroke-width="5" opacity=".55" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+
+function telaHome(){
+  const exemplo=MISTURAS[6];
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · CIÊNCIAS</span>
+    <h1>Laboratório das <span>Misturas</span></h1>
+    <p class="lead">Vista o jaleco! Misture materiais no béquer, descubra quando nasce um <b>material novo</b> e escolha o jeito certo de <b>separar</b> cada mistura, da cozinha de casa às usinas de Mato Grosso do Sul.</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 6º B" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">Entrar no laboratório 🧪</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena" style="background:#fff;padding:20px;display:grid;place-items:center"><div class="becher" style="width:240px">${becher(exemplo.cam)}</div><p class="mini" style="margin:6px 0 0;text-align:center">Areia, água e óleo: quantas fases você vê?</p></div></div>
+  <div class="info"><div><b>3</b>missões</div><div><b>12</b>misturas no béquer</div><div><b>10</b>métodos de separação</div><div><b>${patente()}</b>★ ${totalEst()}/${MAXEST}</div></div>
+  <p class="rodape">Ciências · 6º ano · Habilidades <b>MS.EF06CI01</b> (classificar misturas homogêneas e heterogêneas) · <b>MS.EF06CI02</b> (evidências de transformações químicas) · <b>MS.EF06CI03</b> (métodos de separação de materiais) · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Experimentos</h2><small>${patente()}</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">EXPERIMENTO ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete um experimento para liberar o próximo. Professor(a): em ⚙️ dá para liberar todos.</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=MISSOES[idx];
+  const base = m.tipo==='mistura'?MISTURAS : m.tipo==='transf'?TRANSF : SEPARAR;
+  const itens = embaralhar(base).map(x=>({...x, ordem: x.ops? embaralhar([x.m,...x.ops]) : null}));
+  M={m, itens, i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  const intro={
+    mistura:`<p>Toque em <b>Colocar no béquer</b>, observe com atenção e classifique:</p><div class="lista">${Object.values(TIPOS).map(t=>`<div><b>${t.n}</b>: ${t.d}.</div>`).join('')}</div><p class="mini">Cada parte que dá para ver separada é uma <b>fase</b>.</p>`,
+    transf:`<p>Numa <b>transformação química</b>, os materiais viram um <b>material novo</b>, diferente dos que existiam antes. Quando só muda a forma ou o estado físico (derreter, ferver, amassar), não é transformação química.</p><div class="lista">${EVID.map(e=>`<div>🔎 ${e}</div>`).join('')}</div><p class="mini">Essas são as principais evidências de que houve transformação química.</p>`,
+    separar:`<p>Cada mistura pede um método de separação. Pense: as partes são sólidas ou líquidas? Têm tamanhos diferentes? Uma é atraída por ímã? Uma evapora mais fácil?</p><div class="lista">${Object.values(METODOS).slice(0,5).map(x=>`<div>${x.e} <b>${x.n}</b>: ${x.d}.</div>`).join('')}<div>… e mais 5 métodos para descobrir!</div></div>`
+  }[m.tipo];
+  abrirModal(`<span class="selo">EXPERIMENTO ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${intro}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Começar o experimento 🥼</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>Experimento ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+function desenhar(){
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const t=M.m.tipo; if(t==='mistura') desenharMistura(); else if(t==='transf') desenharTransf(); else desenharSeparar();
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir" data-foco>${M.i<M.itens.length-1?'Próximo ➔':'Concluir experimento ✔'}</button></div>`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+
+/* --- misturas --- */
+function desenharMistura(){
+  const it=M.itens[M.i], cheio=!!it.cheio, feito=!!it.resp;
+  $('#area').innerHTML=`<p class="enunciado">${cheio?'O que você observa no béquer?':'Prepare o experimento'}</p>
+    <div class="bancada"><div class="becher" id="bq">${becher(it.cam,!cheio)}</div>
+      <div><div class="ingred">${it.ing.map((g,k)=>(k?'<i>+</i>':'')+`<span>${esc(g)}</span>`).join('')}</div>
+        <p class="obs">${cheio?'Misturamos bem e esperamos alguns minutos. Agora classifique:':'Coloque os materiais no béquer e mexa bem.'}</p>
+        ${cheio?'':'<button class="btn ipe grande" data-acao="encher">🥄 Colocar no béquer e mexer</button>'}</div></div>
+    ${cheio?`<div class="tipos3">${Object.entries(TIPOS).map(([k,t])=>`<button class="tipo3 ${feito&&k===it.r?'certa':''} ${feito&&k===it.resp&&k!==it.r?'errada':''}" data-tipo="${k}" ${feito?'disabled':''}>${t.n}<small>${t.d}</small></button>`).join('')}</div>`:''}
+    ${feito?`<div class="retorno ${it.resp===it.r?'ok':'no'}"><span class="t">${it.resp===it.r?'✅ Isso mesmo!':'❌ Não é bem isso.'} ${TIPOS[it.r].n}.</span>${esc(it.x)}</div>${botaoSeguir()}`:''}`;
+  if(feito){ const b=$('[data-acao="seguir"]'); if(b) b.focus(); }
+}
+function encher(){ const it=M.itens[M.i]; it.cheio=true; som('blub'); desenharMistura(); const b=$('#bq'); if(b){ b.classList.add('mexe'); } }
+function responderMistura(k){ const it=M.itens[M.i]; it.resp=k; const ok=k===it.r; registrar('m'+M.i,'mistura',ok); som(ok?'ok':'erro'); desenharMistura(); }
+
+/* --- transformações --- */
+function desenharTransf(){
+  const it=M.itens[M.i];
+  let baixo='';
+  if(it.q1==null){
+    baixo=`<p class="pergunta">Houve uma transformação química?</p><div class="sn"><button class="sim" data-sn="1">Sim<small>formou um material novo</small></button><button class="nao" data-sn="0">Não<small>mudou só a forma ou o estado</small></button></div>`;
+  } else {
+    const acertou1 = it.q1===it.q;
+    baixo=`<div class="sn"><button class="sim ${it.q?'marcado':''}" disabled>Sim<small>formou um material novo</small></button><button class="nao ${!it.q?'marcado':''}" disabled>Não<small>mudou só a forma ou o estado</small></button></div>`;
+    if(it.q && it.ev2==null){
+      baixo+=`<div class="retorno ${acertou1?'ok':'no'}"><span class="t">${acertou1?'✅ Sim, é transformação química!':'❌ Na verdade, é transformação química.'}</span>Agora a parte de cientista:</div>
+        <p class="pergunta">Qual é a principal evidência dessa transformação?</p>
+        <div class="opcoes">${EVID.map((e,j)=>`<button class="op ${(it.evErr||[]).includes(j)?'errada':''}" data-ev="${j}" ${(it.evErr||[]).includes(j)?'disabled':''}><b>${'ABCD'[j]}</b><span>${e}</span></button>`).join('')}</div><div id="ret">${it.msg||''}</div>`;
+    } else {
+      const t = it.q ? `✅ Evidência: ${EVID[it.ev2].toLowerCase()}.` : (acertou1?'✅ Isso! Não é transformação química.':'❌ Não é transformação química.');
+      baixo+=`<div class="retorno ${it.q||acertou1?'ok':'no'}"><span class="t">${t}</span>${esc(it.x)}</div>${botaoSeguir()}`;
+    }
+  }
+  $('#area').innerHTML=`<p class="enunciado">Observe a situação</p><div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt">${esc(it.t)}</span></div>${baixo}`;
+  const b=$('[data-acao="seguir"]'); if(b) b.focus();
+}
+function responderSN(v){ const it=M.itens[M.i]; it.q1=!!v; const ok=it.q1===it.q; registrar('t'+M.i,'transf',ok); som(ok?'ok':'erro'); desenharTransf(); }
+function responderEv(j){ const it=M.itens[M.i];
+  if(it.ev.includes(j)){ registrar('e'+M.i,'evid',true); som('ok'); it.ev2=j; it.msg=''; desenharTransf(); }
+  else { registrar('e'+M.i,'evid',false); som('erro'); it.evErr=(it.evErr||[]).concat(j); it.msg=`<div class="retorno no"><span class="t">Essa não é a principal.</span>Imagine a cena: o que você veria, cheiraria ou sentiria que mostra que surgiu algo novo?</div>`; desenharTransf(); }
+}
+
+/* --- separação --- */
+function desenharSeparar(){
+  const it=M.itens[M.i], feito=!!it.feito;
+  $('#area').innerHTML=`<p class="enunciado">Qual é o melhor método de separação?</p>
+    <div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt">${esc(it.t)}</span></div>
+    <div class="metodos">${it.ordem.map(k=>{ const x=METODOS[k]; const err=(it.err||[]).includes(k);
+      return `<button class="metodo ${feito&&k===it.m?'certa':''} ${err?'errada':''}" data-met="${k}" ${feito||err?'disabled':''}><span class="em" aria-hidden="true">${x.e}</span><span>${x.n}<small>${x.d}</small></span></button>`; }).join('')}</div>
+    <div id="ret">${feito?`<div class="retorno ok"><span class="t">✅ ${METODOS[it.m].n}!</span>${esc(it.x)}</div>${botaoSeguir()}`:(it.msg||'')}</div>`;
+  const b=$('[data-acao="seguir"]'); if(b) b.focus();
+}
+function responderMetodo(k){ const it=M.itens[M.i];
+  if(k===it.m){ registrar('s'+M.i,'separar',true); som('ok'); it.feito=true; desenharSeparar(); }
+  else { registrar('s'+M.i,'separar',false); som('erro'); it.err=(it.err||[]).concat(k);
+    it.msg=`<div class="retorno no"><span class="t">${METODOS[k].n} não é o melhor aqui.</span>Pense em como são as partes dessa mistura: são sólidas ou líquidas? Uma está dissolvida na outra? Têm tamanhos ou densidades diferentes?</div>`; desenharSeparar(); }
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">Experimento concluído! 🧪</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu cargo</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn ipe" data-acao="prox" data-foco>Próximo experimento ➔</button>':'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['LABORATÓRIO DAS MISTURAS — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Cargo: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${MAXEST} · Experimentos: ${f}/${MISSOES.length}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">🧪 Experimentos</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>cargo</div><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${f}/${MISSOES.length}</b>experimentos</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Faça alguns experimentos para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todos os experimentos','Para o professor escolher o experimento da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="lista">
+    <div>🧪 <b>Homogênea ou heterogênea?</b> Coloque os materiais no béquer, observe as fases e classifique.</div>
+    <div>🫧 <b>Transformou ou não?</b> Diga se houve transformação química e qual foi a evidência.</div>
+    <div>⚗️ <b>Hora de separar:</b> escolha o melhor método para separar cada mistura.</div>
+    <div>⭐ As estrelas contam os acertos de primeira e sobem o seu cargo no laboratório.</div></div>
+    <div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(modalAberto()) fecharModal(); ir(irB.dataset.ir); return; }
+  const mb=e.target.closest('[data-missao]'); if(mb&&!mb.disabled){ ir('missao',+mb.dataset.missao); return; }
+  const tp=e.target.closest('[data-tipo]'); if(tp&&!tp.disabled){ responderMistura(tp.dataset.tipo); return; }
+  const sn=e.target.closest('[data-sn]'); if(sn&&!sn.disabled){ responderSN(+sn.dataset.sn); return; }
+  const ev=e.target.closest('[data-ev]'); if(ev&&!ev.disabled){ responderEv(+ev.dataset.ev); return; }
+  const mt=e.target.closest('[data-met]'); if(mt&&!mt.disabled){ responderMetodo(mt.dataset.met); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='encher') encher();
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modalAberto()) fecharModal(); });
+
+telaHome();
+</script>
+</body>
+</html>

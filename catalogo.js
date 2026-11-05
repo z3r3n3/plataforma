@@ -54,6 +54,10 @@ const JOGOS = [
     tipo: 'Missões', icone: '🐆',
     descricao: 'Monte cadeias alimentares do Pantanal e do Cerrado, reconheça os biomas de MS e preveja os efeitos do fogo, da caça e do desmatamento.',
     habilidades: ['MS.EF07CI07', 'MS.EF07CI08', 'MS.EF04CI04'] },
+  { arquivo: 'laboratorio-das-misturas.html', titulo: 'Laboratório das Misturas', componente: 'cie', anos: [6],
+    tipo: 'Laboratório virtual', icone: '🧪',
+    descricao: 'Misture materiais no béquer, reconheça transformações químicas e escolha o método certo para separar cada mistura.',
+    habilidades: ['MS.EF06CI01', 'MS.EF06CI02', 'MS.EF06CI03'] },
 
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
