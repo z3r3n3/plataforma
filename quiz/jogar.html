@@ -208,7 +208,7 @@ document.addEventListener('click',e=>{ const b=e.target.closest('[data-r]'); if(
       else esquecer();
     }
   }catch(e){
-    const m=String(e.message)==='sem-config'?'O quiz ao vivo ainda está sendo configurado pelo professor.':'Não foi possível conectar. Verifique a internet.';
+    const m=String(e.message)==='sem-config'?'O quiz ao vivo ainda está sendo configurado pelo professor.':'Não foi possível conectar ('+(e.code||e.message||'erro')+'). Verifique a internet.';
     $('#con').lastChild.textContent='Sem conexão'; telaEntrar(m);
   }
 })();

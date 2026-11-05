@@ -188,7 +188,7 @@ async function abrirSala(quizId){
     await R.set('salas/'+PIN, {dono:R.uid, criadaEm:TS, titulo:QUIZ.titulo, estado:{fase:'lobby', idx:-1, total:QUIZ.perguntas.length}});
     salvarSessao(); ouvirSala(); telaLobby();
     R.salasVelhas(86400000).then(ks=>ks.forEach(k=>R.remove('salas/'+k).catch(()=>{})));
-  }catch(e){ console.error(e); toast('Não foi possível abrir a sala. Verifique a internet e as regras do Firebase.'); }
+  }catch(e){ console.error(e); toast('Não foi possível abrir a sala ('+(e.code||e.message||'erro')+'). Verifique a internet e as regras do Firebase.'); }
 }
 function pararOuvintes(){ ouvintes.forEach(f=>{ try{f();}catch(e){} }); ouvintes=[]; if(ouvResp){ try{ouvResp();}catch(e){} ouvResp=null; } clearInterval(timerId); }
 function ouvirSala(){
@@ -437,7 +437,7 @@ function semConfig(){
     }
   }catch(e){
     if(String(e.message)==='sem-config'){ semConfig(); $('#con').lastChild.textContent='Não configurado'; }
-    else { console.error(e); toast('Não foi possível conectar ao servidor do quiz.'); $('#con').lastChild.textContent='Erro de conexão'; }
+    else { console.error(e); toast('Não foi possível conectar ao servidor do quiz ('+(e.code||e.message||'erro')+').'); $('#con').lastChild.textContent='Erro de conexão'; }
   }
 })();
 </script>
