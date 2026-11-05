@@ -67,6 +67,10 @@ const JOGOS = [
     tipo: 'Missões', icone: '⏳',
     descricao: 'Fontes históricas, povos indígenas de MS, Guerra do Paraguai, ervais, ferrovia, Era Vargas e criação do estado, numa linha do tempo.',
     habilidades: ['MS.EF06HI01', 'MS.EF06HI02', 'MS.EF06HI00.n.10', 'MS.EF08HI00.n.23', 'MS.EF09HI00.n.25'] },
+  { arquivo: 'mundo-atlantico.html', titulo: 'Mundo Atlântico', componente: 'his', anos: [7],
+    tipo: 'Mapa e missões', icone: '⛵',
+    descricao: 'Povos da América e da África antes dos europeus, rotas das navegações no mapa, colonização, tráfico atlântico, quilombos e linha do tempo.',
+    habilidades: ['MS.EF07HI03', 'MS.EF07HI06', 'MS.EF07HI09', 'MS.EF07HI15', 'MS.EF07HI16'] },
 
   { arquivo: 'explorador-ms.html', titulo: 'Explorador MS', componente: 'geo', anos: [6,7],
     tipo: 'Mapa interativo', icone: '🧭',
