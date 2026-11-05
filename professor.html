@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Área do Professor — JRM Aventuras Educativas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='%23F5B700'%3E%3Ccircle cx='20' cy='9' r='8'/%3E%3Ccircle cx='30.5' cy='16.6' r='8'/%3E%3Ccircle cx='26.5' cy='29' r='8'/%3E%3Ccircle cx='13.5' cy='29' r='8'/%3E%3Ccircle cx='9.5' cy='16.6' r='8'/%3E%3C/g%3E%3Ccircle cx='20' cy='20' r='5' fill='%239A3412'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo"><div class="topo-in">
+  <a class="marca" href="./"><svg class="flor" viewBox="0 0 40 40" aria-hidden="true"><g fill="#F5B700"><circle cx="20" cy="9" r="8"/><circle cx="30.5" cy="16.6" r="8"/><circle cx="26.5" cy="29" r="8"/><circle cx="13.5" cy="29" r="8"/><circle cx="9.5" cy="16.6" r="8"/></g><circle cx="20" cy="20" r="5" fill="#9A3412"/></svg>
+    <span><b>JRM Aventuras Educativas</b><small>jogos para aprender · MS</small></span></a>
+  <nav class="menu"><a href="./">Jogos</a><a href="professor.html" aria-current="page">Área do Professor</a><a class="apoie" href="apoie.html">💛 Apoie</a></nav>
+</div></header>
+
+<style>
+  .topo-prof h1{font-size:clamp(34px,5vw,52px);margin:10px 0}
+  .topo-prof p{max-width:720px;margin:0 0 10px;font-size:18px}
+  .kits{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin:24px 0}
+  .kit{background:#fff;border:2px solid var(--borda);border-radius:var(--raio);padding:18px;display:flex;flex-direction:column;gap:8px}
+  .kit .ic{font-size:36px}
+  .kit h3{font-size:22px}
+  .kit p{margin:0;color:var(--suave);font-size:15px;flex:1}
+  .kit .tag{align-self:flex-start;font-size:12px;font-weight:800;border-radius:20px;padding:3px 10px;background:#F5B70033;color:#7A5600}
+  .gratis{background:#EAF5EC;border-color:#BFDCC5}
+  .gratis .tag{background:#1F7A4522;color:var(--mata)}
+  .dicas{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .dicas .cartao h2{font-size:24px;margin-bottom:8px}
+  .dicas ul{margin:0;padding-left:1.2em}
+  .dicas li{margin:4px 0}
+  code{background:#F1E6CF;border-radius:6px;padding:1px 6px;font-size:.92em}
+  @media (max-width:820px){.dicas{grid-template-columns:1fr}}
+</style>
+<main class="pagina">
+  <section class="topo-prof">
+    <span class="selo">ÁREA DO PROFESSOR</span>
+    <h1>Materiais para a sua aula</h1>
+    <p>Os jogos continuam livres para os estudantes. Aqui ficam os materiais para o professor planejar, imprimir e adaptar as atividades, organizados pelas habilidades do Currículo de Referência de MS.</p>
+  </section>
+
+  <div class="kits">
+    <div class="kit gratis"><span class="ic">🎮</span><span class="tag">GRÁTIS · JÁ DISPONÍVEL</span><h3>Criar a própria versão</h3><p>Vários jogos têm o botão <b>Criar</b>: você escreve frases ou textos da sua aula e gera um link para mandar à turma.</p></div>
+    <div class="kit"><span class="ic">🖨️</span><span class="tag">EM BREVE</span><h3>Kits para imprimir</h3><p>Fichas, cartões e circuitos em PDF, por habilidade, para usar na sala mesmo sem internet.</p></div>
+    <div class="kit"><span class="ic">🧭</span><span class="tag">EM BREVE</span><h3>Sequências didáticas</h3><p>Planos de aula prontos que combinam um jogo com atividades antes e depois, com tempo e avaliação.</p></div>
+    <div class="kit"><span class="ic">🗂️</span><span class="tag">EM BREVE</span><h3>Trilhas por bimestre</h3><p>Os jogos organizados na ordem do organizador curricular, do 1º ao 4º bimestre, por ano.</p></div>
+  </div>
+
+  <div class="dicas">
+    <div class="cartao">
+      <h2>Como usar com a turma</h2>
+      <ul>
+        <li>Mande o link do jogo direto: cada jogo tem o seu endereço.</li>
+        <li>Para mostrar só um ano ou componente, use o filtro da página inicial e copie o link (ex.: <code>?c=mat&amp;ano=6</code>).</li>
+        <li>Em vários jogos, o estudante tem a tela <b>Desempenho</b> e pode copiar o relatório para você.</li>
+        <li>Nesses jogos, as configurações (⚙️) também permitem liberar todas as fases.</li>
+      </ul>
+    </div>
+    <div class="cartao">
+      <h2>Privacidade dos estudantes</h2>
+      <ul>
+        <li>Nenhum jogo pede cadastro, e-mail ou foto.</li>
+        <li>Não há anúncios nem rastreamento.</li>
+        <li>O progresso fica salvo apenas no navegador do aparelho usado.</li>
+      </ul>
+      <p class="mini" style="margin-top:10px">Veja a <a href="privacidade.html">política de privacidade</a>.</p>
+    </div>
+  </div>
+</main>
+
+<footer class="rodape"><div class="rodape-in">
+  <div><b>JRM Aventuras Educativas</b><br>Jogos educativos criados pelo Prof. José Rene Miranda, da rede estadual de Mato Grosso do Sul. Os jogos não coletam dados: o progresso de cada estudante fica salvo apenas no navegador do aparelho que ele usa.</div>
+  <div><a href="./">Jogos</a><a href="professor.html">Área do Professor</a><a href="apoie.html">Apoie o projeto</a><a href="privacidade.html">Privacidade</a></div>
+</div></footer>
+</body>
+</html>

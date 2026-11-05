@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detetive das Retomadas</title>
+<meta name="description" content="Jogo de coesão para o 4º ao 7º ano: descubra a quem os pronomes e sinônimos se referem e reescreva textos repetitivos. Habilidades MS.EF35LP06, MS.EF35LP14 e MS.EF07LP12.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fundo:#172033; --fundo2:#202B44; --cortica:#B88A57; --cortica2:#A87A49; --papel:#FFFDF6; --borda:#E8DCC2;
+  --tinta:#1D2433; --suave:#5F6778; --fio:#D7263D; --amarelo:#FFE58F; --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Andika','Segoe UI',system-ui,sans-serif; --maquina:'Special Elite','Courier New',monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:var(--texto);font-size:17px;color:#fff;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,var(--fundo),var(--fundo2))}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--amarelo);outline-offset:2px}
+.btn{border:2px solid #ffffff2e;background:#ffffff12;color:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s,background .12s}
+.btn:hover{transform:translateY(-2px);background:#ffffff20}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.verm{background:var(--fio);border-color:#A51D2F;color:#fff;box-shadow:0 4px 0 #A51D2F}
+.btn.verm:hover{background:#E43A50}
+.btn.claro{background:#fff;border-color:var(--borda);color:var(--tinta)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--maquina);letter-spacing:2px;font-size:13px;color:var(--amarelo);border:2px dashed #FFE58F88;padding:4px 12px;border-radius:6px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:28px 20px 34px}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:center}
+.hero h1{font-size:clamp(42px,6.5vw,74px);font-weight:800;margin:14px 0 8px;letter-spacing:-1px}
+.hero h1 span{color:var(--fio)}
+.lead{font-size:19px;line-height:1.6;color:#D3DAEA;max-width:540px;margin:0 0 18px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:#AEB9D3}
+.campos input{border:2px solid #ffffff2e;background:#ffffff10;border-radius:12px;padding:10px 12px;width:190px;font-size:17px;color:#fff}
+.campos label:last-child input{width:110px}
+.campos input::placeholder{color:#ffffff60}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.quadro-arte{position:relative;height:300px;border-radius:18px;background:var(--cortica);background-image:radial-gradient(#8E6236 1px,transparent 1.5px);background-size:9px 9px;border:12px solid #6B4423;box-shadow:0 20px 50px #0007;overflow:hidden}
+.quadro-arte .nota{position:absolute;background:var(--papel);color:var(--tinta);padding:10px 14px;border-radius:4px;font-family:var(--maquina);font-size:18px;box-shadow:0 6px 12px #0004}
+.quadro-arte .nota::before{content:"";position:absolute;top:-8px;left:50%;margin-left:-8px;width:16px;height:16px;border-radius:50%;background:var(--fio);box-shadow:0 2px 0 #0004}
+.quadro-arte svg{position:absolute;inset:0;width:100%;height:100%}
+.patente{display:inline-flex;align-items:center;gap:8px;background:#ffffff10;border:2px solid #ffffff26;border-radius:30px;padding:6px 14px;font-weight:700;margin-bottom:14px}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+.info div{flex:1;min-width:150px;background:#ffffff0d;border:2px solid #ffffff1f;border-radius:16px;padding:12px 16px;font-size:14px;color:#AEB9D3}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:#fff}
+.rodape{font-size:13px;color:#9FAAC4;line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#172033f2;backdrop-filter:blur(6px);border-bottom:2px solid #ffffff1a;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:#AEB9D3;font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#ffffff12;border:2px solid #ffffff24;border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* ARQUIVO DE CASOS */
+.arquivo{max-width:1040px;margin:auto;padding:22px 16px 40px}
+.pastas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.pasta{position:relative;text-align:left;border:0;background:#E9C98F;color:var(--tinta);border-radius:4px 14px 14px 14px;padding:18px 16px 14px;min-height:190px;display:flex;flex-direction:column;gap:6px;box-shadow:0 8px 0 #0003;transition:transform .12s}
+.pasta::before{content:"";position:absolute;top:-14px;left:0;width:44%;height:16px;background:#E9C98F;border-radius:8px 8px 0 0}
+.pasta:hover:not(:disabled){transform:translateY(-4px) rotate(-.5deg)}
+.pasta:disabled{opacity:.5;cursor:not-allowed}
+.pasta .num{font-family:var(--maquina);font-size:15px;color:#7A5A2A}
+.pasta h3{font-size:22px}
+.pasta .foco{font-size:14px;color:#5B4A2E}
+.pasta .est{margin-top:auto;font-size:20px;letter-spacing:2px;color:#C9A86A}
+.pasta .est .on{color:var(--fio)}
+.pasta .cad{position:absolute;top:12px;right:14px;font-size:20px}
+.pasta .carimbo{position:absolute;right:12px;bottom:14px;font-family:var(--maquina);color:var(--fio);border:3px solid var(--fio);padding:2px 8px;transform:rotate(-12deg);font-size:14px;opacity:.85;border-radius:4px}
+.pasta.reesc{background:#CFE3F0}.pasta.reesc::before{background:#CFE3F0}
+.pasta.atual{box-shadow:0 0 0 4px var(--amarelo),0 8px 0 #0003}
+.nota-rod{color:#AEB9D3;font-size:13px;margin-top:18px;line-height:1.5}
+
+/* CASO */
+.caso{max-width:1200px;margin:auto;padding:16px;display:grid;grid-template-columns:1.45fr 1fr;gap:18px;align-items:start}
+.quadro{background:var(--cortica);background-image:radial-gradient(#8E6236 1px,transparent 1.5px);background-size:9px 9px;border:12px solid #6B4423;border-radius:18px;padding:18px;box-shadow:0 14px 40px #0006}
+.folha{position:relative;background:var(--papel);color:var(--tinta);border-radius:6px;padding:26px clamp(16px,3vw,30px) 22px;box-shadow:0 8px 16px #0004}
+.folha::before{content:"";position:absolute;top:-9px;left:50%;margin-left:-9px;width:18px;height:18px;border-radius:50%;background:var(--fio);box-shadow:0 2px 0 #0005}
+.folha .gen{font-family:var(--maquina);font-size:14px;color:var(--suave)}
+.folha h3{font-size:clamp(24px,3.4vw,30px);margin:4px 0 6px}
+.texto-wrap{position:relative}
+.texto{position:relative;z-index:1;font-size:clamp(19px,2.5vw,22px);line-height:2.15}
+.texto p{margin:10px 0}
+#fios{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}
+.tk{border-radius:4px;cursor:pointer;transition:background .1s}
+.tk:hover{background:#F3EAD6}
+.sp{border-radius:5px;padding:1px 2px;transition:background .15s,box-shadow .15s}
+.sp.ana{background:#FFF4C2;box-shadow:inset 0 -3px 0 #E0B400;cursor:pointer}
+.sp.ana::after{content:"🔍";font-size:.62em;vertical-align:super;margin-left:1px}
+.sp.ana.sel{background:var(--amarelo);box-shadow:0 0 0 3px #E0B400;animation:pulsa 1s ease-in-out infinite}
+.sp.ana.feito::after{content:"✔";color:var(--ok);font-weight:700}
+.sp.ana.feito{background:transparent;box-shadow:inset 0 -3px 0 var(--cor,var(--ok))}
+.sp.men.ligado{box-shadow:inset 0 -3px 0 var(--cor,var(--fio))}
+.sp.errou,.tk.errou{background:var(--erro-f)!important;animation:treme .3s}
+.sp.mostra{animation:mostra 1.4s ease 2}
+@keyframes mostra{50%{background:#BBF7D0;box-shadow:0 0 0 3px var(--ok)}}
+@keyframes pulsa{50%{box-shadow:0 0 0 6px #E0B40055}}
+@keyframes treme{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.rw{background:#FFF4C2;box-shadow:inset 0 -3px 0 #E0B400;border-radius:5px;padding:1px 3px;cursor:pointer}
+.rw::before{content:"🔁 ";font-size:.6em;vertical-align:super}
+.rw.sel{background:var(--amarelo);box-shadow:0 0 0 3px #E0B400}
+.rw.feito{background:var(--ok-f);box-shadow:inset 0 -3px 0 var(--ok);cursor:default}
+.rw.feito::before{content:"✔ ";color:var(--ok)}
+.tk.falando,.sp.falando{background:#C7E0FF}
+
+.lado{position:sticky;top:76px}
+.painel{background:var(--papel);color:var(--tinta);border-radius:20px;border:3px solid var(--borda);padding:16px}
+.painel .progresso{display:flex;align-items:center;gap:10px;font-weight:700;font-family:var(--titulo);font-size:18px}
+.barra-p{flex:1;height:12px;border-radius:10px;background:#EFE5CF;overflow:hidden}
+.barra-p i{display:block;height:100%;background:var(--fio);border-radius:10px;transition:width .3s}
+.instr{margin:12px 0 0;line-height:1.55;font-size:17px}
+.instr .alvo{font-weight:700;background:var(--amarelo);padding:1px 6px;border-radius:6px}
+.opcoes{display:grid;gap:8px;margin-top:10px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 14px;font-size:18px;font-weight:700;color:var(--tinta)}
+.op:hover:not(:disabled){border-color:#C9B48A}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through}
+.op:disabled{cursor:default}
+.msg{margin-top:10px;border-radius:12px;padding:10px 12px;line-height:1.5;font-size:16px}
+.msg.ok{background:var(--ok-f)}
+.msg.no{background:var(--erro-f)}
+.msg.dica{background:#FFF4C2}
+.linha-acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.linha-acoes .btn{min-height:40px;padding:6px 12px;font-size:15px}
+.ficha{margin-top:12px;border-top:2px dashed var(--borda);padding-top:10px}
+.ficha h4{margin:0 0 6px;font-family:var(--maquina);font-weight:400;font-size:15px;color:var(--suave)}
+.cadeia{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0;font-size:15px}
+.cadeia b{padding:2px 8px;border-radius:8px;color:#fff}
+.cadeia span{padding:2px 8px;border-radius:8px;border:2px solid;background:#fff}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0a0f1cc4;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--papel);color:var(--tinta);border-radius:22px;max-width:680px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0008}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .btn:not(.verm){background:#fff;border-color:var(--borda);color:var(--tinta)}
+.modal .acoes{margin-top:18px}
+.tipos{display:grid;gap:8px;margin-top:10px}
+.tipos div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:10px 12px;line-height:1.5}
+.mini{font-size:13px;color:var(--suave)}
+.carimbo-g{font-family:var(--maquina);color:var(--fio);border:5px solid var(--fio);display:inline-block;padding:6px 18px;font-size:32px;transform:rotate(-8deg) scale(2.5);opacity:0;animation:carimba .5s .2s forwards;border-radius:6px}
+@keyframes carimba{to{transform:rotate(-8deg) scale(1);opacity:.9}}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D3B5;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--fio)}
+.big-est span:nth-child(1){animation-delay:.6s}.big-est span:nth-child(2){animation-delay:.8s}.big-est span:nth-child(3){animation-delay:1s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.antes-depois{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.antes-depois div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:10px 12px;line-height:1.55;font-size:15px}
+.antes-depois h4{margin:0 0 4px;font-family:var(--titulo);font-size:16px}
+.antes-depois mark{background:#FEE2E2}
+.antes-depois ins{background:var(--ok-f);text-decoration:none}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* PÁGINAS */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:var(--papel);color:var(--tinta);border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(180px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EFE5CF;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--fio)}
+.cat .n{font-weight:700;white-space:nowrap}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:700;font-size:14px;color:var(--suave)}
+.campo input,.campo textarea{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;background:#fff;font-size:16px;color:var(--tinta);font-weight:400;width:100%}
+.campo textarea{min-height:200px;line-height:1.6;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px}
+pre.ex{white-space:pre-wrap;background:#F4EEDF;border-radius:10px;padding:10px;font-size:14px;line-height:1.5}
+.link-box{word-break:break-all;background:#F4EEDF;border-radius:12px;padding:10px;font-size:14px;margin-top:10px}
+
+#toast{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:60;background:#fff;color:var(--tinta);padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px #0006}
+#toast.on{opacity:1}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .quadro-arte{height:200px;order:-1}
+  .caso{grid-template-columns:1fr;padding:10px;padding-bottom:46vh}
+  .quadro{padding:10px;border-width:8px}
+  .lado{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:30}
+  .painel{border-radius:20px 20px 0 0;max-height:44vh;overflow:auto;padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px #0007;border-bottom:0}
+  .ficha{display:none}
+  .instr{font-size:16px;margin-top:8px}
+  .linha-acoes .btn{min-height:36px;padding:4px 10px;font-size:14px}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .antes-depois{grid-template-columns:1fr}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+  .sp,.rw{scroll-margin-top:90px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   DETETIVE DAS RETOMADAS — JRM • Aventuras Educativas (jrmapps.com)
+   Habilidades: MS.EF35LP06 · MS.EF35LP14 · MS.EF07LP12
+   ---------------------------------------------------------
+   CASOS DE "LIGAR" (modo:'ligar')
+     [Tiago]{1}          -> menção a um personagem/coisa (número = identidade)
+     <Ele>{1:pp}         -> "suspeito": palavra que retoma o número 1
+     <aos netos>{1+2:si} -> retoma 1 ou 2
+     tipos: pp pronome pessoal · po possessivo · ob oblíquo · de demonstrativo · si sinônimo/expressão
+   CASOS DE "REESCREVER" (modo:'reescrever')
+     {Ana|Ela*|Ele~g|Elas~n} -> 1º = palavra repetida; * = troca certa;
+     ~g gênero · ~n número · ~s muda o sentido · ~i informal · ~a fica confuso · ~r continua repetido
+   ========================================================= */
+
+const TIPOS = {
+  pp:{nome:'Pronome pessoal', ex:'ele, ela, eles, elas, dele, delas', dica:'Observe o gênero (masculino ou feminino) e o número (um ou vários) do pronome. Quem já apareceu antes e combina com ele?'},
+  po:{nome:'Pronome possessivo', ex:'seu, sua, seus, suas', dica:'Pronomes como seu e sua mostram de quem é alguma coisa. De quem é?'},
+  ob:{nome:'Pronome oblíquo', ex:'o, a, os, as, lhe', dica:'Palavrinhas como o, a, as, lhe ficam junto do verbo e substituem uma pessoa ou coisa que já apareceu.'},
+  de:{nome:'Pronome demonstrativo', ex:'esse, essa, isso, aquele, aquela', dica:'Esse, isso, aquele… apontam para algo que já foi dito antes no texto.'},
+  si:{nome:'Sinônimo ou expressão', ex:'o animal, a especialista, o veículo', dica:'Essa expressão descreve alguém ou algo que já apareceu antes. Quem combina com essa descrição?'},
+  rw:{nome:'Reescrita sem repetição', ex:'trocar o nome por pronome ou sinônimo', dica:''}
+};
+const MOTIVOS = {
+  g:'Não combina no <b>gênero</b>: veja se a palavra é masculina ou feminina.',
+  n:'Não combina no <b>número</b>: veja se é uma coisa só ou várias.',
+  s:'Essa troca <b>muda o sentido</b> do texto.',
+  i:'Na fala é comum, mas na <b>escrita</b> preferimos outra forma.',
+  a:'Fica <b>confuso</b>: não dá para saber de quem estamos falando.',
+  r:'Assim o texto <b>continua repetitivo</b>.'
+};
+const CORES=['#D7263D','#1D4ED8','#15803D','#7C3AED','#C2410C','#0E7490'];
+
+const CASOS = [
+ {id:'c1', modo:'ligar', titulo:'O cachorro novo', ano:'4º ano', foco:'Pronomes pessoais', gen:'Narrativa',
+  texto:'[Tiago]{1} ganhou [um cachorro]{2} de aniversário. <Ele>{1:pp} ficou tão feliz que pulou no sofá. [A mãe]{3} riu e contou que <ela>{3:pp} também tinha um cachorro quando era criança.\n[O filhote]{2} correu pela sala, e [Tiago]{1} correu atrás <dele>{2:pp}. [Os vizinhos]{4} ouviram a bagunça, e <eles>{4:pp} vieram conhecer [o novo morador da casa]{2}.'},
+ {id:'c2', modo:'ligar', titulo:'A coleção da Lia', ano:'4º ano', foco:'Possessivos e oblíquos', gen:'Narrativa',
+  texto:'[Lia]{1} coleciona [figurinhas]{2} de animais. <Sua>{1:po} coleção já tem mais de duzentas!\nOntem, [o primo Rafael]{3} contou que estava começando um álbum. [Lia]{1} separou [as figurinhas repetidas]{2} e <as>{2:ob} colocou num envelope para <ele>{3:pp}. [Rafael]{3} adorou o presente e prometeu cuidar bem <delas>{2:pp}.\nQuando soube da história, [a mãe]{4} <a>{1:ob} abraçou, orgulhosa.'},
+ {id:'c3', modo:'ligar', titulo:'O jacaré do lago', ano:'5º ano', foco:'Sinônimos e expressões', gen:'Notícia',
+  texto:'Os moradores do bairro levaram um susto: [um jacaré]{1} apareceu no lago do parque. <O réptil>{1:si} tomava sol tranquilamente na margem.\n[A bióloga Carla]{2} foi chamada para ajudar. <A especialista>{2:si} explicou que <o animal>{1:si} provavelmente chegou pelo córrego durante as chuvas.\nCom cuidado, [a equipe do resgate]{3} levou <o bicho>{1:si} para uma área de mata. <Os profissionais>{3:si} pediram que ninguém alimente jacarés.'},
+ {id:'c4', modo:'ligar', titulo:'O bilhete misterioso', ano:'5º ano', foco:'Demonstrativos', gen:'Narrativa',
+  texto:'Na [terça-feira]{1}, [a professora Rosa]{2} encontrou [um bilhete]{3} em cima da mesa: “Hoje tem surpresa no recreio!”. <Esse bilhete>{3:de} deixou todo mundo curioso.\nNo recreio, [os alunos do 5º ano]{4} apareceram com um bolo enorme e cantaram parabéns. [Tudo tinha sido preparado em segredo]{5}, e <isso>{5:de} emocionou muito [a professora]{2}.\n<Ela>{2:pp} agradeceu <àquela turma>{4:de} tão carinhosa. <Aquele dia>{1:de} ficou na memória de todos.'},
+ {id:'c5', modo:'reescrever', titulo:'A bola da Ana', ano:'4º ano', foco:'Evitar repetições', gen:'Narrativa',
+  texto:'Ana ganhou uma bola de vôlei no aniversário. {Ana|Ela*|Ele~g|Elas~n} levou a bola para a escola.\nNa quadra, as amigas de Ana viram {a bola|o presente*|o aniversário~s|as bolas~n} e quiseram jogar. {As amigas de Ana|Elas*|Ela~n|Eles~g} formaram dois times.\nNo fim do jogo, {Ana|a dona da bola*|a quadra~s|o time~s} guardou tudo e agradeceu às colegas.'},
+ {id:'c6', modo:'ligar', titulo:'A biblioteca sobre rodas', ano:'6º ano', foco:'Tudo junto', gen:'Notícia',
+  texto:'[Um ônibus colorido]{1} está levando livros para os bairros de Campo Grande. <O veículo>{1:si} foi transformado em [uma biblioteca]{1} pela [professora aposentada Teresa Lima]{2}.\n<A idealizadora do projeto>{2:si} conta que teve a ideia quando percebeu que [muitas crianças]{3} não tinham livros em casa.\n— <Elas>{3:pp} adoram escolher as próprias histórias — diz <ela>{2:pp}.\n<A biblioteca sobre rodas>{1:si} já recebeu mais de dois mil leitores, e <sua>{1:po} próxima parada será uma escola do bairro Moreninha.'},
+ {id:'c7', modo:'ligar', titulo:'O ipê da vovó', ano:'7º ano', foco:'Cadeias longas', gen:'Narrativa',
+  texto:'[Marcos]{1} e [Júlia]{2}, <sua>{1:po} [irmã]{2}, decidiram plantar [uma árvore]{3} no quintal da [avó]{4}. <Ele>{1:pp} cavou o buraco, e <ela>{2:pp} buscou [a muda de ipê]{3} no viveiro.\n[A avó]{4} observava tudo da varanda e, de vez em quando, dava conselhos <aos netos>{1+2:si}.\n— Reguem <a plantinha>{3:si} todos os dias — disse <a senhora>{4:si}.\nAnos depois, <aquele ipê>{3:de} cresceu e encheu o quintal de flores amarelas. <Seus>{3:po} galhos hoje fazem sombra para a família inteira.'},
+ {id:'c8', modo:'reescrever', titulo:'A ave do Pantanal', ano:'6º e 7º ano', foco:'Sinônimos e pronomes', gen:'Texto informativo',
+  texto:'O tuiuiú é a ave símbolo do Pantanal. {O tuiuiú|Essa ave*|Esse peixe~s|Essas aves~n} pode medir mais de um metro de altura.\n{O tuiuiú|Ele*|Ela~g|Eles~n} constrói ninhos enormes no alto das árvores. Os ninhos do tuiuiú são feitos de galhos, e {os ninhos|eles*|elas~g|ele~n} podem ser usados por vários anos.\nQuem visita o Pantanal sempre quer fotografar {o tuiuiú|essa ave gigante*|essa árvore~s|esses ninhos~s}.'}
+];
+CASOS.forEach((c,i)=>c.idx=i);
+
+/* ---------- ESTADO ---------- */
+const CHAVE='detetiveRetomadas.v1';
+function padrao(){ return {nome:'',turma:'',casos:{},stats:{},cfg:{som:true,lenta:false,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const $$=(q,el=document)=>Array.from(el.querySelectorAll(q));
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>CASOS.reduce((a,c)=>a+((S.casos[c.id]||{}).estrelas||0),0);
+function patente(){ const e=totalEst(); return e>=21?'🏅 Investigador(a)-chefe':e>=14?'🎖️ Inspetor(a)':e>=6?'🕵️ Detetive':'🔎 Detetive aprendiz'; }
+const ehPont=w=>/^[^\p{L}\p{N}]+$/u.test(w);
+
+/* ---------- VOZ / SOM ---------- */
+const VOZ={ok:'speechSynthesis' in window,voz:null,sessao:0,quem:null};
+if(VOZ.ok){ const e=()=>{ const v=speechSynthesis.getVoices(); VOZ.voz=v.find(x=>/pt[-_]BR/i.test(x.lang))||v.find(x=>/^pt/i.test(x.lang))||null; }; e(); speechSynthesis.onvoiceschanged=e; }
+function pararVoz(){ VOZ.sessao++; VOZ.quem=null; if(VOZ.ok) speechSynthesis.cancel(); rotulosVoz(); }
+function falar(textos,quem){
+  if(!VOZ.ok){ toast('Este navegador não lê em voz alta. Tente o Chrome ou o Edge.'); return; }
+  pararVoz(); const s=++VOZ.sessao; VOZ.quem=quem; rotulosVoz(); let i=0;
+  const prox=()=>{ if(s!==VOZ.sessao) return; if(i>=textos.length){ VOZ.quem=null; rotulosVoz(); return; }
+    const u=new SpeechSynthesisUtterance(textos[i++]); u.lang='pt-BR'; if(VOZ.voz) u.voice=VOZ.voz; u.rate=.95*(S.cfg.lenta?.8:1); u.onend=prox; u.onerror=prox; speechSynthesis.speak(u); };
+  setTimeout(prox,60);
+}
+function rotulosVoz(){ $$('[data-voz]').forEach(b=>{ b.innerHTML = VOZ.quem===b.dataset.voz ? '⏹ Parar' : b.dataset.rotulo; }); }
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={sel:[[520,.05]],ok:[[587,.07],[784,.07],[988,.14]],erro:[[220,.12],[185,.18]],fim:[[392,.1],[523,.1],[659,.1],[784,.1],[1047,.3]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+/* ---------- MODAL ---------- */
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- PARSER ---------- */
+function palavras(txt){ return txt.split(/(\s+)/).map(p=> /^\s+$/.test(p)||p==='' ? p : (ehPont(p)? esc(p) : `<span class="tk">${esc(p)}</span>`)).join(''); }
+function lerLigar(src){
+  const spans=[];
+  const paras=src.split('\n').map(s=>s.trim()).filter(Boolean);
+  const html=paras.map(p=>{
+    let out='', last=0, m; const re=/\[([^\]]+)\]\{([^}]+)\}|<([^>]+)>\{([^}]+)\}/g;
+    while((m=re.exec(p))){
+      out+=palavras(p.slice(last,m.index));
+      let sp;
+      if(m[1]!=null) sp={k:'m', ids:m[2].split('+').map(Number), txt:m[1]};
+      else { const [ids,tipo]=m[4].split(':'); sp={k:'a', ids:ids.split('+').map(Number), tipo:TIPOS[tipo]?tipo:'si', txt:m[3]}; }
+      sp.i=spans.length; spans.push(sp);
+      out+=`<span class="sp ${sp.k==='a'?'ana':'men'}" data-sp="${sp.i}" ${sp.k==='a'?'role="button" tabindex="0"':''}>${esc(sp.txt)}</span>`;
+      last=re.lastIndex;
+    }
+    out+=palavras(p.slice(last));
+    return '<p>'+out+'</p>';
+  }).join('');
+  const plano=paras.map(p=>p.replace(/\[([^\]]+)\]\{[^}]+\}|<([^>]+)>\{[^}]+\}/g,(_,a,b)=>a??b));
+  return {spans, html, plano};
+}
+function lerReescrever(src){
+  const spans=[];
+  const paras=src.split('\n').map(s=>s.trim()).filter(Boolean);
+  paras.forEach(p=>{ let m; const re=/\{([^}]+)\}/g; while((m=re.exec(p))){ const partes=m[1].split('|'); const orig=partes[0];
+    const opts=partes.slice(1).map(o=>{ let ok=false, why=''; if(o.endsWith('*')){ ok=true; o=o.slice(0,-1); } const w=o.match(/~([a-z])$/); if(w){ why=w[1]; o=o.slice(0,-2); } return {t:o.trim(),ok,why}; });
+    spans.push({orig, opts:embaralhar(opts), atual:orig, feito:false, i:spans.length}); } });
+  return {spans, paras};
+}
+function htmlReescrever(){
+  let k=0;
+  return C.R.paras.map(p=>'<p>'+p.split(/(\{[^}]+\})/).map(seg=>{
+    if(/^\{[^}]+\}$/.test(seg)){ const sp=C.R.spans[k++]; return `<span class="rw ${sp.feito?'feito':''} ${C.sel===sp.i?'sel':''}" data-rw="${sp.i}" ${sp.feito?'':'role="button" tabindex="0"'}>${esc(sp.atual)}</span>`; }
+    return palavras(seg);
+  }).join('')+'</p>').join('');
+}
+function textoReescrito(versao){ let k=0; return C.R.paras.map(p=>p.replace(/\{[^}]+\}/g,()=>{ const sp=C.R.spans[k++]; return versao==='antes'?sp.orig:sp.atual; })); }
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ pararVoz(); TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='arquivo') telaArquivo(); else if(t==='caso') abrirCaso(arg); else if(t==='relatorio') telaRelatorio(); else if(t==='criar') telaCriar(); }
+const liberado=c=>S.cfg.livre||c.idx===0||!!(S.casos[CASOS[c.idx-1].id]||{}).feito;
+
+function telaHome(){
+  app.innerHTML=`<section class="home"><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS</span>
+    <h1>Detetive das <span>Retomadas</span></h1>
+    <p class="lead">Nos textos, as palavras se escondem atrás de <b>pronomes</b> e <b>apelidos</b>: “ele”, “sua”, “o animal”, “aquele dia”… Descubra a quem cada pista se refere, ligue tudo com o fio vermelho e resolva os casos!</p>
+    <span class="patente">${patente()} · ★ ${totalEst()}/24</span>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 6º B" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn verm grande" data-ir="arquivo">Abrir os casos 🕵️</button><button class="btn" data-ir="criar">✍️ Criar caso</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div>
+  <div class="quadro-arte" aria-hidden="true">
+    <svg viewBox="0 0 400 300" preserveAspectRatio="none"><path d="M80 70 Q180 10 290 60" stroke="#D7263D" stroke-width="3" fill="none"/><path d="M290 60 Q330 150 250 210" stroke="#D7263D" stroke-width="3" fill="none"/><path d="M110 200 Q170 120 250 210" stroke="#1D4ED8" stroke-width="3" fill="none"/></svg>
+    <div class="nota" style="left:8%;top:18%;transform:rotate(-4deg)">Tiago</div>
+    <div class="nota" style="left:60%;top:12%;transform:rotate(3deg)">ele</div>
+    <div class="nota" style="left:52%;top:62%;transform:rotate(-2deg)">o menino</div>
+    <div class="nota" style="left:12%;top:60%;transform:rotate(4deg)">seu</div>
+  </div></div>
+  <div class="info"><div><b>8</b>casos para resolver</div><div><b>5</b>tipos de pista</div><div><b>2</b>casos de reescrita</div><div><b>4º–7º</b>anos</div></div>
+  <p class="rodape">Habilidades <b>MS.EF35LP06</b> (relações entre partes do texto: substituições por sinônimos e pronomes) · <b>MS.EF35LP14</b> (pronomes como recurso coesivo na produção) · <b>MS.EF07LP12</b> (coesão referencial) · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaArquivo(){
+  const atual=CASOS.find(c=>liberado(c)&&!(S.casos[c.id]||{}).feito);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Arquivo de casos</h2><small>${patente()}</small></div><span class="chip-topo">★ ${totalEst()}/24</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="arquivo"><div class="pastas">${CASOS.map(c=>{ const r=S.casos[c.id]||{}; const lib=liberado(c);
+    return `<button class="pasta ${c.modo==='reescrever'?'reesc':''} ${atual&&atual.id===c.id?'atual':''}" data-caso="${c.idx}" ${lib?'':'disabled'}>
+      ${lib?'':'<span class="cad">🔒</span>'}<span class="num">CASO ${String(c.idx+1).padStart(2,'0')} · ${esc(c.ano)}</span><h3>${esc(c.titulo)}</h3>
+      <span class="foco">${c.modo==='reescrever'?'✏️ Reescrita: ':'🔍 '}${esc(c.foco)}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span>${r.feito?'<span class="carimbo">RESOLVIDO</span>':''}</button>`; }).join('')}</div>
+  <p class="nota-rod">Pastas amarelas: ligar as pistas. Pastas azuis: reescrever um texto repetitivo. Professor(a): em ⚙️ dá para liberar todos os casos.</p></section>`;
+}
+
+/* ---------- CASO ---------- */
+let C=null;
+function abrirCaso(c){
+  if(typeof c==='number') c=CASOS[c];
+  C={caso:c, modo:c.modo, sel:null, erros:0, tent:{}, primeira:{}, links:[], msg:null, fim:false};
+  if(c.modo==='ligar'){ C.L=lerLigar(c.texto); C.total=C.L.spans.filter(s=>s.k==='a').length; C.feitos={}; }
+  else { C.R=lerReescrever(c.texto); C.total=C.R.spans.length; }
+  telaCaso();
+  const tiposUsados = c.modo==='ligar' ? [...new Set(C.L.spans.filter(s=>s.k==='a').map(s=>s.tipo))] : [];
+  abrirModal(`<span class="selo" style="color:#A51D2F;border-color:#D7263D88">CASO ${c.idx>=0?String(c.idx+1).padStart(2,'0'):'ESPECIAL'} · ${esc(c.ano||'')}</span>
+    <h2 style="margin-top:10px">${esc(c.titulo)}</h2>
+    ${c.modo==='ligar'
+      ? `<p>No texto há <b>${C.total} suspeitos</b> marcados com 🔍. Cada um retoma alguém ou alguma coisa que já apareceu antes.</p>
+         <p><b>Como investigar:</b> toque num suspeito 🔍 e depois toque na palavra do texto a que ele se refere. O fio vermelho vai ligar as pistas!</p>
+         <div class="tipos">${tiposUsados.map(t=>`<div><b>${TIPOS[t].nome}</b> — ex.: ${TIPOS[t].ex}</div>`).join('')}</div>`
+      : `<p>Este texto está <b>repetitivo demais</b>! Algumas palavras aparecem de novo e de novo.</p>
+         <p><b>Sua missão:</b> toque em cada palavra marcada com 🔁 e escolha a melhor troca: um <b>pronome</b> (ele, ela, eles…) ou um <b>sinônimo</b> (a ave, o presente…). A troca precisa combinar e não pode mudar o sentido.</p>`}
+    <div class="acoes"><button class="btn verm" data-acao="fechar" data-foco>Investigar! 🔍</button></div>`);
+}
+function telaCaso(){
+  const c=C.caso;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="${c.id==='custom'?'home':'arquivo'}" aria-label="Voltar">←</button>
+    <div class="tit"><h2>${c.idx>=0?'Caso '+String(c.idx+1).padStart(2,'0')+' · ':''}${esc(c.titulo)}</h2><small>${esc(c.foco||'')}${c.ano?' · '+esc(c.ano):''}</small></div>
+    <span class="chip-topo" id="prog-topo">${c.modo==='ligar'?'🔍':'🔁'} ${feitos()}/${C.total}</span>
+    <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="caso" id="caso">
+    <div class="quadro"><article class="folha"><span class="gen">${esc(c.gen||'Texto')}</span><h3>${esc(c.titulo)}</h3>
+      <div class="texto-wrap"><div class="texto" id="texto">${c.modo==='ligar'?C.L.html:htmlReescrever()}</div><svg id="fios" aria-hidden="true"></svg></div></article></div>
+    <aside class="lado"><div class="painel" id="painel"></div></aside>
+  </section>`;
+  desenharPainel(); desenharFios();
+}
+const feitos=()=> C.modo==='ligar' ? Object.keys(C.feitos).length : C.R.spans.filter(s=>s.feito).length;
+function desenharPainel(){
+  const p=$('#painel'); if(!p) return; const n=feitos(), T=C.total;
+  let corpo='';
+  if(C.modo==='ligar'){
+    if(C.sel==null) corpo=`<p class="instr">Toque num <b>suspeito</b> 🔍 (palavra amarela) para começar.</p>`;
+    else { const sp=C.L.spans[C.sel]; corpo=`<p class="instr">A quem ou a que se refere <span class="alvo">${esc(sp.txt)}</span>?<br>👉 <b>Toque no texto</b> na palavra que ela retoma.</p><p class="mini" style="margin:6px 0 0">${TIPOS[sp.tipo].nome}</p>`; }
+  } else {
+    if(C.sel==null) corpo=`<p class="instr">Toque numa palavra repetida 🔁 (em amarelo) para trocá-la.</p>`;
+    else { const sp=C.R.spans[C.sel]; corpo=`<p class="instr">Troque <span class="alvo">${esc(sp.orig)}</span> por:</p><div class="opcoes">${sp.opts.map((o,k)=>`<button class="op ${o.usada?'errada':''}" data-op="${k}" ${o.usada?'disabled':''}>${esc(o.t)}</button>`).join('')}</div>`; }
+  }
+  const btns = [];
+  if(VOZ.ok){ if(C.modo==='ligar') btns.push(`<button class="btn claro" data-voz="texto" data-rotulo="🔊 Ouvir texto" data-acao="ouvir">🔊 Ouvir texto</button>`);
+    else { btns.push(`<button class="btn claro" data-voz="antes" data-rotulo="🔊 Antes" data-acao="ouvir-antes">🔊 Antes</button>`); btns.push(`<button class="btn claro" data-voz="agora" data-rotulo="🔊 Agora" data-acao="ouvir-agora">🔊 Agora</button>`); } }
+  if(C.sel!=null) btns.push(`<button class="btn claro" data-acao="desmarcar">✕ Escolher outro</button>`);
+  p.innerHTML=`<div class="progresso">${C.modo==='ligar'?'🔍 Pistas':'🔁 Trocas'} <div class="barra-p"><i style="width:${T?100*n/T:0}%"></i></div> ${n}/${T}</div>
+    ${corpo}<div id="msg">${C.msg||''}</div><div class="linha-acoes">${btns.join('')}</div>
+    ${C.modo==='ligar'?htmlFicha():''}`;
+  const pt=$('#prog-topo'); if(pt) pt.textContent=`${C.modo==='ligar'?'🔍':'🔁'} ${n}/${T}`;
+  rotulosVoz();
+}
+function corDe(id){ return CORES[(id-1)%CORES.length]; }
+function htmlFicha(){
+  const ids=[...new Set(C.L.spans.flatMap(s=>s.ids))].sort((a,b)=>a-b);
+  const linhas=ids.map(id=>{ const resolvidos=C.L.spans.filter(s=>s.k==='a'&&s.ids.includes(id)&&C.feitos[s.i]); if(!resolvidos.length) return '';
+    const nome=(C.L.spans.find(s=>s.k==='m'&&s.ids.includes(id))||{}).txt||'?'; const cor=corDe(id);
+    return `<div class="cadeia"><b style="background:${cor}">${esc(nome)}</b>${resolvidos.map(s=>`← <span style="border-color:${cor}">${esc(s.txt)}</span>`).join(' ')}</div>`; }).join('');
+  return `<div class="ficha"><h4>QUADRO DE PISTAS</h4>${linhas||'<p class="mini">As ligações que você descobrir aparecem aqui.</p>'}</div>`;
+}
+function desenharFios(){
+  const svg=$('#fios'); if(!svg||C.modo!=='ligar') return;
+  const base=$('.texto-wrap').getBoundingClientRect();
+  svg.setAttribute('viewBox',`0 0 ${base.width} ${base.height}`);
+  svg.innerHTML=C.links.map(l=>{
+    const a=$(`.sp[data-sp="${l.de}"]`), b=$(`.sp[data-sp="${l.para}"]`); if(!a||!b) return '';
+    const ra=a.getClientRects()[0], rb=b.getClientRects()[0]; if(!ra||!rb) return '';
+    const x1=ra.left+ra.width/2-base.left, y1=ra.top-base.top+3, x2=rb.left+rb.width/2-base.left, y2=rb.top-base.top+3;
+    const cx=(x1+x2)/2, cy=Math.min(y1,y2)-14-Math.min(26,Math.abs(x1-x2)*.08);
+    return `<path d="M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}" stroke="${l.cor}" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".6"/>
+      <circle cx="${x1}" cy="${y1}" r="5" fill="${l.cor}"/><circle cx="${x2}" cy="${y2}" r="5" fill="${l.cor}"/>`;
+  }).join('');
+}
+let resizeT; window.addEventListener('resize',()=>{ clearTimeout(resizeT); resizeT=setTimeout(()=>{ if(TELA==='caso'&&C) desenharFios(); },120); });
+
+function registrar(chave, tipo, ok){
+  if(C.primeira[chave]!=null) return; C.primeira[chave]=ok;
+  S.stats[tipo]=S.stats[tipo]||{ok:0,total:0}; S.stats[tipo].total++; if(ok) S.stats[tipo].ok++; salvar();
+}
+function setMsg(h){ C.msg=h; const m=$('#msg'); if(m) m.innerHTML=h; }
+function selecionarAnafora(i){
+  if(C.feitos[i]){ const l=C.links.find(x=>x.de===i); toast(`Essa já foi resolvida: “${C.L.spans[i].txt}” → “${C.L.spans[l.para].txt}”.`); return; }
+  C.sel=i; C.msg=null; som('sel');
+  $$('.sp.ana.sel').forEach(x=>x.classList.remove('sel')); const el=$(`.sp[data-sp="${i}"]`); el.classList.add('sel');
+  desenharPainel();
+}
+function tentarReferente(alvoSp, el){
+  const a=C.L.spans[C.sel];
+  const ok = alvoSp!=null && alvoSp.i!==a.i && alvoSp.i<a.i && alvoSp.ids.some(id=>a.ids.includes(id));
+  if(ok){
+    registrar('a'+a.i, a.tipo, true);
+    const id=alvoSp.ids.find(x=>a.ids.includes(x)); const cor=corDe(id);
+    C.feitos[a.i]=true; C.links.push({de:a.i, para:alvoSp.i, cor});
+    const ea=$(`.sp[data-sp="${a.i}"]`); ea.classList.remove('sel'); ea.classList.add('feito'); ea.style.setProperty('--cor',cor);
+    const eb=$(`.sp[data-sp="${alvoSp.i}"]`); eb.classList.add('ligado'); eb.style.setProperty('--cor',cor);
+    som('ok'); C.sel=null;
+    C.msg=`<div class="msg ok">✅ <b>“${esc(a.txt)}”</b> retoma <b>“${esc(alvoSp.txt)}”</b>. ${a.tipo==='si'?'Usar outra expressão evita repetir o nome e ainda dá mais informação.':'Usar o pronome evita repetir o nome.'}</div>`;
+    desenharPainel(); desenharFios();
+    if(feitos()===C.total) setTimeout(concluir,700);
+  } else {
+    C.erros++; C.tent[a.i]=(C.tent[a.i]||0)+1; registrar('a'+a.i, a.tipo, false); som('erro');
+    if(el){ el.classList.remove('errou'); void el.offsetWidth; el.classList.add('errou'); setTimeout(()=>el.classList.remove('errou'),800); }
+    let txt = alvoSp && alvoSp.i>a.i ? 'Essa palavra aparece <b>depois</b>. A retomada aponta para algo que já apareceu <b>antes</b>.' : 'Não é essa. ';
+    txt += ' 💡 '+TIPOS[a.tipo].dica;
+    if(C.tent[a.i]>=3){ const certo=C.L.spans.find(s=>s.i<a.i&&s.ids.some(id=>a.ids.includes(id))); if(certo){ const ec=$(`.sp[data-sp="${certo.i}"]`); if(ec){ ec.classList.remove('mostra'); void ec.offsetWidth; ec.classList.add('mostra'); } txt+=' <b>Olhe a palavra que está piscando em verde.</b>'; } }
+    setMsg(`<div class="msg no">❌ ${txt}</div>`);
+  }
+}
+function escolherTroca(k){
+  const sp=C.R.spans[C.sel]; const o=sp.opts[k];
+  if(o.ok){
+    registrar('r'+sp.i,'rw',true); sp.atual=o.t; sp.feito=true; som('ok');
+    C.msg=`<div class="msg ok">✅ “${esc(sp.orig)}” virou <b>“${esc(o.t)}”</b>. O texto ficou menos repetitivo e continua claro!</div>`;
+    C.sel=null; $('#texto').innerHTML=htmlReescrever(); desenharPainel();
+    if(feitos()===C.total) setTimeout(concluir,700);
+  } else {
+    C.erros++; registrar('r'+sp.i,'rw',false); o.usada=true; som('erro');
+    C.msg=`<div class="msg no">❌ “${esc(o.t)}” não serve aqui. ${MOTIVOS[o.why]||'Essa troca não funciona aqui.'}</div>`;
+    desenharPainel();
+  }
+}
+function concluir(){
+  C.fim=true; pararVoz();
+  const est = C.erros<=1?3 : C.erros<=3?2 : 1;
+  const c=C.caso;
+  if(c.id!=='custom'){ const a=S.casos[c.id]||{}; S.casos[c.id]={feito:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar(); }
+  som('fim');
+  let extra='';
+  if(C.modo==='ligar'){ extra=`<div class="ficha" style="border:0;padding:0">${htmlFicha().replace('<div class="ficha">','<div>')}</div><p class="mini">Esse conjunto de palavras que se referem à mesma coisa se chama <b>cadeia referencial</b>. É ela que costura o texto!</p>`; }
+  else { let k=0; const antes=C.R.paras.map(p=>p.replace(/\{[^}]+\}/g,()=>`<mark>${esc(C.R.spans[k++].orig)}</mark>`)); k=0; const depois=C.R.paras.map(p=>p.replace(/\{[^}]+\}/g,()=>`<ins>${esc(C.R.spans[k++].atual)}</ins>`));
+    extra=`<div class="antes-depois"><div><h4>Antes 😵</h4>${antes.join('<br>')}</div><div><h4>Depois 😎</h4>${depois.join('<br>')}</div></div>`; }
+  const prox = c.id!=='custom' && c.idx<CASOS.length-1;
+  abrirModal(`<div style="text-align:center;margin:10px 0 4px"><span class="carimbo-g">CASO RESOLVIDO</span></div>
+    <div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${C.total}</b>${C.modo==='ligar'?'pistas ligadas':'trocas feitas'}</div><div><b>${C.erros}</b>tentativas erradas</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>sua patente</div></div>
+    ${extra}
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" data-acao="fechar">Ver o quadro</button><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn verm" data-acao="prox" data-foco>Próximo caso ➔</button>':'<button class="btn verm" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+const ORDEM_T=['pp','po','ob','de','si','rw'];
+function linhasRel(){ return ORDEM_T.filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:TIPOS[k].nome,ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=CASOS.filter(c=>(S.casos[c.id]||{}).feito).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['DETETIVE DAS RETOMADAS — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Patente: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/24 · Casos resolvidos: ${f}/8`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`,'Habilidades: MS.EF35LP06 · MS.EF35LP14 · MS.EF07LP12'].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=CASOS.filter(c=>(S.casos[c.id]||{}).feito).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="arquivo">🗂️ Casos</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>patente</div><div><b>★ ${totalEst()}/24</b>estrelas</div><div><b>${f}/8</b>casos</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa, por tipo de retomada</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Resolva alguns casos para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn verm" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn claro" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div>
+      <p class="mini" style="margin-top:12px"><b>MS.EF35LP06</b> — recuperar relações entre partes de um texto, identificando substituições lexicais (sinônimos) ou pronominais · <b>MS.EF35LP14</b> — usar pronomes como recurso coesivo anafórico · <b>MS.EF07LP12</b> — reconhecer recursos de coesão referencial.</p></div></section>`;
+}
+
+/* ---------- CRIAR CASO ---------- */
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+const EX_LIGAR='[Pedro]{1} encontrou [um gatinho]{2} na rua. <Ele>{1:pp} levou <o bichano>{2:si} para casa.\n[A irmã de Pedro]{3} adorou a surpresa e deu um nome para <o animal>{2:si}.';
+const EX_REESC='Pedro encontrou um gatinho na rua. {Pedro|Ele*|Ela~g|Eles~n} levou {o gatinho|o bichano*|a rua~s} para casa.';
+function telaCriar(){
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Criar caso</h2><small>Para o professor (ou para estudantes que querem desafiar a turma)</small></div></header>
+  <section class="pg"><div class="cartao">
+    <div class="campo"><span>Título do caso</span><input id="c-tit" maxlength="50" placeholder="ex.: O mistério do recreio"></div>
+    <div class="campo"><span>Tipo de caso</span><div style="display:flex;gap:10px;flex-wrap:wrap"><label><input type="radio" name="modo" value="ligar" checked> 🔍 Ligar pistas</label><label><input type="radio" name="modo" value="reescrever"> ✏️ Reescrever</label></div></div>
+    <div class="campo"><span>Texto com as marcações (um parágrafo por linha)</span><textarea id="c-texto" maxlength="1800"></textarea></div>
+    <details><summary style="cursor:pointer;font-weight:700">Como marcar o texto? (ver exemplos)</summary>
+      <p class="mini" style="font-size:14px;line-height:1.6"><b>Ligar pistas:</b> coloque entre colchetes quem aparece no texto e dê um número: <code>[Pedro]{1}</code>. Coloque entre &lt; &gt; a palavra que o retoma, com o mesmo número e o tipo: <code>&lt;Ele&gt;{1:pp}</code>. Tipos: pp pessoal · po possessivo · ob oblíquo · de demonstrativo · si sinônimo/expressão.</p>
+      <pre class="ex">${esc(EX_LIGAR)}</pre>
+      <p class="mini" style="font-size:14px;line-height:1.6"><b>Reescrever:</b> entre chaves, primeiro a palavra repetida e depois as opções. Marque a certa com * e as erradas com o motivo: ~g gênero · ~n número · ~s muda o sentido · ~a fica confuso.</p>
+      <pre class="ex">${esc(EX_REESC)}</pre>
+      <button class="btn claro" data-acao="exemplo">Colocar o exemplo no texto</button></details>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn claro" data-acao="testar">▶️ Testar</button><button class="btn verm" data-acao="gerar">🔗 Gerar link</button></div>
+    <div id="c-link"></div></div></section>`;
+}
+function modoCriar(){ return ($('input[name="modo"]:checked')||{}).value||'ligar'; }
+function dadosCriar(){
+  const x=$('#c-texto').value.trim(); const m=modoCriar();
+  if(m==='ligar'){ const L=lerLigar(x); const an=L.spans.filter(s=>s.k==='a'); if(!an.length){ toast('Marque pelo menos um suspeito com <palavra>{número:tipo}.'); return null; }
+    const semRef=an.filter(a=>!L.spans.some(s=>s.i<a.i&&s.ids.some(id=>a.ids.includes(id)))); if(semRef.length){ toast(`“${semRef[0].txt}” não tem a quem se referir antes dele no texto. Confira os números.`); return null; } }
+  else { const R=lerReescrever(x); if(!R.spans.length){ toast('Marque pelo menos uma palavra repetida com {palavra|opção*|opção~g}.'); return null; } if(R.spans.some(s=>!s.opts.some(o=>o.ok))){ toast('Cada troca precisa de uma opção certa marcada com *.'); return null; } }
+  return {t:$('#c-tit').value.trim()||'Caso especial', m, x};
+}
+function casoCustom(d){ return {id:'custom', idx:-1, modo:d.m==='reescrever'?'reescrever':'ligar', titulo:d.t, ano:'', foco:d.m==='reescrever'?'Reescrita':'Caso especial', gen:'Texto', texto:d.x}; }
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('lenta','Voz mais lenta','')}${l('livre','Liberar todos os casos','Para o professor escolher o caso da aula.')}
+    <div class="acoes"><button class="btn verm" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="tipos">
+    <div>🔍 <b>Casos de ligar:</b> toque num suspeito (palavra amarela). Depois toque na palavra do texto a que ele se refere. Acertou? O fio liga as duas!</div>
+    <div>✏️ <b>Casos de reescrever:</b> toque numa palavra repetida 🔁 e escolha a melhor troca. Ouça o texto antes e depois.</div>
+    <div>⭐ Até 1 erro: 3 estrelas. Até 3 erros: 2 estrelas. As estrelas sobem sua <b>patente</b> de detetive.</div>
+    ${['pp','po','ob','de','si'].map(t=>`<div><b>${TIPOS[t].nome}</b> — ${TIPOS[t].ex}</div>`).join('')}</div>
+    <div class="acoes"><button class="btn verm" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+function cliqueTexto(e){
+  if(!C||C.fim) return false;
+  if(C.modo==='ligar'){
+    const sp=e.target.closest('#texto .sp'); const tk=e.target.closest('#texto .tk');
+    if(!sp&&!tk) return false;
+    if(C.sel==null){ if(sp&&sp.classList.contains('ana')) selecionarAnafora(+sp.dataset.sp); else toast('Primeiro toque num suspeito 🔍 (palavra amarela).'); return true; }
+    if(sp&&+sp.dataset.sp===C.sel){ C.sel=null; sp.classList.remove('sel'); C.msg=null; desenharPainel(); return true; }
+    tentarReferente(sp?C.L.spans[+sp.dataset.sp]:null, sp||tk); return true;
+  } else {
+    const rw=e.target.closest('#texto .rw'); if(!rw) return false;
+    const i=+rw.dataset.rw; if(C.R.spans[i].feito) return true;
+    C.sel=i; C.msg=null; som('sel'); $('#texto').innerHTML=htmlReescrever(); desenharPainel(); return true;
+  }
+}
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(modalAberto()) fecharModal(); ir(irB.dataset.ir); return; }
+  const cb=e.target.closest('[data-caso]'); if(cb&&!cb.disabled){ ir('caso',+cb.dataset.caso); return; }
+  if(TELA==='caso' && cliqueTexto(e)) return;
+  const op=e.target.closest('.op'); if(op&&!op.disabled&&C){ escolherTroca(+op.dataset.op); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='arquivo') telaArquivo(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar'){ fecharModal(); if(TELA==='caso') desenharFios(); }
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='desmarcar'){ C.sel=null; C.msg=null; $$('.sp.sel').forEach(x=>x.classList.remove('sel')); if(C.modo==='reescrever') $('#texto').innerHTML=htmlReescrever(); desenharPainel(); }
+  else if(a==='ouvir'){ if(VOZ.quem==='texto') return pararVoz(); falar([C.caso.titulo+'.',...C.L.plano],'texto'); }
+  else if(a==='ouvir-antes'){ if(VOZ.quem==='antes') return pararVoz(); falar(textoReescrito('antes'),'antes'); }
+  else if(a==='ouvir-agora'){ if(VOZ.quem==='agora') return pararVoz(); falar(textoReescrito('agora'),'agora'); }
+  else if(a==='repetir'){ fecharModal(); ir('caso', C.caso.id==='custom'?C.caso:C.caso.idx); }
+  else if(a==='prox'){ fecharModal(); ir('caso', C.caso.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+  else if(a==='exemplo'){ $('#c-texto').value = modoCriar()==='reescrever'?EX_REESC:EX_LIGAR; }
+  else if(a==='testar'){ const d=dadosCriar(); if(d) ir('caso', casoCustom(d)); }
+  else if(a==='gerar'){ const d=dadosCriar(); if(!d) return; const url=location.href.split('#')[0]+'#d='+b64e(JSON.stringify(d)); $('#c-link').innerHTML=`<div class="link-box">${esc(url)}</div><div style="margin-top:10px"><button class="btn verm" id="c-copiar">📋 Copiar link</button></div>`; $('#c-copiar').onclick=()=>copiar(url); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()){ fecharModal(); return; }
+  if((e.key==='Enter'||e.key===' ') && document.activeElement && document.activeElement.matches('#texto .sp.ana,#texto .rw')){ e.preventDefault(); document.activeElement.click(); }
+});
+
+/* ---------- INÍCIO ---------- */
+(function(){
+  const h=location.hash;
+  if(h.startsWith('#d=')){ try{ const d=JSON.parse(b64d(h.slice(3))); if(d&&typeof d.x==='string'){ telaHome(); TELA='caso'; abrirCaso(casoCustom(d)); return; } }catch(e){ console.warn('Link de caso inválido'); } }
+  telaHome();
+})();
+</script>
+</body>
+</html>

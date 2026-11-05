@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fábrica de Problemas – Matemática 6º ao 9º ano</title>
+<meta name="description" content="Monte uma situação-problema escolhendo as peças, confira se ela tem todos os dados, planeje e resolva. Habilidades de resolver e elaborar problemas do Currículo de MS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#0E4D45; --verde-esc:#08332D; --verde-claro:#E7F2EF;
+    --latao:#C9962B; --latao-claro:#E8C066; --latao-esc:#8C6516;
+    --papel:#FFF6DC; --borda:#CDBF96; --linha:#EADDB5;
+    --tinta:#1B2430; --suave:#5b5440;
+    --ok:#2E9E5B; --ok-claro:#E8F5EC; --erro:#D64545; --erro-claro:#FBE3E3;
+    --raio:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:18px;line-height:1.5;color:var(--tinta);
+    background:var(--verde);background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.06) 1px,transparent 0);
+    background-size:22px 22px;min-height:100vh}
+  h1,h2,h3{font-family:"Baloo 2",system-ui,sans-serif;line-height:1.15}
+  button,input,select{font:inherit;color:inherit}
+  button{cursor:pointer}
+  :focus-visible{outline:3px solid var(--latao-claro);outline-offset:3px}
+  .oculto{display:none!important}
+
+  .btn{border:0;border-radius:999px;padding:.55em 1.25em;font-weight:700;background:var(--latao);color:var(--tinta);
+    box-shadow:0 4px 0 var(--latao-esc);transition:transform .08s,box-shadow .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--latao-esc)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-sec{background:#fff;border:2px solid var(--borda);border-radius:999px;padding:.4em 1em;font-weight:700}
+  .link{background:none;border:0;padding:0;color:#6B5A2A;text-decoration:underline;font-size:.95rem}
+
+  header.topo{max-width:1180px;margin:0 auto;padding:26px 16px 18px;color:#fff;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .engrenagem{width:56px;height:56px;flex:none;border-radius:50%;
+    background:radial-gradient(circle,var(--verde) 0 22%,var(--latao) 23% 62%,transparent 63%),
+      conic-gradient(from 0deg,var(--latao) 0 10%,transparent 10% 15%,var(--latao) 15% 25%,transparent 25% 30%,var(--latao) 30% 40%,transparent 40% 45%,var(--latao) 45% 55%,transparent 55% 60%,var(--latao) 60% 70%,transparent 70% 75%,var(--latao) 75% 85%,transparent 85% 90%,var(--latao) 90% 100%)}
+  header h1{margin:0;font-size:clamp(2rem,5vw,2.8rem);color:var(--latao-claro)}
+  header p{margin:0;opacity:.9}
+  header .voltar{margin-left:auto;color:#fff;border-color:rgba(255,255,255,.5);background:transparent}
+
+  main{max-width:1180px;margin:0 auto;padding:0 16px 48px}
+  .painel{background:var(--papel);border-radius:var(--raio);padding:24px;box-shadow:0 10px 0 rgba(0,0,0,.18)}
+
+  /* escolha da habilidade */
+  .anos{display:grid;gap:22px}
+  .ano h2{margin:0 0 10px;font-size:1.5rem;color:var(--verde)}
+  .habs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .hab{background:#fff;border:2px solid var(--linha);border-radius:var(--raio);padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:6px}
+  .hab:hover{border-color:var(--latao)}
+  .hab .cod{font-size:.85rem;font-weight:700;color:var(--suave)}
+  .hab .tit{font-family:"Baloo 2",system-ui,sans-serif;font-size:1.2rem;font-weight:800;line-height:1.2}
+  .hab .nv{font-size:.9rem;color:var(--verde);font-weight:700}
+
+  /* área de trabalho */
+  .barra{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;margin-bottom:18px}
+  .barra .hab-atual{font-family:"Baloo 2",system-ui,sans-serif;font-size:1.35rem;font-weight:800}
+  .barra .cod{font-size:.9rem;color:var(--suave)}
+  .niveis{display:flex;gap:6px;flex-wrap:wrap}
+  .niveis button{border:2px solid var(--borda);background:#fff;border-radius:10px;padding:.25em .8em;font-weight:700;font-size:.95rem}
+  .niveis button[aria-pressed=true]{background:var(--verde);border-color:var(--verde);color:#fff}
+  .progresso{display:flex;align-items:center;gap:8px;font-size:.95rem;color:var(--suave)}
+  .progresso .bolinhas{display:flex;gap:4px}
+  .progresso .bolinhas span{width:16px;height:16px;border-radius:50%;background:var(--linha)}
+  .progresso .bolinhas span.on{background:var(--ok)}
+
+  .etapas{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px;padding:0;list-style:none}
+  .etapas li{font-size:.9rem;font-weight:700;padding:.3em .8em;border-radius:999px;background:#fff;border:2px solid var(--linha);color:var(--suave)}
+  .etapas li.atual{border-color:var(--latao);background:#FBEFC8;color:var(--tinta)}
+  .etapas li.feita{border-color:var(--ok);color:var(--ok)}
+
+  /* o enunciado com lacunas: a peça central */
+  .enunciado{background:#fff;border:2px dashed var(--borda);border-radius:var(--raio);padding:20px 22px;font-size:1.3rem;line-height:2.1;margin-bottom:18px}
+  .enunciado .lac{display:inline-block;min-width:4.5em;border-bottom:3px solid var(--borda);color:transparent;line-height:1.2;vertical-align:baseline}
+  .enunciado .lac.agora{border-bottom-color:var(--latao);background:linear-gradient(transparent 70%,#FBEFC8 70%)}
+  .peca{display:inline-block;background:linear-gradient(#f6e3b0,var(--latao-claro));border:0;border-radius:8px;padding:0 .4em;line-height:1.5;
+    font-weight:700;box-shadow:0 2px 0 var(--latao-esc);margin:0 .1em}
+  button.peca{font-size:inherit}
+  .enunciado .pergunta{display:block;margin-top:6px;font-weight:700;color:var(--verde)}
+
+  .bancada h3{margin:0 0 10px;font-size:1.3rem}
+  .opcoes{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .opcoes .peca{font-size:1.1rem;padding:.25em .8em;cursor:pointer}
+  .opcoes .peca:hover{filter:brightness(1.05)}
+  .cartoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:12px}
+  .escolha{background:#fff;border:2px solid var(--linha);border-radius:var(--raio);padding:14px 16px;text-align:left;font-weight:700}
+  .escolha:hover{border-color:var(--latao)}
+  .escolha small{display:block;font-weight:400;color:var(--suave)}
+  .acoes{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .ops{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 16px}
+  .ops button{border:2px solid var(--borda);background:#fff;border-radius:10px;padding:.3em .9em;font-weight:700;min-width:3em}
+  .ops button[aria-pressed=true]{background:var(--verde);border-color:var(--verde);color:#fff}
+  .resp{display:flex;gap:8px;max-width:480px;margin-bottom:10px}
+  .resp input{flex:1;min-width:0;padding:.4em .7em;border:2px solid var(--borda);border-radius:10px;background:#fff;font-size:1.2rem}
+  .unid{align-self:center;color:var(--suave)}
+  .nota{margin:0 0 12px;padding:10px 14px;border-radius:10px;font-size:1rem}
+  .nota.ok{background:var(--ok-claro);border-left:4px solid var(--ok)}
+  .nota.erro{background:var(--erro-claro);border-left:4px solid var(--erro)}
+  .nota.info{background:#FBEFC8;border-left:4px solid var(--latao)}
+  .dica-txt{color:var(--suave);font-size:.95rem;margin:0 0 12px}
+
+  .fim{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}
+  .selo{width:120px;height:120px;border-radius:50%;border:6px double var(--ok);color:var(--ok);display:grid;place-items:center;
+    text-align:center;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;line-height:1.1;transform:rotate(-10deg)}
+  .selo.subiu{border-color:var(--latao);color:var(--latao-esc)}
+
+  footer{color:rgba(255,255,255,.7);text-align:center;font-size:.85rem;padding:0 16px 24px}
+
+  @media (max-width:640px){
+    body{font-size:17px}
+    .painel{padding:18px}
+    .enunciado{font-size:1.15rem;padding:16px}
+    .habs,.cartoes{grid-template-columns:minmax(0,1fr)}
+    .fim{grid-template-columns:minmax(0,1fr)}
+    .selo{justify-self:center}
+    header .voltar{margin-left:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="engrenagem" aria-hidden="true"></div>
+  <div>
+    <h1>Fábrica de Problemas</h1>
+    <p>Escolha as peças, monte a situação-problema e resolva.</p>
+  </div>
+  <button class="btn-sec voltar oculto" id="voltar" type="button">Trocar de habilidade</button>
+</header>
+
+<main>
+  <section class="painel" id="telaHabs" aria-labelledby="tHabs">
+    <h2 id="tHabs" class="oculto">Escolha a habilidade</h2>
+    <div class="anos" id="anos"></div>
+  </section>
+
+  <section class="painel oculto" id="telaTrabalho" aria-live="polite">
+    <div class="barra">
+      <div>
+        <div class="hab-atual" id="habNome"></div>
+        <div class="cod" id="habCod"></div>
+      </div>
+      <div class="niveis" id="niveis" role="group" aria-label="Nível"></div>
+      <div class="progresso" id="progresso"></div>
+    </div>
+    <ol class="etapas" id="etapas"></ol>
+    <div class="enunciado oculto" id="enunciado"></div>
+    <div class="bancada" id="bancada"></div>
+  </section>
+</main>
+
+<footer>Habilidades do Organizador Curricular de MS que pedem para resolver e elaborar problemas · Matemática em Ação</footer>
+
+<script>
+(() => {
+  // ================= utilidades =================
+  const $ = id => document.getElementById(id);
+  function el(tag, attrs = {}, ...filhos) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') e.className = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (v !== false && v != null) e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const f of filhos.flat()) if (f != null && f !== false) e.append(f instanceof Node ? f : document.createTextNode(String(f)));
+    return e;
+  }
+  const r2 = x => Math.round(x * 100) / 100;
+  const fmt = n => (n < 0 ? '−' : '') + Math.abs(r2(n)).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+  const money = n => (n < 0 ? '−' : '') + 'R$ ' + Math.abs(r2(n)).toLocaleString('pt-BR', { minimumFractionDigits: Number.isInteger(r2(n)) ? 0 : 2, maximumFractionDigits: 2 });
+  const sup = n => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join('');
+  const embaralhar = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const amostra = (arr, k = 4) => { const s = embaralhar(arr).slice(0, k); return typeof s[0] === 'number' ? s.sort((a, b) => a - b) : s; };
+  function numero(s) {
+    const fr = String(s || '').trim().replace(/[\u2212\u2013]/g, '-');
+    let m = fr.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+    if (m && +m[3]) return (+m[1] < 0 ? -1 : 1) * (Math.abs(+m[1]) + m[2] / m[3]);
+    m = fr.match(/^(-?\d+)\s*\/\s*(\d+)$/);
+    if (m) return +m[2] ? m[1] / m[2] : NaN;
+    s = String(s || '').replace(/[−–]/g, '-').replace(/R\$|%|°C?|\s/gi, '');
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    else if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+    s = s.replace(/[^0-9.\-]/g, '');
+    return s === '' || s === '-' ? NaN : Number(s);
+  }
+  const lerLS = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (_) { return null; } };
+  const salvarLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} };
+
+  // ================= construtores de peças =================
+  const O = (t, v, extra = {}) => ({ t, v: v === undefined ? t : v, ...extra });
+  const nums = (arr, k) => amostra(arr, k).map(n => O(fmt(n), n));
+  const reais = (arr, k) => amostra(arr, k).map(n => O(money(n), n));
+  const pct = arr => arr.map(p => O(p + '%', p));
+  const nomes = () => amostra(['Ana', 'Pedro', 'Júlia', 'Davi', 'Sofia', 'Lucas', 'Marina', 'Gabriel', 'Laura', 'Enzo']).map(n => O(n));
+  const PRODUTOS = () => [O('um tênis'), O('uma mochila'), O('um fone de ouvido'), O('uma bicicleta'), O('um jogo de videogame')];
+  const LANCHES = () => [O('salgados', 'salgados', { sg: 'salgado' }), O('sucos', 'sucos', { sg: 'suco' }), O('pastéis', 'pastéis', { sg: 'pastel' }), O('pedaços de bolo', 'pedaços de bolo', { sg: 'pedaço de bolo' })];
+  const sig = n => (n < 0 ? '−' : '') + Math.abs(n);
+  const frac = (n, d) => O(`${n}/${d}`, n / d, { n, d });
+  const fracs = (pool, N) => amostra(pool.filter(([, d]) => N % d === 0), 4).map(([n, d]) => frac(n, d));
+  const UNIT = [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]];
+  const NAOUNIT = [[2, 3], [3, 4], [2, 5], [3, 5], [5, 6]];
+  const ACOES = () => [O('vai ao passeio', null, { q: 'vão ao passeio' }), O('prefere futebol', null, { q: 'preferem futebol' }), O('trouxe lanche de casa', null, { q: 'trouxeram lanche de casa' })];
+  const ACOES_PCT = () => [O('vão de ônibus para a escola', null, { q: 'vão de ônibus para a escola' }), O('praticam algum esporte', null, { q: 'praticam algum esporte' }), O('leem pelo menos um livro por mês', null, { q: 'leem pelo menos um livro por mês' })];
+  function estrategiaPct(v, p) {
+    const d = r2(v / 10), m = {
+      5: `10% de ${money(v)} = ${money(d)}; 5% é a metade: ${money(r2(d / 2))}`,
+      10: `10% de ${money(v)} = ${money(v)} ÷ 10 = ${money(d)}`,
+      15: `10% = ${money(d)} e 5% = ${money(r2(d / 2))}; 15% = ${money(r2(d * 1.5))}`,
+      20: `10% = ${money(d)}; 20% = 2 × ${money(d)} = ${money(r2(d * 2))}`,
+      25: `25% é 1/4: ${money(v)} ÷ 4 = ${money(r2(v / 4))}`,
+      30: `10% = ${money(d)}; 30% = 3 × ${money(d)} = ${money(r2(d * 3))}`,
+      35: `10% = ${money(d)}; 30% = ${money(r2(d * 3))}; 5% = ${money(r2(d / 2))}; 35% = ${money(r2(d * 3.5))}`,
+      40: `10% = ${money(d)}; 40% = 4 × ${money(d)} = ${money(r2(d * 4))}`,
+      50: `50% é a metade: ${money(v)} ÷ 2 = ${money(r2(v / 2))}`,
+      75: `50% = ${money(r2(v / 2))} e 25% = ${money(r2(v / 4))}; 75% = ${money(r2(v * .75))}`
+    };
+    return m[p] || `${p}% de ${money(v)} = ${money(r2(v * p / 100))}`;
+  }
+  const temRestoPool = (c, de, ate) => { const p = []; for (let x = de; x <= ate; x++) if (x % c) p.push(x); return p; };
+  const mdc = (a, b) => (b ? mdc(b, a % b) : Math.abs(a));
+  const mmc = (a, b) => a / mdc(a, b) * b;
+  const divisores = n => { const d = []; for (let i = 1; i <= n; i++) if (n % i === 0) d.push(i); return d; };
+  const multiplosAte = (a, lim) => { const l = []; for (let x = a; x <= lim; x += a) l.push(x); return l; };
+  const intervalo = (a, b) => { const l = []; for (let i = a; i <= b; i++) l.push(i); return l; };
+  // frações exatas: {n, d, v, t}
+  const F = (n, d) => { const g = mdc(n, d) || 1; n /= g; d /= g; return { n, d, v: n / d, t: d === 1 ? String(n) : `${n}/${d}` }; };
+  const fopt = ([n, d]) => { const f = F(n, d); return O(f.t, f.v, { n: f.n, d: f.d }); };
+  function contaFracoes(f1, f2, op) {
+    const m = mmc(f1.d, f2.d), a = f1.n * m / f1.d, b = f2.n * m / f2.d, r = op === '+' ? a + b : Math.abs(a - b), fr = F(r, m);
+    const passo = f1.d === f2.d ? '' : `Denominador comum ${m}: ${f1.t} = ${a}/${m} e ${f2.t} = ${b}/${m}. `;
+    const ordem = op === '+' || a >= b ? `${a}/${m} ${op} ${b}/${m}` : `${b}/${m} − ${a}/${m}`;
+    const misto = fr.n > fr.d && fr.d > 1 ? ` (ou ${Math.floor(fr.n / fr.d)} ${Math.floor(fr.n / fr.d) === 1 ? 'inteiro' : 'inteiros'} e ${fr.n % fr.d}/${fr.d})` : '';
+    return { f: fr, txt: `${passo}${ordem} = ${r}/${m}` + (fr.t !== `${r}/${m}` ? ` = ${fr.t}` : '') + misto + '.' };
+  }
+  const hora = min => `${Math.floor(min / 60)}h${String(min % 60).padStart(2, '0')}`;
+  const outroNome = s => amostra(['Ana', 'Pedro', 'Júlia', 'Davi', 'Sofia', 'Lucas', 'Marina', 'Gabriel', 'Laura', 'Enzo'].filter(n => n !== s.nome.v)).map(n => O(n));
+  const FAIXAS_FRACAO = [{ t: 'menos de 1/2', ok: x => x < 0.5 - 1e-9 }, { t: 'de 1/2 até quase 1', ok: x => x >= 0.5 - 1e-9 && x < 1 - 1e-9 },
+                         { t: 'exatamente 1 inteiro', ok: x => Math.abs(x - 1) < 1e-9 }, { t: 'mais de 1 inteiro', ok: x => x > 1 + 1e-9 }];
+
+  // ================= pacotes por habilidade =================
+  // Cada cenário: peças (lacunas), texto com {id} ou {id.campo}, perguntas.
+  // Pergunta com r = null é proposital: os dados não bastam e o aluno precisa perceber.
+  const PACOTES = [
+  {
+    id: 'EF06MA03', cod: 'MS.EF06MA03.s.03', ano: '6º ano', nome: 'Problemas com números naturais',
+    desc: 'Resolver e elaborar problemas com números naturais, com cálculo mental ou escrito, exato ou aproximado.',
+    niveis: [
+      { nome: 'Uma operação', cenarios: [
+        { nome: 'Cantina', resumo: 'Vendas no intervalo',
+          pecas: [{ id: 'prod', rot: 'O que a cantina vendeu?', op: LANCHES },
+                  { id: 'q', rot: 'Quantos foram vendidos?', op: () => nums([24, 32, 36, 45, 48, 56, 64, 75]) },
+                  { id: 'p', rot: 'Qual é o preço de cada um?', op: () => reais([2, 3, 4, 5, 6]) }],
+          texto: 'No intervalo, a cantina vendeu {q} {prod}. Cada {prod.sg} custa {p}.',
+          perguntas: [
+            { p: 'Quanto a cantina arrecadou com os {prod}?', r: s => s.q.v * s.p.v, ops: ['×'], un: 'reais',
+              res: s => `${s.q.v} × ${s.p.v} = ${s.q.v * s.p.v}. A cantina arrecadou ${money(s.q.v * s.p.v)}.` },
+            { p: 'Se cada {prod.sg} custasse R$ 1 a mais, quanto a cantina teria arrecadado?', r: s => s.q.v * (s.p.v + 1), ops: ['+', '×'], un: 'reais',
+              res: s => `Novo preço: ${s.p.v} + 1 = ${s.p.v + 1}. ${s.q.v} × ${s.p.v + 1} = ${s.q.v * (s.p.v + 1)} reais.` },
+            { p: 'Quantos {prod} sobraram no fim do dia?', r: null, falta: 'quantos {prod} havia no começo do dia' }] },
+        { nome: 'Figurinhas', resumo: 'Coleção de um estudante',
+          pecas: [{ id: 'nome', rot: 'Quem é o colecionador?', op: nomes },
+                  { id: 'a', rot: 'Quantas figurinhas tinha?', op: () => nums([35, 48, 56, 63, 74, 87]) },
+                  { id: 'b', rot: 'Quantas ganhou?', op: () => nums([12, 15, 18, 24, 27]) }],
+          texto: '{nome} tinha {a} figurinhas e ganhou {b} de um colega.',
+          perguntas: [
+            { p: 'Com quantas figurinhas {nome} ficou?', r: s => s.a.v + s.b.v, ops: ['+'], un: 'figurinhas', res: s => `${s.a.v} + ${s.b.v} = ${s.a.v + s.b.v} figurinhas.` },
+            { p: 'Quantas figurinhas {nome} tinha a mais do que as que ganhou?', r: s => s.a.v - s.b.v, ops: ['−'], un: 'figurinhas', res: s => `${s.a.v} − ${s.b.v} = ${s.a.v - s.b.v} figurinhas.` },
+            { p: 'Quantas figurinhas faltam para completar o álbum?', r: null, falta: 'quantas figurinhas cabem no álbum' }] }
+      ]},
+      { nome: 'Duas etapas', cenarios: [
+        { nome: 'Papelaria', resumo: 'Compras e troco',
+          pecas: [{ id: 'nome', rot: 'Quem foi às compras?', op: nomes },
+                  { id: 'k', rot: 'Quantos itens iguais comprou?', op: () => nums([2, 3, 4]) },
+                  { id: 'item', rot: 'O que comprou?', op: () => [O('cadernos'), O('livros'), O('gibis')] },
+                  { id: 'q', rot: 'Quanto custa cada um?', op: () => reais([8, 12, 15, 18]) },
+                  { id: 'extra', rot: 'Que outro item comprou?', op: () => [O('uma caneta'), O('uma borracha'), O('um marcador de página')] },
+                  { id: 'e', rot: 'Quanto custou esse outro item?', op: () => reais([3, 4, 5, 7]) },
+                  { id: 'M', rot: 'Quanto dinheiro levou?', op: s => { const t = s.k.v * s.q.v + s.e.v, b = Math.ceil((t + 1) / 10) * 10; return [b, b + 10, b + 20, b + 50].map(n => O(money(n), n)); } }],
+          texto: '{nome} levou {M} para a papelaria. Comprou {k} {item} de {q} cada e {extra} de {e}.',
+          perguntas: [
+            { p: 'Quanto {nome} gastou ao todo?', r: s => s.k.v * s.q.v + s.e.v, ops: ['×', '+'], un: 'reais', res: s => `${s.k.v} × ${s.q.v} = ${s.k.v * s.q.v}; ${s.k.v * s.q.v} + ${s.e.v} = ${s.k.v * s.q.v + s.e.v} reais.` },
+            { p: 'Quanto {nome} recebeu de troco?', r: s => s.M.v - (s.k.v * s.q.v + s.e.v), ops: ['×', '+', '−'], un: 'reais', res: s => { const t = s.k.v * s.q.v + s.e.v; return `Gasto: ${s.k.v} × ${s.q.v} + ${s.e.v} = ${t}. Troco: ${s.M.v} − ${t} = ${s.M.v - t} reais.`; } },
+            { p: 'Quanto custou a mochila de {nome}?', r: null, falta: 'o preço da mochila' }] },
+        { nome: 'Cantina o dia todo', resumo: 'Manhã e tarde',
+          pecas: [{ id: 'prod', rot: 'O que a cantina vendeu?', op: LANCHES },
+                  { id: 'a', rot: 'Quantos de manhã?', op: () => nums([96, 108, 120, 135]) },
+                  { id: 'b', rot: 'Quantos à tarde?', op: () => nums([48, 57, 64, 72]) },
+                  { id: 'p', rot: 'Qual é o preço de cada um?', op: () => reais([3, 4, 5]) }],
+          texto: 'A cantina vendeu {a} {prod} de manhã e {b} à tarde. Cada {prod.sg} custa {p}.',
+          perguntas: [
+            { p: 'Quanto a cantina arrecadou no dia?', r: s => (s.a.v + s.b.v) * s.p.v, ops: ['+', '×'], un: 'reais', res: s => `${s.a.v} + ${s.b.v} = ${s.a.v + s.b.v}; ${s.a.v + s.b.v} × ${s.p.v} = ${(s.a.v + s.b.v) * s.p.v} reais.` },
+            { p: 'Quantos {prod} a mais foram vendidos de manhã do que à tarde?', r: s => s.a.v - s.b.v, ops: ['−'], un: '{prod}', res: s => `${s.a.v} − ${s.b.v} = ${s.a.v - s.b.v}.` },
+            { p: 'Qual foi o lucro da cantina?', r: null, falta: 'quanto a cantina gastou para preparar os produtos' }] }
+      ]},
+      { nome: 'Divisão com resto', cenarios: [
+        { nome: 'Passeio', resumo: 'Transporte da turma',
+          pecas: [{ id: 'veic', rot: 'Em que veículo?', op: () => [O('ônibus', 'ônibus', { quant: 'Quantos', nec: 'necessários', caps: [40, 44, 46] }), O('vans', 'vans', { quant: 'Quantas', nec: 'necessárias', caps: [12, 15, 16] })] },
+                  { id: 'c', rot: 'Quantos lugares em cada um?', op: s => s.veic.caps.map(n => O(String(n), n)) },
+                  { id: 'n', rot: 'Quantos estudantes vão?', op: s => nums(s.veic.v === 'vans' ? temRestoPool(s.c.v, 80, 200) : temRestoPool(s.c.v, 150, 330)) },
+                  { id: 'x', rot: 'Quanto custa a entrada?', op: () => reais([15, 20, 25, 30]) }],
+          texto: 'A escola vai levar {n} estudantes a um passeio em {veic} de {c} lugares. A entrada no parque custa {x} por estudante.',
+          perguntas: [
+            { p: '{veic.quant} {veic} são {veic.nec}, no mínimo?', r: s => Math.ceil(s.n.v / s.c.v), ops: ['÷'], un: '{veic}', res: s => `${s.n.v} ÷ ${s.c.v} = ${Math.floor(s.n.v / s.c.v)}, com resto ${s.n.v % s.c.v}. Os ${s.n.v % s.c.v} estudantes que sobram precisam de mais um veículo: ${Math.ceil(s.n.v / s.c.v)}.` },
+            { p: 'Quantos lugares ficam vazios?', r: s => Math.ceil(s.n.v / s.c.v) * s.c.v - s.n.v, ops: ['÷', '×', '−'], un: 'lugares', res: s => { const v = Math.ceil(s.n.v / s.c.v); return `São ${v} veículos: ${v} × ${s.c.v} = ${v * s.c.v} lugares. ${v * s.c.v} − ${s.n.v} = ${v * s.c.v - s.n.v} lugares vazios.`; } },
+            { p: 'Quanto a escola arrecada com as entradas?', r: s => s.n.v * s.x.v, ops: ['×'], un: 'reais', res: s => `${s.n.v} × ${s.x.v} = ${s.n.v * s.x.v} reais. Aqui o número de lugares é um dado que sobra.` },
+            { p: 'Quanto tempo dura a viagem?', r: null, falta: 'a distância até o parque e a velocidade do veículo' }] },
+        { nome: 'Fábrica de caixas', resumo: 'Embalagens',
+          pecas: [{ id: 'prod', rot: 'O que a fábrica produziu?', op: () => [O('bombons'), O('sabonetes'), O('lápis')] },
+                  { id: 'c', rot: 'Quantos cabem em cada caixa?', op: () => nums([6, 8, 12, 15]) },
+                  { id: 'n', rot: 'Quantos foram produzidos?', op: s => nums(temRestoPool(s.c.v, 100, 260)) }],
+          texto: 'Uma fábrica produziu {n} {prod} e coloca {c} em cada caixa.',
+          perguntas: [
+            { p: 'Quantas caixas ficam completas?', r: s => Math.floor(s.n.v / s.c.v), ops: ['÷'], un: 'caixas', res: s => `${s.n.v} ÷ ${s.c.v} = ${Math.floor(s.n.v / s.c.v)}, com resto ${s.n.v % s.c.v}. Ficam ${Math.floor(s.n.v / s.c.v)} caixas completas.` },
+            { p: 'Quantos {prod} ficam fora das caixas completas?', r: s => s.n.v % s.c.v, ops: ['÷'], un: '{prod}', res: s => `O resto de ${s.n.v} ÷ ${s.c.v} é ${s.n.v % s.c.v}.` },
+            { p: 'Quantas caixas são necessárias para guardar todos os {prod}?', r: s => Math.ceil(s.n.v / s.c.v), ops: ['÷'], un: 'caixas', res: s => `${Math.floor(s.n.v / s.c.v)} caixas completas e mais 1 para o resto: ${Math.ceil(s.n.v / s.c.v)} caixas.` },
+            { p: 'Quanto custa cada caixa?', r: null, falta: 'o preço das caixas' }] }
+      ]},
+      { nome: 'Potências e caminho de volta', cenarios: [
+        { nome: 'Mensagem', resumo: 'Corrente de mensagens',
+          pecas: [{ id: 'b', rot: 'Para quantas pessoas cada um envia?', op: () => nums([2, 3, 4, 5]) },
+                  { id: 'r', rot: 'Até que rodada?', op: s => ({ 2: [4, 5, 6], 3: [3, 4], 4: [3], 5: [3] })[s.b.v].map(n => O(n + 'ª', n)) }],
+          texto: 'Uma mensagem foi enviada para {b} pessoas. Cada pessoa repassou para {b} novas pessoas, e assim por diante, até a {r} rodada.',
+          perguntas: [
+            { p: 'Quantas pessoas receberam a mensagem na {r} rodada?', r: s => s.b.v ** s.r.v, ops: ['potência'], un: 'pessoas', res: s => `${s.b.v}${sup(s.r.v)} = ${Array(s.r.v).fill(s.b.v).join(' × ')} = ${s.b.v ** s.r.v} pessoas.` },
+            { p: 'Quantas pessoas receberam a mensagem, somando todas as rodadas?', r: s => { let t = 0; for (let i = 1; i <= s.r.v; i++) t += s.b.v ** i; return t; }, ops: ['potência', '+'], un: 'pessoas',
+              res: s => { const l = []; for (let i = 1; i <= s.r.v; i++) l.push(s.b.v ** i); return `${l.join(' + ')} = ${l.reduce((a, b) => a + b, 0)} pessoas.`; } },
+            { p: 'Quantas pessoas responderam à mensagem?', r: null, falta: 'quantas pessoas responderam' }] },
+        { nome: 'Feira', resumo: 'Descobrir quanto havia antes',
+          pecas: [{ id: 'nome', rot: 'Quem foi à feira?', op: nomes },
+                  { id: 'g', rot: 'Quanto gastou?', op: () => reais([18, 25, 37, 42]) },
+                  { id: 's', rot: 'Com quanto voltou?', op: () => reais([13, 15, 26, 33]) },
+                  { id: 'x', rot: 'Quanto ganhou da avó?', op: () => reais([10, 20, 25]) }],
+          texto: '{nome} gastou {g} na feira e voltou para casa com {s}. Depois, ganhou {x} da avó.',
+          perguntas: [
+            { p: 'Quanto {nome} tinha antes de ir à feira?', r: s => s.g.v + s.s.v, ops: ['+'], un: 'reais', res: s => `Antes = o que gastou + o que sobrou: ${s.g.v} + ${s.s.v} = ${s.g.v + s.s.v} reais. Aqui o presente da avó é um dado que sobra.` },
+            { p: 'Com quanto {nome} ficou no fim do dia?', r: s => s.s.v + s.x.v, ops: ['+'], un: 'reais', res: s => `${s.s.v} + ${s.x.v} = ${s.s.v + s.x.v} reais.` },
+            { p: 'Quantas frutas {nome} comprou?', r: null, falta: 'o preço de cada fruta' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF06MA09', cod: 'MS.EF06MA09.s.09', ano: '6º ano', nome: 'Fração de uma quantidade',
+    desc: 'Resolver e elaborar problemas que envolvam o cálculo da fração de uma quantidade, com resultado natural.',
+    niveis: [1, 2].map(nv => ({ nome: nv === 1 ? 'Frações unitárias' : 'Outras frações', cenarios: [
+      { nome: 'Turma', resumo: 'Parte dos estudantes',
+        pecas: [{ id: 'N', rot: 'Quantos estudantes tem a turma?', op: () => nums([24, 30, 36, 40, 60]) },
+                { id: 'f', rot: 'Que fração da turma?', op: s => fracs(nv === 1 ? UNIT : NAOUNIT, s.N.v) },
+                { id: 'acao', rot: 'O que essa parte da turma faz?', op: ACOES }],
+        texto: 'Uma turma tem {N} estudantes. {f} da turma {acao}.',
+        perguntas: [
+          { p: 'Quantos estudantes {acao.q}?', r: s => s.N.v / s.f.d * s.f.n, ops: nv === 1 ? ['÷'] : ['÷', '×'], un: 'estudantes', res: s => `${s.N.v} ÷ ${s.f.d} = ${s.N.v / s.f.d}` + (s.f.n > 1 ? `; ${s.N.v / s.f.d} × ${s.f.n} = ${s.N.v / s.f.d * s.f.n}` : '') + ' estudantes.' },
+          { p: 'Quantos estudantes não {acao.q}?', r: s => s.N.v - s.N.v / s.f.d * s.f.n, ops: nv === 1 ? ['÷', '−'] : ['÷', '×', '−'], un: 'estudantes', res: s => { const p = s.N.v / s.f.d * s.f.n; return `${s.f.t} de ${s.N.v} = ${p}. ${s.N.v} − ${p} = ${s.N.v - p} estudantes.`; } },
+          { p: 'Quantos estudantes faltaram hoje?', r: null, falta: 'quantos estudantes vieram à aula' }] },
+      { nome: 'Álbum', resumo: 'Figurinhas coladas',
+        pecas: [{ id: 'nome', rot: 'De quem é o álbum?', op: nomes },
+                { id: 'N', rot: 'Quantas figurinhas cabem no álbum?', op: () => nums([60, 120, 180, 240]) },
+                { id: 'f', rot: 'Que fração já foi colada?', op: s => fracs(nv === 1 ? UNIT : NAOUNIT, s.N.v) }],
+        texto: '{nome} já colou {f} das {N} figurinhas do álbum.',
+        perguntas: [
+          { p: 'Quantas figurinhas {nome} já colou?', r: s => s.N.v / s.f.d * s.f.n, ops: nv === 1 ? ['÷'] : ['÷', '×'], un: 'figurinhas', res: s => `${s.N.v} ÷ ${s.f.d} = ${s.N.v / s.f.d}` + (s.f.n > 1 ? `; ${s.N.v / s.f.d} × ${s.f.n} = ${s.N.v / s.f.d * s.f.n}` : '') + ' figurinhas.' },
+          { p: 'Quantas figurinhas ainda faltam colar?', r: s => s.N.v - s.N.v / s.f.d * s.f.n, ops: nv === 1 ? ['÷', '−'] : ['÷', '×', '−'], un: 'figurinhas', res: s => { const p = s.N.v / s.f.d * s.f.n; return `Coladas: ${p}. ${s.N.v} − ${p} = ${s.N.v - p} figurinhas.`; } },
+          { p: 'Quanto custa cada pacote de figurinhas?', r: null, falta: 'o preço dos pacotes' }] }
+    ]})).concat([{ nome: 'Fração do que sobrou', cenarios: [
+      { nome: 'Mesada', resumo: 'Duas frações seguidas',
+        pecas: [{ id: 'nome', rot: 'Quem recebeu a mesada?', op: nomes },
+                { id: 'N', rot: 'Qual é o valor da mesada?', op: () => reais([120, 180, 240, 360]) },
+                { id: 'f1', rot: 'Que fração gastou com um presente?', op: s => fracs(UNIT.concat(NAOUNIT), s.N.v) },
+                { id: 'f2', rot: 'Que fração do que sobrou gastou com lanches?', op: s => { const resto = s.N.v - s.N.v / s.f1.d * s.f1.n; return fracs([[1, 2], [1, 3], [1, 4], [2, 3], [3, 4]], resto); } }],
+        texto: '{nome} recebeu {N} de mesada. Gastou {f1} desse valor com um presente e {f2} do que sobrou com lanches.',
+        perguntas: [
+          { p: 'Quanto {nome} gastou com o presente?', r: s => s.N.v / s.f1.d * s.f1.n, ops: ['÷', '×'], un: 'reais', res: s => `${s.f1.t} de ${s.N.v}: ${s.N.v} ÷ ${s.f1.d} × ${s.f1.n} = ${s.N.v / s.f1.d * s.f1.n} reais.` },
+          { p: 'Quanto sobrou depois do presente e dos lanches?', r: s => { const r1 = s.N.v - s.N.v / s.f1.d * s.f1.n; return r1 - r1 / s.f2.d * s.f2.n; }, ops: ['÷', '×', '−'], un: 'reais',
+            res: s => { const g1 = s.N.v / s.f1.d * s.f1.n, r1 = s.N.v - g1, g2 = r1 / s.f2.d * s.f2.n; return `Presente: ${g1}. Sobrou ${s.N.v} − ${g1} = ${r1}. Lanches: ${s.f2.t} de ${r1} = ${g2}. Sobrou ${r1} − ${g2} = ${r1 - g2} reais.`; } },
+          { p: 'Quanto {nome} vai receber no mês que vem?', r: null, falta: 'o valor da próxima mesada' }] }
+    ]}])
+  },
+  {
+    id: 'EF06MA13', cod: 'MS.EF06MA13.s.13', ano: '6º ano', nome: 'Porcentagem sem regra de três',
+    desc: 'Resolver e elaborar problemas com porcentagens, com base na ideia de proporcionalidade, usando estratégias pessoais e cálculo mental.',
+    niveis: [
+      { nome: '10%, 25% e 50%', cenarios: [
+        { nome: 'Pesquisa na escola', resumo: 'Parte dos estudantes',
+          pecas: [{ id: 'N', rot: 'Quantos estudantes tem a escola?', op: () => nums([200, 300, 400, 500, 600, 800]) },
+                  { id: 'p', rot: 'Que porcentagem?', op: () => pct([10, 25, 50]) },
+                  { id: 'acao', rot: 'O que esses estudantes fazem?', op: ACOES_PCT }],
+          texto: 'Uma escola tem {N} estudantes. {p} deles {acao}.',
+          perguntas: [
+            { p: 'Quantos estudantes {acao.q}?', r: s => s.N.v * s.p.v / 100, ops: ['%'], un: 'estudantes', res: s => ({ 10: `10% = ${s.N.v} ÷ 10`, 25: `25% = 1/4 = ${s.N.v} ÷ 4`, 50: `50% = metade = ${s.N.v} ÷ 2` })[s.p.v] + ` = ${s.N.v * s.p.v / 100} estudantes.` },
+            { p: 'Quantos estudantes não {acao.q}?', r: s => s.N.v - s.N.v * s.p.v / 100, ops: ['%', '−'], un: 'estudantes', res: s => `${s.p.v}% de ${s.N.v} = ${s.N.v * s.p.v / 100}. ${s.N.v} − ${s.N.v * s.p.v / 100} = ${s.N.v - s.N.v * s.p.v / 100} estudantes.` },
+            { p: 'Quantos estudantes estudam à tarde?', r: null, falta: 'quantos estudantes há em cada período' }] }
+      ]},
+      { nome: 'Descontos', cenarios: [
+        { nome: 'Loja', resumo: 'Preço com desconto',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'v', rot: 'Qual é o preço?', op: () => reais([60, 80, 120, 150, 200, 240]) },
+                  { id: 'p', rot: 'Qual é o desconto?', op: s => pct([10, 20, 25, 50].filter(p => s.v.v * p % 100 === 0)) }],
+          texto: 'Na loja, {prod} custa {v} e está com {p} de desconto.',
+          perguntas: [
+            { p: 'De quantos reais é o desconto?', r: s => s.v.v * s.p.v / 100, ops: ['%'], un: 'reais', res: s => estrategiaPct(s.v.v, s.p.v) + '.' },
+            { p: 'Quanto vou pagar com o desconto?', r: s => s.v.v - s.v.v * s.p.v / 100, ops: ['%', '−'], un: 'reais', res: s => `${estrategiaPct(s.v.v, s.p.v)}. ${money(s.v.v)} − ${money(s.v.v * s.p.v / 100)} = ${money(s.v.v - s.v.v * s.p.v / 100)}.` },
+            { p: 'Quanto esse produto custava no ano passado?', r: null, falta: 'o preço do ano passado' }] }
+      ]},
+      { nome: 'Juntando porcentagens', cenarios: [
+        { nome: 'Liquidação', resumo: '5%, 15%, 30%, 35%, 75%',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'v', rot: 'Qual é o preço?', op: () => reais([40, 60, 80, 120, 200, 240]) },
+                  { id: 'p', rot: 'Qual é o desconto?', op: s => pct(amostra([5, 15, 30, 35, 75].filter(p => s.v.v * p % 100 === 0), 4).sort((a, b) => a - b)) }],
+          texto: 'Na liquidação, {prod} que custava {v} está com {p} de desconto.',
+          perguntas: [
+            { p: 'De quantos reais é o desconto?', r: s => s.v.v * s.p.v / 100, ops: ['%', '+'], un: 'reais', res: s => estrategiaPct(s.v.v, s.p.v) + '.' },
+            { p: 'Qual é o preço com o desconto?', r: s => s.v.v - s.v.v * s.p.v / 100, ops: ['%', '+', '−'], un: 'reais', res: s => `${estrategiaPct(s.v.v, s.p.v)}. ${money(s.v.v)} − ${money(s.v.v * s.p.v / 100)} = ${money(s.v.v - s.v.v * s.p.v / 100)}.` },
+            { p: 'Até que dia vai a liquidação?', r: null, falta: 'a data final da liquidação' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF06MA06', cod: 'MS.EF06MA06.s.06', ano: '6º ano', nome: 'Múltiplos e divisores',
+    desc: 'Resolver e elaborar problemas que envolvam as ideias de múltiplo e de divisor.',
+    niveis: [
+      { nome: 'Agrupar e repartir', cenarios: [
+        { nome: 'Equipes', resumo: 'Dividir a turma em grupos',
+          pecas: [{ id: 'N', rot: 'Quantos estudantes participam?', op: () => nums([24, 28, 30, 36, 40, 42, 48]) },
+                  { id: 'k', rot: 'Quantos estudantes em cada equipe?', op: () => nums([3, 4, 5, 6, 7, 8]) }],
+          texto: 'Na gincana, {N} estudantes vão ser divididos em equipes de {k} estudantes.',
+          perguntas: [
+            { p: 'Quantas equipes completas vão ser formadas?', r: s => Math.floor(s.N.v / s.k.v), ops: ['÷'], un: 'equipes',
+              res: s => `${s.N.v} ÷ ${s.k.v} = ${Math.floor(s.N.v / s.k.v)}` + (s.N.v % s.k.v ? `, com resto ${s.N.v % s.k.v}.` : ', sem resto.') },
+            { p: 'Quantos estudantes ficam fora das equipes completas?', r: s => s.N.v % s.k.v, ops: ['÷'], un: 'estudantes',
+              res: s => s.N.v % s.k.v === 0 ? `${s.N.v} ÷ ${s.k.v} = ${s.N.v / s.k.v}, sem resto. Ninguém fica de fora, porque ${s.k.v} é divisor de ${s.N.v}.` : `${s.N.v} ÷ ${s.k.v} = ${Math.floor(s.N.v / s.k.v)}, com resto ${s.N.v % s.k.v}. Sobram estudantes porque ${s.k.v} não é divisor de ${s.N.v}.` },
+            { p: 'Qual é o maior tamanho de equipe, de até 10 estudantes, para não sobrar ninguém?', r: s => { for (let x = 10; x >= 2; x--) if (s.N.v % x === 0) return x; }, ops: ['÷'], un: 'estudantes',
+              res: s => { const d = divisores(s.N.v).filter(x => x >= 2 && x <= 10); return `Os divisores de ${s.N.v} entre 2 e 10 são ${d.join(', ')}. O maior é ${d[d.length - 1]}.`; } },
+            { p: 'Qual equipe vai vencer a gincana?', r: null, falta: 'o resultado das provas' }] },
+        { nome: 'Pacotes', resumo: 'Comprar em pacotes fechados',
+          pecas: [{ id: 'nome', rot: 'Quem vai dar a festa?', op: nomes },
+                  { id: 'a', rot: 'Quantos copos vêm em cada pacote?', op: () => nums([6, 8, 10, 12]) },
+                  { id: 'N', rot: 'De quantos copos precisa, no mínimo?', op: s => nums(temRestoPool(s.a.v, 25, 90)) }],
+          texto: 'Os copos descartáveis são vendidos em pacotes de {a}. {nome} precisa de pelo menos {N} copos para a festa.',
+          perguntas: [
+            { p: 'Quantos pacotes {nome} precisa comprar, no mínimo?', r: s => Math.ceil(s.N.v / s.a.v), ops: ['÷'], un: 'pacotes',
+              res: s => `${s.N.v} ÷ ${s.a.v} = ${Math.floor(s.N.v / s.a.v)}, com resto ${s.N.v % s.a.v}. Para ter copos suficientes, é preciso mais 1 pacote: ${Math.ceil(s.N.v / s.a.v)}.` },
+            { p: 'Quantos copos {nome} vai comprar ao todo?', r: s => Math.ceil(s.N.v / s.a.v) * s.a.v, ops: ['÷', '×'], un: 'copos',
+              res: s => `É o primeiro múltiplo de ${s.a.v} que passa de ${s.N.v}: ${Math.ceil(s.N.v / s.a.v)} × ${s.a.v} = ${Math.ceil(s.N.v / s.a.v) * s.a.v} copos.` },
+            { p: 'Quantos copos vão sobrar?', r: s => Math.ceil(s.N.v / s.a.v) * s.a.v - s.N.v, ops: ['÷', '×', '−'], un: 'copos',
+              res: s => `Vai comprar ${Math.ceil(s.N.v / s.a.v) * s.a.v} copos. ${Math.ceil(s.N.v / s.a.v) * s.a.v} − ${s.N.v} = ${Math.ceil(s.N.v / s.a.v) * s.a.v - s.N.v} copos.` },
+            { p: 'Quantos convidados vão à festa?', r: null, falta: 'o número de convidados' }] }
+      ]},
+      { nome: 'Encontros (múltiplos comuns)', cenarios: [
+        { nome: 'Luzes', resumo: 'Quando piscam juntas',
+          pecas: [{ id: 'a', rot: 'De quantos em quantos segundos pisca a primeira luz?', op: () => nums([4, 6, 8, 10, 12]) },
+                  { id: 'b', rot: 'E a segunda luz?', op: s => nums([6, 9, 10, 12, 15, 16].filter(x => x !== s.a.v && mmc(s.a.v, x) <= 120 && x % s.a.v && s.a.v % x)) }],
+          texto: 'Uma luz pisca a cada {a} segundos e outra pisca a cada {b} segundos. Agora, as duas piscaram juntas.',
+          perguntas: [
+            { p: 'Daqui a quantos segundos as duas vão piscar juntas de novo?', r: s => mmc(s.a.v, s.b.v), ops: ['×'], un: 'segundos',
+              res: s => { const m = mmc(s.a.v, s.b.v); return `Múltiplos de ${s.a.v}: ${multiplosAte(s.a.v, m).join(', ')}. Múltiplos de ${s.b.v}: ${multiplosAte(s.b.v, m).join(', ')}. O primeiro comum é ${m}.`; } },
+            { p: 'Até piscarem juntas de novo, quantas vezes a luz de {a} segundos vai piscar?', r: s => mmc(s.a.v, s.b.v) / s.a.v, ops: ['×', '÷'], un: 'vezes',
+              res: s => `Elas se encontram em ${mmc(s.a.v, s.b.v)} segundos. ${mmc(s.a.v, s.b.v)} ÷ ${s.a.v} = ${mmc(s.a.v, s.b.v) / s.a.v} vezes.` },
+            { p: 'De que cor são as luzes?', r: null, falta: 'a cor das luzes' }] },
+        { nome: 'Ônibus', resumo: 'Partidas ao mesmo tempo',
+          pecas: [{ id: 'a', rot: 'De quanto em quanto tempo sai a linha A?', op: () => amostra([10, 12, 15, 20]).map(n => O(n + ' minutos', n)) },
+                  { id: 'b', rot: 'E a linha B?', op: s => amostra([8, 12, 15, 18, 25, 30].filter(x => x !== s.a.v && mmc(s.a.v, x) <= 120 && x % s.a.v && s.a.v % x)).map(n => O(n + ' minutos', n)) }],
+          texto: 'Duas linhas de ônibus saíram juntas do terminal às 7h. A linha A sai a cada {a} e a linha B, a cada {b}.',
+          perguntas: [
+            { p: 'Daqui a quantos minutos as duas linhas vão sair juntas de novo?', r: s => mmc(s.a.v, s.b.v), ops: ['×'], un: 'minutos',
+              res: s => { const m = mmc(s.a.v, s.b.v); return `Múltiplos de ${s.a.v}: ${multiplosAte(s.a.v, m).join(', ')}. Múltiplos de ${s.b.v}: ${multiplosAte(s.b.v, m).join(', ')}. O primeiro comum é ${m}: às ${hora(420 + m)}.`; } },
+            { p: 'Nesse intervalo, quantos ônibus da linha A saem, sem contar o das 7h?', r: s => mmc(s.a.v, s.b.v) / s.a.v, ops: ['×', '÷'], un: 'ônibus',
+              res: s => `${mmc(s.a.v, s.b.v)} ÷ ${s.a.v} = ${mmc(s.a.v, s.b.v) / s.a.v} ônibus.` },
+            { p: 'Quantos passageiros cabem em cada ônibus?', r: null, falta: 'a lotação dos ônibus' }] }
+      ]},
+      { nome: 'Kits iguais (divisores comuns)', cenarios: [
+        { nome: 'Kits escolares', resumo: 'Repartir sem sobrar',
+          pecas: [{ id: 'a', rot: 'Quantos lápis?', op: () => nums([24, 36, 48, 60]) },
+                  { id: 'b', rot: 'Quantas borrachas?', op: s => nums([18, 20, 30, 32, 40, 45].filter(x => x !== s.a.v && mdc(s.a.v, x) >= 3)) }],
+          texto: 'A escola tem {a} lápis e {b} borrachas para montar kits iguais, sem sobrar nada, com o maior número possível de kits.',
+          perguntas: [
+            { p: 'Quantos kits vão ser montados?', r: s => mdc(s.a.v, s.b.v), ops: ['÷'], un: 'kits',
+              res: s => { const ca = divisores(s.a.v), cb = divisores(s.b.v), c = ca.filter(x => cb.includes(x)); return `Divisores comuns de ${s.a.v} e ${s.b.v}: ${c.join(', ')}. O maior é ${c[c.length - 1]}.`; } },
+            { p: 'Quantos lápis vai ter cada kit?', r: s => s.a.v / mdc(s.a.v, s.b.v), ops: ['÷'], un: 'lápis', res: s => `São ${mdc(s.a.v, s.b.v)} kits. ${s.a.v} ÷ ${mdc(s.a.v, s.b.v)} = ${s.a.v / mdc(s.a.v, s.b.v)} lápis.` },
+            { p: 'Quantas borrachas vai ter cada kit?', r: s => s.b.v / mdc(s.a.v, s.b.v), ops: ['÷'], un: 'borrachas', res: s => `São ${mdc(s.a.v, s.b.v)} kits. ${s.b.v} ÷ ${mdc(s.a.v, s.b.v)} = ${s.b.v / mdc(s.a.v, s.b.v)} borrachas.` },
+            { p: 'Quanto custa cada kit?', r: null, falta: 'o preço dos lápis e das borrachas' }] },
+        { nome: 'Fitas', resumo: 'Cortar em pedaços iguais',
+          pecas: [{ id: 'a', rot: 'Comprimento da primeira fita?', op: () => amostra([120, 150, 180, 200]).map(n => O(n + ' cm', n)) },
+                  { id: 'b', rot: 'Comprimento da segunda fita?', op: s => amostra([90, 100, 135, 160, 75].filter(x => mdc(s.a.v, x) >= 5)).map(n => O(n + ' cm', n)) }],
+          texto: 'Duas fitas, uma de {a} e outra de {b}, vão ser cortadas em pedaços do mesmo tamanho, o maior possível, sem sobrar fita.',
+          perguntas: [
+            { p: 'Qual vai ser o tamanho de cada pedaço, em centímetros?', r: s => mdc(s.a.v, s.b.v), ops: ['÷'], un: 'cm',
+              res: s => { const c = divisores(s.a.v).filter(x => s.b.v % x === 0); return `Divisores comuns de ${s.a.v} e ${s.b.v}: ${c.join(', ')}. O maior é ${c[c.length - 1]} cm.`; } },
+            { p: 'Quantos pedaços vão ser cortados ao todo?', r: s => (s.a.v + s.b.v) / mdc(s.a.v, s.b.v), ops: ['÷', '+'], un: 'pedaços',
+              res: s => { const g = mdc(s.a.v, s.b.v); return `Pedaços de ${g} cm: ${s.a.v} ÷ ${g} = ${s.a.v / g} e ${s.b.v} ÷ ${g} = ${s.b.v / g}. Ao todo, ${(s.a.v + s.b.v) / g} pedaços.`; } },
+            { p: 'Para que as fitas vão ser usadas?', r: null, falta: 'o uso das fitas' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF06MA10', cod: 'MS.EF06MA10.s.10', ano: '6º ano', nome: 'Adição e subtração de frações', faixas: FAIXAS_FRACAO,
+    desc: 'Resolver e elaborar problemas que envolvam adição ou subtração com números racionais positivos na representação fracionária.',
+    niveis: [
+      { nome: 'Mesmo denominador', cenarios: [
+        { nome: 'Pizza', resumo: 'Pedaços de uma pizza',
+          pecas: [{ id: 'nome', rot: 'Quem dividiu a pizza com o irmão?', op: nomes },
+                  { id: 'd', rot: 'Em quantos pedaços iguais a pizza foi cortada?', op: () => nums([6, 8, 10, 12]) },
+                  { id: 'a', rot: 'Que fração da pizza essa pessoa comeu?', op: s => amostra(intervalo(2, s.d.v - 2)).map(a => O(`${a}/${s.d.v}`, a)) },
+                  { id: 'b', rot: 'Que fração o irmão comeu?', op: s => intervalo(1, Math.min(s.a.v - 1, s.d.v - s.a.v - 1)).slice(0, 4).map(b => O(`${b}/${s.d.v}`, b)) }],
+          texto: '{nome} e o irmão dividiram uma pizza cortada em {d} pedaços iguais. {nome} comeu {a} da pizza e o irmão comeu {b}.',
+          perguntas: [
+            { p: 'Que fração da pizza os dois comeram juntos?', r: s => (s.a.v + s.b.v) / s.d.v, fmt: s => F(s.a.v + s.b.v, s.d.v).t, tol: 1e-9, ops: ['+'], un: 'da pizza',
+              res: s => `${s.a.v}/${s.d.v} + ${s.b.v}/${s.d.v} = ${s.a.v + s.b.v}/${s.d.v}` + (F(s.a.v + s.b.v, s.d.v).t !== `${s.a.v + s.b.v}/${s.d.v}` ? ` = ${F(s.a.v + s.b.v, s.d.v).t}` : '') + '. Com o mesmo denominador, somam-se os numeradores.' },
+            { p: 'Que fração da pizza sobrou?', r: s => (s.d.v - s.a.v - s.b.v) / s.d.v, fmt: s => F(s.d.v - s.a.v - s.b.v, s.d.v).t, tol: 1e-9, ops: ['+', '−'], un: 'da pizza',
+              res: s => `A pizza inteira é ${s.d.v}/${s.d.v}. Comeram ${s.a.v + s.b.v}/${s.d.v}. ${s.d.v}/${s.d.v} − ${s.a.v + s.b.v}/${s.d.v} = ${s.d.v - s.a.v - s.b.v}/${s.d.v}` + (F(s.d.v - s.a.v - s.b.v, s.d.v).t !== `${s.d.v - s.a.v - s.b.v}/${s.d.v}` ? ` = ${F(s.d.v - s.a.v - s.b.v, s.d.v).t}` : '') + '.' },
+            { p: 'Que fração da pizza {nome} comeu a mais que o irmão?', r: s => (s.a.v - s.b.v) / s.d.v, fmt: s => F(s.a.v - s.b.v, s.d.v).t, tol: 1e-9, ops: ['−'], un: 'da pizza',
+              res: s => `${s.a.v}/${s.d.v} − ${s.b.v}/${s.d.v} = ${s.a.v - s.b.v}/${s.d.v}` + (F(s.a.v - s.b.v, s.d.v).t !== `${s.a.v - s.b.v}/${s.d.v}` ? ` = ${F(s.a.v - s.b.v, s.d.v).t}` : '') + '.' },
+            { p: 'Quanto custou a pizza?', r: null, falta: 'o preço da pizza' }] }
+      ]},
+      { nome: 'Denominadores diferentes', cenarios: [
+        { nome: 'Receita', resumo: 'Xícaras de ingredientes',
+          pecas: [{ id: 'nome', rot: 'Quem fez a receita?', op: nomes },
+                  { id: 'f1', rot: 'Quanto de açúcar, em xícaras?', op: () => amostra([[1, 2], [1, 3], [1, 4], [2, 3], [3, 4]]).map(fopt) },
+                  { id: 'f2', rot: 'Quanto de leite, em xícaras?', op: s => amostra([[1, 2], [1, 3], [1, 4], [2, 3], [3, 4], [1, 6]].filter(([, d]) => d !== s.f1.d)).map(fopt) }],
+          texto: 'Em uma receita de bolo, {nome} usou {f1} de xícara de açúcar e {f2} de xícara de leite.',
+          perguntas: [
+            { p: 'Quantas xícaras foram usadas, somando açúcar e leite?', r: s => s.f1.v + s.f2.v, fmt: s => contaFracoes(s.f1, s.f2, '+').f.t, tol: 1e-9, ops: ['+'], un: 'de xícara', res: s => contaFracoes(s.f1, s.f2, '+').txt },
+            { p: 'Qual é a diferença entre a quantidade de açúcar e a de leite?', r: s => Math.abs(s.f1.v - s.f2.v), fmt: s => contaFracoes(s.f1, s.f2, '−').f.t, tol: 1e-9, ops: ['−'], un: 'de xícara', res: s => contaFracoes(s.f1, s.f2, '−').txt },
+            { p: 'Quantos ovos foram na receita?', r: null, falta: 'a quantidade de ovos' }] },
+        { nome: 'Caminhada', resumo: 'Distâncias do dia',
+          pecas: [{ id: 'nome', rot: 'Quem caminhou?', op: nomes },
+                  { id: 'f1', rot: 'Quanto caminhou de manhã, em km?', op: () => amostra([[1, 2], [3, 4], [2, 3], [3, 5], [5, 6]]).map(fopt) },
+                  { id: 'f2', rot: 'Quanto caminhou à tarde, em km?', op: s => amostra([[1, 2], [1, 3], [1, 4], [2, 5], [5, 6]].filter(([, d]) => d !== s.f1.d)).map(fopt) }],
+          texto: '{nome} caminhou {f1} de quilômetro de manhã e {f2} de quilômetro à tarde.',
+          perguntas: [
+            { p: 'Quantos quilômetros {nome} caminhou no dia?', r: s => s.f1.v + s.f2.v, fmt: s => contaFracoes(s.f1, s.f2, '+').f.t, tol: 1e-9, ops: ['+'], un: 'de quilômetro', res: s => contaFracoes(s.f1, s.f2, '+').txt },
+            { p: 'Quanto {nome} caminhou a mais em um período do que no outro?', r: s => Math.abs(s.f1.v - s.f2.v), fmt: s => contaFracoes(s.f1, s.f2, '−').f.t, tol: 1e-9, ops: ['−'], un: 'de quilômetro', res: s => contaFracoes(s.f1, s.f2, '−').txt },
+            { p: 'Quanto tempo {nome} levou para caminhar?', r: null, falta: 'a velocidade ou o horário da caminhada' }] }
+      ]},
+      { nome: 'Partes de um inteiro', cenarios: [
+        { nome: 'Horta', resumo: 'Dividir o terreno',
+          pecas: [{ id: 'f1', rot: 'Que fração do terreno tem alface?', op: () => amostra([[1, 2], [1, 3], [1, 4], [2, 5], [1, 5]]).map(fopt) },
+                  { id: 'f2', rot: 'Que fração tem tomate?', op: s => amostra([[1, 3], [1, 4], [1, 6], [1, 5], [1, 8], [3, 10]].filter(([n, d]) => d !== s.f1.d && s.f1.v + n / d < 1 - 1e-9)).map(fopt) }],
+          texto: 'Na horta da escola, {f1} do terreno tem alface e {f2} tem tomate. O resto do terreno vai ter cenoura.',
+          perguntas: [
+            { p: 'Que fração do terreno tem alface ou tomate?', r: s => s.f1.v + s.f2.v, fmt: s => contaFracoes(s.f1, s.f2, '+').f.t, tol: 1e-9, ops: ['+'], un: 'do terreno', res: s => contaFracoes(s.f1, s.f2, '+').txt },
+            { p: 'Que fração do terreno vai ter cenoura?', r: s => 1 - s.f1.v - s.f2.v, fmt: s => { const t = contaFracoes(s.f1, s.f2, '+').f; return F(t.d - t.n, t.d).t; }, tol: 1e-9, ops: ['+', '−'], un: 'do terreno',
+              res: s => { const t = contaFracoes(s.f1, s.f2, '+'); return `${t.txt} O terreno inteiro é ${t.f.d}/${t.f.d}: ${t.f.d}/${t.f.d} − ${t.f.t} = ${F(t.f.d - t.f.n, t.f.d).t}.`; } },
+            { p: 'Quantos metros quadrados tem a horta?', r: null, falta: 'as medidas do terreno' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF06MA11', cod: 'MS.EF06MA11.s.11', ano: '6º ano', nome: 'Números decimais',
+    desc: 'Resolver e elaborar problemas com números racionais na forma decimal, com as quatro operações e a potenciação, usando estimativas e arredondamentos.',
+    niveis: [
+      { nome: 'Somar e subtrair', cenarios: [
+        { nome: 'Papelaria', resumo: 'Compra e troco com centavos',
+          pecas: [{ id: 'nome', rot: 'Quem foi à papelaria?', op: nomes },
+                  { id: 'p1', rot: 'Preço do caderno?', op: () => reais([3.5, 4.25, 6.8, 7.9, 12.45]) },
+                  { id: 'p2', rot: 'Preço da caneta?', op: () => reais([2.75, 3.4, 5.6, 8.99]) },
+                  { id: 'M', rot: 'Com que nota pagou?', op: s => [10, 20, 50, 100].filter(x => x > s.p1.v + s.p2.v).map(n => O(`uma nota de ${money(n)}`, n)) }],
+          texto: '{nome} comprou um caderno de {p1} e uma caneta de {p2} e pagou com {M}.',
+          perguntas: [
+            { p: 'Quanto {nome} gastou?', r: s => r2(s.p1.v + s.p2.v), ops: ['+'], un: 'reais', res: s => `${money(s.p1.v)} + ${money(s.p2.v)} = ${money(s.p1.v + s.p2.v)}. Dica: alinhe a vírgula.` },
+            { p: 'Quanto {nome} recebeu de troco?', r: s => r2(s.M.v - s.p1.v - s.p2.v), ops: ['+', '−'], un: 'reais', res: s => `Gasto: ${money(s.p1.v + s.p2.v)}. ${money(s.M.v)} − ${money(s.p1.v + s.p2.v)} = ${money(s.M.v - s.p1.v - s.p2.v)}.` },
+            { p: 'Quanto custa a mochila da loja?', r: null, falta: 'o preço da mochila' }] },
+        { nome: 'Salto em distância', resumo: 'Medidas em metros',
+          pecas: [{ id: 'nome', rot: 'Quem saltou?', op: nomes },
+                  { id: 'a', rot: 'Primeiro salto?', op: () => amostra([2.35, 2.48, 2.6, 2.75]).map(n => O(fmt(n) + ' m', n)) },
+                  { id: 'b', rot: 'Segundo salto?', op: () => amostra([2.4, 2.52, 2.67, 2.81]).map(n => O(fmt(n) + ' m', n)) }],
+          texto: 'Na prova de salto em distância, {nome} saltou {a} na primeira tentativa e {b} na segunda.',
+          perguntas: [
+            { p: 'Qual é a diferença entre os dois saltos, em metros?', r: s => r2(Math.abs(s.a.v - s.b.v)), ops: ['−'], un: 'metros', res: s => `${fmt(Math.max(s.a.v, s.b.v))} − ${fmt(Math.min(s.a.v, s.b.v))} = ${fmt(Math.abs(s.a.v - s.b.v))} m.` },
+            { p: 'Quantos metros somam os dois saltos?', r: s => r2(s.a.v + s.b.v), ops: ['+'], un: 'metros', res: s => `${fmt(s.a.v)} + ${fmt(s.b.v)} = ${fmt(s.a.v + s.b.v)} m.` },
+            { p: 'Quanto saltou quem ganhou a prova?', r: null, falta: 'o salto do vencedor' }] }
+      ]},
+      { nome: 'Multiplicar e dividir', cenarios: [
+        { nome: 'Feira', resumo: 'Preço por quilo',
+          pecas: [{ id: 'nome', rot: 'Quem foi à feira?', op: nomes },
+                  { id: 'prod', rot: 'O que comprou?', op: () => [O('tomate'), O('batata'), O('banana')] },
+                  { id: 'p', rot: 'Preço do quilo?', op: () => reais([4.5, 5.9, 6.4, 7.2]) },
+                  { id: 'k', rot: 'Quantos quilos comprou?', op: s => [1.5, 2, 2.5, 3].filter(k => Math.abs(s.p.v * k * 100 - Math.round(s.p.v * k * 100)) < 1e-6).map(k => O(fmt(k) + ' kg', k)) }],
+          texto: 'O quilo de {prod} custa {p}. {nome} comprou {k}.',
+          perguntas: [
+            { p: 'Quanto {nome} pagou?', r: s => r2(s.p.v * s.k.v), ops: ['×'], un: 'reais', res: s => `${fmt(s.p.v)} × ${fmt(s.k.v)} = ${fmt(s.p.v * s.k.v)} reais.` },
+            { p: 'Se pagar com uma nota de R$ 50, quanto recebe de troco?', r: s => r2(50 - s.p.v * s.k.v), ops: ['×', '−'], un: 'reais', res: s => `Gasto: ${money(s.p.v * s.k.v)}. 50 − ${fmt(s.p.v * s.k.v)} = ${fmt(50 - s.p.v * s.k.v)} reais.` },
+            { p: 'Quantos {prod}s vêm em um quilo?', r: null, falta: 'o peso de cada unidade' }] },
+        { nome: 'Conta do restaurante', resumo: 'Dividir igualmente',
+          pecas: [{ id: 'v', rot: 'Valor da conta?', op: () => reais([86.4, 97.5, 120.6, 145.8]) },
+                  { id: 'k', rot: 'Entre quantos amigos?', op: s => [2, 3, 4, 5, 6].filter(k => Math.round(s.v.v * 100) % k === 0).slice(0, 4).map(k => O(String(k), k)) }],
+          texto: 'Uma conta de {v} no restaurante foi dividida igualmente entre {k} amigos.',
+          perguntas: [
+            { p: 'Quanto cada amigo pagou?', r: s => r2(s.v.v / s.k.v), ops: ['÷'], un: 'reais', res: s => `${fmt(s.v.v)} ÷ ${s.k.v} = ${fmt(s.v.v / s.k.v)} reais.` },
+            { p: 'Quanto pagaram dois desses amigos, juntos?', r: s => r2(2 * s.v.v / s.k.v), ops: ['÷', '×'], un: 'reais', res: s => `Cada um: ${money(s.v.v / s.k.v)}. 2 × ${fmt(s.v.v / s.k.v)} = ${fmt(2 * s.v.v / s.k.v)} reais.` },
+            { p: 'O que cada amigo comeu?', r: null, falta: 'o pedido de cada um' }] }
+      ]},
+      { nome: 'Potência e arredondamento', cenarios: [
+        { nome: 'Canteiro quadrado', resumo: 'Área com decimal ao quadrado',
+          pecas: [{ id: 'l', rot: 'Quanto mede o lado?', op: () => amostra([0.8, 1.2, 2.5, 3.5, 4.5]).map(n => O(fmt(n) + ' m', n)) }],
+          texto: 'Um canteiro quadrado tem {l} de lado.',
+          perguntas: [
+            { p: 'Qual é a área do canteiro, em metros quadrados?', r: s => r2(s.l.v * s.l.v), ops: ['potência'], un: 'm²', res: s => `(${fmt(s.l.v)})² = ${fmt(s.l.v)} × ${fmt(s.l.v)} = ${fmt(s.l.v * s.l.v)} m².` },
+            { p: 'Quantos metros de tela são necessários para cercar o canteiro?', r: s => r2(4 * s.l.v), ops: ['×'], un: 'metros', res: s => `São 4 lados: 4 × ${fmt(s.l.v)} = ${fmt(4 * s.l.v)} m.` },
+            { p: 'Quantas mudas cabem no canteiro?', r: null, falta: 'o espaço ocupado por cada muda' }] },
+        { nome: 'Posto de gasolina', resumo: 'Conta exata e estimativa',
+          pecas: [{ id: 'p', rot: 'Preço do litro?', op: () => reais([5.89, 6.19, 6.49]) },
+                  { id: 'l', rot: 'Quantos litros para encher o tanque?', op: () => nums([40, 45, 50]) }],
+          texto: 'O litro da gasolina custa {p}. Para encher o tanque de um carro, são necessários {l} litros.',
+          perguntas: [
+            { p: 'Quanto custa encher o tanque?', r: s => r2(s.p.v * s.l.v), ops: ['×'], un: 'reais', res: s => `${fmt(s.p.v)} × ${s.l.v} = ${fmt(s.p.v * s.l.v)} reais.` },
+            { p: 'Arredondando o preço do litro para o real mais próximo, quanto custaria, aproximadamente?', r: s => Math.round(s.p.v) * s.l.v, ops: ['×'], un: 'reais', res: s => `${money(s.p.v)} fica perto de ${money(Math.round(s.p.v))}. ${Math.round(s.p.v)} × ${s.l.v} = ${Math.round(s.p.v) * s.l.v} reais. Comparem com a conta exata.` },
+            { p: 'Quantos quilômetros o carro anda com um tanque?', r: null, falta: 'quantos quilômetros o carro faz com 1 litro' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF06MA15', cod: 'MS.EF06MA15.s.15', ano: '6º ano', nome: 'Partilha em partes desiguais',
+    desc: 'Resolver e elaborar problemas de partilha de uma quantidade em duas partes desiguais, com relações aditivas e multiplicativas e razões.',
+    niveis: [
+      { nome: 'Uma parte tem a mais', cenarios: [
+        { nome: 'Figurinhas', resumo: 'Diferença entre duas pessoas',
+          pecas: [{ id: 'nome', rot: 'Quem tem mais figurinhas?', op: nomes },
+                  { id: 'nome2', rot: 'Quem tem menos?', op: outroNome },
+                  { id: 'T', rot: 'Quantas figurinhas os dois têm juntos?', op: () => nums([40, 50, 60, 80, 100]) },
+                  { id: 'd', rot: 'Quantas a mais tem quem tem mais?', op: s => nums([4, 6, 8, 10, 12, 14, 20].filter(x => x < s.T.v && (s.T.v - x) % 2 === 0)) }],
+          texto: '{nome} e {nome2} têm, juntos, {T} figurinhas. {nome} tem {d} figurinhas a mais que {nome2}.',
+          perguntas: [
+            { p: 'Quantas figurinhas {nome2} tem?', r: s => (s.T.v - s.d.v) / 2, ops: ['−', '÷'], un: 'figurinhas', res: s => `Tirando a diferença: ${s.T.v} − ${s.d.v} = ${s.T.v - s.d.v}. Agora as partes ficam iguais: ${s.T.v - s.d.v} ÷ 2 = ${(s.T.v - s.d.v) / 2}.` },
+            { p: 'Quantas figurinhas {nome} tem?', r: s => (s.T.v + s.d.v) / 2, ops: ['−', '÷', '+'], un: 'figurinhas', res: s => `${s.nome2.v} tem (${s.T.v} − ${s.d.v}) ÷ 2 = ${(s.T.v - s.d.v) / 2}. ${s.nome.v} tem ${(s.T.v - s.d.v) / 2} + ${s.d.v} = ${(s.T.v + s.d.v) / 2}.` },
+            { p: 'Quantas figurinhas cabem no álbum?', r: null, falta: 'o tamanho do álbum' }] }
+      ]},
+      { nome: 'O dobro, o triplo', cenarios: [
+        { nome: 'Prêmio', resumo: 'Uma parte vale várias vezes a outra',
+          pecas: [{ id: 'nome', rot: 'Quem recebeu mais?', op: nomes },
+                  { id: 'nome2', rot: 'Quem recebeu menos?', op: outroNome },
+                  { id: 'm', rot: 'Quantas vezes mais?', op: () => [O('dobro', 2), O('triplo', 3), O('quádruplo', 4)] },
+                  { id: 'T', rot: 'Valor do prêmio?', op: s => reais([60, 90, 120, 150, 180, 200, 240, 250, 300].filter(x => x % (s.m.v + 1) === 0)) }],
+          texto: 'Um prêmio de {T} foi dividido entre {nome} e {nome2}. {nome} recebeu o {m} do valor de {nome2}.',
+          perguntas: [
+            { p: 'Quanto {nome2} recebeu?', r: s => s.T.v / (s.m.v + 1), ops: ['+', '÷'], un: 'reais', res: s => `${s.nome.v} fica com ${s.m.v} partes e ${s.nome2.v} com 1 parte: ${s.m.v + 1} partes iguais. ${s.T.v} ÷ ${s.m.v + 1} = ${s.T.v / (s.m.v + 1)} reais.` },
+            { p: 'Quanto {nome} recebeu?', r: s => s.m.v * s.T.v / (s.m.v + 1), ops: ['+', '÷', '×'], un: 'reais', res: s => `Cada parte vale ${s.T.v} ÷ ${s.m.v + 1} = ${s.T.v / (s.m.v + 1)}. ${s.nome.v}: ${s.m.v} × ${s.T.v / (s.m.v + 1)} = ${s.m.v * s.T.v / (s.m.v + 1)} reais.` },
+            { p: 'Em que competição eles ganharam o prêmio?', r: null, falta: 'o nome da competição' }] }
+      ]},
+      { nome: 'Razão entre as partes', cenarios: [
+        { nome: 'Turma', resumo: 'Meninos e meninas',
+          pecas: [{ id: 'raz', rot: 'Qual é a razão?', op: () => [O('2 meninos para cada 3 meninas', null, { a: 2, b: 3 }), O('1 menino para cada 2 meninas', null, { a: 1, b: 2 }), O('3 meninos para cada 4 meninas', null, { a: 3, b: 4 }), O('3 meninos para cada 2 meninas', null, { a: 3, b: 2 })] },
+                  { id: 'T', rot: 'Quantos estudantes tem a turma?', op: s => nums([20, 21, 24, 28, 30, 35, 36, 40, 42].filter(x => x % (s.raz.a + s.raz.b) === 0)) }],
+          texto: 'Em uma turma de {T} estudantes, há {raz}.',
+          perguntas: [
+            { p: 'Quantas meninas há na turma?', r: s => s.T.v * s.raz.b / (s.raz.a + s.raz.b), ops: ['+', '÷', '×'], un: 'meninas', res: s => { const g = s.raz.a + s.raz.b, k = s.T.v / g; return `Cada grupo tem ${s.raz.a} + ${s.raz.b} = ${g} estudantes. ${s.T.v} ÷ ${g} = ${k} grupos. Meninas: ${k} × ${s.raz.b} = ${k * s.raz.b}.`; } },
+            { p: 'Quantos meninos há na turma?', r: s => s.T.v * s.raz.a / (s.raz.a + s.raz.b), ops: ['+', '÷', '×'], un: 'meninos', res: s => { const g = s.raz.a + s.raz.b, k = s.T.v / g; return `${s.T.v} ÷ ${g} = ${k} grupos. Meninos: ${k} × ${s.raz.a} = ${k * s.raz.a}.`; } },
+            { p: 'Que fração da turma são meninas?', r: s => s.raz.b / (s.raz.a + s.raz.b), fmt: s => F(s.raz.b, s.raz.a + s.raz.b).t, tol: 1e-9, ops: ['+'], un: 'da turma', res: s => `Em cada grupo de ${s.raz.a + s.raz.b} estudantes, ${s.raz.b} são meninas: ${F(s.raz.b, s.raz.a + s.raz.b).t} da turma.` },
+            { p: 'Quantos estudantes usam óculos?', r: null, falta: 'quantos usam óculos' }] },
+        { nome: 'Suco', resumo: 'Concentrado e água',
+          pecas: [{ id: 'raz', rot: 'Qual é a receita?', op: () => [O('1 copo de concentrado para cada 2 de água', null, { a: 1, b: 2 }), O('1 copo de concentrado para cada 3 de água', null, { a: 1, b: 3 }), O('2 copos de concentrado para cada 3 de água', null, { a: 2, b: 3 }), O('1 copo de concentrado para cada 4 de água', null, { a: 1, b: 4 })] },
+                  { id: 'T', rot: 'Quantos copos de suco cabem na jarra?', op: s => nums([12, 15, 16, 20, 24, 30].filter(x => x % (s.raz.a + s.raz.b) === 0)) }],
+          texto: 'Para fazer suco, a receita usa {raz}. Uma jarra tem {T} copos de suco pronto.',
+          perguntas: [
+            { p: 'Quantos copos de concentrado vão na jarra?', r: s => s.T.v * s.raz.a / (s.raz.a + s.raz.b), ops: ['+', '÷', '×'], un: 'copos', res: s => { const g = s.raz.a + s.raz.b, k = s.T.v / g; return `Cada "porção" tem ${g} copos. ${s.T.v} ÷ ${g} = ${k} porções. Concentrado: ${k} × ${s.raz.a} = ${k * s.raz.a} copos.`; } },
+            { p: 'Quantos copos de água vão na jarra?', r: s => s.T.v * s.raz.b / (s.raz.a + s.raz.b), ops: ['+', '÷', '×'], un: 'copos', res: s => { const g = s.raz.a + s.raz.b, k = s.T.v / g; return `${s.T.v} ÷ ${g} = ${k} porções. Água: ${k} × ${s.raz.b} = ${k * s.raz.b} copos.`; } },
+            { p: 'Que fração do suco é água?', r: s => s.raz.b / (s.raz.a + s.raz.b), fmt: s => F(s.raz.b, s.raz.a + s.raz.b).t, tol: 1e-9, ops: ['+'], un: 'do suco', res: s => `De cada ${s.raz.a + s.raz.b} copos, ${s.raz.b} são de água: ${F(s.raz.b, s.raz.a + s.raz.b).t}.` },
+            { p: 'Qual é o sabor do suco?', r: null, falta: 'o sabor do concentrado' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF06MA24', cod: 'MS.EF06MA24.s.24', ano: '6º ano', nome: 'Grandezas e medidas',
+    desc: 'Resolver e elaborar problemas com comprimento, massa, tempo, capacidade, área e volume, sem uso de fórmulas.',
+    niveis: [
+      { nome: 'Tempo', cenarios: [
+        { nome: 'Treino', resumo: 'Minutos e horas',
+          pecas: [{ id: 'nome', rot: 'Quem treina?', op: nomes },
+                  { id: 'm', rot: 'Quantos minutos por dia?', op: () => nums([30, 40, 45, 60, 90]) },
+                  { id: 'd', rot: 'Quantos dias por semana?', op: s => nums([2, 3, 4, 5, 6].filter(x => s.m.v * x % 60 === 0)) }],
+          texto: '{nome} treina futebol {m} minutos por dia, {d} dias por semana.',
+          perguntas: [
+            { p: 'Quantos minutos {nome} treina por semana?', r: s => s.m.v * s.d.v, ops: ['×'], un: 'minutos', res: s => `${s.m.v} × ${s.d.v} = ${s.m.v * s.d.v} minutos.` },
+            { p: 'Quantas horas {nome} treina por semana?', r: s => s.m.v * s.d.v / 60, ops: ['×', '÷'], un: 'horas', res: s => `${s.m.v} × ${s.d.v} = ${s.m.v * s.d.v} minutos. 1 hora = 60 minutos: ${s.m.v * s.d.v} ÷ 60 = ${s.m.v * s.d.v / 60} horas.` },
+            { p: 'Quantos gols {nome} fez no treino?', r: null, falta: 'o número de gols' }] },
+        { nome: 'Viagem', resumo: 'Duração entre dois horários',
+          pecas: [{ id: 'h1', rot: 'A que horas o ônibus saiu?', op: () => amostra([460, 495, 590, 805]).map(m => O(hora(m), m)) },
+                  { id: 'h2', rot: 'A que horas chegou?', op: s => [95, 130, 155, 200].map(x => O(hora(s.h1.v + x), s.h1.v + x)) }],
+          texto: 'Um ônibus saiu da rodoviária às {h1} e chegou ao destino às {h2}.',
+          perguntas: [
+            { p: 'Quantos minutos durou a viagem?', r: s => s.h2.v - s.h1.v, ops: ['−'], un: 'minutos', res: s => { const d = s.h2.v - s.h1.v; return `Das ${s.h1.t} às ${s.h2.t} são ${Math.floor(d / 60)} h e ${d % 60} min. ${Math.floor(d / 60)} × 60 + ${d % 60} = ${d} minutos.`; } },
+            { p: 'Se a volta demorar 20 minutos a mais, quantos minutos ela vai durar?', r: s => s.h2.v - s.h1.v + 20, ops: ['−', '+'], un: 'minutos', res: s => `A ida durou ${s.h2.v - s.h1.v} minutos. ${s.h2.v - s.h1.v} + 20 = ${s.h2.v - s.h1.v + 20} minutos.` },
+            { p: 'Qual é a distância entre as duas cidades?', r: null, falta: 'a velocidade do ônibus' }] }
+      ]},
+      { nome: 'Massa e capacidade', cenarios: [
+        { nome: 'Jarra de suco', resumo: 'Litros e mililitros',
+          pecas: [{ id: 'L', rot: 'Quantos litros tem a jarra?', op: () => [1, 1.5, 2, 3].map(n => O(fmt(n) + (n === 1 ? ' litro' : ' litros'), n)) },
+                  { id: 'c', rot: 'Qual é a capacidade de cada copo?', op: s => [200, 250, 300].filter(x => (s.L.v * 1000) % x === 0).map(n => O(n + ' mL', n)) }],
+          texto: 'Uma jarra tem {L} de suco, que vai ser servido em copos de {c}.',
+          perguntas: [
+            { p: 'Quantos copos dá para encher?', r: s => s.L.v * 1000 / s.c.v, ops: ['×', '÷'], un: 'copos', res: s => `1 litro = 1.000 mL, então ${fmt(s.L.v)} L = ${fmt(s.L.v * 1000)} mL. ${fmt(s.L.v * 1000)} ÷ ${s.c.v} = ${s.L.v * 1000 / s.c.v} copos.` },
+            { p: 'Quantos mililitros de suco há na jarra?', r: s => s.L.v * 1000, ops: ['×'], un: 'mL', res: s => `1 litro = 1.000 mL. ${fmt(s.L.v)} × 1.000 = ${fmt(s.L.v * 1000)} mL.` },
+            { p: 'De que fruta é o suco?', r: null, falta: 'o sabor do suco' }] },
+        { nome: 'Caixa de biscoitos', resumo: 'Gramas e quilogramas',
+          pecas: [{ id: 'k', rot: 'Quantos pacotes na caixa?', op: () => nums([6, 8, 10, 12, 20]) },
+                  { id: 'g', rot: 'Quantos gramas tem cada pacote?', op: () => [125, 150, 200, 250].map(n => O(n + ' g', n)) }],
+          texto: 'Uma caixa tem {k} pacotes de biscoito de {g} cada.',
+          perguntas: [
+            { p: 'Quantos gramas de biscoito há na caixa?', r: s => s.k.v * s.g.v, ops: ['×'], un: 'gramas', res: s => `${s.k.v} × ${s.g.v} = ${fmt(s.k.v * s.g.v)} g.` },
+            { p: 'Quantos quilogramas de biscoito há na caixa?', r: s => s.k.v * s.g.v / 1000, ops: ['×', '÷'], un: 'kg', res: s => `${s.k.v} × ${s.g.v} = ${fmt(s.k.v * s.g.v)} g. 1 kg = 1.000 g: ${fmt(s.k.v * s.g.v)} ÷ 1.000 = ${fmt(s.k.v * s.g.v / 1000)} kg.` },
+            { p: 'Quanto custa a caixa?', r: null, falta: 'o preço dos biscoitos' }] }
+      ]},
+      { nome: 'Área e volume, sem fórmula', cenarios: [
+        { nome: 'Piso de lajotas', resumo: 'Contar quadrados',
+          pecas: [{ id: 'a', rot: 'Quantas fileiras de lajotas?', op: () => nums([3, 4, 5, 6]) },
+                  { id: 'b', rot: 'Quantas lajotas em cada fileira?', op: () => nums([5, 6, 7, 8]) }],
+          texto: 'O piso de uma sala retangular foi coberto com {a} fileiras de {b} lajotas quadradas, cada uma com 1 m de lado.',
+          perguntas: [
+            { p: 'Qual é a área do piso, em metros quadrados?', r: s => s.a.v * s.b.v, ops: ['×'], un: 'm²', res: s => `Cada lajota tem 1 m². São ${s.a.v} × ${s.b.v} = ${s.a.v * s.b.v} lajotas, então ${s.a.v * s.b.v} m².` },
+            { p: 'Quantos metros de rodapé vão em volta da sala?', r: s => 2 * (s.a.v + s.b.v), ops: ['+', '×'], un: 'metros', res: s => `Os lados medem ${s.a.v} m e ${s.b.v} m. Contorno: ${s.a.v} + ${s.b.v} + ${s.a.v} + ${s.b.v} = ${2 * (s.a.v + s.b.v)} m.` },
+            { p: 'Quanto custou cada lajota?', r: null, falta: 'o preço das lajotas' }] },
+        { nome: 'Caixa de cubinhos', resumo: 'Volume por camadas',
+          pecas: [{ id: 'a', rot: 'Quantos cubinhos no comprimento?', op: () => nums([5, 6, 8, 10]) },
+                  { id: 'b', rot: 'Quantos na largura?', op: () => nums([3, 4, 5]) },
+                  { id: 'c', rot: 'Quantas camadas na altura?', op: () => nums([2, 3, 4]) }],
+          texto: 'Uma caixa foi preenchida com cubinhos de 1 cm³: {a} cubinhos no comprimento, {b} na largura e {c} camadas na altura.',
+          perguntas: [
+            { p: 'Qual é o volume da caixa, em centímetros cúbicos?', r: s => s.a.v * s.b.v * s.c.v, ops: ['×'], un: 'cm³', res: s => `Cada camada tem ${s.a.v} × ${s.b.v} = ${s.a.v * s.b.v} cubinhos. ${s.c.v} camadas: ${s.a.v * s.b.v} × ${s.c.v} = ${s.a.v * s.b.v * s.c.v} cm³.` },
+            { p: 'Quantos cubinhos há em cada camada?', r: s => s.a.v * s.b.v, ops: ['×'], un: 'cubinhos', res: s => `${s.a.v} × ${s.b.v} = ${s.a.v * s.b.v} cubinhos.` },
+            { p: 'Quanto pesa a caixa cheia?', r: null, falta: 'o peso de cada cubinho' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF07MA04', cod: 'MS.EF07MA04.s.04', ano: '7º ano', nome: 'Números inteiros', neg: true,
+    desc: 'Resolver e elaborar problemas que envolvam operações com números inteiros.',
+    niveis: [
+      { nome: 'Temperaturas', cenarios: [
+        { nome: 'Frio e calor', resumo: 'Temperatura ao longo do dia',
+          pecas: [{ id: 'lugar', rot: 'Onde?', op: () => [O('uma cidade no Sul do Brasil'), O('o alto de uma serra'), O('uma cidade no Canadá')] },
+                  { id: 't1', rot: 'Temperatura de madrugada?', op: () => amostra([-6, -5, -4, -3, -2]).map(n => O(sig(n) + ' °C', n)) },
+                  { id: 't2', rot: 'Temperatura à tarde?', op: () => amostra([3, 4, 6, 8, 10]).map(n => O(n + ' °C', n)) },
+                  { id: 'qd', rot: 'Quanto caiu à noite?', op: () => amostra([5, 7, 9, 12]).map(n => O(n + ' graus', n)) }],
+          texto: 'De madrugada, a temperatura em {lugar} era de {t1}. À tarde, chegou a {t2}. À noite, caiu {qd}.',
+          perguntas: [
+            { p: 'Quantos graus a temperatura subiu da madrugada até a tarde?', r: s => s.t2.v - s.t1.v, ops: ['−'], un: 'graus', res: s => `${s.t2.v} − (${sig(s.t1.v)}) = ${s.t2.v} + ${-s.t1.v} = ${s.t2.v - s.t1.v} graus.` },
+            { p: 'Qual era a temperatura à noite?', r: s => s.t2.v - s.qd.v, ops: ['−'], un: '°C', res: s => `${s.t2.v} − ${s.qd.v} = ${sig(s.t2.v - s.qd.v)} °C.` },
+            { p: 'Qual será a temperatura amanhã de manhã?', r: null, falta: 'a previsão do tempo para amanhã' }] }
+      ]},
+      { nome: 'Saldo bancário', cenarios: [
+        { nome: 'Conta no banco', resumo: 'Saldo que pode ficar negativo',
+          pecas: [{ id: 'nome', rot: 'De quem é a conta?', op: nomes },
+                  { id: 's', rot: 'Qual era o saldo?', op: () => reais([50, 80, 120, 150]) },
+                  { id: 'c', rot: 'Qual conta pagou?', op: () => reais([90, 130, 175, 200]) },
+                  { id: 'd', rot: 'Quanto depositou depois?', op: () => reais([40, 60, 100]) }],
+          texto: '{nome} tinha {s} na conta. Pagou uma conta de {c} e, no dia seguinte, depositou {d}.',
+          perguntas: [
+            { p: 'Qual ficou o saldo logo depois de pagar a conta?', r: s => s.s.v - s.c.v, ops: ['−'], un: 'reais', res: s => `${s.s.v} − ${s.c.v} = ${sig(s.s.v - s.c.v)} reais` + (s.s.v - s.c.v < 0 ? ' (saldo negativo).' : '.') },
+            { p: 'Qual é o saldo final?', r: s => s.s.v - s.c.v + s.d.v, ops: ['−', '+'], un: 'reais', res: s => `${s.s.v} − ${s.c.v} = ${sig(s.s.v - s.c.v)}; ${sig(s.s.v - s.c.v)} + ${s.d.v} = ${sig(s.s.v - s.c.v + s.d.v)} reais.` },
+            { p: 'Quanto {nome} ganha por mês?', r: null, falta: 'o salário de {nome}' }] }
+      ]},
+      { nome: 'Abaixo do nível do mar', cenarios: [
+        { nome: 'Submarino', resumo: 'Subir e descer',
+          pecas: [{ id: 'p', rot: 'Onde o submarino estava?', op: () => amostra([-120, -90, -75, -60]).map(n => O(sig(n) + ' m', n)) },
+                  { id: 'su', rot: 'Quanto subiu?', op: () => amostra([35, 45, 50]).map(n => O(n + ' metros', n)) },
+                  { id: 'de', rot: 'Quanto desceu depois?', op: () => amostra([20, 30, 40]).map(n => O(n + ' metros', n)) }],
+          texto: 'Um submarino estava a {p} em relação ao nível do mar. Subiu {su} e depois desceu {de}.',
+          perguntas: [
+            { p: 'Em que posição o submarino ficou, em metros?', r: s => s.p.v + s.su.v - s.de.v, ops: ['+', '−'], un: 'metros', res: s => `${sig(s.p.v)} + ${s.su.v} = ${sig(s.p.v + s.su.v)}; ${sig(s.p.v + s.su.v)} − ${s.de.v} = ${sig(s.p.v + s.su.v - s.de.v)} metros.` },
+            { p: 'Quantos metros ele ainda precisa subir para chegar à superfície?', r: s => -(s.p.v + s.su.v - s.de.v), ops: ['+', '−'], un: 'metros', res: s => `Ele está a ${sig(s.p.v + s.su.v - s.de.v)} m. Do ${sig(s.p.v + s.su.v - s.de.v)} até o 0 faltam ${-(s.p.v + s.su.v - s.de.v)} metros.` },
+            { p: 'Quanto tempo o submarino levou para subir?', r: null, falta: 'a velocidade do submarino' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF07MA02', cod: 'MS.EF07MA02.s.02', ano: '7º ano', nome: 'Acréscimos e descontos',
+    desc: 'Resolver e elaborar problemas com porcentagens, como acréscimos e decréscimos simples, no contexto de educação financeira.',
+    niveis: [
+      { nome: 'Desconto', cenarios: [
+        { nome: 'Promoção', resumo: 'Quanto pagar e quanto economizar',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'v', rot: 'Quanto custava?', op: () => reais([80, 100, 120, 150, 200, 250]) },
+                  { id: 'p', rot: 'Qual é o desconto?', op: s => pct([10, 20, 30, 40].filter(p => s.v.v * p % 100 === 0)) }],
+          texto: 'Na promoção, {prod} que custava {v} está com {p} de desconto.',
+          perguntas: [
+            { p: 'Quanto vou pagar na promoção?', r: s => s.v.v * (100 - s.p.v) / 100, ops: ['%', '−'], un: 'reais', res: s => `${estrategiaPct(s.v.v, s.p.v)}. ${money(s.v.v)} − ${money(s.v.v * s.p.v / 100)} = ${money(s.v.v * (100 - s.p.v) / 100)}.` },
+            { p: 'Quantos reais vou economizar?', r: s => s.v.v * s.p.v / 100, ops: ['%'], un: 'reais', res: s => estrategiaPct(s.v.v, s.p.v) + '.' },
+            { p: 'Até quando vai a promoção?', r: null, falta: 'a data em que a promoção termina' }] }
+      ]},
+      { nome: 'Multa e acréscimo', cenarios: [
+        { nome: 'Conta atrasada', resumo: 'Multa por atraso',
+          pecas: [{ id: 'conta', rot: 'Que conta?', op: () => [O('de luz'), O('de água'), O('de internet')] },
+                  { id: 'v', rot: 'Qual é o valor da conta?', op: () => reais([80, 120, 150, 200, 240]) },
+                  { id: 'p', rot: 'Qual é a multa?', op: () => pct([2, 5, 10]) }],
+          texto: 'Uma conta {conta} de {v} foi paga com atraso e teve multa de {p}.',
+          perguntas: [
+            { p: 'De quanto foi a multa?', r: s => r2(s.v.v * s.p.v / 100), ops: ['%'], un: 'reais', res: s => `${s.p.v}% de ${money(s.v.v)}: ${money(s.v.v)} ÷ 100 × ${s.p.v} = ${money(s.v.v * s.p.v / 100)}.` },
+            { p: 'Qual foi o valor total pago?', r: s => r2(s.v.v + s.v.v * s.p.v / 100), ops: ['%', '+'], un: 'reais', res: s => `Multa: ${money(s.v.v * s.p.v / 100)}. ${money(s.v.v)} + ${money(s.v.v * s.p.v / 100)} = ${money(s.v.v + s.v.v * s.p.v / 100)}.` },
+            { p: 'Com quantos dias de atraso a conta foi paga?', r: null, falta: 'a data de vencimento e a data do pagamento' }] }
+      ]},
+      { nome: 'Comparar lojas', cenarios: [
+        { nome: 'Duas lojas', resumo: 'Onde compensa comprar',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'a', rot: 'Preço na loja A?', op: () => reais([100, 120, 150, 200]) },
+                  { id: 'p', rot: 'Desconto na loja A?', op: s => pct([10, 20, 25].filter(p => s.a.v * p % 100 === 0)) },
+                  { id: 'b', rot: 'Preço na loja B, sem desconto?', op: s => { const f = s.a.v * (100 - s.p.v) / 100; return [f - 12, f - 6, f + 6, f + 12].map(n => O(money(n), n)); } }],
+          texto: 'Na loja A, {prod} custa {a}, com {p} de desconto. Na loja B, o mesmo produto custa {b}, sem desconto.',
+          perguntas: [
+            { p: 'Quanto custa na loja A, com o desconto?', r: s => s.a.v * (100 - s.p.v) / 100, ops: ['%', '−'], un: 'reais', res: s => `${estrategiaPct(s.a.v, s.p.v)}. ${money(s.a.v)} − ${money(s.a.v * s.p.v / 100)} = ${money(s.a.v * (100 - s.p.v) / 100)}.` },
+            { p: 'Quantos reais se economiza comprando na loja mais barata?', r: s => Math.abs(s.a.v * (100 - s.p.v) / 100 - s.b.v), ops: ['%', '−'], un: 'reais', res: s => { const f = s.a.v * (100 - s.p.v) / 100; return `Loja A: ${money(f)}. Loja B: ${money(s.b.v)}. A diferença é ${money(Math.abs(f - s.b.v))}, a favor da loja ${f < s.b.v ? 'A' : 'B'}.`; } },
+            { p: 'Qual loja fica mais perto da escola?', r: null, falta: 'o endereço das lojas' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF08MA03', cod: 'MS.EF08MA03.s.03', ano: '8º ano', nome: 'Contagem: princípio multiplicativo',
+    desc: 'Resolver e elaborar problemas de contagem cuja resolução envolva a aplicação do princípio multiplicativo.',
+    niveis: [
+      { nome: 'Duas escolhas', cenarios: [
+        { nome: 'Roupas', resumo: 'Combinar peças',
+          pecas: [{ id: 'nome', rot: 'De quem são as roupas?', op: nomes },
+                  { id: 'c', rot: 'Quantas camisetas?', op: () => nums([2, 3, 4, 5]) },
+                  { id: 'b', rot: 'Quantas bermudas?', op: () => nums([2, 3, 4]) }],
+          texto: '{nome} tem {c} camisetas diferentes e {b} bermudas diferentes.',
+          perguntas: [
+            { p: 'De quantas formas {nome} pode se vestir com 1 camiseta e 1 bermuda?', r: s => s.c.v * s.b.v, ops: ['×'], un: 'formas', res: s => `Para cada camiseta há ${s.b.v} bermudas: ${s.c.v} × ${s.b.v} = ${s.c.v * s.b.v} formas.` },
+            { p: 'Quantas peças de roupa {nome} tem ao todo?', r: s => s.c.v + s.b.v, ops: ['+'], un: 'peças', res: s => `${s.c.v} + ${s.b.v} = ${s.c.v + s.b.v} peças. Aqui não é combinação, é só contar.` },
+            { p: 'Qual é a camiseta preferida de {nome}?', r: null, falta: 'a preferência de {nome}' }] }
+      ]},
+      { nome: 'Três escolhas', cenarios: [
+        { nome: 'Lanchonete', resumo: 'Montar combos',
+          pecas: [{ id: 'p', rot: 'Quantos tipos de pão?', op: () => nums([2, 3, 4]) },
+                  { id: 'r', rot: 'Quantos recheios?', op: () => nums([3, 4, 5]) },
+                  { id: 's', rot: 'Quantos sabores de suco?', op: () => nums([2, 3, 4]) }],
+          texto: 'A lanchonete oferece {p} tipos de pão, {r} tipos de recheio e {s} sabores de suco.',
+          perguntas: [
+            { p: 'Quantos sanduíches diferentes (1 pão e 1 recheio) dá para montar?', r: s => s.p.v * s.r.v, ops: ['×'], un: 'sanduíches', res: s => `${s.p.v} × ${s.r.v} = ${s.p.v * s.r.v} sanduíches. O suco é um dado que sobra.` },
+            { p: 'Quantos combos diferentes (1 pão, 1 recheio e 1 suco) dá para montar?', r: s => s.p.v * s.r.v * s.s.v, ops: ['×'], un: 'combos', res: s => `${s.p.v} × ${s.r.v} × ${s.s.v} = ${s.p.v * s.r.v * s.s.v} combos.` },
+            { p: 'Quantos combos a lanchonete vende por dia?', r: null, falta: 'o número de vendas por dia' }] }
+      ]},
+      { nome: 'Senhas', cenarios: [
+        { nome: 'Cadeado', resumo: 'Com e sem repetição',
+          pecas: [{ id: 'k', rot: 'Quantos algarismos tem a senha?', op: () => [2, 3, 4].map(n => O(n + ' algarismos', n)) },
+                  { id: 'rep', rot: 'Pode repetir algarismos?', op: () => [O('podendo repetir algarismos', true), O('sem repetir algarismos', false)] }],
+          texto: 'A senha de um cadeado tem {k}, de 0 a 9, {rep}.',
+          perguntas: [
+            { p: 'Quantas senhas diferentes são possíveis?', r: s => { let t = 1; for (let i = 0; i < s.k.v; i++) t *= s.rep.v ? 10 : 10 - i; return t; }, ops: ['×'], un: 'senhas',
+              res: s => { const f = []; for (let i = 0; i < s.k.v; i++) f.push(s.rep.v ? 10 : 10 - i); return `${f.join(' × ')} = ${f.reduce((a, b) => a * b, 1)} senhas.`; } },
+            { p: 'Quantas senhas são possíveis se ela não puder começar com 0?', r: s => { let t = 9; for (let i = 1; i < s.k.v; i++) t *= s.rep.v ? 10 : 10 - i; return t; }, ops: ['×'], un: 'senhas',
+              res: s => { const f = [9]; for (let i = 1; i < s.k.v; i++) f.push(s.rep.v ? 10 : 10 - i); return `O primeiro algarismo tem 9 opções: ${f.join(' × ')} = ${f.reduce((a, b) => a * b, 1)} senhas.`; } },
+            { p: 'Quanto tempo alguém leva para testar todas as senhas?', r: null, falta: 'quanto tempo leva cada tentativa' }] }
+      ]}
+    ]
+  },
+  {
+    id: 'EF09MA05', cod: 'MS.EF09MA05.s.05', ano: '9º ano', nome: 'Percentuais sucessivos',
+    desc: 'Resolver e elaborar problemas com porcentagens, com a ideia de percentuais sucessivos e a determinação de taxas percentuais.',
+    niveis: [
+      { nome: 'Dois aumentos', cenarios: [
+        { nome: 'Preço que sobe', resumo: 'Aumento sobre aumento',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'v', rot: 'Qual era o preço?', op: () => reais([100, 200, 400, 500]) },
+                  { id: 'p1', rot: 'Primeiro aumento?', op: () => pct([10, 20]) },
+                  { id: 'p2', rot: 'Segundo aumento?', op: () => pct([10, 20, 50]) }],
+          texto: 'Em uma loja, {prod} custava {v}. Teve um aumento de {p1} e, um mês depois, outro aumento de {p2}.',
+          perguntas: [
+            { p: 'Qual é o preço depois dos dois aumentos?', r: s => r2(s.v.v * (1 + s.p1.v / 100) * (1 + s.p2.v / 100)), ops: ['%', '×'], un: 'reais', res: s => { const a = r2(s.v.v * (1 + s.p1.v / 100)); return `${money(s.v.v)} × ${fmt(1 + s.p1.v / 100)} = ${money(a)}; ${money(a)} × ${fmt(1 + s.p2.v / 100)} = ${money(a * (1 + s.p2.v / 100))}.`; } },
+            { p: 'De quantos reais foi o aumento total?', r: s => r2(s.v.v * (1 + s.p1.v / 100) * (1 + s.p2.v / 100) - s.v.v), ops: ['%', '×', '−'], un: 'reais', res: s => { const f = r2(s.v.v * (1 + s.p1.v / 100) * (1 + s.p2.v / 100)); return `Preço final: ${money(f)}. ${money(f)} − ${money(s.v.v)} = ${money(f - s.v.v)}. Repare que não é ${s.p1.v + s.p2.v}% de aumento.`; } },
+            { p: 'Qual será o preço no ano que vem?', r: null, falta: 'os próximos aumentos' }] }
+      ]},
+      { nome: 'Sobe e desce', cenarios: [
+        { nome: 'Aumento e desconto', resumo: 'O preço volta ao início?',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'v', rot: 'Qual era o preço?', op: () => reais([100, 200, 400, 500]) },
+                  { id: 'p', rot: 'Porcentagem do aumento e do desconto?', op: () => pct([10, 20, 25, 50]) }],
+          texto: 'Em uma loja, {prod} custava {v}. O preço subiu {p} e, depois, baixou {p}.',
+          perguntas: [
+            { p: 'Qual é o preço final?', r: s => r2(s.v.v * (1 + s.p.v / 100) * (1 - s.p.v / 100)), ops: ['%', '×'], un: 'reais', res: s => { const a = r2(s.v.v * (1 + s.p.v / 100)); return `Depois do aumento: ${money(a)}. Depois do desconto: ${money(a)} × ${fmt(1 - s.p.v / 100)} = ${money(a * (1 - s.p.v / 100))}.`; } },
+            { p: 'Quantos reais o preço final ficou abaixo do original?', r: s => r2(s.v.v - s.v.v * (1 + s.p.v / 100) * (1 - s.p.v / 100)), ops: ['%', '×', '−'], un: 'reais', res: s => { const f = r2(s.v.v * (1 + s.p.v / 100) * (1 - s.p.v / 100)); return `${money(s.v.v)} − ${money(f)} = ${money(s.v.v - f)}. O desconto é calculado sobre um valor maior, por isso o preço não volta ao início.`; } },
+            { p: 'Por que a loja mudou o preço?', r: null, falta: 'o motivo da mudança' }] }
+      ]},
+      { nome: 'Descobrir a taxa', cenarios: [
+        { nome: 'Reajuste', resumo: 'De quanto foi o aumento, em %',
+          pecas: [{ id: 'prod', rot: 'Qual produto?', op: PRODUTOS },
+                  { id: 'a', rot: 'Preço antigo?', op: () => reais([80, 120, 200, 250]) },
+                  { id: 'b', rot: 'Preço novo?', op: s => [10, 20, 25, 40, 50].map(t => s.a.v * (100 + t) / 100).filter(Number.isInteger).slice(0, 4).map(n => O(money(n), n)) }],
+          texto: 'O preço de {prod} passou de {a} para {b}.',
+          perguntas: [
+            { p: 'Qual foi a taxa de aumento, em porcentagem?', r: s => r2((s.b.v - s.a.v) / s.a.v * 100), ops: ['−', '÷', '%'], un: '%', res: s => `Aumento: ${s.b.v} − ${s.a.v} = ${s.b.v - s.a.v}. ${s.b.v - s.a.v} ÷ ${s.a.v} = ${fmt((s.b.v - s.a.v) / s.a.v)} = ${fmt((s.b.v - s.a.v) / s.a.v * 100)}%.` },
+            { p: 'De quantos reais foi o aumento?', r: s => s.b.v - s.a.v, ops: ['−'], un: 'reais', res: s => `${money(s.b.v)} − ${money(s.a.v)} = ${money(s.b.v - s.a.v)}.` },
+            { p: 'Quanto a loja lucra com esse produto?', r: null, falta: 'quanto a loja pagou pelo produto' }] }
+      ]}
+    ]
+  }
+  ];
+
+  // ================= estado =================
+  const ETAPAS = ['Cenário', 'Montar', 'Pergunta', 'Conferir', 'Planejar', 'Resolver'];
+  let pac = null, nivel = 0, cen = null, sel = {}, slotAtual = 0, perg = null, prog = {};
+  const chaveProg = id => 'fabrica.' + id;
+
+  function preencher(tpl, s) {
+    return tpl.replace(/\{(\w+)(?:\.(\w+))?\}/g, (_, id, k) => s[id] ? String(k ? s[id][k] : s[id].t) : '____');
+  }
+
+  // ================= telas =================
+  function telaHabs() {
+    $('telaTrabalho').classList.add('oculto'); $('telaHabs').classList.remove('oculto'); $('voltar').classList.add('oculto');
+    const box = $('anos'); box.innerHTML = '';
+    const anos = [...new Set(PACOTES.map(p => p.ano))];
+    anos.forEach(ano => {
+      const g = el('div', { class: 'habs' });
+      PACOTES.filter(p => p.ano === ano).sort((a, b) => a.id.localeCompare(b.id)).forEach(p => {
+        const pr = lerLS(chaveProg(p.id)) || { nivel: 0 };
+        g.append(el('button', { class: 'hab', type: 'button', onclick: () => abrirPacote(p) },
+          el('span', { class: 'cod' }, p.cod),
+          el('span', { class: 'tit' }, p.nome),
+          el('span', {}, p.desc),
+          el('span', { class: 'nv' }, `Nível ${pr.nivel + 1} de ${p.niveis.length}`)));
+      });
+      box.append(el('div', { class: 'ano' }, el('h2', {}, ano), g));
+    });
+  }
+
+  function abrirPacote(p) {
+    pac = p; prog = lerLS(chaveProg(p.id)) || { nivel: 0, acertos: 0, falhas: 0 };
+    nivel = Math.min(prog.nivel, p.niveis.length - 1);
+    $('telaHabs').classList.add('oculto'); $('telaTrabalho').classList.remove('oculto'); $('voltar').classList.remove('oculto');
+    $('habNome').textContent = p.nome; $('habCod').textContent = p.cod + ' · ' + p.ano;
+    try { history.replaceState(null, '', '?hab=' + p.id); } catch (_) {}
+    novoProblema();
+  }
+
+  function desenharNiveis() {
+    const box = $('niveis'); box.innerHTML = '';
+    pac.niveis.forEach((n, i) => box.append(el('button', { type: 'button', 'aria-pressed': i === nivel, title: n.nome,
+      onclick: () => { nivel = i; prog.nivel = i; prog.acertos = 0; prog.falhas = 0; salvarLS(chaveProg(pac.id), prog); novoProblema(); } }, `Nível ${i + 1}: ${n.nome}`)));
+    const b = el('span', { class: 'bolinhas' });
+    for (let i = 0; i < 3; i++) b.append(el('span', { class: i < (prog.acertos || 0) ? 'on' : '' }));
+    const pr = $('progresso'); pr.innerHTML = '';
+    pr.append(b, nivel < pac.niveis.length - 1 ? '3 acertos liberam o próximo nível' : 'Último nível');
+  }
+
+  function desenharEtapas(i) {
+    const box = $('etapas'); box.innerHTML = '';
+    ETAPAS.forEach((t, k) => box.append(el('li', { class: k < i ? 'feita' : k === i ? 'atual' : '' }, `${k + 1}. ${t}`)));
+  }
+
+  function desenharEnunciado(comPergunta) {
+    const box = $('enunciado'); box.innerHTML = ''; box.classList.remove('oculto');
+    const partes = cen.texto.split(/(\{\w+(?:\.\w+)?\})/);
+    partes.forEach(pt => {
+      const m = pt.match(/^\{(\w+)(?:\.(\w+))?\}$/);
+      if (!m) { box.append(pt); return; }
+      const [, id, k] = m;
+      if (sel[id]) {
+        const idx = cen.pecas.findIndex(p => p.id === id);
+        box.append(el('button', { class: 'peca', type: 'button', title: 'Trocar esta peça', onclick: () => { if (!comPergunta) { trocarDesde(idx); } } }, String(k ? sel[id][k] : sel[id].t)));
+      } else {
+        const atual = cen.pecas[slotAtual] && cen.pecas[slotAtual].id === id;
+        box.append(el('span', { class: 'lac' + (atual ? ' agora' : ''), 'aria-label': 'lacuna' }, '____'));
+      }
+    });
+    if (comPergunta && perg) box.append(el('span', { class: 'pergunta' }, preencher(perg.p, sel)));
+  }
+
+  function trocarDesde(idx) {
+    // trocar uma peça apaga as que dependem dela (as seguintes)
+    cen.pecas.slice(idx).forEach(p => delete sel[p.id]);
+    slotAtual = idx; etapaMontar();
+  }
+
+  // ---------- etapa 1: cenário ----------
+  function novoProblema() {
+    cen = null; sel = {}; slotAtual = 0; perg = null;
+    desenharNiveis(); desenharEtapas(0); $('enunciado').classList.add('oculto');
+    const nv = pac.niveis[nivel], b = $('bancada'); b.innerHTML = '';
+    const cards = el('div', { class: 'cartoes' });
+    nv.cenarios.forEach(c => cards.append(el('button', { class: 'escolha', type: 'button', onclick: () => { cen = c; etapaMontar(); } }, c.nome, el('small', {}, c.resumo))));
+    b.append(el('h3', {}, 'Escolha o cenário do problema'), cards);
+  }
+
+  // ---------- etapa 2: montar ----------
+  function etapaMontar() {
+    desenharEtapas(1); desenharEnunciado(false);
+    const b = $('bancada'); b.innerHTML = '';
+    if (slotAtual >= cen.pecas.length) { etapaPergunta(); return; }
+    const peca = cen.pecas[slotAtual];
+    const ops = el('div', { class: 'opcoes' });
+    peca.op(sel).forEach(o => ops.append(el('button', { class: 'peca', type: 'button', onclick: () => { sel[peca.id] = o; slotAtual++; etapaMontar(); } }, o.t)));
+    b.append(el('h3', {}, peca.rot), ops,
+      el('div', { class: 'acoes' },
+        el('button', { class: 'btn-sec', type: 'button', onclick: sortearRestante }, 'Sortear as peças que faltam'),
+        slotAtual > 0 && el('button', { class: 'link', type: 'button', onclick: () => trocarDesde(slotAtual - 1) }, 'Voltar uma peça')),
+      el('p', { class: 'dica-txt', style: 'margin-top:12px' }, 'Para trocar uma peça já escolhida, clique nela no texto.'));
+  }
+  function sortearRestante() {
+    for (let i = slotAtual; i < cen.pecas.length; i++) { const p = cen.pecas[i]; const l = p.op(sel); sel[p.id] = l[Math.floor(Math.random() * l.length)]; }
+    slotAtual = cen.pecas.length; etapaMontar();
+  }
+
+  // ---------- etapa 3: pergunta ----------
+  function etapaPergunta() {
+    desenharEtapas(2); desenharEnunciado(false);
+    const b = $('bancada'); b.innerHTML = '';
+    const cards = el('div', { class: 'cartoes' });
+    embaralhar(cen.perguntas).forEach(q => cards.append(el('button', { class: 'escolha', type: 'button', onclick: () => { perg = q; etapaConferir(); } }, preencher(q.p, sel))));
+    b.append(el('h3', {}, 'Agora escolha a pergunta do problema'), cards,
+      el('button', { class: 'link', type: 'button', onclick: () => trocarDesde(cen.pecas.length - 1) }, 'Voltar e trocar peças'));
+  }
+
+  // ---------- etapa 4: conferir se dá para responder ----------
+  function etapaConferir() {
+    desenharEtapas(3); desenharEnunciado(true);
+    const b = $('bancada'); b.innerHTML = '';
+    const nota = el('div');
+    const responder = disse => {
+      const possivel = perg.r !== null;
+      b.querySelectorAll('.acoes button').forEach(x => x.disabled = true);
+      if (possivel && disse) { nota.replaceWith(el('p', { class: 'nota ok' }, 'Isso! O problema tem todos os dados necessários.')); setTimeout(etapaPlanejar, 900); }
+      else if (!possivel && !disse) {
+        b.append(el('p', { class: 'nota ok' }, `Muito bem! Para responder, faltaria saber ${preencher(perg.falta, sel)}. Um bom problema precisa trazer todos os dados.`),
+          el('button', { class: 'btn', type: 'button', onclick: () => { perg = null; etapaPergunta(); } }, 'Escolher outra pergunta'));
+      } else if (!possivel && disse) {
+        b.append(el('p', { class: 'nota erro' }, `Releia com atenção: o problema não diz ${preencher(perg.falta, sel)}. Sem esse dado, não dá para responder.`),
+          el('button', { class: 'btn', type: 'button', onclick: () => { perg = null; etapaPergunta(); } }, 'Escolher outra pergunta'));
+      } else {
+        b.append(el('p', { class: 'nota info' }, 'Dá para responder, sim: todos os dados necessários estão no texto. Releia e veja quais você vai usar.'),
+          el('button', { class: 'btn', type: 'button', onclick: etapaPlanejar }, 'Continuar'));
+      }
+    };
+    b.append(el('h3', {}, 'Com os dados do seu problema, dá para responder a essa pergunta?'),
+      el('div', { class: 'acoes', style: 'margin-bottom:14px' },
+        el('button', { class: 'btn', type: 'button', onclick: () => responder(true) }, 'Sim, dá para responder'),
+        el('button', { class: 'btn-sec', type: 'button', onclick: () => responder(false) }, 'Não, falta informação')), nota);
+  }
+
+  // ---------- etapa 5: planejar ----------
+  const OPERACOES = ['+', '−', '×', '÷', 'potência', '%'];
+  function faixas(neg) {
+    const f = [];
+    if (neg) f.push({ t: 'um número negativo', ok: x => x < 0 });
+    f.push({ t: 'menos de 10', ok: x => x >= 0 && x < 10 }, { t: 'de 10 a 99', ok: x => x >= 10 && x < 100 },
+           { t: 'de 100 a 999', ok: x => x >= 100 && x < 1000 }, { t: '1.000 ou mais', ok: x => x >= 1000 });
+    return f;
+  }
+  function etapaPlanejar() {
+    desenharEtapas(4); desenharEnunciado(true);
+    const b = $('bancada'); b.innerHTML = '';
+    const marc = new Set(); let est = null;
+    const opsBox = el('div', { class: 'ops', role: 'group', 'aria-label': 'Operações' });
+    OPERACOES.forEach(o => { const bt = el('button', { type: 'button', 'aria-pressed': false, onclick: () => { marc.has(o) ? marc.delete(o) : marc.add(o); bt.setAttribute('aria-pressed', marc.has(o)); conf.disabled = !marc.size || !est; } }, o); opsBox.append(bt); });
+    const estBox = el('div', { class: 'ops', role: 'group', 'aria-label': 'Estimativa' });
+    (pac.faixas || faixas(pac.neg)).forEach(f => { const bt = el('button', { type: 'button', 'aria-pressed': false, onclick: () => { est = f; estBox.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === bt)); conf.disabled = !marc.size || !est; } }, f.t); estBox.append(bt); });
+    const conf = el('button', { class: 'btn', type: 'button', disabled: true, onclick: () => {
+      const certo = perg.r(sel), esperadas = new Set(perg.ops);
+      const iguais = marc.size === esperadas.size && [...marc].every(o => esperadas.has(o));
+      const msgs = [];
+      msgs.push(iguais ? 'Operações certas!' : `A resolução usa: ${perg.ops.join(', ')}. Vocês marcaram: ${[...marc].join(', ')}.`);
+      msgs.push(est.ok(certo) ? 'A estimativa também está certa.' : 'A estimativa não bateu. Pensem de novo no tamanho do resultado enquanto calculam.');
+      etapaResolver(msgs.join(' '), iguais && est.ok(certo));
+    } }, 'Confirmar o plano');
+    b.append(el('h3', {}, 'Quais operações vocês vão usar?'), opsBox,
+      el('h3', {}, 'Antes de calcular: o resultado vai ser…'), estBox, conf);
+  }
+
+  // ---------- etapa 6: resolver ----------
+  function etapaResolver(msgPlano, planoOk) {
+    desenharEtapas(5); desenharEnunciado(true);
+    const b = $('bancada'); b.innerHTML = '';
+    const certo = perg.r(sel), un = preencher(perg.un || '', sel);
+    let erros = 0;
+    const inp = el('input', { type: 'text', inputmode: 'decimal', placeholder: 'Resposta', autocomplete: 'off', 'aria-label': 'Resposta' });
+    const fb = el('div', { 'aria-live': 'polite' });
+    const form = el('form', { class: 'resp', novalidate: true, onsubmit: ev => {
+      ev.preventDefault();
+      const v = numero(inp.value);
+      if (isNaN(v)) { fb.replaceChildren(el('p', { class: 'nota erro' }, 'Digitem um número' + (pac.neg ? ' (use o sinal de menos para negativos).' : '.'))); return; }
+      if (Math.abs(v - certo) < (perg.tol != null ? perg.tol : 0.0051)) { concluir(true, erros); return; }
+      erros++;
+      if (erros >= 3) { concluir(false, erros); return; }
+      fb.replaceChildren(el('p', { class: 'nota erro' }, `Ainda não. Restam ${3 - erros} tentativa(s). Confiram cada passo da conta.`));
+      inp.select();
+    } }, inp, el('button', { class: 'btn', type: 'submit' }, 'Verificar'));
+    if (un) form.insertBefore(el('span', { class: 'unid' }, un), form.lastChild);
+    b.append(...[el('p', { class: 'nota ' + (planoOk ? 'ok' : 'info') }, msgPlano),
+      el('h3', {}, 'Resolvam e digitem a resposta'), form,
+      pac.neg ? el('p', { class: 'dica-txt' }, 'Para números negativos, use o sinal de menos. Ex.: -15') : null,
+      el('p', { class: 'dica-txt' }, perg.fmt ? 'Escrevam a fração assim: 5/6. Frações equivalentes também valem.' : 'Números com vírgula podem ser escritos assim: 37,50'), fb].filter(Boolean));
+    setTimeout(() => inp.focus({ preventScroll: true }), 30);
+  }
+
+  function concluir(acertou, erros) {
+    const b = $('bancada'); b.innerHTML = '';
+    const certo = perg.r(sel), un = preencher(perg.un || '', sel);
+    let subiu = false, desceu = false;
+    if (acertou) {
+      prog.acertos = (prog.acertos || 0) + 1; prog.falhas = 0;
+      if (prog.acertos >= 3 && nivel < pac.niveis.length - 1) { nivel++; prog.nivel = nivel; prog.acertos = 0; subiu = true; }
+    } else {
+      prog.falhas = (prog.falhas || 0) + 1;
+      if (prog.falhas >= 2 && nivel > 0) { nivel--; prog.nivel = nivel; prog.acertos = 0; prog.falhas = 0; desceu = true; }
+    }
+    salvarLS(chaveProg(pac.id), prog);
+    desenharNiveis(); desenharEtapas(6);
+
+    const resposta = perg.fmt ? perg.fmt(sel) + (un ? ' ' + un : '') : (un === 'reais' ? money(certo) : fmt(certo) + (un ? ' ' + un : ''));
+    const texto = `${preencher(cen.texto, sel)} ${preencher(perg.p, sel)}`;
+    const copiar = el('button', { class: 'btn-sec', type: 'button', onclick: async () => {
+      const t = `Enunciado: ${texto}\nResposta: ${perg.fmt ? perg.fmt(sel) : fmt(certo)}${un ? ' (' + un + ')' : ''}\nComo resolver: ${perg.res(sel)}\nHabilidade: ${pac.cod}`;
+      try { await navigator.clipboard.writeText(t); copiar.textContent = 'Copiado!'; }
+      catch (_) { const ta = el('textarea', {}, t); document.body.append(ta); ta.select(); try { document.execCommand('copy'); copiar.textContent = 'Copiado!'; } catch (__) { copiar.textContent = 'Não foi possível copiar'; } ta.remove(); }
+    } }, 'Copiar para o Banco de Desafios');
+
+    const info = el('div', {},
+      el('h3', {}, acertou ? (erros ? 'Resposta certa!' : 'Resposta certa de primeira!') : 'Vejam como resolver'),
+      el('p', { class: 'nota ' + (acertou ? 'ok' : 'info') }, `Resposta: ${resposta}. ${perg.res(sel)}`),
+      subiu ? el('p', { class: 'nota ok' }, `Vocês subiram para o nível ${nivel + 1}: ${pac.niveis[nivel].nome}!`) : null,
+      desceu ? el('p', { class: 'nota info' }, `Vamos treinar mais um pouco no nível ${nivel + 1}: ${pac.niveis[nivel].nome}.`) : null,
+      el('div', { class: 'acoes' },
+        el('button', { class: 'btn', type: 'button', onclick: novoProblema }, 'Montar outro problema'), copiar));
+    const selo = el('div', { class: 'selo' + (subiu ? ' subiu' : ''), 'aria-hidden': 'true' }, subiu ? 'NOVO NÍVEL' : acertou ? 'PROBLEMA RESOLVIDO' : 'TENTEM DE NOVO');
+    b.append(el('div', { class: 'fim' }, info, selo));
+  }
+
+  // ================= início =================
+  $('voltar').addEventListener('click', () => { try { history.replaceState(null, '', location.pathname); } catch (_) {} telaHabs(); });
+  window.__fabrica = { PACOTES, preencher, respostaAtual: () => (perg && perg.r ? perg.r(sel) : null) };
+  telaHabs();
+  const q = new URLSearchParams(location.search).get('hab');
+  const alvo = q && PACOTES.find(p => p.id.toLowerCase() === q.toLowerCase().replace(/^ms\./, '').split('.')[0]);
+  if (alvo) abrirPacote(alvo);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apoie o projeto — JRM Aventuras Educativas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='%23F5B700'%3E%3Ccircle cx='20' cy='9' r='8'/%3E%3Ccircle cx='30.5' cy='16.6' r='8'/%3E%3Ccircle cx='26.5' cy='29' r='8'/%3E%3Ccircle cx='13.5' cy='29' r='8'/%3E%3Ccircle cx='9.5' cy='16.6' r='8'/%3E%3C/g%3E%3Ccircle cx='20' cy='20' r='5' fill='%239A3412'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo"><div class="topo-in">
+  <a class="marca" href="./"><svg class="flor" viewBox="0 0 40 40" aria-hidden="true"><g fill="#F5B700"><circle cx="20" cy="9" r="8"/><circle cx="30.5" cy="16.6" r="8"/><circle cx="26.5" cy="29" r="8"/><circle cx="13.5" cy="29" r="8"/><circle cx="9.5" cy="16.6" r="8"/></g><circle cx="20" cy="20" r="5" fill="#9A3412"/></svg>
+    <span><b>JRM Aventuras Educativas</b><small>jogos para aprender · MS</small></span></a>
+  <nav class="menu"><a href="./">Jogos</a><a href="professor.html">Área do Professor</a><a class="apoie" href="apoie.html" aria-current="page">💛 Apoie</a></nav>
+</div></header>
+
+<style>
+  .apoio{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start}
+  .apoio h1{font-size:clamp(34px,5vw,52px);margin:10px 0}
+  .apoio p{margin:0 0 12px}
+  .usos{display:grid;gap:8px;margin:16px 0}
+  .usos div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px}
+  .pix{text-align:center}
+  .valores{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+  .valores button{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 16px;font-weight:800;font-family:var(--titulo);font-size:20px;cursor:pointer}
+  .valores button[aria-pressed="true"]{background:var(--mata2);border-color:var(--mata);color:#fff}
+  #qr{display:grid;place-items:center;margin:14px auto;width:232px;height:232px;background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px}
+  #qr img,#qr canvas{width:212px;height:212px}
+  .copia{display:flex;gap:8px;margin-top:10px}
+  .copia input{flex:1;min-width:0;border:2px solid var(--borda);border-radius:12px;padding:10px;font-size:13px;background:#FBF6EA}
+  .aviso{background:#FFF8E1;border:2px dashed #F3D98A;border-radius:14px;padding:16px}
+  @media (max-width:820px){.apoio{grid-template-columns:1fr}}
+</style>
+<main class="pagina">
+  <div class="apoio">
+    <div>
+      <span class="selo">APOIE O PROJETO</span>
+      <h1>Jogos grátis para todos os estudantes 💛</h1>
+      <p>A JRM Aventuras Educativas é gratuita, sem anúncios e sem cadastro, porque criança precisa de um espaço seguro para aprender. Todo o trabalho é feito por um professor da rede estadual de MS, nas horas livres.</p>
+      <p>Se os jogos ajudam a sua turma ou o seu filho, você pode contribuir com qualquer valor por PIX.</p>
+      <div class="usos">
+        <div>🎮 <b>Novos jogos</b> para Ciências, História, Geografia, Arte, Educação Física e Inglês</div>
+        <div>🛠️ <b>Melhorias</b> nos jogos que já existem, a partir das ideias de professores e estudantes</div>
+        <div>🌐 <b>Manter o site no ar</b>, rápido e sem propaganda</div>
+      </div>
+      <p class="mini">A contribuição é voluntária e não dá acesso a nada diferente: os jogos continuam livres para todos.</p>
+    </div>
+    <div class="cartao pix" id="pix"></div>
+  </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ======================================================
+   CONFIGURAÇÃO DO PIX — preencha e publique de novo.
+   chave: CPF, e-mail, telefone (+55...) ou chave aleatória
+   nome: até 25 letras, sem acento | cidade: até 15 letras
+   ====================================================== */
+const PIX = { chave: '', nome: 'JOSE RENE MIRANDA', cidade: 'CAMPO GRANDE' };
+
+(() => {
+  const box = document.getElementById('pix');
+  if (!PIX.chave) {
+    box.innerHTML = `<h2 style="font-size:26px">PIX em breve</h2>
+      <div class="aviso" style="margin-top:12px">O QR Code de apoio vai aparecer aqui assim que a chave PIX for cadastrada.</div>`;
+    return;
+  }
+  const limpa = (s, n) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9 ]/g, '').toUpperCase().slice(0, n);
+  const campo = (id, v) => id + String(v.length).padStart(2, '0') + v;
+  function crc16(s) {
+    let c = 0xFFFF;
+    for (let i = 0; i < s.length; i++) {
+      c ^= s.charCodeAt(i) << 8;
+      for (let k = 0; k < 8; k++) c = c & 0x8000 ? (c << 1) ^ 0x1021 : c << 1;
+      c &= 0xFFFF;
+    }
+    return c.toString(16).toUpperCase().padStart(4, '0');
+  }
+  function payload(valor) {
+    let p = campo('00', '01')
+      + campo('26', campo('00', 'br.gov.bcb.pix') + campo('01', PIX.chave.trim()))
+      + campo('52', '0000') + campo('53', '986')
+      + (valor ? campo('54', valor.toFixed(2)) : '')
+      + campo('58', 'BR') + campo('59', limpa(PIX.nome, 25)) + campo('60', limpa(PIX.cidade, 15))
+      + campo('62', campo('05', 'APOIOJRM')) + '6304';
+    return p + crc16(p);
+  }
+  const VALORES = [5, 10, 20, 50, 0];
+  let atual = 10;
+  box.innerHTML = `<h2 style="font-size:26px">Contribua por PIX</h2>
+    <div class="valores" role="group" aria-label="Valor">${VALORES.map(v => `<button data-v="${v}">${v ? 'R$ ' + v : 'Outro'}</button>`).join('')}</div>
+    <div id="qr" aria-label="QR Code PIX"></div>
+    <p class="mini" id="legenda"></p>
+    <div class="copia"><input id="cc" readonly aria-label="PIX copia e cola"><button class="btn ipe" id="copiar">Copiar</button></div>`;
+  function desenhar() {
+    box.querySelectorAll('[data-v]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.v === atual));
+    const p = payload(atual);
+    const q = document.getElementById('qr'); q.innerHTML = '';
+    if (window.QRCode) new QRCode(q, { text: p, width: 212, height: 212, correctLevel: QRCode.CorrectLevel.M });
+    else q.textContent = 'Use o PIX copia e cola abaixo.';
+    document.getElementById('cc').value = p;
+    document.getElementById('legenda').textContent = atual ? `Valor: R$ ${atual},00. Abra o app do banco e leia o QR Code.` : 'Você escolhe o valor no app do banco.';
+  }
+  box.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b) { atual = +b.dataset.v; desenhar(); } });
+  document.getElementById('copiar').addEventListener('click', ev => {
+    const i = document.getElementById('cc'); i.select();
+    const ok = () => { ev.target.textContent = 'Copiado!'; setTimeout(() => ev.target.textContent = 'Copiar', 2000); };
+    if (navigator.clipboard) navigator.clipboard.writeText(i.value).then(ok, () => { document.execCommand('copy'); ok(); });
+    else { document.execCommand('copy'); ok(); }
+  });
+  desenhar();
+})();
+</script>
+
+<footer class="rodape"><div class="rodape-in">
+  <div><b>JRM Aventuras Educativas</b><br>Jogos educativos criados pelo Prof. José Rene Miranda, da rede estadual de Mato Grosso do Sul. Os jogos não coletam dados: o progresso de cada estudante fica salvo apenas no navegador do aparelho que ele usa.</div>
+  <div><a href="./">Jogos</a><a href="professor.html">Área do Professor</a><a href="apoie.html">Apoie o projeto</a><a href="privacidade.html">Privacidade</a></div>
+</div></footer>
+</body>
+</html>

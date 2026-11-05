@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pontuação Turbo</title>
+<meta name="description" content="Jogo de pontuação para o 3º ao 5º ano: coloque os sinais no texto e ouça a diferença na leitura. Habilidades MS.EF04LP05 e MS.EF35LP07.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#FFF8EC; --papel2:#FFF1DA; --tinta:#1F2A44; --suave:#5B6782; --laranja:#FF6B2C; --laranja-e:#D9531A;
+  --amarelo:#FFC93C; --pista:#2E3550; --borda:#EADBC2; --cartao:#FFFFFF;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2; --falta:#D97706; --falta-f:#FEF3C7;
+  --m-ponto:#2563EB; --m-virg:#059669; --m-int:#7C3AED; --m-exc:#DC2626; --m-dp:#0E7490; --m-trav:#B45309;
+  --titulo:'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
+  --texto:'Andika', 'Segoe UI', system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--papel);color:var(--tinta);font-family:var(--texto);font-size:17px;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+.btn{border:2px solid var(--borda);background:var(--cartao);border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:transform .12s,background .12s,border-color .12s;min-height:48px}
+.btn:hover{transform:translateY(-2px);border-color:#D8C3A0}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible,.chip:focus-visible,.s:focus-visible,.fase:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--laranja);outline-offset:2px}
+.btn.primario{background:var(--laranja);border-color:var(--laranja-e);color:#fff;box-shadow:0 4px 0 var(--laranja-e)}
+.btn.primario:hover{background:#FF7D45}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--laranja-e);background:#FFE6D6;padding:5px 12px;border-radius:30px}
+
+/* ---------- HOME ---------- */
+.home{max-width:1100px;margin:auto;padding:28px 20px 30px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
+.hero h1{font-size:clamp(44px,7vw,78px);font-weight:800;margin:14px 0 10px;letter-spacing:-1px}
+.hero h1 span{color:var(--laranja)}
+.lead{font-size:19px;line-height:1.6;color:#3B4663;max-width:540px;margin:0 0 18px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;font-size:14px;color:var(--suave);gap:5px;font-weight:700}
+.campos input{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;background:#fff;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.hero-art{position:relative;height:300px;border-radius:28px;background:linear-gradient(#BDE6FF,#E6F6FF 60%,#CFEFC4 60%);overflow:hidden;border:3px solid #fff;box-shadow:0 10px 30px #c9a77a33}
+.estrada{position:absolute;left:-10%;right:-10%;bottom:28px;height:74px;background:var(--pista);transform:rotate(-4deg)}
+.estrada::after{content:"";position:absolute;left:0;right:0;top:33px;height:7px;background:repeating-linear-gradient(90deg,var(--amarelo) 0 46px,transparent 46px 86px)}
+.hero-art .carro{position:absolute;width:210px;bottom:72px;left:50%;transform:translateX(-50%) rotate(-4deg);animation:balanca 1.6s ease-in-out infinite}
+.sol{position:absolute;top:26px;right:34px;width:66px;height:66px;border-radius:50%;background:var(--amarelo);box-shadow:0 0 0 12px #ffc93c44}
+.placa{position:absolute;top:46px;left:26px;background:#fff;border-radius:12px;padding:8px 14px;font-family:var(--titulo);font-weight:800;font-size:28px;box-shadow:0 4px 0 #0001;display:flex;gap:10px}
+.placa b:nth-child(1){color:var(--m-ponto)}.placa b:nth-child(2){color:var(--m-virg)}.placa b:nth-child(3){color:var(--m-int)}.placa b:nth-child(4){color:var(--m-exc)}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 8px}
+.info div{background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave);flex:1;min-width:150px}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);margin-top:14px;line-height:1.6}
+@keyframes balanca{0%,100%{transform:translateX(-50%) rotate(-4deg) translateY(0)}50%{transform:translateX(-50%) rotate(-4deg) translateY(-4px)}}
+
+/* ---------- TOPO ---------- */
+.topo{position:sticky;top:0;z-index:20;background:var(--papel);border-bottom:2px solid var(--borda);display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo .tit h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo .tit small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.estrelas-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* ---------- MAPA ---------- */
+.mapa{max-width:980px;margin:auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:18px}
+.mundo{background:#fff;border:2px solid var(--borda);border-radius:24px;overflow:hidden}
+.mundo-cab{padding:14px 18px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;color:#fff}
+.mundo-cab h3{font-size:24px}
+.mundo-cab .ano{background:#ffffff33;border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700}
+.mundo-cab .sinais{margin-left:auto;display:flex;gap:6px}
+.mundo-cab .sinais span{background:#fff;border-radius:8px;width:30px;height:30px;display:grid;place-items:center;font-weight:800;font-size:20px}
+.pista-fases{position:relative;padding:22px 18px 18px;display:flex;flex-wrap:wrap;gap:16px}
+.fase{position:relative;width:142px;min-height:120px;border:2px solid var(--borda);border-radius:18px;background:var(--papel);padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;transition:transform .12s}
+.fase:hover:not(:disabled){transform:translateY(-3px)}
+.fase .num{font-family:var(--titulo);font-weight:800;font-size:28px;line-height:1}
+.fase .nome{font-size:14px;font-weight:700;line-height:1.25}
+.fase .est{margin-top:auto;font-size:18px;letter-spacing:2px;color:#D9C9AE}
+.fase .est .on{color:#F5A700}
+.fase:disabled{opacity:.55;cursor:not-allowed}
+.fase .cad{position:absolute;top:10px;right:10px;font-size:18px}
+.fase.atual{border-color:var(--laranja);box-shadow:0 0 0 4px #FF6B2C33}
+.fase.atual .carrinho{position:absolute;top:-18px;right:-10px;width:56px}
+
+/* ---------- JOGO ---------- */
+.jogo{max-width:980px;margin:auto;padding:14px 16px 210px}
+.turbinho{display:flex;align-items:center;gap:12px;margin:4px 0 12px}
+.turbinho svg{width:96px;flex:none}
+.turbinho svg.treme{animation:treme .12s linear infinite}
+.balao{position:relative;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:10px 14px;line-height:1.45;flex:1}
+.balao::before{content:"";position:absolute;left:-10px;top:50%;margin-top:-8px;border:8px solid transparent;border-right-color:var(--borda);border-left:0}
+.balao-acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.balao-acoes .btn{min-height:40px;padding:6px 12px;font-size:15px}
+@keyframes treme{0%{transform:translate(0,0)}25%{transform:translate(1px,-1px)}50%{transform:translate(-1px,1px)}75%{transform:translate(1px,1px)}}
+.folha{background:#fff;border:2px solid var(--borda);border-radius:22px;padding:18px clamp(14px,3vw,30px);box-shadow:0 6px 0 #EADBC2}
+.texto{font-size:clamp(22px,3.8vw,31px);line-height:2.2em;word-break:normal}
+#texto{background-image:repeating-linear-gradient(transparent 0 calc(2.2em - 2px),#F1E6D3 calc(2.2em - 2px) 2.2em);background-position:0 -.5em}
+.linha{min-height:2.2em}
+.u{display:inline-flex;align-items:baseline;white-space:nowrap}
+.w{padding:0 .04em;border-radius:.2em;transition:background .1s}
+.w.falando{background:var(--amarelo);box-shadow:0 0 0 .1em var(--amarelo)}
+.s{position:relative;display:inline-flex;align-items:baseline;justify-content:center;min-width:.9em;padding:.12em .1em;margin:0 .02em;border:0;background:transparent;border-radius:.32em;font-size:1em;line-height:1}
+.s::after{content:"";position:absolute;left:50%;bottom:.08em;width:.46em;height:.09em;margin-left:-.23em;border-radius:3px;background:#D9C9AC}
+.s.has::after{display:none}
+.s.ini{min-width:1.1em}
+.s.ini::after{width:.7em;margin-left:-.35em;background:#E8DCC6}
+.editando .s:hover{background:#FFE9C7}
+.editando .s:not(.has):hover .mk::before{content:var(--fantasma);opacity:.35;color:var(--tinta)}
+.mk.vz{min-width:.1em}
+.mk{font-weight:700;font-size:1.05em}
+.s[data-m="."] .mk{color:var(--m-ponto);font-size:1.25em}
+.s[data-m=","] .mk{color:var(--m-virg);font-size:1.25em}
+.s[data-m="?"] .mk{color:var(--m-int)}
+.s[data-m="!"] .mk{color:var(--m-exc)}
+.s[data-m=":"] .mk{color:var(--m-dp);font-size:1.2em}
+.s[data-m="—"] .mk{color:var(--m-trav)}
+.s.ok{background:var(--ok-f)}
+.s.erro{background:var(--erro-f);box-shadow:inset 0 0 0 2px var(--erro)}
+.s.extra{background:var(--erro-f);box-shadow:inset 0 0 0 2px var(--erro)}
+.s.extra .mk{text-decoration:line-through;text-decoration-color:var(--erro);text-decoration-thickness:3px}
+.s.falta{background:var(--falta-f);box-shadow:inset 0 0 0 2px var(--falta);animation:pulsa 1.2s ease-in-out infinite}
+.s.falta .mk.vz::before{content:"?";color:var(--falta);font-size:.7em}
+.s.falta::after{display:none}
+.s.dica{animation:pulsa 1s ease-in-out infinite;box-shadow:inset 0 0 0 3px var(--amarelo);background:#FFF4C2}
+.s.sel{box-shadow:inset 0 0 0 2px var(--suave)}
+@keyframes pulsa{0%,100%{filter:none}50%{filter:brightness(.93)}}
+.legenda{font-size:14px;color:var(--suave);margin:10px 4px 0;line-height:1.5}
+.retorno{margin-top:14px;border-radius:18px;padding:14px 16px;line-height:1.55;font-size:17px;border:2px solid var(--borda);background:#fff}
+.retorno.dica{background:#FFF7D6;border-color:#F6D776}
+.retorno.revisao{background:#FFF;border-color:#F3C9A8}
+.retorno b.t{display:block;font-family:var(--titulo);font-size:19px;margin-bottom:2px}
+.retorno .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fffdf8f2;backdrop-filter:blur(6px);border-top:2px solid var(--borda);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+.barra-in{max-width:980px;margin:auto;display:flex;flex-direction:column;gap:10px}
+.paleta{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+.chip{height:60px;border-radius:16px;border:3px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;padding:2px;transition:transform .1s}
+.chip b{font-size:30px;font-family:var(--titulo);font-weight:800;height:32px;display:flex;align-items:center}
+.chip small{font-size:11px;color:var(--suave);margin-top:2px}
+.chip.on{transform:translateY(-3px);box-shadow:0 4px 0 currentColor;border-color:currentColor;background:#FFFBF2}
+.chip[data-m="."]{color:var(--m-ponto)}.chip[data-m=","]{color:var(--m-virg)}.chip[data-m="?"]{color:var(--m-int)}.chip[data-m="!"]{color:var(--m-exc)}.chip[data-m=":"]{color:var(--m-dp)}.chip[data-m="—"]{color:var(--m-trav)}
+.chip.apagar{color:var(--suave)}
+.paleta.trava{opacity:.45;pointer-events:none}
+.botoes{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:8px}
+.botoes .btn{min-height:50px;padding:8px 10px;font-size:16px}
+
+/* ---------- MODAL ---------- */
+.overlay{position:fixed;inset:0;z-index:50;background:#1F2A44a8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--papel);border-radius:26px;max-width:640px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid #fff;box-shadow:0 30px 80px #0005}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.regra{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px 16px;line-height:1.65;font-size:18px}
+.exemplo{margin-top:12px;background:#fff;border:2px dashed var(--borda);border-radius:18px;padding:12px 16px}
+.exemplo .texto{font-size:24px}
+.exemplo .s{cursor:default}
+.mini{font-size:13px;color:var(--suave)}
+.grandes-estrelas{font-size:64px;letter-spacing:8px;text-align:center;margin:6px 0}
+.grandes-estrelas span{display:inline-block;color:#E5D7BF;transform:scale(.4);opacity:0;animation:surge .5s forwards}
+.grandes-estrelas span.on{color:#F5A700}
+.grandes-estrelas span:nth-child(2){animation-delay:.25s}.grandes-estrelas span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{transform:scale(1);opacity:1}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-size:24px;font-family:var(--titulo);color:var(--tinta)}
+.corrida{position:relative;height:56px;background:var(--pista);border-radius:14px;overflow:hidden;margin:12px 0}
+.corrida::after{content:"";position:absolute;left:0;right:0;top:25px;height:5px;background:repeating-linear-gradient(90deg,var(--amarelo) 0 30px,transparent 30px 56px)}
+.corrida svg{position:absolute;bottom:4px;left:-90px;width:84px;z-index:1;animation:corre 1.8s ease-in forwards}
+.corrida .chama{position:absolute;bottom:14px;left:-120px;font-size:24px;z-index:1;animation:corre 1.8s ease-in forwards}
+@keyframes corre{to{left:calc(100% + 10px)}}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha span{line-height:1.4}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5;transition:background .15s}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+.ajuda-lista{display:grid;gap:10px;margin-top:10px}
+.ajuda-lista div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px;line-height:1.5}
+
+/* ---------- RELATÓRIO / CRIAR ---------- */
+.pagina{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:2px solid var(--borda);border-radius:22px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(150px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #F1E6D3;font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#F1E6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px}
+.cat .n{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.alerta{background:#FFF7D6;border:2px solid #F6D776;border-radius:16px;padding:12px 14px;line-height:1.55}
+textarea{width:100%;min-height:190px;border:2px solid var(--borda);border-radius:16px;padding:12px;font-size:18px;line-height:1.55;background:#fff;resize:vertical}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:700;font-size:14px;color:var(--suave)}
+.campo input{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;background:#fff;font-size:17px;color:var(--tinta);font-weight:400}
+.link-box{word-break:break-all;background:var(--papel2);border-radius:12px;padding:10px;font-size:14px;margin-top:10px}
+
+#toast{position:fixed;left:50%;bottom:230px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+.conf{position:fixed;top:-20px;width:10px;height:16px;border-radius:3px;z-index:70;pointer-events:none;animation:cai linear forwards}
+@keyframes cai{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .hero-art{height:200px;order:-1}
+  .hero-art .carro{width:150px;bottom:62px}
+  .placa{font-size:22px;top:18px;left:16px}
+  .sol{width:48px;height:48px;top:18px;right:20px}
+  .topo .tit h2{font-size:17px}
+  .estrelas-topo{padding:4px 8px;font-size:14px}
+  .turbinho svg{width:70px}
+  .balao{font-size:15px}
+  .fase{width:calc(50% - 8px)}
+  .cat{grid-template-columns:1fr auto;}
+  .cat .bar{grid-column:1 / -1;order:3}
+  .botoes .btn{font-size:14px}
+  .paleta{gap:5px}
+  .chip{height:52px;border-radius:12px;border-width:2px}
+  .chip b{font-size:24px;height:26px}
+  .chip small{font-size:9px;letter-spacing:-.2px}
+  .jogo{padding-bottom:200px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="turbinho" viewBox="0 0 150 92">
+    <g stroke="#1F2A44" stroke-width="4" stroke-linecap="round" opacity=".35"><line x1="2" y1="40" x2="16" y2="40"/><line x1="6" y1="52" x2="18" y2="52"/><line x1="2" y1="64" x2="14" y2="64"/></g>
+    <rect x="20" y="34" width="118" height="40" rx="18" fill="#FF6B2C"/>
+    <rect x="22" y="58" width="114" height="14" rx="7" fill="#D9531A"/>
+    <rect x="48" y="12" width="62" height="34" rx="14" fill="#FF8A52"/>
+    <rect x="55" y="17" width="48" height="24" rx="9" fill="#1F2A44"/>
+    <circle cx="69" cy="28" r="6" fill="#fff"/><circle cx="89" cy="28" r="6" fill="#fff"/>
+    <circle cx="71" cy="29" r="3" fill="#1F2A44"/><circle cx="91" cy="29" r="3" fill="#1F2A44"/>
+    <path d="M72 36 Q79 40 86 36" stroke="#FFC93C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <line x1="79" y1="12" x2="79" y2="4" stroke="#1F2A44" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="79" cy="4" r="4" fill="#FFC93C"/>
+    <circle cx="80" cy="52" r="9" fill="#fff"/><text x="80" y="57" text-anchor="middle" font-size="13" font-weight="800" font-family="Arial, sans-serif" fill="#FF6B2C">T</text>
+    <circle cx="132" cy="46" r="5" fill="#FFC93C"/>
+    <circle cx="46" cy="74" r="13" fill="#1F2A44"/><circle cx="46" cy="74" r="5" fill="#C9CED9"/>
+    <circle cx="112" cy="74" r="13" fill="#1F2A44"/><circle cx="112" cy="74" r="5" fill="#C9CED9"/>
+  </symbol>
+</svg>
+
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   PONTUAÇÃO TURBO — JRM • Aventuras Educativas (jrmapps.com)
+   Habilidades: MS.EF04LP05 · MS.EF35LP07
+   ---------------------------------------------------------
+   COMO ESCREVER TEXTOS DAS FASES
+   - Escreva o texto com a pontuação correta.
+   - Cada linha nova = uma linha do texto (use para diálogos).
+   - Fala de personagem: comece a linha com "— ".
+   - Mais de uma resposta aceita: palavra{.|!}   (vírgula opcional: palavra{,|})
+   - Tipo de vírgula (para o relatório e as dicas):
+       ,~l lista   ,~v vocativo   ,~a aposto   ,~i expressão no início
+   - Nome próprio no começo de frase: ^Pedro
+   ========================================================= */
+
+const SINAIS = {
+  '.': {nome:'Ponto final', curto:'ponto'},
+  '?': {nome:'Ponto de interrogação', curto:'pergunta'},
+  '!': {nome:'Ponto de exclamação', curto:'emoção'},
+  ',': {nome:'Vírgula', curto:'vírgula'},
+  ':': {nome:'Dois-pontos', curto:'dois-pontos'},
+  '—': {nome:'Travessão', curto:'travessão'}
+};
+const TECLAS = {'.':'.', ',':',', '?':'?', '!':'!', ':':':', '-':'—', '_':'—'};
+const FINAIS = ['.','?','!'];
+
+const MUNDOS = [
+ {nome:'Pista do Ponto', ano:'3º ano', cor:'#2563EB', sinais:['.','?','!'], fases:[
+  {id:'f1', titulo:'Ponto final',
+   regra:'O <b>ponto final (.)</b> avisa que a frase acabou. Na leitura, a gente <b>para</b> um pouquinho e a voz desce. Depois do ponto, a próxima frase começa com <b>letra maiúscula</b>.',
+   exemplo:'O sol nasceu. A rua acordou.',
+   texto:'O ipê da praça floriu. As flores são amarelas. Muitos pássaros pousam nos galhos. As crianças tiram fotos embaixo da árvore.'},
+  {id:'f2', titulo:'Pergunta?',
+   regra:'O <b>ponto de interrogação (?)</b> aparece no fim de uma <b>pergunta</b>. Na leitura, a voz <b>sobe</b> no final. Palavras como <i>onde, quando, quem</i> e <i>por que</i> costumam começar perguntas.',
+   exemplo:'Você gosta de ler? Eu gosto muito.',
+   texto:'Você já viu um tuiuiú? Ele é a ave símbolo do Pantanal. Onde ele faz o ninho? Ele faz o ninho no alto das árvores. Por que ele tem uma faixa vermelha no pescoço? Vamos pesquisar juntos{.|!}'},
+  {id:'f3', titulo:'Que emoção!',
+   regra:'O <b>ponto de exclamação (!)</b> mostra <b>emoção</b>: alegria, surpresa, susto, dor ou uma ordem. Na leitura, a voz fica mais forte.',
+   exemplo:'Que susto! O gato pulou na mesa.',
+   texto:'Que calor! A turma correu para a sombra do ipê. A tia da cantina trouxe suco de guavira. Que delícia! Cuidado com o copo! Ufa{!|.} Ninguém derrubou nada.'},
+  {id:'f4', titulo:'Tudo junto',
+   regra:'Agora é tudo junto! Leia cada frase e pense: ela <b>conta</b> alguma coisa (.), faz uma <b>pergunta</b> (?) ou mostra <b>emoção</b> (!)?',
+   exemplo:'Que dia lindo! Vamos brincar? Eu vou buscar a bola.',
+   texto:'Hoje é dia de feira{.|!} A vovó comprou chipa quentinha. Que cheiro bom! Você quer um pedaço? Eu quero dois{!|.}'}
+ ]},
+ {nome:'Curva da Vírgula', ano:'4º ano', cor:'#059669', sinais:['.','?','!',','], fases:[
+  {id:'f5', titulo:'Lista com vírgula',
+   regra:'Numa <b>lista</b> de coisas, a <b>vírgula (,)</b> separa um item do outro. Antes do último item vem o <b>e</b>, e aí não usamos vírgula.',
+   exemplo:'Comprei pão,~l leite e frutas.',
+   texto:'Na mochila da Ana tem caderno,~l lápis,~l borracha e régua. Na lancheira tem pão,~l banana e suco. Ela está pronta para a aula{.|!}'},
+  {id:'f6', titulo:'Chamando alguém',
+   regra:'Quando <b>chamamos alguém</b> pelo nome, separamos esse nome com <b>vírgula</b>. Esse chamado se chama <b>vocativo</b>. Ele pode vir no começo, no meio ou no fim da frase.',
+   exemplo:'^Maria,~v venha ver! Venha ver,~v Maria!',
+   texto:'^Pedro,~v o jantar está pronto{!|.} Crianças,~v não esqueçam o casaco{.|!} Professora,~v a senhora pode me ajudar? Claro,~v Lucas{.|!}'},
+  {id:'f7', titulo:'Curva dupla',
+   regra:'Curva dupla! Neste texto aparecem vírgulas de <b>lista</b> e de <b>chamado (vocativo)</b>, além dos pontos.',
+   exemplo:'Mãe,~v comprei lápis,~l cola e tesoura.',
+   texto:'No Pantanal vivem capivaras,~l jacarés,~l araras e onças. Você sabia disso,~v Júlia? Lá também existem muitos peixes{!|.} Quero conhecer o Pantanal,~v vovô{!|.}'}
+ ]},
+ {nome:'Estrada do Diálogo', ano:'4º ano', cor:'#0E7490', sinais:['.','?','!',',',':','—'], fases:[
+  {id:'f8', titulo:'Dois-pontos',
+   regra:'Os <b>dois-pontos (:)</b> avisam que vem algo importante: uma <b>lista</b>, uma <b>explicação</b> ou a <b>fala</b> de alguém.',
+   exemplo:'Levei três frutas: maçã,~l uva e pera.',
+   texto:'Para o piquenique{,|}~i levamos três coisas: frutas,~l água e chapéu. A professora deu um aviso: ninguém deixa lixo no parque. Que dia bonito{!|.}'},
+  {id:'f9', titulo:'Travessão',
+   regra:'Num <b>diálogo</b>, cada fala começa em uma linha nova com <b>travessão (—)</b>. Antes da fala, o narrador costuma usar <b>dois-pontos</b>, como em <i>A professora perguntou:</i>',
+   exemplo:'O menino disse:\n— Bom dia!',
+   texto:'A professora perguntou:\n— Quem quer ler primeiro?\n^Lucas levantou a mão e disse:\n— Eu quero,~v professora!\n— Muito bem,~v Lucas. Pode começar{.|!}'},
+  {id:'f10', titulo:'Conversa no Pantanal',
+   regra:'Uma conversa completa! Use travessão, dois-pontos, vírgulas e pontos. Dica: a vírgula depois de uma expressão de tempo no começo da frase (<i>Durante o passeio,</i>) é opcional.',
+   exemplo:'No recreio{,|}~i ^Davi perguntou:\n— Quem quer jogar?',
+   texto:'Durante o passeio{,|}~i Bia viu um bicho na beira do rio e gritou:\n— Olha lá,~v pai! É um jacaré{!|.}\nO pai respondeu:\n— É sim,~v filha. Fique longe da água.\n— Ele morde?\n— Pode morder. Por isso{,|} vamos olhar daqui de longe{.|!}'}
+ ]},
+ {nome:'Grande Prêmio', ano:'5º ano', cor:'#B45309', sinais:['.','?','!',',',':','—'], fases:[
+  {id:'f11', titulo:'Explicação entre vírgulas',
+   regra:'Às vezes colocamos uma <b>explicação</b> logo depois de um nome, para dizer quem ou o que ele é. Essa explicação fica <b>entre vírgulas</b> e se chama <b>aposto</b>.',
+   exemplo:'^Rex,~a o cachorro da vizinha,~a adora brincar.',
+   texto:'^Campo Grande,~a a capital de Mato Grosso do Sul,~a é chamada de Cidade Morena. O apelido vem da cor avermelhada da terra. Você sabe qual é a fruta símbolo do estado? É a guavira,~a uma frutinha pequena e doce.'},
+  {id:'f12', titulo:'Passeio no Bioparque',
+   regra:'Grande Prêmio! Um texto com lista, aposto, dois-pontos e diálogo. Leia tudo com calma antes de colocar os sinais.',
+   exemplo:'^Lia,~a minha prima,~a perguntou:\n— Vamos ao parque?',
+   texto:'Na sexta-feira{,|}~i a turma do quinto ano visitou o Bioparque Pantanal{.|!}\nLá eles viram arraias,~l piranhas,~l pintados e dourados.\n^Joana ficou encantada e perguntou ao monitor:\n— Esses peixes vivem nos rios daqui?\n— Vivem sim. O Bioparque,~a um dos maiores aquários de água doce do mundo,~a mostra os peixes da nossa região.\n— Que incrível!'},
+  {id:'f13', titulo:'Bilhete da professora',
+   regra:'Última volta! Um bilhete da professora para a turma. Repare na <b>saudação</b> do começo, na <b>lista</b> e na <b>despedida</b>.',
+   exemplo:'Querida vovó{,|:}~v\nEstou com saudade{.|!}\nBeijos{,|}\nTiago',
+   texto:'Querida turma{,|:}~v\nAmanhã teremos a Feira de Ciências. Tragam três materiais: garrafa,~l tesoura sem ponta e cola.\nQuem vai apresentar o vulcão de bicarbonato? Lembrem-se: cheguem cedo{!|.}\nUm abraço{,|.|!|}\nProfessora Lúcia'}
+ ]}
+];
+const TODAS = [];
+MUNDOS.forEach((m,mi)=>m.fases.forEach(f=>{f.mundo=mi; f.idx=TODAS.length; TODAS.push(f);}));
+
+const CATS = {
+  ponto:'Ponto final (.)', int:'Ponto de interrogação (?)', exc:'Ponto de exclamação (!)',
+  v_l:'Vírgula em listas', v_v:'Vírgula no vocativo (chamar alguém)', v_a:'Vírgula no aposto (explicação)',
+  v_i:'Vírgula após expressão no início', v_o:'Vírgula (outros usos)', dp:'Dois-pontos (:)', trav:'Travessão em diálogos (—)'
+};
+const COR_CAT = {ponto:'--m-ponto', int:'--m-int', exc:'--m-exc', v_l:'--m-virg', v_v:'--m-virg', v_a:'--m-virg', v_i:'--m-virg', v_o:'--m-virg', dp:'--m-dp', trav:'--m-trav'};
+function catDe(m, tag){
+  if(m==='.') return 'ponto'; if(m==='?') return 'int'; if(m==='!') return 'exc';
+  if(m===':') return 'dp'; if(m==='—') return 'trav';
+  return tag ? 'v_'+tag : 'v_o';
+}
+
+/* ---------------- ESTADO SALVO ---------------- */
+const CHAVE = 'pontuacaoTurbo.v1';
+function padrao(){ return {nome:'', turma:'', fases:{}, stats:{}, extras:0, cfg:{som:true, lenta:false, desafio:false, livre:false}}; }
+let S = padrao();
+try { const g = JSON.parse(localStorage.getItem(CHAVE)); if(g && typeof g==='object') S = Object.assign(padrao(), g, {cfg:Object.assign(padrao().cfg, g.cfg||{})}); } catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(S)); }catch(e){} }
+
+/* ---------------- UTIL ---------------- */
+const $ = (q,el=document)=>el.querySelector(q);
+const app = $('#app');
+function esc(t){ return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function maiusc(w){ return w ? w.charAt(0).toLocaleUpperCase('pt-BR')+w.slice(1) : w; }
+function minusc(w){ return w ? w.charAt(0).toLocaleLowerCase('pt-BR')+w.slice(1) : w; }
+function ehMaiusc(w){ const c=w.charAt(0); return c!==c.toLocaleLowerCase('pt-BR') && c===c.toLocaleUpperCase('pt-BR'); }
+let toastT=null;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+function carro(cls=''){ return `<svg class="${cls}" viewBox="0 0 150 92" role="img" aria-label="Turbinho"><use href="#turbinho"/></svg>`; }
+
+/* ---------------- LEITOR DE TEXTO (parser) ---------------- */
+function lerToken(tk){
+  let tag=null, aceita=null, proprio=false, m;
+  if((m=tk.match(/~([lvai])$/))){ tag=m[1]; tk=tk.slice(0,-2); }
+  if((m=tk.match(/\{([^}]*)\}$/))){ aceita=m[1].split('|').map(s=>s.trim()); tk=tk.slice(0,m.index); }
+  if(tk.startsWith('^')){ proprio=true; tk=tk.slice(1); }
+  tk = tk.replace(/^["“”'«]+|["“”'»]+$/g,'');
+  let sinal='';
+  if((m=tk.match(/(\.\.\.|…|[.,?!:;]+)$/))){
+    const p=m[0]; tk=tk.slice(0,m.index).replace(/["“”'»]+$/,'');
+    if(p.includes('?') && p.includes('!')) aceita = aceita || ['?','!'];
+    else if(p==='...'||p==='…') sinal='.';
+    else sinal = p.charAt(0)===';' ? ',' : p.charAt(0);
+  }
+  if(!aceita) aceita=[sinal];
+  return {palavra:tk, aceita, tag, proprio};
+}
+function lerTexto(src){
+  const linhas = String(src).replace(/\r/g,'').split('\n').map(l=>l.trim()).filter(Boolean);
+  const words=[], slots=[], lines=[];
+  linhas.forEach((ln,li)=>{
+    let toks = ln.split(/\s+/);
+    let ini=[''];
+    if(/^(—|–|-{1,2})$/.test(toks[0])){ ini=['—']; toks=toks.slice(1); }
+    else if(/^(—|–|--)/.test(toks[0])){ ini=['—']; toks[0]=toks[0].replace(/^(—|–|--)/,''); }
+    const line={ini:slots.length, units:[]};
+    slots.push({aceita:ini, tag:null, tipo:'ini', linha:li});
+    toks.forEach(tk=>{
+      const p=lerToken(tk);
+      if(!p.palavra){ // sinal solto ("Oi ?")
+        const ult=line.units[line.units.length-1];
+        if(ult && p.aceita[0]) slots[ult.s].aceita=p.aceita;
+        return;
+      }
+      const wi=words.length, si=slots.length;
+      words.push({txt:p.palavra, proprio:p.proprio, linha:li, prev: line.units.length? line.units[line.units.length-1].s : line.ini, primeira: line.units.length===0});
+      slots.push({aceita:p.aceita, tag:p.tag, tipo:'pos', w:wi, linha:li});
+      line.units.push({w:wi, s:si});
+    });
+    if(line.units.length) lines.push(line); else slots.pop();
+  });
+  // começo de frase e nomes próprios (para o modo desafio)
+  const proprios=new Set();
+  words.forEach(w=>{
+    w.inicio = w.primeira || FINAIS.includes(slots[w.prev].aceita[0]);
+    if(!w.inicio && ehMaiusc(w.txt)) proprios.add(w.txt.toLocaleLowerCase('pt-BR'));
+  });
+  words.forEach(w=>{ if(proprios.has(w.txt.toLocaleLowerCase('pt-BR'))) w.proprio=true; });
+  return {words, slots, lines};
+}
+function respostaCorreta(P){ return P.slots.map(s=> s.aceita.find(a=>a!=='') ?? ''); }
+
+/* ---------------- VOZ ---------------- */
+const VOZ = { ok: 'speechSynthesis' in window, voz:null, sessao:0, falando:null };
+if(VOZ.ok){
+  const escolher=()=>{ const vs=speechSynthesis.getVoices(); VOZ.voz = vs.find(v=>/pt[-_]BR/i.test(v.lang)) || vs.find(v=>/^pt/i.test(v.lang)) || null; };
+  escolher(); speechSynthesis.onvoiceschanged=escolher;
+}
+function pararVoz(){
+  VOZ.sessao++; VOZ.falando=null;
+  if(VOZ.ok) speechSynthesis.cancel();
+  document.querySelectorAll('.w.falando').forEach(e=>e.classList.remove('falando'));
+  document.querySelectorAll('svg.treme').forEach(e=>e.classList.remove('treme'));
+  atualizarBotoesVoz();
+}
+/* segs: [{texto, mapa:[{c,w}], rate, pitch, raiz}] */
+function falar(segs, quem){
+  if(!VOZ.ok){ toast('Este navegador não tem leitura em voz alta. Tente o Chrome ou o Edge.'); return; }
+  pararVoz();
+  const sessao=++VOZ.sessao; VOZ.falando=quem;
+  atualizarBotoesVoz();
+  let i=0;
+  const prox=()=>{
+    if(sessao!==VOZ.sessao) return;
+    document.querySelectorAll('.w.falando').forEach(e=>e.classList.remove('falando'));
+    if(i>=segs.length){ VOZ.falando=null; document.querySelectorAll('svg.treme').forEach(e=>e.classList.remove('treme')); atualizarBotoesVoz(); return; }
+    const sg=segs[i++];
+    const u=new SpeechSynthesisUtterance(sg.texto);
+    u.lang='pt-BR'; if(VOZ.voz) u.voice=VOZ.voz;
+    u.rate=sg.rate*(S.cfg.lenta?0.8:1); u.pitch=sg.pitch;
+    u.onboundary=e=>{
+      if(sessao!==VOZ.sessao || !sg.mapa || (e.name && e.name!=='word')) return;
+      let alvo=null; for(const m of sg.mapa){ if(m.c<=e.charIndex) alvo=m; else break; }
+      document.querySelectorAll('.w.falando').forEach(el=>el.classList.remove('falando'));
+      if(alvo){ const el=(sg.raiz||document).querySelector(`.w[data-w="${alvo.w}"]`); if(el) el.classList.add('falando'); }
+    };
+    u.onend=prox; u.onerror=prox;
+    speechSynthesis.speak(u);
+  };
+  setTimeout(prox,60);
+}
+function montarFala(P, marcas, robo, raiz){
+  const segs=[]; let cur={texto:'',mapa:[]};
+  const fecha=()=>{ if(cur.texto.trim()){ segs.push(Object.assign(cur,{rate:robo?1.35:0.92, pitch:robo?0.55:1.05, raiz})); } cur={texto:'',mapa:[]}; };
+  P.lines.forEach(line=>{
+    line.units.forEach(u=>{
+      const m = robo ? '' : (marcas[u.s]||'');
+      cur.mapa.push({c:cur.texto.length, w:u.w});
+      cur.texto += P.words[u.w].txt + (m && m!=='—' ? m : '') + ' ';
+      if((!robo && FINAIS.includes(m)) || cur.texto.length>170) fecha();
+    });
+  });
+  fecha();
+  return segs;
+}
+function atualizarBotoesVoz(){
+  document.querySelectorAll('[data-voz]').forEach(b=>{
+    const k=b.dataset.voz;
+    b.innerHTML = VOZ.falando===k ? '⏹ Parar' : b.dataset.rotulo;
+  });
+}
+
+/* ---------------- SONS ---------------- */
+let AC=null;
+function som(tipo){
+  if(!S.cfg.som) return;
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended') AC.resume();
+    const notas = {poe:[[660,.06]], tira:[[330,.06]], ok:[[523,.09],[659,.09],[784,.14]], erro:[[262,.14],[220,.18]], vitoria:[[523,.1],[659,.1],[784,.1],[1047,.25]], dica:[[880,.08],[988,.1]]}[tipo]||[];
+    let t=AC.currentTime;
+    notas.forEach(([f,d])=>{
+      const o=AC.createOscillator(), g=AC.createGain();
+      o.type = tipo==='erro'?'triangle':'sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(.12,t); g.gain.exponentialRampToValueAtTime(.001,t+d);
+      o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t+d+.02); t+=d*.9;
+    });
+  }catch(e){}
+}
+function festa(){
+  const cores=['#FF6B2C','#FFC93C','#2563EB','#059669','#7C3AED','#DC2626'];
+  for(let i=0;i<70;i++){
+    const d=document.createElement('div'); d.className='conf';
+    d.style.left=Math.random()*100+'vw'; d.style.background=cores[i%cores.length];
+    d.style.animationDuration=(1.8+Math.random()*1.8)+'s'; d.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(d); setTimeout(()=>d.remove(),4200);
+  }
+}
+
+/* ---------------- MODAL ---------------- */
+let modalFechavel=true;
+function abrirModal(html, fechavel=true){ modalFechavel=fechavel; $('#modal').innerHTML=html; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; pararVoz(); }
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay' && modalFechavel) fecharModal(); });
+
+/* ---------------- TELAS ---------------- */
+let TELA='home';
+function ir(tela, arg){
+  pararVoz(); TELA=tela; window.scrollTo(0,0);
+  if(tela==='home') telaHome();
+  else if(tela==='mapa') telaMapa();
+  else if(tela==='jogo') iniciarFase(arg);
+  else if(tela==='relatorio') telaRelatorio();
+  else if(tela==='criar') telaCriar();
+}
+function totalEstrelas(){ return TODAS.reduce((a,f)=>a+((S.fases[f.id]||{}).estrelas||0),0); }
+function liberada(f){ return S.cfg.livre || f.idx===0 || !!(S.fases[TODAS[f.idx-1].id]||{}).feita; }
+
+function telaHome(){
+  app.innerHTML = `
+  <section class="home">
+    <div class="hero">
+      <div>
+        <span class="selo">JRM • AVENTURAS EDUCATIVAS</span>
+        <h1>Pontuação <span>Turbo</span></h1>
+        <p class="lead">O Turbinho lê tudo sem freio, porque o texto chegou <b>sem pontuação</b>! Sua missão é colocar os sinais no lugar certo para ele ler direitinho. Ouça a diferença!</p>
+        <div class="campos">
+          <label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label>
+          <label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 4º A" value="${esc(S.turma)}"></label>
+        </div>
+        <div class="acoes">
+          <button class="btn primario grande" data-ir="mapa">Começar corrida 🏁</button>
+          <button class="btn" data-ir="criar">✍️ Criar desafio</button>
+          <button class="btn" data-ir="relatorio">📊 Meu desempenho</button>
+          <button class="btn" data-acao="ajuda">❓ Como jogar</button>
+          <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="sol"></div>
+        <div class="placa"><b>.</b><b>,</b><b>?</b><b>!</b></div>
+        <div class="estrada"></div>
+        ${carro('carro')}
+      </div>
+    </div>
+    <div class="info">
+      <div><b>13</b>fases em 4 pistas</div>
+      <div><b>6</b>sinais de pontuação</div>
+      <div><b>🔊</b>a voz lê o seu texto</div>
+      <div><b>★ ${totalEstrelas()}/39</b>suas estrelas</div>
+    </div>
+    <p class="rodape">Para o 3º ao 5º ano · Habilidades <b>MS.EF04LP05</b> (pontuação na leitura e na escrita) e <b>MS.EF35LP07</b> (pontuação na produção de texto) · Funciona no computador, tablet e celular · Progresso salvo neste navegador.${VOZ.ok?'':' <b>Atenção:</b> este navegador não tem leitura em voz alta.'}</p>
+  </section>`;
+  $('#in-nome').addEventListener('input',e=>{S.nome=e.target.value.trim(); salvar();});
+  $('#in-turma').addEventListener('input',e=>{S.turma=e.target.value.trim(); salvar();});
+}
+
+function telaMapa(){
+  const atual = TODAS.find(f=>liberada(f) && !(S.fases[f.id]||{}).feita);
+  app.innerHTML = `
+  <header class="topo">
+    <button class="btn" data-ir="home" aria-label="Início">←</button>
+    <div class="tit"><h2>Escolha a fase</h2><small>${S.nome?esc(S.nome)+' · ':''}Complete uma fase para liberar a próxima</small></div>
+    <span class="estrelas-topo">★ ${totalEstrelas()}/39</span>
+    <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+  </header>
+  <section class="mapa">
+    ${MUNDOS.map(m=>`
+      <div class="mundo">
+        <div class="mundo-cab" style="background:${m.cor}">
+          <h3>${m.nome}</h3><span class="ano">${m.ano}</span>
+          <div class="sinais">${m.sinais.map(s=>`<span style="color:${m.cor}">${s}</span>`).join('')}</div>
+        </div>
+        <div class="pista-fases">
+          ${m.fases.map(f=>{ const r=S.fases[f.id]||{}; const lib=liberada(f); const ehAtual=atual&&atual.id===f.id;
+            return `<button class="fase ${ehAtual?'atual':''}" data-fase="${f.idx}" ${lib?'':'disabled'} aria-label="Fase ${f.idx+1}: ${esc(f.titulo)}${lib?'':' (bloqueada)'}">
+              ${ehAtual?carro('carrinho'):''}${lib?'':'<span class="cad">🔒</span>'}
+              <span class="num" style="color:${m.cor}">${f.idx+1}</span>
+              <span class="nome">${esc(f.titulo)}</span>
+              <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span>
+            </button>`; }).join('')}
+        </div>
+      </div>`).join('')}
+    <p class="mini">Professor(a): em ⚙️ Configurações dá para liberar todas as fases e ativar o modo desafio (sem letras maiúsculas de pista).</p>
+  </section>`;
+}
+
+/* ---------------- JOGO ---------------- */
+let G=null, P=null;
+function paleta(){ return G.fase.sinais || MUNDOS[G.fase.mundo].sinais; }
+function iniciarFase(fase){
+  if(typeof fase==='number') fase=TODAS[fase];
+  P = lerTexto(fase.texto);
+  G = {fase, marcas:P.slots.map(()=>''), ferramenta:paleta0(fase), modo:'editar', res:null, primeira:null, dicas:2, dicasUsadas:0, dica:null, revelou:false, tentativas:0, msg:null};
+  telaJogo();
+  if(fase.regra) mostrarRegra();
+}
+function paleta0(f){ return (f.sinais||MUNDOS[f.mundo].sinais)[0]; }
+function mostrarRegra(){
+  const ex = lerTexto(G.fase.exemplo);
+  const exMarcas = respostaCorreta(ex);
+  abrirModal(`
+    <span class="selo">FASE ${G.fase.idx+1} · ${esc(MUNDOS[G.fase.mundo].nome.toUpperCase())}</span>
+    <h2 style="margin-top:10px">${esc(G.fase.titulo)}</h2>
+    <div class="regra">${G.fase.regra}</div>
+    <div class="exemplo"><div class="mini">Exemplo</div><div class="texto" id="ex-texto">${htmlTexto(ex, exMarcas, null, true)}</div></div>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap">
+      ${VOZ.ok?`<button class="btn" data-voz="ex" data-rotulo="🔊 Ouvir sem e com pontuação" data-acao="ouvir-ex">🔊 Ouvir sem e com pontuação</button>`:''}
+      <button class="btn primario" data-acao="fechar" data-foco>Vamos lá! 🏁</button>
+    </div>`);
+  $('#modal').dataset.ex = G.fase.exemplo;
+}
+function palavraVisivel(PP, wi, marcas){
+  const w=PP.words[wi];
+  if(!S.cfg.desafio) return w.txt;
+  const capPorSinal = w.primeira || FINAIS.includes(marcas[w.prev]);
+  if(capPorSinal) return maiusc(w.txt);
+  if(w.proprio) return w.txt;
+  return w.inicio ? minusc(w.txt) : w.txt;
+}
+function htmlTexto(PP, marcas, res, estatico){
+  const comIni = estatico ? PP.slots.some(s=>s.tipo==='ini'&&s.aceita.includes('—')) : paleta().includes('—');
+  return PP.lines.map(line=>{
+    let h='<div class="linha">';
+    line.units.forEach((u,k)=>{
+      h+='<span class="u">';
+      if(k===0 && comIni) h+=htmlSlot(PP, line.ini, marcas, res, estatico);
+      h+=`<span class="w" data-w="${u.w}">${esc(palavraVisivel(PP,u.w,marcas))}</span>`;
+      h+=htmlSlot(PP, u.s, marcas, res, estatico);
+      h+='</span><wbr>';
+    });
+    return h+'</div>';
+  }).join('');
+}
+function htmlSlot(PP, i, marcas, res, estatico){
+  const s=PP.slots[i], m=marcas[i]||'';
+  const cls=['s', s.tipo==='ini'?'ini':'', m?'has':'', res&&res[i]?res[i]:'', (!estatico&&G&&G.dica===i)?'dica':''].filter(Boolean).join(' ');
+  if(estatico && !m && s.tipo==='ini') return '';
+  const rot = s.tipo==='ini' ? 'Começo da linha' : 'Espaço depois de “'+PP.words[s.w].txt+'”';
+  return `<button class="${cls}" ${estatico?'tabindex="-1" aria-hidden="true"':''} data-s="${i}" data-m="${m}" aria-label="${esc(rot)}${m?': '+SINAIS[m].nome:': vazio'}">${m?`<span class="mk">${m}</span>`:'<span class="mk vz">\u200B</span>'}</button>`;
+}
+function falaTurbinho(){
+  if(G.modo==='editar') return G.msg || 'Eu leio tudo sem freio! 😵 Escolha um sinal lá embaixo e toque no espaço entre as palavras.';
+  if(G.modo==='revisar') return 'Quase lá! Toque nos espaços coloridos para ver uma dica.';
+  return 'Agora sim! Com pontuação eu leio do jeito certo! 🏁';
+}
+function telaJogo(){
+  const f=G.fase, m=MUNDOS[f.mundo]||{nome:'Desafio', cor:'#FF6B2C'};
+  const custom = f.id==='custom';
+  app.innerHTML = `
+  <header class="topo">
+    <button class="btn" data-ir="${custom?'home':'mapa'}" aria-label="Voltar">←</button>
+    <div class="tit"><h2>${custom?'Desafio':'Fase '+(f.idx+1)} · ${esc(f.titulo)}</h2><small>${custom ? (f.autor?'Criado por '+esc(f.autor):'Desafio personalizado') : esc(m.nome)+' · '+m.ano}</small></div>
+    ${f.regra?'<button class="btn icone" data-acao="regra" aria-label="Ver regra da fase">📘</button>':''}
+    <button class="btn icone" data-acao="recomecar" aria-label="Recomeçar fase">↻</button>
+    <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+  </header>
+  <section class="jogo">
+    <div class="turbinho">
+      ${carro('robo')}
+      <div class="balao"><div id="fala">${falaTurbinho()}</div>
+        <div class="balao-acoes">${VOZ.ok?`<button class="btn" data-voz="robo" data-rotulo="🔊 Ouvir sem pontuação" data-acao="ouvir-robo">🔊 Ouvir sem pontuação</button>`:''}</div>
+      </div>
+    </div>
+    <div class="folha"><div class="texto ${G.modo==='editar'?'editando':''}" id="texto" style="--fantasma:'${G.ferramenta==='x'?'':G.ferramenta}'"></div></div>
+    <p class="legenda">${G.modo==='editar'?'Toque no espaço entre as palavras para colocar o sinal escolhido. Tocar de novo no mesmo sinal tira ele. No teclado: <b>Tab</b> anda pelos espaços e as teclas <b>. , ? ! : -</b> colocam o sinal.':'&nbsp;'}</p>
+    <div id="retorno"></div>
+  </section>
+  <nav class="barra" aria-label="Ferramentas">
+    <div class="barra-in">
+      <div class="paleta ${G.modo!=='editar'?'trava':''}" id="paleta">
+        ${paleta().map((s,k)=>`<button class="chip ${G.ferramenta===s?'on':''}" data-ferr="${s}" data-m="${s}" aria-pressed="${G.ferramenta===s}" title="${SINAIS[s].nome} (atalho ${k+1})"><b>${s}</b><small>${SINAIS[s].curto}</small></button>`).join('')}
+        <button class="chip apagar ${G.ferramenta==='x'?'on':''}" data-ferr="x" aria-pressed="${G.ferramenta==='x'}" title="Apagar"><b>⌫</b><small>apagar</small></button>
+      </div>
+      <div class="botoes" id="botoes"></div>
+    </div>
+  </nav>`;
+  atualizarTexto(); atualizarBotoes(); atualizarRetorno();
+}
+function atualizarTexto(focar){
+  const el=$('#texto'); if(!el) return;
+  el.innerHTML = htmlTexto(P, G.marcas, G.modo==='editar'?null:G.res, false);
+  el.classList.toggle('editando', G.modo==='editar');
+  el.style.setProperty('--fantasma', `'${G.ferramenta==='x'?'':G.ferramenta}'`);
+  if(focar!=null){ const b=el.querySelector(`.s[data-s="${focar}"]`); if(b) b.focus({preventScroll:true}); }
+}
+function atualizarBotoes(){
+  const b=$('#botoes'); if(!b) return;
+  const vozBtn = (k,r)=> VOZ.ok?`<button class="btn" data-voz="${k}" data-rotulo="${r}" data-acao="ouvir-${k}">${r}</button>`:`<span></span>`;
+  if(G.modo==='editar') b.innerHTML = `${vozBtn('meu','🔊 Meu texto')}
+      <button class="btn" data-acao="dica" ${G.dicas<=0?'disabled':''}>💡 Dica (${G.dicas})</button>
+      <button class="btn primario" data-acao="verificar">✅ Verificar</button>`;
+  else if(G.modo==='revisar') b.innerHTML = `${vozBtn('meu','🔊 Meu texto')}
+      <button class="btn" data-acao="revelar">👀 Resposta</button>
+      <button class="btn primario" data-acao="corrigir">✏️ Corrigir</button>`;
+  else b.innerHTML = `${vozBtn('certo','🔊 Ouvir texto')}
+      <button class="btn" data-ir="${G.fase.id==='custom'?'home':'mapa'}">🗺️ ${G.fase.id==='custom'?'Início':'Mapa'}</button>
+      ${G.fase.id!=='custom' && G.fase.idx<TODAS.length-1 ? `<button class="btn primario" data-acao="proxima">Próxima ➔</button>` : `<button class="btn primario" data-ir="relatorio">📊 Desempenho</button>`}`;
+  atualizarBotoesVoz();
+}
+function atualizarRetorno(html, classe){
+  const r=$('#retorno'); if(!r) return;
+  if(!html){ r.innerHTML=''; r.className=''; return; }
+  r.className='retorno '+(classe||''); r.innerHTML=html;
+}
+function setFala(t){ G.msg=t; const f=$('#fala'); if(f) f.textContent=t; }
+
+function colocar(i, sinal){
+  if(G.modo!=='editar') return;
+  const s=P.slots[i];
+  if(sinal==='x'){ if(G.marcas[i]){ G.marcas[i]=''; som('tira'); } }
+  else if(s.tipo==='ini' && sinal!=='—'){ toast('No começo da linha só cabe o travessão (—).'); return; }
+  else if(s.tipo==='pos' && sinal==='—'){ toast('O travessão vai no começo da fala, antes da primeira palavra.'); return; }
+  else if(G.marcas[i]===sinal){ G.marcas[i]=''; som('tira'); }
+  else { G.marcas[i]=sinal; som('poe'); }
+  if(G.dica===i) G.dica=null;
+  atualizarTexto(i);
+}
+function avaliar(){
+  const res=[]; let ok=0,total=0,extra=0; const porCat={};
+  P.slots.forEach((s,i)=>{
+    const m=G.marcas[i]||'';
+    if(s.tipo==='ini' && !paleta().includes('—')){ res[i]=''; return; }
+    const exigido=!s.aceita.includes('');
+    if(exigido){
+      total++; const c=catDe(s.aceita[0], s.tag); porCat[c]=porCat[c]||{ok:0,total:0}; porCat[c].total++;
+      if(s.aceita.includes(m)){ ok++; res[i]='ok'; porCat[c].ok++; } else res[i]= m?'erro':'falta';
+    } else {
+      if(m && !s.aceita.includes(m)){ extra++; res[i]='extra'; } else res[i]= m?'ok':'';
+    }
+  });
+  const acc = (total+extra) ? ok/(total+extra) : 1;
+  return {res, ok, total, extra, acc, perfeito: ok===total && extra===0, porCat};
+}
+function estrelasDe(acc){ return acc>=1?3 : acc>=.75?2 : acc>=.4?1 : 0; }
+function verificar(){
+  pararVoz();
+  const r=avaliar(); G.tentativas++; G.res=r.res;
+  if(G.primeira===null){
+    G.primeira=r;
+    Object.entries(r.porCat).forEach(([c,v])=>{ S.stats[c]=S.stats[c]||{ok:0,total:0}; S.stats[c].ok+=v.ok; S.stats[c].total+=v.total; });
+    S.extras=(S.extras||0)+r.extra; salvar();
+  }
+  if(r.perfeito){ concluir(); return; }
+  som('erro');
+  G.modo='revisar';
+  const faltam = r.total - r.ok;
+  telaJogo();
+  atualizarRetorno(`<b class="t">Você acertou ${r.ok} de ${r.total} sinais.</b>
+    ${faltam?`🟧 Espaços laranja: falta um sinal. 🟥 Espaços vermelhos: sinal trocado${r.extra?' ou colocado onde não precisava':''}.`:`🟥 Tem ${r.extra} sinal(is) onde não precisava.`}
+    <br>Toque num espaço colorido para ver uma dica e depois clique em <b>✏️ Corrigir</b>.`, 'revisao');
+}
+function dicaPara(i){
+  const s=P.slots[i], m=G.marcas[i]||'', certo=s.aceita.find(a=>a!=='')||'';
+  const r = G.res ? G.res[i] : null;
+  if(r==='ok') return {t:'Certinho! ✅', d:`Esse ${SINAIS[m]?SINAIS[m].nome.toLowerCase():'espaço'} está no lugar certo.`};
+  if(!certo || (s.aceita.includes('') && m && !s.aceita.includes(m))) return {t:'Aqui não precisa de sinal', d:'A frase continua depois deste espaço. Leia em voz alta sem parar aqui: faz sentido? Então pode apagar.'};
+  const pre = m ? `Você colocou <b>${m}</b>, mas ele não combina aqui. ` : '';
+  const D = {
+    '.':'Aqui termina uma frase que <b>conta ou afirma</b> alguma coisa. Qual sinal fecha esse tipo de frase?',
+    '?':'Leia de novo: essa frase está <b>fazendo uma pergunta</b>? Qual sinal mostra isso?',
+    '!':'Essa frase mostra <b>emoção</b> (surpresa, alegria, susto ou uma ordem). Qual sinal combina?',
+    ':':'Algo vai ser <b>anunciado</b>: uma lista, uma explicação ou a fala de alguém. Qual sinal avisa isso?',
+    '—':'Nesta linha começa a <b>fala de um personagem</b>. Que sinal aparece no começo da fala?'
+  };
+  const V = {l:'Aqui tem uma <b>lista</b> de coisas. O que separa um item do outro?', v:'Alguém está sendo <b>chamado pelo nome</b>. O que separa esse chamado do resto da frase?', a:'Tem uma <b>explicação</b> sobre um nome aqui. Ela fica entre dois sinais iguais. Qual?', i:'A frase começa com uma informação de <b>tempo ou lugar</b>. Cabe uma pausa curta aqui.'};
+  let d = certo===',' ? (V[s.tag]||'Aqui cabe uma <b>pausa curta</b> na leitura. Qual sinal marca isso?') : D[certo];
+  if(s.aceita.length>1 && s.aceita.filter(Boolean).length>1) d += ' <i>(Aqui mais de um sinal pode ficar certo.)</i>';
+  return {t: m?'Sinal trocado':'Está faltando um sinal', d: pre+d};
+}
+function tocarSlotRevisao(i){
+  const h=dicaPara(i);
+  $('#texto').querySelectorAll('.s.sel').forEach(e=>e.classList.remove('sel'));
+  const b=$(`#texto .s[data-s="${i}"]`); if(b) b.classList.add('sel');
+  atualizarRetorno(`<b class="t">${h.t}</b>${h.d}<div class="btns"><button class="btn primario" data-acao="corrigir">✏️ Corrigir</button></div>`, 'dica');
+}
+function usarDica(){
+  if(G.dicas<=0) return;
+  const r=avaliar();
+  const alvo = r.res.findIndex(x=>x==='falta'||x==='erro'||x==='extra');
+  if(alvo<0){ toast('Parece que está tudo certo! Clique em Verificar. ✅'); return; }
+  G.dicas--; G.dicasUsadas++; G.dica=alvo; som('dica');
+  const salvaRes=G.res; G.res=r.res; const h=dicaPara(alvo); G.res=salvaRes;
+  atualizarTexto(); atualizarBotoes();
+  atualizarRetorno(`<b class="t">💡 Dica: olhe o espaço amarelo</b>${h.d}`, 'dica');
+  const b=$(`#texto .s[data-s="${alvo}"]`); if(b) b.scrollIntoView({block:'center', behavior:'smooth'});
+}
+function concluir(){
+  G.modo='feito';
+  const base = estrelasDe(G.primeira.acc);
+  let est = Math.max(1, Math.min(base, G.dicasUsadas?2:3));
+  if(G.revelou) est = Math.max(1, Math.min(base,1));
+  const f=G.fase;
+  if(f.id!=='custom'){
+    const ant=S.fases[f.id]||{};
+    S.fases[f.id]={feita:true, estrelas:Math.max(ant.estrelas||0, est), vezes:(ant.vezes||0)+1};
+    salvar();
+  }
+  G.res = avaliar().res;
+  telaJogo();
+  if(!G.revelou){ som('vitoria'); if(est===3) festa(); } else som('ok');
+  const msg = G.revelou ? 'Você viu a resposta. Leia o texto com atenção e tente a fase de novo depois para ganhar mais estrelas!'
+    : est===3 ? 'TURBO TOTAL! Pontuação perfeita logo na primeira tentativa!'
+    : est===2 ? 'Muito bem! Você está quase no turbo.' : 'Fase concluída! Jogue de novo para ganhar mais estrelas.';
+  const p=G.primeira;
+  abrirModal(`
+    <h2 style="text-align:center">${G.revelou?'Resposta revelada':'Chegou ao fim da pista!'}</h2>
+    <div class="grandes-estrelas" aria-label="${est} estrelas">${estrelasHtml(est)}</div>
+    <div class="corrida" aria-hidden="true">${est===3?'<span class="chama">🔥</span>':''}${carro()}</div>
+    <p style="text-align:center">${msg}</p>
+    <div class="resumo">
+      <div><b>${p.ok}/${p.total}</b>acertos na 1ª tentativa</div>
+      <div><b>${p.extra}</b>sinais a mais</div>
+      <div><b>${G.tentativas}</b>tentativa(s)</div>
+      <div><b>${G.dicasUsadas}</b>dica(s)</div>
+    </div>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      ${VOZ.ok?`<button class="btn" data-voz="certo" data-rotulo="🔊 Ouvir texto pontuado" data-acao="ouvir-certo">🔊 Ouvir texto pontuado</button>`:''}
+      <button class="btn" data-acao="fechar">Ver o texto</button>
+      ${f.id!=='custom' && f.idx<TODAS.length-1 ? '<button class="btn primario" data-acao="proxima" data-foco>Próxima fase ➔</button>' : '<button class="btn primario" data-ir="relatorio" data-foco>📊 Meu desempenho</button>'}
+    </div>`);
+}
+function revelar(){
+  G.marcas = respostaCorreta(P).map((m,i)=> (P.slots[i].tipo==='ini' && !paleta().includes('—')) ? '' : m);
+  G.revelou=true; concluir();
+}
+
+/* ---------------- RELATÓRIO ---------------- */
+function linhasRelatorio(){
+  return Object.keys(CATS).filter(c=>S.stats[c]&&S.stats[c].total).map(c=>({c, nome:CATS[c], ok:S.stats[c].ok, total:S.stats[c].total, pct:Math.round(100*S.stats[c].ok/S.stats[c].total)}));
+}
+function textoRelatorio(){
+  const L=linhasRelatorio(); const feitas=TODAS.filter(f=>(S.fases[f.id]||{}).feita).length;
+  const retomar=L.filter(l=>l.total>=3 && l.pct<60).map(l=>l.nome);
+  return ['PONTUAÇÃO TURBO — Relatório',
+    `Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,
+    `Estrelas: ${totalEstrelas()}/39 · Fases concluídas: ${feitas}/13`,
+    'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),
+    `Sinais colocados onde não precisava: ${S.extras||0}`,
+    `Retomar: ${retomar.length?retomar.join('; '):'nada urgente'}`,
+    'Habilidades: MS.EF04LP05 · MS.EF35LP07'].join('\n');
+}
+function telaRelatorio(){
+  const L=linhasRelatorio(); const feitas=TODAS.filter(f=>(S.fases[f.id]||{}).feita).length;
+  const retomar=L.filter(l=>l.total>=3 && l.pct<60);
+  app.innerHTML = `
+  <header class="topo">
+    <button class="btn" data-ir="home" aria-label="Início">←</button>
+    <div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div>
+    <button class="btn" data-ir="mapa">🗺️ Fases</button>
+  </header>
+  <section class="pagina">
+    <div class="resumo" style="justify-content:flex-start">
+      <div><b>★ ${totalEstrelas()}/39</b>estrelas</div>
+      <div><b>${feitas}/13</b>fases concluídas</div>
+      <div><b>${S.extras||0}</b>sinais a mais</div>
+    </div>
+    <div class="cartao">
+      <h3>Acertos na 1ª tentativa, por sinal</h3>
+      ${L.length ? L.map(l=>`<div class="cat"><span>${l.nome}</span><div class="bar"><i style="width:${l.pct}%;background:var(${COR_CAT[l.c]})"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join('') : '<p class="mini">Jogue algumas fases para ver seus resultados aqui.</p>'}
+    </div>
+    ${retomar.length?`<div class="alerta"><b>Para treinar mais:</b> ${retomar.map(l=>esc(l.nome)).join(', ')}. Releia a regra dessas fases (botão 📘) e jogue de novo.</div>`:''}
+    <div class="cartao" style="margin-top:16px">
+      <h3>Enviar para o professor</h3>
+      <p class="mini">Copie o relatório e cole no grupo da turma, no e-mail ou na plataforma que o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+        <button class="btn primario" data-acao="copiar-rel">📋 Copiar relatório</button>
+        <button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button>
+      </div>
+      <p class="mini" style="margin-top:12px">Habilidades: <b>MS.EF04LP05</b> — identificar a função na leitura e usar na escrita ponto final, de interrogação, de exclamação, dois-pontos e travessão em diálogos, vírgula em enumerações e na separação de vocativo e de aposto · <b>MS.EF35LP07</b> — usar a pontuação ao produzir textos.</p>
+    </div>
+  </section>`;
+}
+
+/* ---------------- CRIAR DESAFIO ---------------- */
+function b64e(str){ return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+function faseCustom(d){
+  const P2=lerTexto(d.x);
+  const usados=new Set(respostaCorreta(P2).filter(Boolean));
+  const sinais=['.','?','!',',',':'].concat(usados.has('—')?['—']:[]);
+  return {id:'custom', idx:-1, mundo:-1, titulo:d.t||'Desafio', autor:d.a||'', texto:d.x, sinais};
+}
+function telaCriar(){
+  app.innerHTML = `
+  <header class="topo">
+    <button class="btn" data-ir="home" aria-label="Início">←</button>
+    <div class="tit"><h2>Criar desafio</h2><small>Escreva um texto e desafie um colega</small></div>
+  </header>
+  <section class="pagina">
+    <div class="cartao">
+      <h3>1. Escreva seu texto com a pontuação certinha</h3>
+      <p class="mini">O jogo vai tirar a pontuação e seu colega terá que colocar de volta. Para um diálogo, comece cada fala numa linha nova com travessão (— ou -).</p>
+      <div class="campo"><span>Título</span><input id="c-titulo" maxlength="40" placeholder="ex.: Minha história"></div>
+      <div class="campo"><span>Autor(a)</span><input id="c-autor" maxlength="20" value="${esc(S.nome)}"></div>
+      <textarea id="c-texto" maxlength="1200" placeholder="Ontem, fui ao parque com meu primo.&#10;— Vamos brincar no balanço?&#10;— Vamos!"></textarea>
+      <p class="mini" id="c-info"></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn" data-acao="testar">▶️ Testar</button>
+        <button class="btn primario" data-acao="gerar">🔗 Gerar link do desafio</button>
+      </div>
+      <div id="c-link"></div>
+    </div>
+    <div class="cartao"><h3>Ideias</h3><p class="mini" style="font-size:15px;line-height:1.6">Conte o que aconteceu no seu fim de semana · Escreva uma conversa entre dois animais do Pantanal · Faça uma lista de compras para uma festa · Escreva um bilhete para alguém da sua família.</p></div>
+  </section>`;
+  const atualiza=()=>{
+    const t=$('#c-texto').value; const P2=lerTexto(t||''); const n=respostaCorreta(P2).filter(Boolean).length;
+    $('#c-info').textContent = t.trim() ? `${P2.words.length} palavras · ${n} sinais de pontuação encontrados` : '';
+  };
+  $('#c-texto').addEventListener('input',atualiza);
+}
+function dadosCriar(){
+  const x=$('#c-texto').value.trim();
+  if(!x){ toast('Escreva um texto primeiro.'); return null; }
+  const P2=lerTexto(x); const n=respostaCorreta(P2).filter(Boolean).length;
+  if(P2.words.length<3 || n<1){ toast('Escreva pelo menos uma frase com pontuação.'); return null; }
+  return {t:$('#c-titulo').value.trim()||'Desafio', a:$('#c-autor').value.trim(), x};
+}
+
+/* ---------------- CONFIG / AJUDA ---------------- */
+function telaConfig(){
+  const linha=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>
+    ${linha('som','Efeitos sonoros','Sons ao colocar sinais e ao terminar a fase.')}
+    ${linha('lenta','Voz mais lenta','Bom para quem está começando a ler.')}
+    ${linha('desafio','Modo desafio','Tira as letras maiúsculas que dão pista de onde começa a frase. Elas aparecem quando o estudante coloca o ponto.')}
+    ${linha('livre','Liberar todas as fases','Para o professor escolher a fase da aula.')}
+    ${VOZ.ok?'':'<p class="alerta">Este navegador não tem leitura em voz alta. No Chrome ou no Edge ela funciona.</p>'}
+    <div class="acoes"><button class="btn primario" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2>
+    <div class="ajuda-lista">
+      <div>🔊 <b>Ouça o Turbinho</b> ler o texto sem pontuação. Fica tudo emendado!</div>
+      <div>✏️ <b>Escolha um sinal</b> na barra de baixo e <b>toque no espaço</b> entre as palavras para colocá-lo. Toque de novo para tirar.</div>
+      <div>🔊 <b>Ouça o seu texto</b>: a voz respeita os sinais que você colocou. Ficou bom?</div>
+      <div>✅ <b>Verifique.</b> Laranja = falta sinal. Vermelho = sinal trocado ou sobrando. Toque neles para ver dicas.</div>
+      <div>⭐ As <b>estrelas</b> contam a primeira tentativa. Usar dica vale no máximo 2 estrelas.</div>
+      <div>✍️ Em <b>Criar desafio</b> você escreve um texto e gera um link para um colega jogar.</div>
+    </div>
+    <div class="acoes"><button class="btn primario" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+
+/* ---------------- COPIAR ---------------- */
+function copiar(txt){
+  const ok=()=>toast('Copiado! 📋');
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(ok).catch(()=>fallback()); } else fallback();
+  function fallback(){ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy'); ok();}catch(e){ toast('Não deu para copiar. Selecione o texto e copie.'); } t.remove(); }
+}
+
+/* ---------------- EVENTOS ---------------- */
+let apagarArmado=false;
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(!$('#overlay').classList.contains('hidden')) fecharModal(); ir(irB.dataset.ir); return; }
+  const fb=e.target.closest('[data-fase]'); if(fb && !fb.disabled){ ir('jogo', +fb.dataset.fase); return; }
+  const fr=e.target.closest('[data-ferr]'); if(fr && G && G.modo==='editar'){ G.ferramenta=fr.dataset.ferr; document.querySelectorAll('[data-ferr]').forEach(c=>{const on=c.dataset.ferr===G.ferramenta; c.classList.toggle('on',on); c.setAttribute('aria-pressed',on);}); $('#texto').style.setProperty('--fantasma',`'${G.ferramenta==='x'?'':G.ferramenta}'`); return; }
+  const sl=e.target.closest('#texto .s'); if(sl && G){ const i=+sl.dataset.s; if(G.modo==='editar') colocar(i, G.ferramenta); else if(G.modo==='revisar') tocarSlotRevisao(i); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='jogo' && G) atualizarTexto(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return;
+  const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='regra') mostrarRegra();
+  else if(a==='recomecar'){ ir('jogo', G.fase.id==='custom'?G.fase:G.fase.idx); }
+  else if(a==='verificar') verificar();
+  else if(a==='dica') usarDica();
+  else if(a==='corrigir'){ G.modo='editar'; G.res=null; G.msg='Corrija os sinais e verifique de novo. Você consegue!'; telaJogo(); }
+  else if(a==='revelar') revelar();
+  else if(a==='proxima'){ fecharModal(); const n=G.fase.idx+1; if(n<TODAS.length){ if(!S.cfg.livre && !liberada(TODAS[n])) ir('mapa'); else ir('jogo', n); } }
+  else if(a==='ouvir-robo'){ if(VOZ.falando==='robo') return pararVoz(); const r=$('svg.robo'); falar(montarFala(P,null,true,$('#texto')),'robo'); if(r) r.classList.add('treme'); }
+  else if(a==='ouvir-meu'){ if(VOZ.falando==='meu') return pararVoz(); if(!G.marcas.some(Boolean)){ toast('Coloque alguns sinais primeiro!'); return; } falar(montarFala(P,G.marcas,false,$('#texto')),'meu'); }
+  else if(a==='ouvir-certo'){ if(VOZ.falando==='certo') return pararVoz(); falar(montarFala(P,respostaCorreta(P),false,$('#texto')),'certo'); }
+  else if(a==='ouvir-ex'){ if(VOZ.falando==='ex') return pararVoz(); const ex=lerTexto($('#modal').dataset.ex); const raiz=$('#ex-texto'); falar(montarFala(ex,null,true,raiz).concat(montarFala(ex,respostaCorreta(ex),false,raiz)),'ex'); }
+  else if(a==='copiar-rel') copiar(textoRelatorio());
+  else if(a==='apagar'){ if(!apagarArmado){ apagarArmado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{apagarArmado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const cfg=S.cfg; S=padrao(); S.cfg=cfg; salvar(); apagarArmado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+  else if(a==='testar'){ const d=dadosCriar(); if(d){ TELA='jogo'; iniciarFase(faseCustom(d)); } }
+  else if(a==='gerar'){ const d=dadosCriar(); if(!d) return; const url=location.href.split('#')[0]+'#d='+b64e(JSON.stringify(d)); $('#c-link').innerHTML=`<div class="link-box">${esc(url)}</div><div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap"><button class="btn primario" id="c-copiar">📋 Copiar link</button></div>`; $('#c-copiar').onclick=()=>copiar(url); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && !$('#overlay').classList.contains('hidden') && modalFechavel){ fecharModal(); return; }
+  if(TELA!=='jogo' || !G || G.modo!=='editar' || !$('#overlay').classList.contains('hidden')) return;
+  const foco=document.activeElement;
+  if(/^[1-7]$/.test(e.key) && !(foco && /INPUT|TEXTAREA/.test(foco.tagName))){
+    const lista=paleta().concat(['x']); const k=+e.key-1; if(lista[k]){ const b=$(`[data-ferr="${lista[k]}"]`); if(b) b.click(); } return;
+  }
+  if(!foco || !foco.matches('#texto .s')) return;
+  const i=+foco.dataset.s;
+  if(TECLAS[e.key]){ e.preventDefault(); const sn=TECLAS[e.key]; if(!paleta().includes(sn)){ toast('Este sinal não está nesta fase.'); return; } if(G.marcas[i]!==sn) colocar(i,sn); }
+  else if(e.key==='Backspace'||e.key==='Delete'){ e.preventDefault(); if(G.marcas[i]) colocar(i,'x'); }
+});
+
+/* ---------------- INÍCIO ---------------- */
+(function iniciar(){
+  const h=location.hash;
+  if(h.startsWith('#d=')){
+    try{ const d=JSON.parse(b64d(h.slice(3))); if(d && typeof d.x==='string' && d.x.length<=1500){ TELA='jogo'; iniciarFase(faseCustom(d)); return; } }
+    catch(e){ console.warn('Link de desafio inválido'); }
+  }
+  telaHome();
+})();
+</script>
+</body>
+</html>

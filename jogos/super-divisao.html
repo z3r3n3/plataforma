@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Divisão - Exatas e Resto</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap');
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            color: #333; text-align: center; margin: 0; padding: 10px;
+            min-height: 100vh; overflow-x: hidden;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive; font-size: 3.5em;
+            margin-bottom: 5px; margin-top: 5px;
+            background: linear-gradient(45deg, #2c3e50, #3498db, #9b59b6, #2c3e50);
+            background-size: 300% auto; color: transparent;
+            -webkit-background-clip: text; background-clip: text;
+            animation: brilhoAnimado 3s linear infinite;
+            filter: drop-shadow(2px 4px 2px rgba(255,255,255,0.5)); letter-spacing: 2px;
+        }
+
+        @keyframes brilhoAnimado { 0% { background-position: 0% center; } 100% { background-position: 300% center; } }
+
+        .hud {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 10px; margin-bottom: 10px; align-items: center;
+        }
+
+        .badge {
+            background: #fff; padding: 6px 15px; border-radius: 15px;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1); font-weight: bold;
+            color: #2f3542; display: flex; align-items: center; gap: 8px; font-size: 1.1em;
+        }
+
+        select, input[type="number"] {
+            font-family: 'Nunito', sans-serif; font-size: 1em; padding: 5px;
+            border-radius: 8px; border: 2px solid #ced4da; cursor: pointer; outline: none;
+        }
+        input[type="number"] { cursor: text; text-align: center; }
+
+        .btn-pequeno {
+            background-color: #2ed573; color: #fff; border: none; padding: 5px 15px;
+            border-radius: 8px; font-weight: bold; font-family: 'Nunito', sans-serif;
+            cursor: pointer; box-shadow: 0 4px 0 #25a85a; transition: transform 0.1s;
+        }
+        .btn-pequeno:active { transform: translateY(4px); box-shadow: none; }
+
+        #btn-fullscreen { background-color: #f39c12; box-shadow: 0 4px 0 #e67e22; }
+
+        #desafio-container {
+            font-size: 2.2em; font-family: 'Fredoka One', cursive; background-color: #fff;
+            padding: 8px 30px; border-radius: 20px; box-shadow: 0 6px 0 #dfe4ea;
+            display: inline-block; margin-bottom: 10px; color: #9b59b6; min-width: 250px;
+        }
+
+        #banco-numeros {
+            display: flex; justify-content: center; gap: 6px; margin-bottom: 10px;
+            flex-wrap: wrap; max-width: 800px; margin-left: auto; margin-right: auto;
+        }
+
+        .numero {
+            width: 45px; height: 45px; background-color: #e056fd; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8em; font-family: 'Fredoka One', cursive; color: #fff;
+            cursor: pointer; box-shadow: 0 4px 0 #be2edd; transition: all 0.2s; touch-action: manipulation; 
+        }
+
+        .numero:active { transform: translateY(4px); box-shadow: 0 0 0 #be2edd; }
+
+        .numero.selecionado {
+            background-color: #2ed573; transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 10px 15px rgba(46, 213, 115, 0.5); border: 3px solid #fff; z-index: 20;
+        }
+
+        .qvl-container {
+            display: flex; justify-content: center; margin-bottom: 10px;
+            position: relative; z-index: 10; overflow-x: auto; padding-bottom: 5px;
+        }
+
+        .qvl {
+            display: inline-block; background-color: #fff; border: 5px solid #9b59b6;
+            border-radius: 20px; padding: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .qvl-row {
+            display: grid; 
+            grid-template-columns: 25px repeat(var(--cols-left), 48px) 15px repeat(var(--cols-right), 48px);
+            gap: 4px; margin-bottom: 4px; align-items: center;
+        }
+
+        .qvl-header div { font-family: 'Fredoka One', cursive; font-size: 1em; color: #fff; border-radius: 6px; padding: 4px 0; }
+        .cabecalho-dividendo { background-color: #3498db; }
+        .cabecalho-divisor { background-color: #e74c3c; }
+
+        .dropzone {
+            background-color: #f1f2f6; border-radius: 8px; display: flex;
+            align-items: center; justify-content: center; font-family: 'Fredoka One', cursive;
+            transition: all 0.2s; cursor: pointer; width: 48px; height: 48px; border: 3px dashed #ced4da; font-size: 1.8em; color: #2f3542;
+        }
+        
+        .dropzone.dragover { background-color: #e2f0cb; border-color: #2ed573; }
+        
+        .borda-chave-esquerda { border-left: 4px solid #2f3542 !important; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
+        .borda-chave-baixo { border-bottom: 4px solid #2f3542 !important; border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+        
+        .linha-vertical-chave { width: 4px; height: 100%; background-color: #2f3542; margin: 0 auto; border-radius: 2px;}
+        .cortado { text-decoration: line-through; text-decoration-thickness: 3px; text-decoration-color: #ff4757; color: #a4b0be; background-color: #f1f2f6;}
+        
+        .operador-sinal { font-size: 2em; font-family: 'Fredoka One', cursive; color: #ff4757; font-weight: bold;}
+        
+        .linha-subtracao { height: 4px; background-color: #2f3542; margin: 6px 0; border-radius: 2px; grid-column: 2 / span var(--cols-left);}
+
+        .controles { margin-top: 10px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; position: relative; z-index: 10; }
+        
+        button.btn-grande {
+            font-family: 'Nunito', sans-serif; font-size: 1.2em; padding: 10px 20px;
+            border: none; border-radius: 12px; cursor: pointer; font-weight: bold; color: #fff;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2); transition: transform 0.1s;
+        }
+
+        button.btn-grande:active:not(:disabled) { transform: translateY(5px); box-shadow: none; }
+        button.btn-grande:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+        
+        #btn-conferir { background-color: #1e90ff; }
+        #btn-pular { background-color: #ff9f43; }
+        #btn-novo { background-color: #ff4757; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        #mensagem { font-size: 1.5em; font-family: 'Fredoka One', cursive; margin-top: 10px; height: 35px; position: relative; z-index: 10; padding: 0 10px;}
+        .sucesso { color: #2ed573; animation: pular 0.5s ease; }
+        .erro { color: #ff4757; }
+        @keyframes pular { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .confete { position: fixed; top: -20px; z-index: 9999; animation: cair linear forwards; border-radius: 2px; pointer-events: none; }
+        @keyframes cair { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+        @media (max-width: 650px) {
+            h1 { font-size: 2em;}
+            .badge { font-size: 0.85em; padding: 6px 10px; }
+            #desafio-container { font-size: 1.6em; padding: 6px 12px; margin-bottom: 8px;}
+            .numero { width: 38px; height: 38px; font-size: 1.4em; border-radius: 8px;}
+            
+            .qvl { padding: 8px; border-width: 3px; border-radius: 12px; }
+            .qvl-row { grid-template-columns: 15px repeat(var(--cols-left), 36px) 10px repeat(var(--cols-right), 36px); gap: 3px; margin-bottom: 3px;}
+            .qvl-header div { font-size: 0.7em; padding: 2px 0;}
+            .dropzone { width: 36px; height: 36px; font-size: 1.3em; border-width: 2px; border-radius: 6px;}
+            
+            .operador-sinal { font-size: 1.5em; }
+            button.btn-grande { font-size: 1em; padding: 8px 12px; }
+            #mensagem { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Super Divisão!</h1>
+    
+    <div class="hud">
+        <button id="btn-fullscreen" class="btn-pequeno" onclick="toggleFullScreen()">Tela Cheia 🔲</button>
+        
+        <div class="badge">
+            Modo:
+            <select id="seletor-modo" onchange="mudarModo()">
+                <option value="auto">Automático</option>
+                <option value="manual">Professor</option>
+            </select>
+        </div>
+
+        <div class="badge" id="painel-auto">
+            Nível: 
+            <select id="seletor-nivel" onchange="gerarNovoDesafioAuto()">
+                <option value="1">1 (D ÷ U - Exatas)</option>
+                <option value="2">2 (C ÷ U - Exatas)</option>
+                <option value="3">3 (UM ÷ D - Exatas)</option>
+                <option value="4">4 (Aleatória Com Resto)</option>
+            </select>
+        </div>
+
+        <div class="badge" id="painel-manual" style="display: none;">
+            <input type="number" id="manual-n1" placeholder="Dividendo" style="width: 80px;">
+            <span style="margin: 0 5px; font-weight: bold; color: #9b59b6; font-size: 1.5em;">÷</span>
+            <input type="number" id="manual-n2" placeholder="Divisor" style="width: 70px;">
+            <button class="btn-pequeno" onclick="iniciarDesafioManual()">Vai!</button>
+        </div>
+
+        <div class="badge">⏱️ <span id="tempo">00:00</span></div>
+        <div class="badge">⭐ Pontos: <span id="pontuacao">0</span></div>
+    </div>
+
+    <div id="desafio-container">
+        <span id="desafio-texto">...</span>
+    </div>
+
+    <div id="banco-numeros"></div>
+
+    <div class="qvl-container" id="container-qvl">
+        <!-- O QVL da Divisão é gerado via JavaScript -->
+    </div>
+
+    <div class="controles">
+        <button id="btn-pular" class="btn-grande" onclick="acaoPular()">Pular / Limpar 🔄</button>
+        <button id="btn-conferir" class="btn-grande" onclick="conferirResposta()">Conferir Conta!</button>
+        <button id="btn-novo" class="btn-grande" onclick="acaoProximo()" style="display:none;">Próximo Desafio ➡️</button>
+    </div>
+
+    <div id="mensagem"></div>
+
+    <script>
+        let desafioAtual = null;
+        let pontos = 0;
+        let timerInterval;
+        let segundos = 0;
+        let jogoTravado = false; 
+        let numeroSelecionadoMobile = null; 
+
+        const TODAS_AS_ORDENS = ['ubi', 'cmi', 'dmi', 'umi', 'cm', 'dm', 'um', 'c', 'd', 'u'];
+        const LABELS_ORDENS = ['UBi', 'CMi', 'DMi', 'UMi', 'CM', 'DM', 'UM', 'C', 'D', 'U'];
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); } 
+                else if (document.documentElement.msRequestFullscreen) { document.documentElement.msRequestFullscreen(); } 
+                else if (document.documentElement.mozRequestFullScreen) { document.documentElement.mozRequestFullScreen(); } 
+                else if (document.documentElement.webkitRequestFullscreen) { document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT); }
+                document.getElementById('btn-fullscreen').innerHTML = "Sair Tela Cheia ✖️";
+            } else {
+                if (document.exitFullscreen) { document.exitFullscreen(); } 
+                else if (document.msExitFullscreen) { document.msExitFullscreen(); } 
+                else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); } 
+                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                document.getElementById('btn-fullscreen').innerHTML = "Tela Cheia 🔲";
+            }
+        }
+
+        function inicializarAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function tocarSom(tipo) {
+            inicializarAudio();
+            const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+            osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+            if (tipo === 'acerto') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (tipo === 'erro') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        function lancarConfetes() {
+            const cores = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6', '#ff007f', '#00f0ff', '#fff200'];
+            for (let i = 0; i < 100; i++) {
+                let confete = document.createElement('div'); confete.classList.add('confete');
+                confete.style.left = Math.random() * 100 + 'vw';
+                confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+                confete.style.width = (Math.random() * 10 + 5) + 'px'; confete.style.height = (Math.random() * 15 + 5) + 'px';
+                confete.style.animationDuration = (Math.random() * 3 + 2) + 's'; confete.style.animationDelay = (Math.random() * 0.5) + 's';
+                document.body.appendChild(confete); setTimeout(() => confete.remove(), 5000);
+            }
+        }
+
+        function atualizarTempo() {
+            segundos++;
+            let min = Math.floor(segundos / 60).toString().padStart(2, '0');
+            let seg = (segundos % 60).toString().padStart(2, '0');
+            document.getElementById('tempo').textContent = `${min}:${seg}`;
+        }
+        function iniciarCronometro() { clearInterval(timerInterval); segundos = 0; document.getElementById('tempo').textContent = "00:00"; timerInterval = setInterval(atualizarTempo, 1000); }
+        function pararCronometro() { clearInterval(timerInterval); }
+
+        function removerSelecaoBanco() {
+            numeroSelecionadoMobile = null;
+            document.querySelectorAll('#banco-numeros .numero').forEach(n => n.classList.remove('selecionado'));
+        }
+
+        function criarBancoNumeros() {
+            const banco = document.getElementById('banco-numeros');
+            banco.innerHTML = '';
+            for (let i = 0; i <= 9; i++) {
+                const numDiv = document.createElement('div');
+                numDiv.classList.add('numero'); numDiv.textContent = i; numDiv.setAttribute('draggable', true);
+                
+                numDiv.addEventListener('dragstart', e => { 
+                    if (jogoTravado) { e.preventDefault(); return; } 
+                    removerSelecaoBanco(); e.dataTransfer.setData('text/plain', e.target.textContent); inicializarAudio(); 
+                });
+
+                numDiv.addEventListener('click', function() {
+                    if (jogoTravado) return;
+                    inicializarAudio();
+                    if (numeroSelecionadoMobile === this.textContent) { removerSelecaoBanco(); } 
+                    else { removerSelecaoBanco(); numeroSelecionadoMobile = this.textContent; this.classList.add('selecionado'); }
+                });
+
+                banco.appendChild(numDiv);
+            }
+        }
+
+        function construirQVLDivisao(div, dvs, quo) {
+            let colsLeft = Math.max(2, String(div).length); 
+            let colsRight = Math.max(1, Math.max(String(dvs).length, String(quo).length));
+            let maxRows = colsLeft * 2; 
+
+            let leftPrefixes = TODAS_AS_ORDENS.slice(-colsLeft);
+            let rightPrefixes = TODAS_AS_ORDENS.slice(-colsRight);
+            let leftLabels = LABELS_ORDENS.slice(-colsLeft);
+            let rightLabels = LABELS_ORDENS.slice(-colsRight);
+
+            let html = `<div class="qvl">`;
+
+            html += `<div class="qvl-row" style="--cols-left: ${colsLeft}; --cols-right: ${colsRight}"><div></div>`;
+            for(let i=0; i<colsLeft; i++) html += `<div class="qvl-header cabecalho-dividendo">${leftLabels[i]}</div>`;
+            html += `<div></div>`;
+            for(let i=0; i<colsRight; i++) html += `<div class="qvl-header cabecalho-divisor">${rightLabels[i]}</div>`;
+            html += `</div>`;
+
+            html += `<div class="qvl-row" style="--cols-left: ${colsLeft}; --cols-right: ${colsRight}"><div></div>`;
+            for(let i=0; i<colsLeft; i++) html += `<div class="dropzone" data-pos="div-${leftPrefixes[i]}"></div>`;
+            html += `<div class="linha-vertical-chave"></div>`;
+            for(let i=0; i<colsRight; i++) html += `<div class="dropzone borda-chave-baixo ${i===0 ? 'borda-chave-esquerda' : ''}" data-pos="dvs-${rightPrefixes[i]}"></div>`;
+            html += `</div>`;
+
+            html += `<div class="qvl-row" style="--cols-left: ${colsLeft}; --cols-right: ${colsRight}"><div class="operador-sinal">-</div>`;
+            for(let i=0; i<colsLeft; i++) html += `<div class="dropzone" data-pos="ws-r1-${leftPrefixes[i]}"></div>`;
+            html += `<div class="linha-vertical-chave"></div>`;
+            for(let i=0; i<colsRight; i++) html += `<div class="dropzone" data-pos="quo-${rightPrefixes[i]}"></div>`;
+            html += `</div>`;
+
+            html += `<div class="qvl-row" style="--cols-left: ${colsLeft}; --cols-right: ${colsRight}"><div></div><div class="linha-subtracao"></div><div style="grid-column: span ${1 + colsRight}"></div></div>`;
+
+            for(let r=2; r<=maxRows; r++) {
+                let sinal = (r % 2 !== 0) ? '-' : ''; 
+                html += `<div class="qvl-row" style="--cols-left: ${colsLeft}; --cols-right: ${colsRight}"><div class="operador-sinal">${sinal}</div>`;
+                for(let i=0; i<colsLeft; i++) html += `<div class="dropzone" data-pos="ws-r${r}-${leftPrefixes[i]}"></div>`;
+                html += `<div style="grid-column: span ${1 + colsRight}"></div></div>`; 
+                
+                if (r % 2 !== 0 && r !== maxRows) {
+                    html += `<div class="qvl-row" style="--cols-left: ${colsLeft}; --cols-right: ${colsRight}"><div></div><div class="linha-subtracao"></div><div style="grid-column: span ${1 + colsRight}"></div></div>`;
+                }
+            }
+
+            html += `</div>`;
+            document.getElementById('container-qvl').innerHTML = html;
+            configurarDropzones();
+        }
+
+        function configurarDropzones() {
+            document.querySelectorAll('.dropzone').forEach(zone => {
+                zone.addEventListener('dragover', e => { if (jogoTravado) return; e.preventDefault(); zone.classList.add('dragover'); });
+                zone.addEventListener('dragleave', e => zone.classList.remove('dragover'));
+                zone.addEventListener('drop', e => {
+                    e.preventDefault(); zone.classList.remove('dragover');
+                    if(!desafioAtual || jogoTravado) return; 
+                    let num = e.dataTransfer.getData('text/plain');
+                    zone.textContent = num; zone.classList.remove('cortado');
+                });
+
+                zone.addEventListener('click', function() {
+                    if (!desafioAtual || jogoTravado) return; 
+                    if (numeroSelecionadoMobile !== null) {
+                        this.textContent = numeroSelecionadoMobile; this.classList.remove('cortado'); 
+                        removerSelecaoBanco();
+                        return;
+                    }
+                    if (this.textContent === '') return; 
+                    if (!this.classList.contains('cortado')) this.classList.add('cortado');
+                    else { this.textContent = ''; this.classList.remove('cortado'); }
+                });
+            });
+        }
+
+        function restaurarBotoes() {
+            document.getElementById('btn-conferir').disabled = false;
+            document.getElementById('btn-conferir').style.display = 'inline-block';
+            document.getElementById('btn-pular').style.display = 'inline-block';
+            document.getElementById('btn-novo').style.display = 'none';
+        }
+
+        function mudarModo() {
+            const modo = document.getElementById('seletor-modo').value;
+            if (modo === 'auto') {
+                document.getElementById('painel-auto').style.display = 'flex';
+                document.getElementById('painel-manual').style.display = 'none';
+                gerarNovoDesafioAuto();
+            } else {
+                document.getElementById('painel-auto').style.display = 'none';
+                document.getElementById('painel-manual').style.display = 'flex';
+                prepararModoManual();
+            }
+        }
+
+        function sortear(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function gerarNovoDesafioAuto() {
+            jogoTravado = false; removerSelecaoBanco(); restaurarBotoes();
+            document.getElementById('mensagem').textContent = '';
+
+            const nivel = document.getElementById('seletor-nivel').value;
+            let div, dvs, quo, res;
+            
+            if(nivel === "1") {
+                // Nível 1: Exatas (D ÷ U)
+                dvs = sortear(2, 9);
+                quo = sortear(2, 11);
+                div = dvs * quo;
+                res = 0;
+            } else if(nivel === "2") {
+                // Nível 2: Exatas (C ÷ U)
+                dvs = sortear(2, 9);
+                quo = sortear(12, 111);
+                div = dvs * quo;
+                res = 0;
+            } else if(nivel === "3") {
+                // Nível 3: Exatas (UM ÷ D)
+                dvs = sortear(10, 99);
+                quo = sortear(11, 99);
+                div = dvs * quo;
+                res = 0;
+            } else {
+                // Nível 4: Aleatória com Resto (Mistura tudo)
+                let opc = Math.random();
+                if (opc < 0.33) {
+                    dvs = sortear(2, 9);
+                    quo = sortear(10, 99);
+                } else if (opc < 0.66) {
+                    dvs = sortear(10, 50);
+                    quo = sortear(10, 99);
+                } else {
+                    dvs = sortear(10, 99);
+                    quo = sortear(100, 500);
+                }
+                res = sortear(1, dvs - 1); // Garante que tem resto
+                div = (dvs * quo) + res;
+            }
+
+            desafioAtual = { dividendo: div, divisor: dvs, quociente: quo, resto: res };
+            document.getElementById('desafio-texto').textContent = `${div.toLocaleString('pt-BR')} ÷ ${dvs.toLocaleString('pt-BR')}`;
+            
+            construirQVLDivisao(div, dvs, quo);
+            iniciarCronometro();
+        }
+
+        function prepararModoManual() {
+            jogoTravado = false; removerSelecaoBanco(); restaurarBotoes();
+            document.getElementById('mensagem').textContent = '';
+            document.getElementById('tempo').textContent = "00:00";
+            document.getElementById('desafio-texto').textContent = "Aguardando...";
+            document.getElementById('manual-n1').value = ''; document.getElementById('manual-n2').value = '';
+            desafioAtual = null; 
+            document.getElementById('container-qvl').innerHTML = '<div style="font-size: 1.5em; color: #fff; margin-top: 20px;">Aguardando o professor digitar...</div>';
+        }
+
+        function iniciarDesafioManual() {
+            let div = parseInt(document.getElementById('manual-n1').value);
+            let dvs = parseInt(document.getElementById('manual-n2').value);
+
+            if (isNaN(div) || isNaN(dvs) || dvs === 0) { alert("Digite números válidos! O divisor não pode ser zero."); return; }
+
+            let quo = Math.floor(div / dvs);
+            let res = div % dvs;
+
+            jogoTravado = false; removerSelecaoBanco(); restaurarBotoes();
+            document.getElementById('mensagem').textContent = '';
+
+            desafioAtual = { dividendo: div, divisor: dvs, quociente: quo, resto: res };
+            document.getElementById('desafio-texto').textContent = `${div.toLocaleString('pt-BR')} ÷ ${dvs.toLocaleString('pt-BR')}`;
+            
+            construirQVLDivisao(div, dvs, quo);
+            iniciarCronometro(); 
+        }
+
+        function acaoPular() {
+            const modo = document.getElementById('seletor-modo').value;
+            if (modo === 'auto') gerarNovoDesafioAuto();
+            else prepararModoManual(); 
+        }
+
+        function acaoProximo() { acaoPular(); }
+
+        function lerValores(grupoId, prefixos) {
+            let val = '';
+            for(let pref of prefixos) {
+                let div = document.querySelector(`.dropzone[data-pos="${grupoId}-${pref}"]`);
+                if (div) val += div.textContent || '';
+            }
+            return val.trim() === '' ? NaN : parseInt(val, 10);
+        }
+
+        function conferirResposta() {
+            if (!desafioAtual || jogoTravado) return; 
+            
+            const msg = document.getElementById('mensagem');
+            removerSelecaoBanco(); 
+            
+            let colsLeft = Math.max(2, String(desafioAtual.dividendo).length);
+            let colsRight = Math.max(1, Math.max(String(desafioAtual.divisor).length, String(desafioAtual.quociente).length));
+            let leftPrefixes = TODAS_AS_ORDENS.slice(-colsLeft);
+            let rightPrefixes = TODAS_AS_ORDENS.slice(-colsRight);
+            
+            let divAluno = lerValores('div', leftPrefixes);
+            let dvsAluno = lerValores('dvs', rightPrefixes);
+            let quoAluno = lerValores('quo', rightPrefixes);
+
+            let resAluno = NaN;
+            let maxRows = colsLeft * 2;
+            for(let r=maxRows; r>=1; r--) {
+                let valStr = '';
+                for(let pref of leftPrefixes) {
+                    let d = document.querySelector(`.dropzone[data-pos="ws-r${r}-${pref}"]`);
+                    if(d && !d.classList.contains('cortado')) valStr += d.textContent || '';
+                }
+                if (valStr.trim() !== '') {
+                    resAluno = parseInt(valStr, 10);
+                    break;
+                }
+            }
+
+            if (isNaN(divAluno) || isNaN(dvsAluno) || isNaN(quoAluno)) {
+                tocarSom('erro'); msg.textContent = "Arme a conta completa (Dividendo, Divisor e Quociente)!"; msg.className = "erro"; return;
+            }
+
+            if (divAluno !== desafioAtual.dividendo || dvsAluno !== desafioAtual.divisor) {
+                tocarSom('erro'); msg.textContent = "Os números armados não batem com o desafio lá de cima!"; msg.className = "erro"; return;
+            }
+
+            if (isNaN(resAluno)) {
+                tocarSom('erro'); msg.textContent = "Escreva o Resto Final (mesmo que seja 0) na área de cálculo!"; msg.className = "erro"; return;
+            }
+
+            if (quoAluno === desafioAtual.quociente && resAluno === desafioAtual.resto) {
+                pararCronometro(); tocarSom('acerto'); lancarConfetes();
+                msg.textContent = "🎉 CORRETO! 🎉"; msg.className = "sucesso";
+                pontos += 10; document.getElementById('pontuacao').textContent = pontos;
+                
+                jogoTravado = true; 
+                document.getElementById('btn-conferir').disabled = true;
+                document.getElementById('btn-conferir').style.display = 'none';
+                document.getElementById('btn-pular').style.display = 'none';
+                document.getElementById('btn-novo').style.display = 'inline-block';
+            } else {
+                tocarSom('erro'); 
+                if (quoAluno !== desafioAtual.quociente) {
+                    msg.textContent = "Ops! O Quociente (resultado) está incorreto."; 
+                } else {
+                    msg.textContent = "Quociente certo, mas o Resto Final está incorreto!"; 
+                }
+                msg.className = "erro";
+            }
+        }
+
+        criarBancoNumeros();
+        gerarNovoDesafioAuto();
+    </script>
+</body>
+</html>

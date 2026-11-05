@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checa Aí! Agência Antifake</title>
+<meta name="description" content="Jogo para o 6º ao 9º ano: diferencie fato de opinião, identifique sensacionalismo e cheque posts antes de compartilhar. Habilidades MS.EF67LP04, MS.EF07LP01 e MS.EF08LP02.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fundo:#0B1220; --painel:#121A2B; --painel2:#1A2438; --linha:#26324A; --txt:#E6ECF5; --suave:#9AA8C1;
+  --ciano:#22D3EE; --ciano-e:#0EA5C4; --ok:#84CC16; --ok-f:#ECFCCB; --erro:#F43F5E; --erro-f:#FFE4E6; --amb:#F59E0B; --vio:#A78BFA;
+  --V:#16A34A; --F:#E11D48; --E:#D97706; --S:#7C3AED;
+  --titulo:'Space Grotesk','Segoe UI',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--txt);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:var(--fundo);background-image:radial-gradient(circle at 15% 0%,#22D3EE14,transparent 40%),radial-gradient(circle at 90% 30%,#A78BFA12,transparent 40%)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ciano);outline-offset:2px}
+.btn{border:2px solid var(--linha);background:var(--painel2);color:var(--txt);border-radius:12px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s,border-color .12s}
+.btn:hover{transform:translateY(-2px);border-color:#3A4A6B}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn.ciano{background:var(--ciano);border-color:var(--ciano-e);color:#06222A;box-shadow:0 4px 0 var(--ciano-e)}
+.btn.ciano:hover{background:#4ADDF2}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.carimbo{display:inline-block;font-family:var(--titulo);font-weight:700;letter-spacing:2px;border:3px solid;border-radius:8px;padding:2px 10px;transform:rotate(-6deg)}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:28px 20px 34px}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:center}
+.marca{font-family:var(--titulo);font-weight:700;letter-spacing:3px;font-size:13px;color:var(--ciano)}
+.hero h1{font-size:clamp(46px,7vw,82px);font-weight:700;margin:12px 0 8px;letter-spacing:-2px}
+.hero h1 span{color:var(--ciano)}
+.lead{font-size:19px;line-height:1.6;color:#C4CEE0;max-width:540px;margin:0 0 16px}
+.cargo{display:inline-flex;gap:8px;align-items:center;background:var(--painel);border:2px solid var(--linha);border-radius:30px;padding:6px 14px;font-weight:700;margin-bottom:14px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--linha);background:var(--painel);border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.celular{width:270px;margin:auto;background:#05080F;border-radius:36px;padding:14px;border:3px solid #2B3754;box-shadow:0 30px 70px #0009;transform:rotate(3deg)}
+.celular .tela{background:#F3F5F9;border-radius:24px;padding:12px;min-height:360px;position:relative;overflow:hidden}
+.celular .stamp{position:absolute;top:120px;left:40px;font-size:30px;color:var(--F);border-color:var(--F);background:#ffffffcc}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+.info div{flex:1;min-width:150px;background:var(--painel);border:2px solid var(--linha);border-radius:14px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--txt)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* POST (rede social fictícia) */
+.post{background:#fff;color:#0F172A;border-radius:18px;padding:14px;box-shadow:0 8px 24px #0005;position:relative;overflow:hidden}
+.post .cab{display:flex;gap:10px;align-items:center}
+.post .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-family:var(--titulo);flex:none}
+.post .nome{font-weight:700;line-height:1.2}
+.post .handle{font-size:13px;color:#64748B}
+.post .corpo{margin:10px 0;line-height:1.5;font-size:17px;white-space:pre-line}
+.post .img{border-radius:12px;background:linear-gradient(135deg,#E2E8F0,#CBD5E1);min-height:140px;display:grid;place-items:center;font-size:15px;color:#334155;text-align:center;padding:10px}
+.post .img b{display:block;font-size:44px;line-height:1.1}
+.post .rod{display:flex;gap:18px;font-size:13px;color:#64748B;margin-top:10px}
+.post .stamp{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-10deg) scale(2.4);opacity:0;font-size:30px;background:#ffffffe6;animation:carimba .45s forwards}
+@keyframes carimba{to{transform:translate(-50%,-50%) rotate(-10deg) scale(1);opacity:1}}
+.mini-post{font-size:13px}
+.mini-post .corpo{font-size:14px}
+.mini-post .img{min-height:80px;font-size:12px}
+.mini-post .img b{font-size:32px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#0B1220ee;backdrop-filter:blur(6px);border-bottom:2px solid var(--linha);display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:700;background:var(--painel);border:2px solid var(--linha);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MISSÕES */
+.missoes{max-width:1040px;margin:auto;padding:22px 16px 40px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.missao{position:relative;text-align:left;background:var(--painel);border:2px solid var(--linha);border-radius:18px;padding:16px;min-height:170px;display:flex;flex-direction:column;gap:6px;color:var(--txt);transition:transform .12s,border-color .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px);border-color:#3A4A6B}
+.missao:disabled{opacity:.45;cursor:not-allowed}
+.missao .tag{align-self:flex-start;font-size:12px;font-weight:700;border-radius:20px;padding:3px 10px;color:#06222A}
+.missao h3{font-size:21px}
+.missao .ano{font-size:13px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:20px;letter-spacing:2px;color:#334262}
+.missao .est .on{color:var(--ciano)}
+.missao .cad{position:absolute;top:14px;right:14px}
+.missao.atual{border-color:var(--ciano);box-shadow:0 0 0 3px #22D3EE33}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:780px;margin:auto;padding:16px 16px 40px}
+.barra-topo{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:var(--painel2);overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--ciano);transition:width .3s}
+.cred{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--txt)}
+.cartao-frase{background:#fff;color:#0F172A;border-radius:18px;padding:22px;font-size:clamp(20px,3vw,25px);line-height:1.45;box-shadow:0 8px 24px #0005;min-height:130px;display:flex;align-items:center}
+.cartao-frase mark{background:#FDE68A;border-radius:4px;padding:0 2px}
+.botoes-fo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.bfo{border:0;border-radius:16px;padding:16px;text-align:left;color:#fff;min-height:96px;display:flex;flex-direction:column;gap:4px;transition:transform .1s}
+.bfo:hover:not(:disabled){transform:translateY(-3px)}
+.bfo b{font-family:var(--titulo);font-size:24px}
+.bfo span{font-size:14px;opacity:.9}
+.bfo.f{background:#0E7490}
+.bfo.o{background:#7C3AED}
+.bfo:disabled{opacity:.5;cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;background:var(--painel);border:2px solid var(--linha)}
+.retorno.ok{border-color:#4D7C0F;background:#1A2A12}
+.retorno.no{border-color:#9F1239;background:#2A1219}
+.retorno .t{display:block;font-family:var(--titulo);font-size:20px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;margin-top:12px}
+
+.manchetes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.manchete{background:#fff;color:#0F172A;border:3px solid transparent;border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:8px;min-height:150px;transition:transform .1s}
+.manchete:hover:not(:disabled){transform:translateY(-3px)}
+.manchete .fonte{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#64748B}
+.manchete .tit-m{font-family:var(--titulo);font-weight:700;font-size:21px;line-height:1.25}
+.manchete.certa{border-color:var(--ok)}
+.manchete.errada{border-color:var(--erro);animation:treme .3s}
+.manchete:disabled{cursor:default}
+.fato-base{background:var(--painel);border:2px dashed var(--linha);border-radius:14px;padding:10px 14px;margin-bottom:12px;color:#C4CEE0;line-height:1.5}
+.caca{background:#fff;color:#0F172A;border-radius:16px;padding:18px;font-family:var(--titulo);font-weight:700;font-size:clamp(22px,3.4vw,30px);line-height:1.5}
+.caca .w{border-radius:6px;padding:0 3px;cursor:pointer;transition:background .1s}
+.caca .w:hover{background:#E2E8F0}
+.caca .w.achou{background:#FED7AA;box-shadow:inset 0 -3px 0 #EA580C}
+.caca .w.errou{background:var(--erro-f);animation:treme .3s}
+.caca .w.faltou{box-shadow:inset 0 0 0 2px #EA580C;border-radius:6px}
+.caca.fim .w{cursor:default}
+@keyframes treme{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+
+.checagem{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.ferramentas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ferr{background:var(--painel);border:2px solid var(--linha);border-radius:12px;padding:10px;text-align:left;color:var(--txt);font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;min-height:52px}
+.ferr:hover:not(:disabled){border-color:var(--ciano)}
+.ferr.usada{background:#0E2A33;border-color:var(--ciano-e)}
+.ferr:disabled{cursor:default}
+.dossie{margin-top:10px;display:grid;gap:8px}
+.pista{background:var(--painel2);border-left:4px solid var(--ciano);border-radius:8px;padding:8px 12px;line-height:1.45;font-size:15px}
+.pista.nova{animation:entra .3s}
+.pista b{color:var(--ciano)}
+@keyframes entra{from{opacity:0;transform:translateY(-4px)}}
+.vereditos{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.ver{border:0;border-radius:12px;padding:12px;color:#fff;font-weight:700;font-family:var(--titulo);font-size:17px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.ver small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.ver.V{background:var(--V)}.ver.F{background:var(--F)}.ver.E{background:var(--E)}.ver.S{background:var(--S)}
+.ver:disabled{opacity:.35;cursor:default}
+.ver.marcado{outline:3px solid #fff;opacity:1}
+.perg{font-family:var(--titulo);font-size:19px;margin:14px 0 8px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;background:var(--painel);border:2px solid var(--linha);border-radius:12px;padding:12px 14px;line-height:1.4;color:var(--txt);font-size:16px}
+.op:hover:not(:disabled){border-color:var(--ciano)}
+.op.certa{border-color:var(--ok);background:#1A2A12}
+.op.errada{border-color:var(--erro);background:#2A1219;text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#020617cc;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--painel);color:var(--txt);border-radius:22px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:2px solid var(--linha);box-shadow:0 30px 80px #000a}
+.modal h2{font-size:28px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista-def{display:grid;gap:8px;margin-top:10px}
+.lista-def div{background:var(--painel2);border-radius:12px;padding:10px 12px;line-height:1.5;border-left:5px solid}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#334262;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ciano)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:var(--painel2);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--txt)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--painel2);border-radius:14px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#334262}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--V)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* PÁGINAS */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:var(--painel);border:2px solid var(--linha);border-radius:18px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:21px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(200px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--linha);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:12px;border-radius:10px;background:var(--painel2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--ciano)}
+.cat .n{font-weight:700;white-space:nowrap}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:700;font-size:14px;color:var(--suave)}
+.campo input,.campo textarea{border:2px solid var(--linha);border-radius:12px;padding:10px 12px;background:var(--fundo);font-size:16px;color:var(--txt);font-weight:400;width:100%}
+.campo textarea{min-height:220px;line-height:1.6;resize:vertical}
+.link-box{word-break:break-all;background:var(--fundo);border-radius:12px;padding:10px;font-size:14px;margin-top:10px}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:#fff;color:#0F172A;padding:12px 18px;border-radius:12px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px #0008}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .celular{order:-1;width:220px;transform:rotate(2deg)}
+  .celular .tela{min-height:260px}
+  .manchetes,.checagem{grid-template-columns:1fr}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .bfo{min-height:80px;padding:12px}
+  .bfo b{font-size:20px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   CHECA AÍ! AGÊNCIA ANTIFAKE — JRM • Aventuras Educativas (jrmapps.com)
+   Habilidades: MS.EF67LP04 (fato × opinião) · MS.EF07LP01 (sensacionalismo)
+                MS.EF08LP02 (checagem de informações)
+   Todos os perfis, veículos, escolas e posts são FICTÍCIOS, criados para fins didáticos.
+   ========================================================= */
+
+const VEREDITOS = {
+  V:{nome:'Verdadeiro', icone:'✅', def:'Confirmado por fontes confiáveis.'},
+  F:{nome:'Falso', icone:'❌', def:'Inventado, montagem ou golpe.'},
+  E:{nome:'Enganoso', icone:'⚠️', def:'Mistura fato real com exagero ou tira de contexto.'},
+  S:{nome:'Sem provas', icone:'❓', def:'Não há como confirmar ainda.'}
+};
+const FERR = {
+  quem:{nome:'Quem publicou?', icone:'👤'},
+  quando:{nome:'Quando?', icone:'📅'},
+  fonte:{nome:'Qual a fonte?', icone:'🔗'},
+  outros:{nome:'Outros confirmam?', icone:'📰'},
+  imagem:{nome:'Busca da imagem', icone:'🖼️'},
+  escrita:{nome:'Como está escrito?', icone:'✍️'}
+};
+const TRILHAS = {
+  fo:{nome:'Fato ou opinião?', cor:'#22D3EE', hab:'MS.EF67LP04'},
+  se:{nome:'Detector de exagero', cor:'#F59E0B', hab:'MS.EF07LP01'},
+  ch:{nome:'Checagem', cor:'#A78BFA', hab:'MS.EF08LP02'}
+};
+
+const MISSOES = [
+ {id:'m1', tipo:'fo', titulo:'A Feira de Ciências', ano:'6º ano', intro:'Um repórter mirim escreveu sobre a Feira de Ciências, mas misturou fatos com opiniões. Separe tudo antes de publicar!',
+  itens:[
+   ['A Feira de Ciências da escola aconteceu no sábado, das 8h às 12h.','F','Dia e horário podem ser conferidos.',[]],
+   ['Foi a feira mais legal de todos os tempos.','O','“Mais legal de todos os tempos” é um julgamento de quem escreveu.',['mais legal','de todos os tempos']],
+   ['Vinte e dois grupos apresentaram trabalhos.','F','É um número que pode ser contado e conferido.',[]],
+   ['O projeto do vulcão era o mais bonito.','O','“Mais bonito” depende do gosto de cada um.',['o mais bonito']],
+   ['O grupo do 7º ano construiu um filtro de água com areia e carvão.','F','Descreve algo que aconteceu e pode ser verificado.',[]],
+   ['Todos os alunos deveriam participar da feira no próximo ano.','O','“Deveriam” mostra um desejo ou conselho de quem escreve.',['deveriam']],
+   ['A diretora entregou medalhas para os três primeiros colocados.','F','É um acontecimento que outras pessoas viram e podem confirmar.',[]],
+   ['Os jurados foram injustos com o grupo de robótica.','O','“Injustos” é uma avaliação; outra pessoa pode pensar diferente.',['injustos']]]},
+ {id:'m2', tipo:'se', titulo:'Manchetes que gritam', ano:'7º ano', intro:'Duas manchetes contam o mesmo fato. Uma informa; a outra quer chocar para ganhar cliques. Descubra qual exagera e cace as palavras do exagero.',
+  itens:[
+   {fato:'Uma chuva forte derrubou árvores em três bairros de Campo Grande.', neutra:'Chuva forte derruba árvores em três bairros de Campo Grande', fN:'Jornal do Ipê', sens:'CAOS TOTAL!!! Tempestade ASSUSTADORA destrói a cidade inteira', fS:'Plantão Bomba', marcas:['caos','total','!!!','assustadora','destrói','inteira'], por:'Letras maiúsculas e exclamações gritam; “destrói a cidade inteira” é um exagero: foram três bairros.'},
+   {fato:'Um estudante de 12 anos ganhou medalha de ouro numa olimpíada de matemática.', neutra:'Estudante de 12 anos conquista medalha de ouro em olimpíada de matemática', fN:'Portal Cerrado Agora', sens:'Você NÃO VAI ACREDITAR no que este GÊNIO de 12 anos fez', fS:'Notícias Já!!', marcas:['você','não','vai','acreditar','gênio'], por:'“Você não vai acreditar” é isca de clique: esconde a informação para você clicar. “Gênio” é exagero.'},
+   {fato:'Um estudo indica que dormir pouco pode prejudicar a memória de adolescentes.', neutra:'Estudo indica que dormir pouco pode prejudicar a memória de adolescentes', fN:'Jornal do Ipê', sens:'URGENTE: cientistas PROVAM que celular à noite DESTRÓI o cérebro dos jovens', fS:'Plantão Bomba', marcas:['urgente','provam','destrói'], por:'O estudo “indica”, não “prova”. E “destrói o cérebro” aumenta muito o que a pesquisa disse — além de trocar o assunto para o celular.'},
+   {fato:'O preço do tomate subiu 15% em outubro.', neutra:'Preço do tomate sobe 15% em outubro, aponta pesquisa', fN:'Portal Cerrado Agora', sens:'ABSURDO! Tomate vira artigo de LUXO e ninguém consegue mais comprar', fS:'Notícias Já!!', marcas:['absurdo','!','luxo','ninguém'], por:'“Absurdo” é opinião. “Ninguém consegue comprar” é uma generalização que não dá para provar.'}]},
+ {id:'m3', tipo:'fo', titulo:'A reforma do parque', ano:'7º ano', intro:'Uma notícia sobre a reforma de um parque chegou na redação cheia de opiniões no meio. Ajude o editor a separar.',
+  itens:[
+   ['A prefeitura reformou a pista de caminhada do parque em três meses.','F','O tempo da obra pode ser conferido em documentos.',[]],
+   ['A reforma ficou caríssima para o que entregou.','O','“Caríssima para o que entregou” é uma avaliação de quem escreve.',['caríssima']],
+   ['Segundo a prefeitura, a obra custou 800 mil reais.','F','“Segundo a prefeitura” indica a fonte, e o valor pode ser conferido.',[]],
+   ['Infelizmente, os bancos novos são desconfortáveis.','O','“Infelizmente” e “desconfortáveis” mostram o sentimento e o julgamento de quem escreve.',['infelizmente','desconfortáveis']],
+   ['O parque recebe cerca de 5 mil visitantes por fim de semana, de acordo com a administração.','F','Tem número e fonte (“de acordo com a administração”).',[]],
+   ['É o lugar mais agradável da cidade para passear.','O','“Mais agradável” depende do gosto de cada pessoa.',['mais agradável']],
+   ['A iluminação foi trocada por lâmpadas de LED.','F','É uma mudança que pode ser vista e conferida.',[]],
+   ['A prefeitura deveria ter feito também um bebedouro.','O','“Deveria” expressa uma opinião sobre o que seria melhor.',['deveria']]]},
+ {id:'m4', tipo:'ch', titulo:'Plantão de checagem', ano:'7º e 8º ano', intro:'Três posts estão bombando nos grupos da escola. Use as ferramentas de checagem, abra pelo menos 3 pistas e dê o veredito antes que eles se espalhem!',
+  itens:[
+   {nome:'Recados da Escola 📢', handle:'@recados.escola.cg', cor:'#0EA5E9', tempo:'há 2 h', curt:'1,8 mil', comp:'3,2 mil',
+    texto:'URGENTE!!! Prefeitura CANCELOU as aulas de amanhã por causa do calor extremo. Repassem para todos os grupos!!!', img:['📰','Print de uma notícia sobre aulas canceladas'],
+    pistas:{quem:'O perfil <b>não é oficial</b>: foi criado há duas semanas e não pertence à prefeitura nem à escola.', quando:'O print mostra uma notícia de <b>novembro de 2023</b>, não de hoje.', fonte:'O post não tem link. O print é de um jornal de <b>outra cidade</b>.', outros:'O site oficial da Secretaria de Educação informa que <b>as aulas de amanhã estão mantidas</b>.', escrita:'Muitas maiúsculas, exclamações e pedido para repassar rápido: <b>sinais de alerta</b>.'},
+    veredito:'E', motivos:['É uma notícia antiga, de outra cidade, apresentada como se fosse de hoje.','O calor de amanhã não vai ser forte.','A escola não tem aula amanhã.'],
+    decisoes:['Não repassar e avisar o grupo, mostrando o site oficial.','Repassar só para os amigos mais próximos.','Repassar, porque é melhor prevenir.']},
+   {nome:'Fala Campão 🗣️', handle:'@falacampao.humor', cor:'#F97316', tempo:'há 35 min', curt:'12 mil', comp:'8,9 mil',
+    texto:'Olha isso!!! Onça passeando no shopping de Campo Grande AGORA. Ninguém sai de casa!!!', img:['🐆','Foto de uma onça no corredor de um shopping'],
+    pistas:{quem:'É um <b>perfil de humor</b> que já publicou outras montagens.', quando:'O post é de hoje, mas a foto é <b>antiga</b>.', fonte:'Não cita <b>nenhuma fonte</b>: nem bombeiros, nem polícia ambiental, nem o shopping.', outros:'Nenhum jornal noticiou. O shopping publicou que <b>não houve nenhum animal</b> no local.', imagem:'A busca reversa mostra que a foto circula <b>desde 2019</b> e foi tirada em <b>outro país</b>.', escrita:'Pede para ninguém sair de casa, o que <b>espalha pânico</b>.'},
+    veredito:'F', motivos:['A foto é antiga, de outro lugar, e ninguém confirma o fato.','Onças não existem em Mato Grosso do Sul.','O perfil tem muitos seguidores.'],
+    decisoes:['Não repassar e avisar quem enviou que a foto é falsa.','Repassar com a legenda “será verdade?”.','Repassar, porque a foto é engraçada.']},
+   {nome:'Loja Super Ofertas 🎁', handle:'@superofertas.premios2', cor:'#DB2777', tempo:'ontem', curt:'240', comp:'5,1 mil',
+    texto:'PARABÉNS! Você foi sorteado para ganhar um celular novo GRÁTIS. Responda 3 perguntas e coloque seu CPF e o número do cartão do seu responsável no link: bit.ly/ganhe-ja', img:['📱','Foto de um celular com laço de presente'],
+    pistas:{quem:'O perfil <b>copia o nome</b> de uma loja, mas foi <b>criado ontem</b> e tem poucos seguidores.', quando:'A mesma mensagem circula <b>há meses</b>, com nomes de lojas diferentes.', fonte:'O link é encurtado e leva para um <b>site com endereço estranho</b>, que não é da loja.', outros:'A loja verdadeira avisou no site dela que <b>não faz esse tipo de sorteio</b>.', escrita:'Pede <b>dados pessoais e do cartão</b>. Nenhuma promoção séria pede isso.'},
+    veredito:'F', motivos:['É um golpe para roubar dados pessoais.','O celular do sorteio é muito caro.','A loja está sem estoque.'],
+    decisoes:['Não clicar, não preencher, avisar um adulto e denunciar o perfil.','Preencher só o nome, sem o CPF.','Repassar para os amigos também participarem.']}]},
+ {id:'m5', tipo:'fo', titulo:'Celular na escola', ano:'8º ano', intro:'Agora ficou mais difícil: os textos de opinião usam palavras que parecem certezas. E às vezes o texto apenas relata a opinião de alguém. Atenção!',
+  itens:[
+   ['É evidente que o celular atrapalha o aprendizado.','O','“É evidente que” parece certeza, mas é uma opinião sem provas apresentadas.',['é evidente que']],
+   ['Uma pesquisa com 2 mil estudantes mostrou que 6 em cada 10 usam o celular durante o estudo.','F','Tem fonte (a pesquisa) e números que podem ser conferidos.',[]],
+   ['O secretário de Educação afirmou que a nova regra “é ótima para todos”.','F','Pegadinha! O fato é que o secretário <b>disse</b> isso. A opinião é dele; o texto só está relatando.',[]],
+   ['Provavelmente, a proibição vai melhorar as notas da turma.','O','“Provavelmente” mostra uma previsão, uma hipótese — não algo comprovado.',['provavelmente']],
+   ['Uma lei que limita o uso de celulares nas escolas brasileiras foi sancionada em janeiro de 2025.','F','A data e a lei podem ser conferidas em documentos oficiais.',[]],
+   ['Os professores mais modernos usam o celular como ferramenta.','O','Chamar alguns professores de “mais modernos” é um julgamento.',['mais modernos']],
+   ['Seria um absurdo proibir o celular até no recreio.','O','“Seria um absurdo” é a avaliação de quem escreve.',['seria um absurdo']],
+   ['Na Escola Sol Nascente, os celulares ficam guardados em caixas durante as aulas.','F','Descreve algo que acontece e pode ser observado.',[]]]},
+ {id:'m6', tipo:'se', titulo:'Exagero disfarçado', ano:'8º e 9º ano', intro:'Nem todo sensacionalismo grita em maiúsculas. Às vezes ele está num verbo (“confessa”), num adjetivo (“desastrosa”) ou numa generalização (“todos”). Fique de olho!',
+  itens:[
+   {fato:'O prefeito explicou numa entrevista por que a obra da avenida atrasou.', neutra:'Prefeito explica motivo do atraso na obra da avenida', fN:'Jornal do Ipê', sens:'Prefeito CONFESSA fracasso e obra vira VERGONHA na cidade', fS:'Plantão Bomba', marcas:['confessa','fracasso','vergonha'], por:'“Confessa” faz parecer que ele admitiu um erro escondido; ele apenas explicou. “Fracasso” e “vergonha” são opiniões.'},
+   {fato:'Um bairro registrou três casos de dengue, e agentes fizeram um mutirão de limpeza.', neutra:'Bairro registra três casos de dengue; agentes fazem mutirão', fN:'Portal Cerrado Agora', sens:'EPIDEMIA! Dengue se espalha sem controle e assusta moradores', fS:'Notícias Já!!', marcas:['epidemia','!','sem','controle','assusta'], por:'Três casos não são uma epidemia. “Sem controle” esconde que já há ação dos agentes.'},
+   {fato:'O time da cidade perdeu por 1 a 0 na estreia do campeonato.', neutra:'Time da cidade perde por 1 a 0 na estreia do campeonato', fN:'Jornal do Ipê', sens:'VEXAME HISTÓRICO: time é HUMILHADO em estreia desastrosa', fS:'Plantão Bomba', marcas:['vexame','histórico','humilhado','desastrosa'], por:'Perder por 1 a 0 não é “humilhação histórica”. As palavras escolhidas transformam um resultado comum em drama.'},
+   {fato:'Um novo aplicativo de vídeos está ganhando usuários entre adolescentes.', neutra:'Novo aplicativo de vídeos ganha usuários entre adolescentes', fN:'Portal Cerrado Agora', sens:'TODOS os jovens estão viciados no app que os pais PRECISAM conhecer JÁ', fS:'Notícias Já!!', marcas:['todos','viciados','precisam','já'], por:'“Todos” é generalização. “Viciados” é um diagnóstico sem prova. “Precisam conhecer já” cria urgência para você clicar.'}]},
+ {id:'m7', tipo:'ch', titulo:'Agência a todo vapor', ano:'9º ano', intro:'Casos mais difíceis: um verdadeiro, um que exagera um estudo real e um que simplesmente não tem provas. Nem tudo é “falso” ou “verdadeiro”!',
+  itens:[
+   {nome:'Jornal do Ipê', handle:'@jornaldoipe', cor:'#16A34A', tempo:'ontem', curt:'860', comp:'410',
+    texto:'Estudo acompanhou 1.200 estudantes por dois anos e indica que quem lê 20 minutos por dia melhora a compreensão de textos. Leia a reportagem completa: jornaldoipe.com/leitura', img:['📊','Gráfico do estudo sobre leitura'],
+    pistas:{quem:'Jornal com <b>redação identificada</b>, endereço e jornalistas que assinam as matérias.', quando:'Publicado ontem; a pesquisa foi divulgada <b>na mesma semana</b>.', fonte:'A reportagem <b>cita a universidade</b> responsável e traz o link para o estudo completo.', outros:'Outros dois jornais e o site da universidade <b>divulgaram a mesma pesquisa</b>.', imagem:'O gráfico é o mesmo que aparece no <b>estudo original</b>.', escrita:'Linguagem cuidadosa: usa “indica”, não “prova”, e <b>explica como o estudo foi feito</b>.'},
+    veredito:'V', motivos:['A fonte é identificada e outros veículos confirmam.','O post tem um gráfico.','Ler é sempre bom, então deve ser verdade.'],
+    decisoes:['Pode compartilhar, de preferência com o link da reportagem.','Não compartilhar nada sobre pesquisas.','Compartilhar só o print, sem o link.']},
+   {nome:'Natureza em Alerta 🌎', handle:'@natureza.alerta.br', cor:'#65A30D', tempo:'há 5 h', curt:'7,4 mil', comp:'15 mil',
+    texto:'CIENTISTAS CONFIRMAM: o Pantanal vai virar DESERTO em 2030!!! Compartilhe antes que apaguem!', img:['🏜️','Foto de chão seco e rachado'],
+    pistas:{quem:'Página que publica muitos conteúdos alarmistas, <b>sem autores identificados</b>.', quando:'Publicado hoje, sobre um estudo divulgado <b>no ano passado</b>.', fonte:'O estudo verdadeiro fala em <b>risco de secas mais longas</b>, mas não diz que o Pantanal vai virar deserto, nem cita 2030.', outros:'Jornais que noticiaram o estudo falam em <b>alerta sobre secas</b>, não em deserto.', imagem:'A foto é de um <b>banco de imagens</b> e não é do Pantanal.', escrita:'“Compartilhe antes que apaguem” é uma frase <b>típica de boatos</b>.'},
+    veredito:'E', motivos:['Parte de um estudo real, mas exagera e distorce o que ele diz.','O Pantanal não tem nenhum problema com secas.','O post foi publicado de madrugada.'],
+    decisoes:['Não repassar este post; se quiser falar do assunto, compartilhar uma reportagem confiável.','Repassar, porque o assunto é importante.','Repassar antes que apaguem.']},
+   {nome:'Fã Clube Futebol MS ⚽', handle:'@fa.futebol.ms', cor:'#2563EB', tempo:'há 1 h', curt:'3,3 mil', comp:'1,2 mil',
+    texto:'Dizem que um jogador famoso da seleção vai visitar uma escola estadual de Campo Grande na semana que vem. Será que é a sua? 👀', img:null,
+    pistas:{quem:'Perfil de fãs, <b>sem ligação</b> com o jogador, o clube ou a escola.', quando:'Publicado hoje.', fonte:'Usa “dizem que” e <b>não informa quem disse</b>, qual jogador nem qual escola.', outros:'Nenhum veículo, nem o clube, nem a Secretaria de Educação <b>comentaram o assunto</b>.', escrita:'Não grita, mas é <b>vaga</b>: não dá detalhes que possam ser conferidos.'},
+    veredito:'S', motivos:['Não há fonte nem informação que permita confirmar.','Jogadores famosos nunca visitam escolas.','O perfil usou um emoji.'],
+    decisoes:['Esperar uma fonte confiável antes de espalhar.','Repassar dizendo que é certeza.','Criar um post dizendo que é a sua escola.']}]}
+];
+MISSOES.forEach((m,i)=>m.idx=i);
+const CATS = {fo:'Fato ou opinião (MS.EF67LP04)', se:'Identificar sensacionalismo (MS.EF07LP01)', ma:'Marcas de exagero na linguagem (MS.EF07LP01)', ch:'Veredito de checagem (MS.EF08LP02)', mo:'Justificar com base nas pistas (MS.EF08LP02)', de:'Decisão responsável ao compartilhar'};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='checaAi.v1';
+function padrao(){ return {nome:'',turma:'',missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const $$=(q,el=document)=>Array.from(el.querySelectorAll(q));
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const MAXEST=MISSOES.length*3;
+function cargo(){ const e=totalEst(); return e>=19?'🏆 Chefe da agência':e>=13?'🗂️ Editor(a) de checagem':e>=6?'🔎 Repórter checador(a)':'🪪 Estagiário(a)'; }
+const tokensManchete=t=>t.match(/[\p{L}\p{N}%'’-]+|[!?]+|[.,:;…]+/gu)||[];
+const normTk=t=>t.toLocaleLowerCase('pt-BR');
+function destacar(frase, marcas){
+  let h=esc(frase);
+  marcas.forEach(m=>{ const re=new RegExp('('+m.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i'); h=h.replace(re,'<mark>$1</mark>'); });
+  return h;
+}
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={clique:[[700,.04]],ok:[[660,.07],[880,.12]],erro:[[200,.14],[160,.18]],fim:[[523,.09],[659,.09],[784,.09],[1047,.25]],carimbo:[[120,.12]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'||t==='carimbo'?'square':'sine'; o.frequency.value=f; g.gain.setValueAtTime(t==='erro'||t==='carimbo'?.05:.09,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- POST ---------- */
+function htmlPost(p, mini, stamp){
+  const ini=p.nome.replace(/[^\p{L}]/gu,'').charAt(0)||'?';
+  return `<div class="post ${mini?'mini-post':''}">
+    <div class="cab"><div class="av" style="background:${p.cor}">${esc(ini)}</div><div><div class="nome">${esc(p.nome)}</div><div class="handle">${esc(p.handle)} · ${esc(p.tempo)}</div></div></div>
+    <div class="corpo">${esc(p.texto)}</div>
+    ${p.img?`<div class="img"><div><b>${p.img[0]}</b>${esc(p.img[1])}</div></div>`:''}
+    <div class="rod"><span>❤️ ${esc(p.curt)}</span><span>🔁 ${esc(p.comp)}</span><span>💬</span></div>
+    ${stamp?`<span class="carimbo stamp" style="color:var(--${stamp});border-color:var(--${stamp})">${VEREDITOS[stamp].nome.toUpperCase()}</span>`:''}
+  </div>`;
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='missoes') telaMissoes(); else if(t==='missao') iniciarMissao(arg); else if(t==='relatorio') telaRelatorio(); else if(t==='criar') telaCriar(); }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[MISSOES[m.idx-1].id]||{}).feita;
+
+function telaHome(){
+  const exemplo=MISSOES[3].itens[1];
+  app.innerHTML=`<section class="home"><div class="hero"><div>
+    <span class="marca">JRM • AVENTURAS EDUCATIVAS</span>
+    <h1>Checa <span>Aí!</span></h1>
+    <p class="lead">Você acaba de entrar na <b>Agência Antifake</b>. Sua missão: separar fato de opinião, desmascarar manchetes exageradas e checar posts antes que eles se espalhem pelos grupos.</p>
+    <span class="cargo">${cargo()} · ★ ${totalEst()}/${MAXEST}</span>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 8º A" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn ciano grande" data-ir="missoes">Entrar na agência 🛰️</button><button class="btn" data-ir="criar">✍️ Criar missão</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div>
+  <div class="celular" aria-hidden="true"><div class="tela">${htmlPost(exemplo,true)}<span class="carimbo stamp" style="color:var(--F);border-color:var(--F)">FALSO</span></div></div></div>
+  <div class="info"><div><b>7</b>missões</div><div><b>3</b>tipos de investigação</div><div><b>6</b>ferramentas de checagem</div><div><b>6º–9º</b>anos</div></div>
+  <p class="rodape">Habilidades <b>MS.EF67LP04</b> (distinguir fato e opinião) · <b>MS.EF07LP01</b> (recursos sensacionalistas) · <b>MS.EF08LP02</b> (checar informações e comparar fontes) · Todos os perfis, veículos e posts do jogo são <b>fictícios</b> · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMissoes(){
+  const atual=MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Missões da agência</h2><small>${cargo()}</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="missoes"><div class="grade">${MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m); const T=TRILHAS[m.tipo];
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="tag" style="background:${T.cor}">${T.nome}</span><h3>${m.idx+1}. ${esc(m.titulo)}</h3><span class="ano">${esc(m.ano)} · ${T.hab}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Professor(a): em ⚙️ dá para liberar todas as missões. Todos os perfis, veículos e posts são fictícios.</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciarMissao(m){
+  if(typeof m==='number') m=MISSOES[m];
+  const itens = m.tipo==='fo' ? embaralhar(m.itens) : m.tipo==='se' ? embaralhar(m.itens).map(x=>Object.assign({},x,{ordem:Math.random()<.5?['n','s']:['s','n']})) : m.itens.map(x=>Object.assign({},x,{motOrd:embaralhar([0,1,2]),decOrd:embaralhar([0,1,2])}));
+  M={m, itens, i:0, etapa:null, ok:0, total:0, cred:100, primeira:{}, abertas:{}, achadas:new Set(), errosMarca:0};
+  telaMissao();
+  const T=TRILHAS[m.tipo];
+  abrirModal(`<span class="marca" style="color:${T.cor}">${T.nome.toUpperCase()} · ${T.hab}</span><h2 style="margin-top:8px">${esc(m.titulo)}</h2><p>${esc(m.intro)}</p>
+    ${m.tipo==='fo'?`<div class="lista-def"><div style="border-color:#0E7490"><b>📊 FATO</b> — algo que aconteceu ou existe e <b>pode ser comprovado</b> (datas, números, acontecimentos).</div><div style="border-color:#7C3AED"><b>💬 OPINIÃO</b> — um <b>julgamento, gosto ou avaliação</b> de alguém. Pistas: adjetivos como “lindo”, “injusto”; palavras como “deveria”, “infelizmente”, “provavelmente”.</div></div>`:''}
+    ${m.tipo==='se'?`<div class="lista-def"><div style="border-color:#F59E0B"><b>Sinais de sensacionalismo:</b> maiúsculas e exclamações, palavras que causam medo ou choque, exageros e generalizações (“todos”, “ninguém”), iscas de clique (“você não vai acreditar”).</div></div>`:''}
+    ${m.tipo==='ch'?`<div class="lista-def">${Object.entries(VEREDITOS).map(([k,v])=>`<div style="border-color:var(--${k})"><b>${v.icone} ${v.nome}</b> — ${v.def}</div>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ciano" data-acao="fechar" data-foco>Começar missão</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++; else M.cred=Math.max(0,M.cred-8);
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+  const c=$('#cred'); if(c) c.textContent=M.cred;
+}
+function telaMissao(){
+  const m=M.m, T=TRILHAS[m.tipo];
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="${m.id==='custom'?'home':'missoes'}" aria-label="Voltar">←</button><div class="tit"><h2>${m.idx>=0?(m.idx+1)+'. ':''}${esc(m.titulo)}</h2><small>${T.nome} · ${esc(m.ano||'')}</small></div><span class="chip-topo">🛡️ <span id="cred">${M.cred}</span></span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra-topo"><span id="contador">${M.i+1}/${M.itens.length}</span><div class="trilho"><i id="trilho" style="width:${100*M.i/M.itens.length}%"></i></div><span class="cred" title="Credibilidade da agência: cai quando você erra na primeira tentativa">🛡️ credibilidade</span></div>
+  <div id="area"></div></section>`;
+  desenharItem();
+}
+function atualizarBarra(){ const c=$('#contador'); if(c) c.textContent=`${Math.min(M.i+1,M.itens.length)}/${M.itens.length}`; const t=$('#trilho'); if(t) t.style.width=(100*M.i/M.itens.length)+'%'; }
+function desenharItem(){
+  atualizarBarra();
+  const tipo=M.m.tipo;
+  if(tipo==='fo') desenharFO(); else if(tipo==='se') desenharSE(); else desenharCH();
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn ciano" data-acao="seguir" data-foco>${M.i<M.itens.length-1?'Próximo ➔':'Concluir missão ✔'}</button></div>`; }
+function seguir(){ M.i++; M.etapa=null; M.abertas={}; M.achadas=new Set(); M.errosMarca=0; M.vErrados=[]; M.mErrados=[]; M.dErrados=[]; M.msg=null; if(M.i>=M.itens.length) return concluir(); desenharItem(); window.scrollTo(0,0); }
+
+/* --- fato x opinião --- */
+function desenharFO(resp){
+  const [frase,certo,expl,marcas]=M.itens[M.i];
+  const feito=resp!=null;
+  $('#area').innerHTML=`<p class="mini" style="margin:0 0 8px">Esta frase é um <b>fato</b> ou uma <b>opinião</b>?</p>
+    <div class="cartao-frase">${feito&&certo==='O'?destacar(frase,marcas):esc(frase)}</div>
+    <div class="botoes-fo"><button class="bfo f" data-fo="F" ${feito?'disabled':''}><b>📊 FATO</b><span>pode ser comprovado</span></button><button class="bfo o" data-fo="O" ${feito?'disabled':''}><b>💬 OPINIÃO</b><span>é um julgamento</span></button></div>
+    ${feito?`<div class="retorno ${resp===certo?'ok':'no'}"><span class="t">${resp===certo?'✅ Isso mesmo!':'❌ Não é bem assim.'} É ${certo==='F'?'um FATO':'uma OPINIÃO'}.</span>${expl}</div>${botaoSeguir()}`:''}`;
+  if(feito){ const b=$('[data-acao="seguir"]'); if(b) b.focus(); }
+}
+function responderFO(r){ const certo=M.itens[M.i][1]; registrar('fo'+M.i, M.m.id==='custom'?'fo':'fo', r===certo); som(r===certo?'ok':'erro'); desenharFO(r); }
+
+/* --- sensacionalismo --- */
+function desenharSE(){
+  const it=M.itens[M.i];
+  const card=(k)=>{ const t=k==='n'?it.neutra:it.sens, f=k==='n'?it.fN:it.fS; return `<button class="manchete" data-man="${k}"><span class="fonte">${esc(f)}</span><span class="tit-m">${esc(t)}</span></button>`; };
+  if(M.etapa==null){
+    $('#area').innerHTML=`<div class="fato-base"><b>O que aconteceu:</b> ${esc(it.fato)}</div><p class="mini" style="margin:0 0 8px">Qual manchete é <b>sensacionalista</b> (quer chocar ou causar emoção para ganhar cliques)?</p>
+      <div class="manchetes">${it.ordem.map(card).join('')}</div><div id="ret"></div>`;
+  } else if(M.etapa==='cacar' || M.etapa==='fim'){
+    const toks=tokensManchete(it.sens); const alvo=new Set(it.marcas);
+    const fim=M.etapa==='fim';
+    const h=toks.map((t,k)=>{ const pont=/^[^\p{L}\p{N}]+$/u.test(t); const cls=['w', M.achadas.has(k)?'achou':'', fim&&!M.achadas.has(k)&&alvo.has(normTk(t))?'faltou':''].filter(Boolean).join(' ');
+      return (k>0&&!pont?' ':'')+`<span class="${cls}" data-w="${k}">${esc(t)}</span>`; }).join('');
+    const totalAlvo=toks.filter(t=>alvo.has(normTk(t))).length;
+    $('#area').innerHTML=`<div class="fato-base"><b>O que aconteceu:</b> ${esc(it.fato)}</div>
+      <p class="mini" style="margin:0 0 8px">${fim?'Resultado da caça:':`Agora <b>toque nas palavras e sinais que exageram</b>. Encontre <b>${totalAlvo}</b>.`}</p>
+      <div class="caca ${fim?'fim':''}" id="caca">${h}</div>
+      <p class="mini" style="margin:8px 0 0">Encontradas: <b id="achadas">${M.achadas.size}</b>/${totalAlvo}${M.errosMarca?` · toques errados: ${M.errosMarca}`:''}</p>
+      ${fim?`<div class="retorno ${M.achadas.size>=Math.ceil(totalAlvo*.7)&&M.errosMarca<=1?'ok':'no'}"><span class="t">Por que é sensacionalista?</span>${esc(it.por)}<br><br><b>Versão que informa:</b> “${esc(it.neutra)}” <span class="mini">(${esc(it.fN)})</span>${M.achadas.size<totalAlvo?'<br><span class="mini">As palavras com contorno laranja eram marcas de exagero que ficaram para trás.</span>':''}</div>${botaoSeguir()}`
+          :`<div class="seguir"><button class="btn ciano" data-acao="fim-caca">Terminei a caça ✔</button></div>`}`;
+  }
+}
+function escolherManchete(k, el){
+  const it=M.itens[M.i];
+  if(k==='s'){ registrar('se'+M.i,'se',true); som('ok'); el.classList.add('certa'); $$('.manchete').forEach(b=>b.disabled=true);
+    $('#ret').innerHTML=`<div class="retorno ok"><span class="t">✅ Isso! Essa manchete exagera.</span>Agora vamos caçar as marcas do exagero.</div><div class="seguir"><button class="btn ciano" data-acao="cacar" data-foco>Caçar palavras 🔎</button></div>`; $('[data-acao="cacar"]').focus(); }
+  else { registrar('se'+M.i,'se',false); som('erro'); el.classList.add('errada'); el.disabled=true;
+    $('#ret').innerHTML=`<div class="retorno no"><span class="t">❌ Essa manchete informa o fato com calma.</span>Compare: qual das duas usa maiúsculas, exclamações, exageros ou palavras de choque?</div>`; }
+}
+function tocarPalavra(k, el){
+  const it=M.itens[M.i]; const toks=tokensManchete(it.sens); const t=normTk(toks[k]);
+  if(M.achadas.has(k)) return;
+  if(it.marcas.includes(t)){ M.achadas.add(k); el.classList.add('achou'); som('clique'); }
+  else { M.errosMarca++; el.classList.remove('errou'); void el.offsetWidth; el.classList.add('errou'); som('erro'); setTimeout(()=>el.classList.remove('errou'),600); toast('Essa palavra só informa. Procure as que exageram.'); }
+  const a=$('#achadas'); if(a) a.textContent=M.achadas.size;
+  const totalAlvo=toks.filter(x=>it.marcas.includes(normTk(x))).length;
+  if(M.achadas.size===totalAlvo){ setTimeout(fimCaca,350); }
+}
+function fimCaca(){
+  if(M.etapa==='fim') return;
+  const it=M.itens[M.i]; const toks=tokensManchete(it.sens); const totalAlvo=toks.filter(x=>it.marcas.includes(normTk(x))).length;
+  registrar('ma'+M.i,'ma', M.achadas.size>=Math.ceil(totalAlvo*.7) && M.errosMarca<=1);
+  M.etapa='fim'; som(M.achadas.size===totalAlvo?'ok':'clique'); desenharSE();
+}
+
+/* --- checagem --- */
+function desenharCH(){
+  const p=M.itens[M.i]; const n=Object.keys(M.abertas).length;
+  const ferrs=Object.keys(FERR).filter(k=>p.pistas[k]);
+  const etapa=M.etapa||'investigar';
+  let direita='';
+  if(etapa==='investigar'){
+    direita=`<p class="mini" style="margin:0 0 8px">Use as ferramentas. Abra pelo menos <b>3 pistas</b> antes de dar o veredito.</p>
+      <div class="ferramentas">${ferrs.map(k=>`<button class="ferr ${M.abertas[k]?'usada':''}" data-ferr="${k}" ${M.abertas[k]?'disabled':''}><span>${FERR[k].icone}</span>${FERR[k].nome}</button>`).join('')}</div>
+      <div class="perg">Veredito ${n<3?`<span class="mini">(abra mais ${3-n})</span>`:''}</div>
+      <div class="vereditos">${Object.entries(VEREDITOS).map(([k,v])=>`<button class="ver ${k} ${M.vErrados&&M.vErrados.includes(k)?'':''}" data-ver="${k}" ${n<3||(M.vErrados||[]).includes(k)?'disabled':''}>${v.icone} ${v.nome}<small>${v.def}</small></button>`).join('')}</div>
+      <div id="ret">${M.msg||''}</div>`;
+  } else if(etapa==='motivo'){
+    direita=`<div class="retorno ok"><span class="t">${VEREDITOS[p.veredito].icone} Veredito: ${VEREDITOS[p.veredito].nome}</span>Agora justifique.</div>
+      <div class="perg">Qual pista mais sustenta esse veredito?</div><div class="opcoes">${p.motOrd.map(k=>`<button class="op ${(M.mErrados||[]).includes(k)?'errada':''}" data-mot="${k}" ${(M.mErrados||[]).includes(k)?'disabled':''}>${esc(p.motivos[k])}</button>`).join('')}</div><div id="ret">${M.msg||''}</div>`;
+  } else if(etapa==='decisao'){
+    direita=`<div class="retorno ok"><span class="t">✔ Justificativa certa</span>${esc(p.motivos[0])}</div>
+      <div class="perg">E agora? O que fazer com esse post?</div><div class="opcoes">${p.decOrd.map(k=>`<button class="op ${(M.dErrados||[]).includes(k)?'errada':''}" data-dec="${k}" ${(M.dErrados||[]).includes(k)?'disabled':''}>${esc(p.decisoes[k])}</button>`).join('')}</div><div id="ret">${M.msg||''}</div>`;
+  } else {
+    direita=`<div class="retorno ok"><span class="t">🗂️ Caso fechado</span><b>${VEREDITOS[p.veredito].icone} ${VEREDITOS[p.veredito].nome}.</b> ${esc(p.motivos[0])}<br><b>Atitude:</b> ${esc(p.decisoes[0])}</div>${botaoSeguir()}`;
+  }
+  $('#area').innerHTML=`<div class="checagem"><div>${htmlPost(p,false,etapa==='fechado'?p.veredito:null)}
+      <div class="dossie">${ferrs.filter(k=>M.abertas[k]).map(k=>`<div class="pista ${M.ultima===k?'nova':''}">${FERR[k].icone} <b>${FERR[k].nome}</b><br>${p.pistas[k]}</div>`).join('')}</div></div>
+    <div>${direita}</div></div>`;
+  if(etapa==='fechado') som('carimbo');
+}
+function abrirFerr(k){ M.abertas[k]=true; M.ultima=k; som('clique'); M.msg=null; desenharCH(); }
+function darVeredito(k){ M.ultima=null;
+  const p=M.itens[M.i];
+  if(k===p.veredito){ registrar('ch'+M.i,'ch',true); som('ok'); M.etapa='motivo'; M.msg=null; M.vErrados=[]; desenharCH(); }
+  else { registrar('ch'+M.i,'ch',false); som('erro'); M.vErrados=(M.vErrados||[]).concat(k);
+    const dicas={V:'Para ser verdadeiro, a informação precisa estar confirmada por fontes confiáveis.',F:'Falso é quando foi inventado, é montagem ou golpe.',E:'Enganoso mistura algo real com exagero ou contexto errado.',S:'Sem provas é quando simplesmente não dá para confirmar.'};
+    M.msg=`<div class="retorno no"><span class="t">❌ Não é “${VEREDITOS[k].nome}”.</span>${dicas[k]} ${Object.keys(M.abertas).length<Object.keys(p.pistas).length?'Abra mais pistas e releia o dossiê.':'Releia as pistas do dossiê.'}</div>`; desenharCH(); }
+}
+function darMotivo(k){
+  if(k===0){ registrar('mo'+M.i,'mo',true); som('ok'); M.etapa='decisao'; M.msg=null; M.mErrados=[]; desenharCH(); }
+  else { registrar('mo'+M.i,'mo',false); som('erro'); M.mErrados=(M.mErrados||[]).concat(k); M.msg='<div class="retorno no"><span class="t">❌ Essa não é a pista principal.</span>Procure no dossiê a informação que mais explica o veredito.</div>'; desenharCH(); }
+}
+function darDecisao(k){
+  if(k===0){ registrar('de'+M.i,'de',true); som('ok'); M.etapa='fechado'; M.msg=null; M.dErrados=[]; desenharCH(); }
+  else { registrar('de'+M.i,'de',false); som('erro'); M.dErrados=(M.dErrados||[]).concat(k); M.msg='<div class="retorno no"><span class="t">❌ Pense de novo.</span>Uma atitude responsável não espalha informação falsa, enganosa ou sem provas, e protege seus dados.</div>'; desenharCH(); }
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m;
+  if(m.id!=='custom'){ const a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar(); }
+  som('fim');
+  const prox = m.id!=='custom' && m.idx<MISSOES.length-1;
+  abrirModal(`<div style="text-align:center"><span class="carimbo" style="color:var(--ciano);border-color:var(--ciano);font-size:28px">MISSÃO CUMPRIDA</span></div>
+    <div class="big-est" style="margin-top:10px">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>🛡️ ${M.cred}</b>credibilidade</div><div><b>${cargo().split(' ').slice(1).join(' ')}</b>seu cargo</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais · 2 estrelas: 70% ou mais.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn ciano" data-acao="prox" data-foco>Próxima missão ➔</button>':'<button class="btn ciano" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['CHECA AÍ! — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Cargo: ${cargo().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${MAXEST} · Missões: ${f}/${MISSOES.length}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="missoes">🛰️ Missões</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${cargo()}</b>cargo</div><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${f}/${MISSOES.length}</b>missões</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Faça algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="border-color:#B45309"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ciano" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CRIAR MISSÃO (fato × opinião) ---------- */
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+function lerLinhasFO(txt){ return txt.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{ const m=l.match(/^([FOfo])\s*[:|-]\s*(.+)$/); if(!m) return null; const [frase,expl='']=m[2].split('|').map(s=>s.trim()); return [frase, m[1].toUpperCase(), expl||(m[1].toUpperCase()==='F'?'Pode ser comprovado.':'É um julgamento ou avaliação de quem escreve.'), []]; }).filter(Boolean).slice(0,15); }
+function telaCriar(){
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Criar missão: fato ou opinião</h2><small>Use frases de uma notícia ou artigo trabalhado em aula</small></div></header>
+  <section class="pg"><div class="cartao">
+    <div class="campo"><span>Título da missão</span><input id="c-tit" maxlength="50" placeholder="ex.: Notícia sobre o festival de inverno"></div>
+    <div class="campo"><span>Uma frase por linha, começando com F: (fato) ou O: (opinião). Depois de uma barra | você pode explicar.</span>
+      <textarea id="c-txt" placeholder="F: O festival terá 20 apresentações gratuitas.&#10;O: É o melhor evento do ano. | “Melhor” é um julgamento.&#10;F: Segundo a organização, 10 mil pessoas são esperadas."></textarea></div>
+    <p class="mini" id="c-info"></p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-acao="testar">▶️ Testar</button><button class="btn ciano" data-acao="gerar">🔗 Gerar link</button></div><div id="c-link"></div></div></section>`;
+  $('#c-txt').oninput=()=>{ const n=lerLinhasFO($('#c-txt').value).length; $('#c-info').textContent=n?`${n} frase(s) reconhecida(s)`:''; };
+}
+function dadosCriar(){ const l=lerLinhasFO($('#c-txt').value); if(l.length<3){ toast('Escreva pelo menos 3 frases começando com F: ou O:.'); return null; } return {t:$('#c-tit').value.trim()||'Missão especial', x:$('#c-txt').value}; }
+function missaoCustom(d){ return {id:'custom', idx:-1, tipo:'fo', titulo:d.t, ano:'', intro:'Missão criada pelo professor: classifique cada frase como fato ou opinião.', itens:lerLinhasFO(d.x)}; }
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as missões','Para o professor escolher a missão da aula.')}<div class="acoes"><button class="btn ciano" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="lista-def">
+    <div style="border-color:#22D3EE"><b>📊💬 Fato ou opinião?</b> Classifique cada frase. Teclas F e O também funcionam.</div>
+    <div style="border-color:#F59E0B"><b>📢 Detector de exagero</b> Descubra qual manchete é sensacionalista e cace as palavras que exageram.</div>
+    <div style="border-color:#A78BFA"><b>🔎 Checagem</b> Abra as ferramentas, leia as pistas, dê o veredito, justifique e decida o que fazer com o post.</div>
+    <div style="border-color:#84CC16"><b>🛡️ Credibilidade</b> Cai quando você erra na primeira tentativa. As estrelas sobem seu cargo na agência.</div></div>
+    <p class="mini">Todos os perfis, veículos, escolas e posts do jogo são fictícios.</p><div class="acoes"><button class="btn ciano" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(modalAberto()) fecharModal(); ir(irB.dataset.ir); return; }
+  const mb=e.target.closest('[data-missao]'); if(mb&&!mb.disabled){ ir('missao',+mb.dataset.missao); return; }
+  const fo=e.target.closest('[data-fo]'); if(fo&&!fo.disabled){ responderFO(fo.dataset.fo); return; }
+  const man=e.target.closest('[data-man]'); if(man&&!man.disabled){ escolherManchete(man.dataset.man, man); return; }
+  const w=e.target.closest('#caca:not(.fim) .w'); if(w){ tocarPalavra(+w.dataset.w, w); return; }
+  const fr=e.target.closest('[data-ferr]'); if(fr&&!fr.disabled){ abrirFerr(fr.dataset.ferr); return; }
+  const ve=e.target.closest('[data-ver]'); if(ve&&!ve.disabled){ darVeredito(ve.dataset.ver); return; }
+  const mo=e.target.closest('[data-mot]'); if(mo&&!mo.disabled){ darMotivo(+mo.dataset.mot); return; }
+  const de=e.target.closest('[data-dec]'); if(de&&!de.disabled){ darDecisao(+de.dataset.dec); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='missoes') telaMissoes(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='cacar'){ M.etapa='cacar'; desenharSE(); }
+  else if(a==='fim-caca') fimCaca();
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.id==='custom'?M.m:M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+  else if(a==='testar'){ const d=dadosCriar(); if(d) ir('missao', missaoCustom(d)); }
+  else if(a==='gerar'){ const d=dadosCriar(); if(!d) return; const url=location.href.split('#')[0]+'#d='+b64e(JSON.stringify(d)); $('#c-link').innerHTML=`<div class="link-box">${esc(url)}</div><div style="margin-top:10px"><button class="btn ciano" id="c-copiar">📋 Copiar link</button></div>`; $('#c-copiar').onclick=()=>copiar(url); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()){ fecharModal(); return; }
+  if(TELA!=='missao'||!M||modalAberto()) return;
+  const f=document.activeElement; if(f&&/INPUT|TEXTAREA/.test(f.tagName)) return;
+  if(M.m.tipo==='fo' && /^[foFO]$/.test(e.key)){ const b=$(`[data-fo="${e.key.toUpperCase()}"]`); if(b&&!b.disabled) b.click(); }
+});
+
+/* ---------- INÍCIO ---------- */
+(function(){
+  const h=location.hash;
+  if(h.startsWith('#d=')){ try{ const d=JSON.parse(b64d(h.slice(3))); if(d&&typeof d.x==='string'&&lerLinhasFO(d.x).length){ telaHome(); TELA='missao'; iniciarMissao(missaoCustom(d)); return; } }catch(e){ console.warn('Link de missão inválido'); } }
+  telaHome();
+})();
+</script>
+</body>
+</html>

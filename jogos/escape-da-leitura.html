@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escape da Leitura</title>
+<meta name="description" content="Escape room de leitura para o 3º ao 5º ano: leia o texto e abra os cadeados localizando informações, fazendo inferências, descobrindo o sentido de palavras e a ideia central. Habilidades MS.EF15LP03, MS.EF35LP04, MS.EF35LP05 e MS.EF35LP03.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fundo:#0F3438; --fundo2:#16484D; --latao:#E8B44C; --latao-e:#B8862A; --creme:#FFF8EA; --borda:#E9D9B8;
+  --tinta:#1E2A2E; --suave:#5E6B6E; --ok:#16A34A; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --L:#2563EB; --I:#16A34A; --P:#EA580C; --C:#9333EA;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Andika','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:var(--texto);font-size:17px;color:#fff;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:var(--fundo);background-image:repeating-linear-gradient(90deg,#ffffff05 0 2px,transparent 2px 120px),linear-gradient(180deg,var(--fundo),var(--fundo2))}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--latao);outline-offset:2px}
+.btn{border:2px solid #ffffff30;background:#ffffff12;color:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s,background .12s}
+.btn:hover{transform:translateY(-2px);background:#ffffff20}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.latao{background:var(--latao);border-color:var(--latao-e);color:var(--tinta);box-shadow:0 4px 0 var(--latao-e)}
+.btn.latao:hover{background:#F2C463}
+.btn.claro{background:#fff;border-color:var(--borda);color:var(--tinta)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--latao);background:#E8B44C22;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:28px 20px 34px}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:center}
+.hero h1{font-size:clamp(44px,7vw,78px);font-weight:800;margin:14px 0 8px;letter-spacing:-1px}
+.hero h1 span{color:var(--latao)}
+.lead{font-size:19px;line-height:1.6;color:#D4E8E6;max-width:540px;margin:0 0 18px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:#A9CFCB}
+.campos input{border:2px solid #ffffff30;background:#ffffff10;border-radius:12px;padding:10px 12px;width:190px;font-size:17px;color:#fff}
+.campos label:last-child input{width:110px}
+.campos input::placeholder{color:#ffffff60}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.porta-arte{position:relative;height:320px;display:grid;place-items:center}
+.porta-arte .moldura{width:200px;height:290px;border-radius:100px 100px 10px 10px;background:#5A3A22;border:10px solid #3E2716;position:relative;box-shadow:0 20px 60px #0007}
+.porta-arte .moldura::before{content:"";position:absolute;inset:18px;border-radius:80px 80px 6px 6px;border:4px solid #7A5233}
+.porta-arte .travas{position:absolute;right:-26px;top:70px;display:flex;flex-direction:column;gap:12px}
+.porta-arte .travas span{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:24px;box-shadow:0 4px 0 #0004}
+.porta-arte .macaneta{position:absolute;left:24px;top:150px;width:18px;height:18px;border-radius:50%;background:var(--latao)}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+.info div{flex:1;min-width:150px;background:#ffffff0d;border:2px solid #ffffff20;border-radius:16px;padding:12px 16px;font-size:14px;color:#A9CFCB}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:#fff}
+.rodape{font-size:13px;color:#9EC3BF;line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#0F3438f0;backdrop-filter:blur(6px);border-bottom:2px solid #ffffff1c;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:#A9CFCB;font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#ffffff12;border:2px solid #ffffff26;border-radius:12px;padding:6px 12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* CORREDOR */
+.corredor{max-width:1040px;margin:auto;padding:22px 16px 40px}
+.portas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.porta-btn{position:relative;text-align:left;border:0;padding:0;background:none;color:inherit;transition:transform .12s}
+.porta-btn:hover:not(:disabled){transform:translateY(-4px)}
+.porta-btn:disabled{opacity:.5;cursor:not-allowed}
+.porta-btn .p{background:#5A3A22;border:8px solid #3E2716;border-radius:80px 80px 12px 12px;padding:34px 18px 18px;min-height:230px;display:flex;flex-direction:column;gap:6px}
+.porta-btn .num{font-family:var(--titulo);font-weight:800;color:var(--latao);font-size:14px;letter-spacing:2px;text-align:center}
+.porta-btn h3{font-size:23px;text-align:center}
+.porta-btn .gen{text-align:center;font-size:14px;color:#E9D2B5}
+.porta-btn .est{margin-top:auto;text-align:center;font-size:22px;letter-spacing:3px;color:#7A5233}
+.porta-btn .est .on{color:var(--latao)}
+.porta-btn .tempo{text-align:center;font-size:13px;color:#E9D2B5}
+.porta-btn .cad{position:absolute;top:14px;right:18px;font-size:22px}
+.porta-btn.atual .p{box-shadow:0 0 0 4px var(--latao),0 0 34px #E8B44C66}
+.nota{color:#A9CFCB;font-size:13px;margin-top:18px;line-height:1.5}
+
+/* SALA */
+.sala{max-width:1180px;margin:auto;padding:16px;display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start}
+.texto-card{background:var(--creme);color:var(--tinta);border:3px solid var(--borda);border-radius:22px;padding:22px clamp(16px,3vw,30px);box-shadow:0 8px 0 #0002}
+.texto-card .gen{display:inline-block;font-size:13px;font-weight:700;color:var(--suave);background:#F1E6CF;border-radius:20px;padding:3px 10px;margin-bottom:8px}
+.texto-card h3{font-size:clamp(24px,3.5vw,32px);margin-bottom:4px}
+.texto-card .fina{font-style:italic;color:var(--suave);margin-bottom:6px}
+.texto{font-size:clamp(18px,2.4vw,21px);line-height:1.75}
+.texto p{margin:12px 0}
+.tk{border-radius:4px;transition:background .1s}
+.lupa .tk[data-n]{cursor:pointer;background:#EAF1FF;box-shadow:0 0 0 1px #C9DAFF}
+.lupa .tk[data-n]:hover{background:#C9DAFF}
+.tk.marcaP{background:#FFEDD5;box-shadow:0 0 0 2px var(--P);font-weight:700}
+.tk.pista{background:#DCFCE7}
+.tk.achou{background:#BBF7D0;box-shadow:0 0 0 2px var(--ok);font-weight:700}
+.tk.errou{background:var(--erro-f);box-shadow:0 0 0 2px var(--erro);animation:treme .3s}
+.tk.falando{background:#FFE58F}
+@keyframes treme{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.ferr-texto{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.ferr-texto .btn{min-height:40px;padding:6px 12px;font-size:15px}
+.li-btn{margin-top:14px;width:100%}
+
+.col-porta{position:sticky;top:76px}
+.painel-porta{background:#ffffff0d;border:2px solid #ffffff22;border-radius:22px;padding:14px}
+.painel-porta h3{font-size:20px;display:flex;align-items:center;gap:8px}
+.cadeados{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.cadeado{border:0;border-radius:16px;padding:10px 4px;background:#ffffff14;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:96px;position:relative;transition:transform .12s}
+.cadeado:hover:not(:disabled){transform:translateY(-3px)}
+.cadeado .ic{font-size:30px;line-height:1}
+.cadeado .nm{font-size:12px;font-weight:700;text-align:center;line-height:1.15}
+.cadeado .dg{font-family:var(--titulo);font-weight:800;font-size:22px;line-height:1}
+.cadeado.sel{box-shadow:0 0 0 3px #fff}
+.cadeado.aberto{animation:abre .5s ease}
+.cadeado:disabled{opacity:.5;cursor:not-allowed}
+@keyframes abre{40%{transform:scale(1.15) rotate(-6deg)}}
+.instr{color:#CFE4E1;line-height:1.55;font-size:15px}
+.desafio{background:var(--creme);color:var(--tinta);border-radius:18px;border:3px solid var(--borda);padding:16px;margin-top:4px}
+.desafio .tipo{display:inline-flex;align-items:center;gap:6px;font-family:var(--titulo);font-weight:800;font-size:13px;letter-spacing:1px;border-radius:20px;padding:3px 10px;color:#fff}
+.desafio .perg{font-size:20px;font-weight:700;line-height:1.4;margin:10px 0}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;line-height:1.4;font-size:17px;color:var(--tinta);display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#F1E6CF;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:#C9B48A;background:#FFFDF7}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.op:disabled{cursor:default}
+.msg{margin-top:10px;border-radius:12px;padding:10px 12px;line-height:1.5;font-size:16px}
+.msg.dica{background:#FFF4C2}
+.msg.ok{background:var(--ok-f)}
+.msg.no{background:var(--erro-f)}
+.linha-acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.linha-acoes .btn{min-height:42px;padding:8px 14px;font-size:15px}
+.final{background:linear-gradient(180deg,#5A3A22,#3E2716);border-radius:18px;padding:16px;text-align:center;border:3px solid var(--latao-e)}
+.final h3{font-size:24px;color:var(--latao);justify-content:center}
+.codigo{display:flex;justify-content:center;gap:10px;margin:14px 0}
+.codigo span{width:56px;height:66px;border-radius:12px;background:#fff;color:var(--tinta);display:grid;place-items:center;font-family:var(--titulo);font-weight:800;font-size:36px;border:4px solid}
+.codigo.treme{animation:treme .35s}
+.chaves{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;font-size:15px;color:#F5E3C3}
+.chaves i{font-style:normal;font-family:var(--titulo);font-weight:800;padding:2px 10px;border-radius:10px;color:#fff}
+.teclado-num{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:340px;margin:12px auto 0}
+.teclado-num button{height:50px;border-radius:12px;border:0;background:#fff;color:var(--tinta);font-family:var(--titulo);font-weight:800;font-size:24px;box-shadow:0 3px 0 #0003}
+.teclado-num button.apaga{background:#FFE4E6}
+.teclado-num button.abrir{grid-column:span 5;background:var(--latao);font-size:20px}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#06191bc4;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);color:var(--tinta);border-radius:26px;max-width:640px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0007}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .btn:not(.latao){background:#fff;border-color:var(--borda);color:var(--tinta)}
+.modal .acoes{margin-top:18px}
+.tipos-lista{display:grid;gap:8px;margin-top:12px}
+.tipos-lista div{display:flex;gap:10px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 12px;line-height:1.4}
+.tipos-lista span.c{flex:none;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:20px}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:64px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D3B5;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:#E9A800}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.porta-abre{position:relative;height:120px;width:180px;margin:6px auto;perspective:400px}
+.porta-abre .luz{position:absolute;inset:0;background:radial-gradient(circle,#FFF3C4,#E8B44C);border-radius:60px 60px 6px 6px}
+.porta-abre .folha{position:absolute;top:0;bottom:0;width:50%;background:#5A3A22;border:5px solid #3E2716;transform-origin:left;animation:gira 1.2s .3s ease forwards}
+.porta-abre .folha.d{right:0;transform-origin:right;animation-name:gira2}
+.porta-abre .folha.e{left:0;border-radius:60px 0 0 6px}
+.porta-abre .folha.d{border-radius:0 60px 6px 0}
+@keyframes gira{to{transform:rotateY(-80deg)}}
+@keyframes gira2{to{transform:rotateY(80deg)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* PÁGINAS */
+.folha-pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:var(--creme);color:var(--tinta);border:3px solid var(--borda);border-radius:22px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(170px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EFE3CB;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px}
+.cat .n{font-weight:700;white-space:nowrap}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:700;font-size:14px;color:var(--suave)}
+.campo input,.campo textarea{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;background:#fff;font-size:16px;color:var(--tinta);font-weight:400;width:100%}
+.campo textarea{min-height:200px;line-height:1.6;resize:vertical}
+details.bloco{border:2px solid var(--borda);border-radius:16px;background:#fff;padding:10px 14px;margin-bottom:10px}
+details.bloco summary{cursor:pointer;font-weight:700;font-family:var(--titulo);font-size:18px}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.link-box{word-break:break-all;background:#F1E6CF;border-radius:12px;padding:10px;font-size:14px;margin-top:10px}
+
+#toast{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:60;background:#fff;color:var(--tinta);padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px #0006}
+#toast.on{opacity:1}
+.conf{position:fixed;top:-20px;width:10px;height:16px;border-radius:3px;z-index:70;pointer-events:none;animation:cai linear forwards}
+@keyframes cai{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .porta-arte{height:220px;order:-1}
+  .porta-arte .moldura{width:140px;height:200px}
+  .porta-arte .travas{top:30px}
+  .sala{grid-template-columns:1fr;padding:12px}
+  .col-porta{position:sticky;top:62px;z-index:15;order:-1}
+  .painel-porta{background:#0F3438f7;padding:8px 10px;border-radius:16px}
+  .painel-porta h3,.instr{display:none}
+  .cadeados{margin:0;gap:6px}
+  .cadeado{min-height:70px;padding:6px 2px}
+  .cadeado .ic{font-size:22px}
+  .cadeado .nm{font-size:11px}
+  #painel.ativo{position:fixed;left:0;right:0;bottom:0;z-index:30;max-height:64vh;overflow:auto;padding:10px 10px calc(12px + env(safe-area-inset-bottom));background:#0B2A2Df5;border-top:2px solid #ffffff30;border-radius:20px 20px 0 0;box-shadow:0 -10px 40px #0007}
+  #painel.ativo.lupa-m{max-height:none}
+  .sala.com-painel{padding-bottom:62vh}
+  .topo h2{font-size:17px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+  .duas{grid-template-columns:1fr}
+  .desafio .perg{font-size:18px;margin:6px 0}
+  .desafio{padding:12px}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .linha-acoes{margin-top:8px;gap:6px}
+  .linha-acoes .btn{min-height:38px;padding:4px 10px;font-size:14px}
+  #painel.lupa-m .msg{font-size:15px;padding:8px 10px}
+  #toast{top:150px}
+  .tk{scroll-margin-top:170px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   ESCAPE DA LEITURA — JRM • Aventuras Educativas (jrmapps.com)
+   Habilidades: MS.EF15LP03 (localizar) · MS.EF35LP04 (inferir)
+                MS.EF35LP05 (sentido de palavras) · MS.EF35LP03 (ideia central)
+   ---------------------------------------------------------
+   Cada sala tem um texto e cadeados de 4 tipos:
+     L = localizar: o estudante toca na palavra do texto (resposta: lista de palavras aceitas)
+     I = inferir:   opções (a 1ª é a certa) + "pista" (trecho do texto destacado depois)
+     P = palavra:   opções (a 1ª é a certa) + "alvo" (palavra/expressão destacada no texto)
+     C = ideia central: opções (a 1ª é a certa)
+   ========================================================= */
+
+const TIPOS = {
+  L:{nome:'Localizar', icone:'🔎', cor:'var(--L)', hex:'#2563EB', hab:'MS.EF15LP03', desc:'Encontrar uma informação que está escrita no texto.'},
+  I:{nome:'Inferir', icone:'🧩', cor:'var(--I)', hex:'#16A34A', hab:'MS.EF35LP04', desc:'Descobrir algo que o texto não diz com todas as letras, juntando pistas.'},
+  P:{nome:'Palavra', icone:'📖', cor:'var(--P)', hex:'#EA580C', hab:'MS.EF35LP05', desc:'Descobrir o sentido de uma palavra ou expressão pelo contexto.'},
+  C:{nome:'Ideia central', icone:'💡', cor:'var(--C)', hex:'#9333EA', hab:'MS.EF35LP03', desc:'Entender do que o texto trata, sua finalidade ou ensinamento.'}
+};
+const ORDEM = ['L','I','P','C'];
+
+const SALAS = [
+ {id:'s1', nome:'A Biblioteca Trancada', ano:'3º ano', genero:'Conto',
+  missao:'A porta da sala de leitura se fechou sozinha! A chave está num cofre com quatro cadeados. Leia o conto que ficou em cima da mesa para descobrir os códigos.',
+  texto:{titulo:'O sumiço do Pipoca', paragrafos:[
+   'Na escola Ipê Amarelo, todo mundo conhecia o Pipoca, o gato cinza que dormia na sala de leitura. Numa segunda-feira, ele não apareceu.',
+   'Lara procurou embaixo das mesas e atrás das estantes. Nada. Então ela ouviu um miado baixinho vindo do armário dos livros novos.',
+   '— Achei! — gritou Lara, abrindo a porta.',
+   'Lá dentro estava o Pipoca, todo enrolado em cima de uma caixa de livros, com três gatinhos ao seu lado. A turma inteira bateu palmas. Naquele dia, ninguém conseguiu prestar atenção na aula.']},
+  cadeados:[
+   {tipo:'L', pergunta:'Em que dia da semana o Pipoca sumiu?', resposta:['segunda-feira'], dica:'Procure no primeiro parágrafo.'},
+   {tipo:'I', pergunta:'Por que o Pipoca estava escondido no armário?', opcoes:['Porque tinha acabado de ter filhotes.','Porque estava de castigo.','Porque queria ler os livros novos.','Porque estava com medo da Lara.'], pista:'com três gatinhos ao seu lado', dica:'Repare em quem estava ao lado do Pipoca dentro do armário.'},
+   {tipo:'P', pergunta:'No texto, “todo enrolado” quer dizer que o Pipoca estava…', alvo:'todo enrolado', opcoes:['deitado em forma de bolinha.','preso com uma corda.','embrulhado num papel de presente.','confuso e atrapalhado.'], dica:'Pense em como os gatos gostam de dormir.'},
+   {tipo:'C', pergunta:'Do que trata o texto, principalmente?', opcoes:['Da busca por um gato que sumiu e da surpresa que a turma encontrou.','De como organizar os livros de uma sala de leitura.','De uma aula de Ciências sobre gatos.','De uma briga entre a Lara e a turma.'], dica:'Pense no começo, no meio e no fim da história.'}
+  ]},
+ {id:'s2', nome:'A Caixa de Cartas', ano:'3º ano', genero:'Carta pessoal',
+  missao:'Você entrou na sala do correio da escola e a porta travou! Dentro de uma caixa há uma carta. Leia com atenção: as respostas abrem os cadeados.',
+  texto:{titulo:'Carta para o primo', paragrafos:[
+   'Campo Grande, 12 de agosto.',
+   'Querido primo Davi,',
+   'Estou com saudade! Aqui a novidade é que ganhei uma bicicleta vermelha de aniversário. Já aprendi a andar sem rodinhas, mas ainda caio nas curvas.',
+   'No sábado, fomos ao Parque das Nações Indígenas. Vimos capivaras tomando sol na beira do lago, e um bando de araras passou voando bem perto da gente!',
+   'Quando você vier nas férias de dezembro, vamos andar de bicicleta juntos. Vou pedir para a mamãe comprar um capacete para você também.',
+   'Um abraço apertado,',
+   'Sofia']},
+  cadeados:[
+   {tipo:'L', pergunta:'Que presente a Sofia ganhou de aniversário?', resposta:['bicicleta'], dica:'Procure logo no começo da carta, depois da saudação.'},
+   {tipo:'I', pergunta:'Por que a Sofia vai pedir um capacete para o Davi?', opcoes:['Porque eles vão andar de bicicleta juntos, e o capacete protege.','Porque o Davi faz aniversário em dezembro.','Porque o capacete da Sofia quebrou.','Porque vai chover nas férias.'], pista:'vamos andar de bicicleta juntos', dica:'Leia o último parágrafo e pense em segurança.'},
+   {tipo:'P', pergunta:'Na frase “ainda caio nas curvas”, a palavra “ainda” mostra que…', alvo:'ainda caio nas curvas', opcoes:['a Sofia está aprendendo e, um dia, vai parar de cair.','a Sofia nunca andou de bicicleta.','a Sofia não gosta de curvas.','a Sofia caiu uma vez só.'], dica:'Compare: “Já aprendi a andar sem rodinhas, mas ainda caio…”.'},
+   {tipo:'C', pergunta:'Qual é a finalidade (o objetivo) deste texto?', opcoes:['Contar novidades a um parente e combinar um encontro.','Ensinar a andar de bicicleta.','Vender uma bicicleta vermelha.','Dar uma notícia para o jornal da cidade.'], dica:'Quem escreveu, para quem e para quê?'}
+  ]},
+ {id:'s3', nome:'O Laboratório de Curiosidades', ano:'4º ano', genero:'Texto de divulgação científica',
+  missao:'O laboratório de Ciências foi trancado e só abre com um código. Na bancada, há um texto sobre um animal do Pantanal. Estude-o para escapar!',
+  texto:{titulo:'Capivara: a gigante tranquila', paragrafos:[
+   'A capivara é o maior roedor do mundo. Um adulto pode pesar mais de 60 quilos, quase o mesmo que uma pessoa adulta! Ela vive perto de rios, lagos e banhados, como os do Pantanal.',
+   'Esse animal é um ótimo nadador. Entre os dedos, a capivara tem uma pele fina, parecida com a dos patos, que funciona como um remo. Quando se sente ameaçada, ela mergulha e pode ficar alguns minutos embaixo da água.',
+   'As capivaras vivem em grupos. Elas se alimentam de capim e de plantas aquáticas e costumam descansar nas horas mais quentes do dia. No fim da tarde, saem para comer.']},
+  cadeados:[
+   {tipo:'L', pergunta:'Quanto pode pesar uma capivara adulta?', resposta:['60','quilos'], dica:'Procure um número no primeiro parágrafo.'},
+   {tipo:'I', pergunta:'Por que a capivara mergulha quando se sente ameaçada?', opcoes:['Para se esconder e fugir do perigo.','Para procurar comida no fundo do rio.','Porque está com muito calor.','Para brincar com os patos.'], pista:'Quando se sente ameaçada, ela mergulha e pode ficar alguns minutos embaixo da água.', dica:'O que um animal faz quando está em perigo?'},
+   {tipo:'P', pergunta:'No texto, a palavra “banhados” quer dizer…', alvo:'banhados', opcoes:['terrenos alagados, cheios de água.','animais que acabaram de tomar banho.','lugares secos e quentes.','piscinas de clubes.'], dica:'Veja as palavras que vêm antes: rios, lagos…'},
+   {tipo:'C', pergunta:'Qual é o assunto principal do texto?', opcoes:['Como a capivara é, vive e se comporta.','Como os patos nadam.','Por que o Pantanal enche na época das chuvas.','A aventura de uma capivara famosa.'], dica:'Sobre o que cada parágrafo fala?'}
+  ]},
+ {id:'s4', nome:'A Redação do Jornalzinho', ano:'4º ano', genero:'Notícia',
+  missao:'Você foi visitar a redação do jornal da escola e a porta emperrou! A última notícia ainda está na impressora. Leia e descubra os códigos.',
+  texto:{titulo:'Escola transforma pátio em horta', fina:'Alunos do 4º ano plantaram alface, cebolinha e couve', paragrafos:[
+   'Os estudantes do 4º ano da Escola Estadual Sol Nascente, em Campo Grande, inauguraram na última sexta-feira uma horta no pátio da escola. O projeto começou em março, quando a turma percebeu que um canto do pátio estava cheio de lixo e mato.',
+   'Com a ajuda da professora Marta e de alguns pais, os alunos limparam o espaço, prepararam os canteiros e plantaram alface, cebolinha e couve. As verduras serão usadas na merenda.',
+   '“Antes ninguém passava por aqui. Agora todo mundo quer ajudar a regar”, contou o aluno Pedro, de 9 anos.',
+   'A próxima etapa é construir uma composteira para transformar as cascas de frutas da cozinha em adubo.']},
+  cadeados:[
+   {tipo:'L', pergunta:'Quem ajudou os alunos a fazer a horta?', resposta:['marta','professora','pais'], dica:'Procure no segundo parágrafo.'},
+   {tipo:'I', pergunta:'Por que o Pedro disse que “antes ninguém passava por aqui”?', opcoes:['Porque o lugar era sujo e abandonado antes da horta.','Porque era proibido entrar no pátio.','Porque o pátio ficava longe da escola.','Porque o Pedro era novo na escola.'], pista:'um canto do pátio estava cheio de lixo e mato', dica:'Como era aquele canto do pátio antes do projeto?'},
+   {tipo:'P', pergunta:'Na notícia, “composteira” é…', alvo:'composteira', opcoes:['um lugar para transformar restos de comida em adubo.','uma máquina de fazer suco.','um tipo de verdura.','uma lixeira para plástico.'], dica:'A própria frase explica para que ela serve.'},
+   {tipo:'C', pergunta:'Qual é o fato principal da notícia?', opcoes:['Alunos criaram uma horta no pátio da escola.','A escola ganhou uma cozinha nova.','O Pedro aprendeu a regar plantas.','A merenda da escola mudou de horário.'], dica:'O título e o primeiro parágrafo de uma notícia contam o fato principal.'}
+  ]},
+ {id:'s5', nome:'A Sala das Fábulas', ano:'5º ano', genero:'Fábula',
+  missao:'Nesta sala, os livros falam! Mas a porta só abre para quem entende a fábula que está no púlpito. Leia e descubra o ensinamento.',
+  texto:{titulo:'O Tatu e a Seriema', paragrafos:[
+   'No meio do cerrado, a Seriema vivia se gabando:',
+   '— Sou a ave mais rápida daqui. Ninguém me alcança!',
+   'O Tatu, que cavava devagar um buraco perto dali, apenas sorria.',
+   'Uma tarde, o céu escureceu e começou um temporal com raios e ventania. A Seriema correu de um lado para o outro, mas não encontrou abrigo. Encharcada e tremendo, ouviu uma voz:',
+   '— Venha, amiga. Aqui cabe mais uma!',
+   'Era o Tatu, na entrada da toca que tinha passado dias cavando. A Seriema entrou, envergonhada, e passou a noite seca e protegida.',
+   'No dia seguinte, ela não falou mais da própria velocidade. Ajudou o Tatu a juntar folhas secas para forrar a toca.']},
+  cadeados:[
+   {tipo:'L', pergunta:'Onde a história acontece?', resposta:['cerrado'], dica:'Procure logo na primeira linha.'},
+   {tipo:'I', pergunta:'Por que a Seriema ficou envergonhada?', opcoes:['Porque se gabava de ser a melhor e precisou da ajuda do Tatu.','Porque estava molhada e suja.','Porque entrou na toca sem bater.','Porque perdeu uma corrida para o Tatu.'], pista:'A Seriema entrou, envergonhada, e passou a noite seca e protegida.', dica:'Lembre o que a Seriema dizia no começo e o que aconteceu depois.'},
+   {tipo:'P', pergunta:'“Se gabando” quer dizer…', alvo:'se gabando', opcoes:['elogiando a si mesma, contando vantagem.','reclamando do tempo.','cantando bem alto.','pedindo ajuda aos amigos.'], dica:'Leia o que a Seriema fala logo em seguida.'},
+   {tipo:'C', pergunta:'Qual é a moral (o ensinamento) da fábula?', opcoes:['Ser humilde e ajudar vale mais do que se exibir.','Quem corre mais rápido sempre vence.','Nunca saia de casa quando vai chover.','Tatus são mais fortes que as aves.'], dica:'O que a Seriema aprendeu no final?'}
+  ]},
+ {id:'s6', nome:'O Cofre da Diretoria', ano:'5º ano', genero:'Conto de mistério',
+  missao:'Última sala! A diretoria está trancada e o cofre guarda a chave da saída. Para abri-lo, você precisa resolver um mistério de verdade. Prepare a lupa!',
+  texto:{titulo:'O mistério das pegadas de lama', paragrafos:[
+   'Quando a diretora Helena chegou à escola na quarta-feira, encontrou pegadas de lama no corredor. Elas começavam na porta da cozinha e iam até a sala de Artes. Lá dentro, um pote de tinta azul estava derrubado, e havia marcas azuis no chão parecidas com mãozinhas.',
+   '— Será que alguém invadiu a escola? — perguntou o vigia, preocupado.',
+   'Helena se abaixou para olhar melhor. As marcas eram pequenas e não tinham desenho de sapato. Perto da janela aberta, ela encontrou um punhado de pelos castanhos e restos de banana.',
+   'A diretora sorriu e apontou para a árvore do pátio, onde algo se mexia entre os galhos.',
+   '— Acho que o nosso visitante tem rabo comprido e adora frutas — disse ela.']},
+  cadeados:[
+   {tipo:'L', pergunta:'De que cor era a tinta derrubada?', resposta:['azul','azuis'], dica:'Procure no fim do primeiro parágrafo.'},
+   {tipo:'I', pergunta:'Quem entrou na escola, de acordo com as pistas?', opcoes:['Um macaco.','Um ladrão.','Um cachorro de rua.','Um aluno que esqueceu a tinta.'], pista:'tem rabo comprido e adora frutas', dica:'Junte as pistas: mãozinhas, pelos, banana, árvore, rabo comprido.'},
+   {tipo:'P', pergunta:'No texto, “um punhado de pelos” quer dizer…', alvo:'um punhado de pelos', opcoes:['uma pequena quantidade de pelos, que cabe na mão.','um pelo muito comprido.','pelos grudados com cola.','um pente cheio de cabelo.'], dica:'“Punhado” vem de “punho”, a mão fechada.'},
+   {tipo:'C', pergunta:'Qual alternativa resume melhor o texto?', opcoes:['Uma diretora usa pistas para descobrir que um animal entrou na escola.','Um vigia prende um ladrão na sala de Artes.','Os alunos fazem uma pintura com tinta azul.','A escola fecha por causa da chuva.'], dica:'O que a diretora fez e o que ela descobriu?'}
+  ]}
+];
+SALAS.forEach((s,i)=>s.idx=i);
+
+/* ---------- ESTADO ---------- */
+const CHAVE='escapeLeitura.v1';
+function padrao(){ return {nome:'',turma:'',salas:{},stats:{},cfg:{som:true,lenta:false,ouvir:true,relogio:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const $$=(q,el=document)=>Array.from(el.querySelectorAll(q));
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=t=>String(t).normalize('NFC').toLocaleLowerCase('pt-BR').replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu,'');
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+const fmtTempo=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+function festa(){ const c=['#E8B44C','#2563EB','#16A34A','#EA580C','#9333EA','#fff']; for(let i=0;i<70;i++){ const d=document.createElement('div'); d.className='conf'; d.style.left=Math.random()*100+'vw'; d.style.background=c[i%c.length]; d.style.animationDuration=(1.8+Math.random()*1.8)+'s'; d.style.animationDelay=(Math.random()*.4)+'s'; document.body.appendChild(d); setTimeout(()=>d.remove(),4300); } }
+
+/* ---------- VOZ ---------- */
+const VOZ={ok:'speechSynthesis' in window,voz:null,sessao:0,quem:null};
+if(VOZ.ok){ const e=()=>{ const v=speechSynthesis.getVoices(); VOZ.voz=v.find(x=>/pt[-_]BR/i.test(x.lang))||v.find(x=>/^pt/i.test(x.lang))||null; }; e(); speechSynthesis.onvoiceschanged=e; }
+function pararVoz(){ VOZ.sessao++; VOZ.quem=null; if(VOZ.ok) speechSynthesis.cancel(); $$('.tk.falando').forEach(x=>x.classList.remove('falando')); rotulosVoz(); }
+function falar(segs,quem){
+  if(!VOZ.ok){ toast('Este navegador não lê em voz alta. Tente o Chrome ou o Edge.'); return; }
+  pararVoz(); const s=++VOZ.sessao; VOZ.quem=quem; rotulosVoz(); let i=0;
+  const prox=()=>{ if(s!==VOZ.sessao) return; $$('.tk.falando').forEach(x=>x.classList.remove('falando'));
+    if(i>=segs.length){ VOZ.quem=null; rotulosVoz(); return; }
+    const sg=segs[i++]; const u=new SpeechSynthesisUtterance(sg.texto); u.lang='pt-BR'; if(VOZ.voz) u.voice=VOZ.voz; u.rate=.92*(S.cfg.lenta?.8:1);
+    u.onboundary=e=>{ if(s!==VOZ.sessao||!sg.mapa||(e.name&&e.name!=='word')) return; let a=null; for(const m of sg.mapa){ if(m.c<=e.charIndex) a=m; else break; }
+      $$('.tk.falando').forEach(x=>x.classList.remove('falando')); if(a){ const el=$(`.tk[data-t="${a.t}"]`); if(el) el.classList.add('falando'); } };
+    u.onend=prox; u.onerror=prox; speechSynthesis.speak(u); };
+  setTimeout(prox,60);
+}
+function rotulosVoz(){ $$('[data-voz]').forEach(b=>{ b.innerHTML = VOZ.quem===b.dataset.voz ? '⏹ Parar' : b.dataset.rotulo; }); }
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={clique:[[600,.04]],ok:[[523,.08],[659,.08],[784,.16]],erro:[[262,.12],[208,.2]],abre:[[392,.08],[523,.08],[659,.08],[784,.1],[1047,.3]],trava:[[180,.08],[160,.12]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'||t==='trava'?'square':'sine'; o.frequency.value=f; g.gain.setValueAtTime(t==='erro'||t==='trava'?.05:.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+/* ---------- MODAL ---------- */
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home', relogio=null;
+function ir(t,arg){ pararVoz(); clearInterval(relogio); TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='corredor') telaCorredor(); else if(t==='sala') entrarSala(arg); else if(t==='relatorio') telaRelatorio(); else if(t==='criar') telaCriar(); }
+const totalEst=()=>SALAS.reduce((a,s)=>a+((S.salas[s.id]||{}).estrelas||0),0);
+const liberada=s=>S.cfg.livre||s.idx===0||!!(S.salas[SALAS[s.idx-1].id]||{}).feita;
+
+function telaHome(){
+  app.innerHTML=`
+  <section class="home"><div class="hero">
+    <div>
+      <span class="selo">JRM • AVENTURAS EDUCATIVAS</span>
+      <h1>Escape da <span>Leitura</span></h1>
+      <p class="lead">Você ficou trancado na escola! Cada sala tem um texto e uma porta com <b>quatro cadeados</b>. Leia com atenção, encontre as pistas e descubra o código para escapar.</p>
+      <div class="campos">
+        <label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label>
+        <label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 5º A" value="${esc(S.turma)}"></label>
+      </div>
+      <div class="acoes">
+        <button class="btn latao grande" data-ir="corredor">Entrar na escola 🗝️</button>
+        <button class="btn" data-ir="criar">✍️ Criar sala</button>
+        <button class="btn" data-ir="relatorio">📊 Desempenho</button>
+        <button class="btn" data-acao="ajuda">❓ Como jogar</button>
+        <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+      </div>
+    </div>
+    <div class="porta-arte" aria-hidden="true"><div class="moldura"><span class="macaneta"></span>
+      <div class="travas">${ORDEM.map(k=>`<span style="background:${TIPOS[k].hex}">🔒</span>`).join('')}</div></div></div>
+  </div>
+  <div class="info">
+    <div><b>6</b>salas para escapar</div><div><b>24</b>cadeados</div><div><b>6</b>gêneros de texto</div><div><b>★ ${totalEst()}/18</b>suas estrelas</div>
+  </div>
+  <p class="rodape">Para o 3º ao 5º ano · ${ORDEM.map(k=>`<b>${TIPOS[k].hab}</b> (${TIPOS[k].nome.toLowerCase()})`).join(' · ')} · Conto, carta, divulgação científica, notícia, fábula e mistério · Progresso salvo neste navegador.</p>
+  </section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+
+function telaCorredor(){
+  const atual=SALAS.find(s=>liberada(s)&&!(S.salas[s.id]||{}).feita);
+  app.innerHTML=`
+  <header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button>
+    <div class="tit"><h2>Corredor da escola</h2><small>Escape de uma sala para liberar a próxima</small></div>
+    <span class="chip-topo">★ ${totalEst()}/18</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="corredor"><div class="portas">
+    ${SALAS.map(s=>{ const r=S.salas[s.id]||{}; const lib=liberada(s);
+      return `<button class="porta-btn ${atual&&atual.id===s.id?'atual':''}" data-sala="${s.idx}" ${lib?'':'disabled'} aria-label="Sala ${s.idx+1}: ${esc(s.nome)}">
+        ${lib?'':'<span class="cad">🔒</span>'}<div class="p"><span class="num">SALA ${s.idx+1} · ${s.ano.toUpperCase()}</span><h3>${esc(s.nome)}</h3><span class="gen">${esc(s.genero)}</span>
+        <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span>
+        <span class="tempo">${r.tempo?'⏱️ melhor tempo '+fmtTempo(r.tempo):'&nbsp;'}</span></div></button>`; }).join('')}
+  </div><p class="nota">Professor(a): em ⚙️ dá para liberar todas as salas, desligar o relógio e desligar a leitura em voz alta do texto.</p></section>`;
+}
+
+/* ---------- SALA ---------- */
+let R=null;
+function prepararTexto(sala){
+  const toks=[]; const paras=sala.texto.paragrafos.map(p=>p.split(/\s+/).filter(Boolean).map(w=>{ const t={raw:w,n:norm(w),i:toks.length}; toks.push(t); return t; }));
+  return {toks, paras};
+}
+function entrarSala(s){
+  if(typeof s==='number') s=SALAS[s];
+  const T=prepararTexto(s);
+  const cads=s.cadeados.map((c,i)=>Object.assign({},c,{i, ordem: c.opcoes? embaralhar(c.opcoes.map((_,k)=>k)) : null, digito:1+Math.floor(Math.random()*9)}));
+  R={sala:s, T, cads, abertos:{}, erros:0, dicas:0, ativo:null, lupa:false, primeira:{}, tent:{}, leu:false, inicio:null, seg:0, codigo:[], fim:false, msg:null, achado:null};
+  telaSala();
+  abrirModal(`<span class="selo" style="color:#B8862A;background:#E8B44C22">SALA ${s.idx>=0?s.idx+1:'★'} · ${esc(s.genero.toUpperCase())}</span>
+    <h2 style="margin-top:10px">${esc(s.nome)}</h2><p>${esc(s.missao||'Leia o texto e abra os cadeados para escapar!')}</p>
+    <div class="tipos-lista">${R.cads.map(c=>`<div><span class="c" style="background:${TIPOS[c.tipo].hex}22">${TIPOS[c.tipo].icone}</span><span><b>${TIPOS[c.tipo].nome}</b> — ${TIPOS[c.tipo].desc}</span></div>`).join('')}</div>
+    <p class="mini">Primeiro leia o texto todo. Depois toque em <b>“Li o texto!”</b> para liberar os cadeados.</p>
+    <div class="acoes"><button class="btn latao" data-acao="fechar" data-foco>Vamos lá! 🔦</button></div>`);
+}
+function iniciarRelogio(){
+  R.inicio=Date.now(); clearInterval(relogio);
+  relogio=setInterval(()=>{ if(!R||R.fim) return clearInterval(relogio); R.seg=Math.floor((Date.now()-R.inicio)/1000); const el=$('#tempo'); if(el) el.textContent='⏱️ '+fmtTempo(R.seg); },1000);
+}
+function htmlTexto(){
+  const s=R.sala;
+  return R.T.paras.map(p=>'<p>'+p.map(t=> t.n ? `<span class="tk" data-t="${t.i}" data-n="${esc(t.n)}">${esc(t.raw)}</span>` : `<span class="tk" data-t="${t.i}">${esc(t.raw)}</span>`).join(' ')+'</p>').join('');
+}
+function telaSala(){
+  const s=R.sala; const n=Object.keys(R.abertos).length;
+  app.innerHTML=`
+  <header class="topo"><button class="btn" data-ir="${s.id==='custom'?'home':'corredor'}" aria-label="Voltar">←</button>
+    <div class="tit"><h2>${s.idx>=0?'Sala '+(s.idx+1)+' · ':''}${esc(s.nome)}</h2><small>${esc(s.genero)}${s.ano?' · '+esc(s.ano):''}</small></div>
+    ${S.cfg.relogio?`<span class="chip-topo" id="tempo">⏱️ ${fmtTempo(R.seg)}</span>`:''}
+    <span class="chip-topo" id="chaves-topo">🗝️ ${n}/${R.cads.length}</span>
+    <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="sala" id="sala">
+    <article class="texto-card">
+      <span class="gen">${esc(s.genero)}</span>
+      <h3>${esc(s.texto.titulo)}</h3>${s.texto.fina?`<div class="fina">${esc(s.texto.fina)}</div>`:''}
+      ${VOZ.ok&&S.cfg.ouvir?`<div class="ferr-texto"><button class="btn claro" data-voz="texto" data-rotulo="🔊 Ouvir o texto" data-acao="ouvir-texto">🔊 Ouvir o texto</button></div>`:''}
+      <div class="texto" id="texto">${htmlTexto()}</div>
+      ${R.leu?'':'<button class="btn latao li-btn" data-acao="li">✅ Li o texto! Liberar os cadeados</button>'}
+    </article>
+    <aside class="col-porta">
+      <div class="painel-porta">
+        <h3>🚪 Porta da sala</h3>
+        <div class="cadeados">${R.cads.map(c=>htmlCadeado(c)).join('')}</div>
+        <div id="painel"></div>
+      </div>
+    </aside>
+  </section>`;
+  desenharPainel();
+}
+function htmlCadeado(c){
+  const T=TIPOS[c.tipo]; const ab=R.abertos[c.i]!=null;
+  return `<button class="cadeado ${R.ativo===c.i?'sel':''}" data-cad="${c.i}" ${R.leu?'':'disabled'} style="background:${ab?T.hex:T.hex+'33'};border:2px solid ${T.hex}" aria-label="Cadeado ${T.nome}${ab?' aberto, número '+R.abertos[c.i]:''}">
+    <span class="ic">${ab?'🔓':'🔒'}</span><span class="nm">${T.icone} ${T.nome}</span>${ab?`<span class="dg">${R.abertos[c.i]}</span>`:''}</button>`;
+}
+function atualizarCadeados(){ const el=$('.cadeados'); if(el) el.innerHTML=R.cads.map(c=>htmlCadeado(c)).join(''); const t=$('#chaves-topo'); if(t) t.textContent=`🗝️ ${Object.keys(R.abertos).length}/${R.cads.length}`; }
+function limparMarcas(){ $$('.tk.marcaP,.tk.errou').forEach(x=>x.classList.remove('marcaP','errou')); $('#texto')&&$('#texto').classList.remove('lupa'); }
+function marcarSequencia(frase, cls){
+  const alvo=frase.split(/\s+/).map(norm).filter(Boolean); if(!alvo.length) return null;
+  const ts=R.T.toks;
+  for(let i=0;i<ts.length;i++){ let ok=true; let j=0,k=i;
+    while(j<alvo.length){ if(k>=ts.length){ok=false;break;} if(!ts[k].n){k++;continue;} if(ts[k].n!==alvo[j]){ok=false;break;} j++;k++; }
+    if(ok){ let first=null; for(let x=i;x<k;x++){ const el=$(`.tk[data-t="${x}"]`); if(el){ el.classList.add(cls); first=first||el; } } return first; } }
+  return null;
+}
+const ehMovel=()=>innerWidth<=900;
+function desenharPainel(){
+  const p=$('#painel'); if(!p) return;
+  p.className=''; $('#sala').classList.remove('com-painel');
+  const todos=Object.keys(R.abertos).length===R.cads.length;
+  if(todos){ desenharFinal(p); return; }
+  if(R.ativo==null){
+    p.innerHTML=`<p class="instr">${R.leu?'Escolha um cadeado para abrir. Você pode abrir na ordem que quiser.':'Leia o texto todo e toque em <b>“Li o texto!”</b> para liberar os cadeados.'}</p>`;
+    return;
+  }
+  const c=R.cads[R.ativo], T=TIPOS[c.tipo];
+  p.classList.add('ativo'); $('#sala').classList.add('com-painel');
+  let corpo='';
+  if(c.tipo==='L'){
+    corpo=`<p style="margin:4px 0 0;line-height:1.5">🔎 <b>Toque na palavra do texto</b> que responde à pergunta.</p>`;
+    if(ehMovel()) p.classList.add('lupa-m');
+  } else {
+    corpo=`<div class="opcoes">${c.ordem.map((k,n)=>`<button class="op" data-op="${k}"><b>${'ABCD'[n]}</b><span>${esc(c.opcoes[k])}</span></button>`).join('')}</div>`;
+  }
+  p.innerHTML=`<div class="desafio">
+    <span class="tipo" style="background:${T.hex}">${T.icone} ${T.nome.toUpperCase()}</span>
+    <div class="perg">${esc(c.pergunta)}</div>${corpo}
+    <div id="msg">${R.msg||''}</div>
+    <div class="linha-acoes">
+      ${VOZ.ok?`<button class="btn claro" data-voz="perg" data-rotulo="🔊 Ouvir pergunta" data-acao="ouvir-perg">🔊 Ouvir pergunta</button>`:''}
+      <button class="btn claro" data-acao="dica">💡 Dica</button>
+      <button class="btn claro" data-acao="fechar-cad">✕ Fechar</button>
+    </div></div>`;
+  rotulosVoz();
+}
+function abrirCadeado(i){
+  if(!R.leu){ toast('Primeiro leia o texto e toque em “Li o texto!”.'); return; }
+  if(R.abertos[i]!=null){ toast('Esse cadeado já está aberto! 🔓'); return; }
+  pararVoz(); limparMarcas();
+  R.ativo=i; R.msg=null; som('clique');
+  const c=R.cads[i];
+  if(c.tipo==='L') $('#texto').classList.add('lupa');
+  atualizarCadeados(); desenharPainel();
+  if(c.tipo==='P' && c.alvo){ const el=marcarSequencia(c.alvo,'marcaP'); if(el) el.scrollIntoView({block:ehMovel()?'start':'center',behavior:'smooth'}); }
+  if(c.tipo==='L' && ehMovel()) $('.texto-card').scrollIntoView({block:'start',behavior:'smooth'});
+}
+function registrar(c, ok){
+  if(R.primeira[c.i]!=null) return;
+  R.primeira[c.i]=ok; const k=c.tipo; S.stats[k]=S.stats[k]||{ok:0,total:0}; S.stats[k].total++; if(ok) S.stats[k].ok++; salvar();
+}
+function errar(c, txt){
+  R.erros++; R.tent[c.i]=(R.tent[c.i]||0)+1; registrar(c,false); som('erro');
+  const extra = R.tent[c.i]>=2 ? `<br>💡 <b>Dica:</b> ${esc(c.dica||'Releia o texto com calma.')}` : '';
+  setMsg(`<div class="msg no">❌ ${txt}${extra}</div>`);
+}
+function setMsg(h){ R.msg=h; const m=$('#msg'); if(m) m.innerHTML=h; }
+function acertar(c, txt){
+  registrar(c,true); R.abertos[c.i]=c.digito; som('ok');
+  $('#texto').classList.remove('lupa');
+  if(c.tipo==='I' && c.pista) marcarSequencia(c.pista,'pista');
+  const T=TIPOS[c.tipo];
+  R.ativo=null; R.msg=null;
+  atualizarCadeados();
+  const b=$(`.cadeado[data-cad="${c.i}"]`); if(b) b.classList.add('aberto');
+  if(Object.keys(R.abertos).length===R.cads.length){ desenharPainel(); toast('Todos os cadeados abertos! Agora digite o código. 🗝️'); return; }
+  const p=$('#painel'); p.className=''; $('#sala').classList.remove('com-painel');
+  p.innerHTML=`<div class="desafio"><span class="tipo" style="background:${T.hex}">🔓 ABERTO</span><div class="msg ok" style="margin-top:10px">✅ ${txt}<br>O número deste cadeado é <b style="font-size:22px">${c.digito}</b>. Guarde bem!</div>
+    ${c.tipo==='I'&&c.pista?'<p class="mini" style="margin:8px 0 0">A pista no texto ficou marcada em verde.</p>':''}
+    <div class="linha-acoes"><button class="btn latao" data-acao="fechar-cad">Escolher outro cadeado</button></div></div>`;
+}
+function tocarPalavra(el){
+  const c=R.cads[R.ativo]; if(!c||c.tipo!=='L') return;
+  const n=el.dataset.n;
+  if(c.resposta.map(norm).includes(n)){ $$('.tk.achou').forEach(x=>x.classList.remove('achou')); el.classList.add('achou'); acertar(c,`Isso! “${esc(el.textContent.replace(/[^\p{L}\p{N}-]/gu,''))}” é a resposta.`); }
+  else { el.classList.remove('errou'); void el.offsetWidth; el.classList.add('errou'); setTimeout(()=>el.classList.remove('errou'),900); errar(c,`“${esc(el.textContent.replace(/[^\p{L}\p{N}-]/gu,''))}” não responde à pergunta. Releia a pergunta e procure de novo.`); }
+}
+function escolherOpcao(btn){
+  const c=R.cads[R.ativo]; const k=+btn.dataset.op;
+  if(k===0){ btn.classList.add('certa'); setTimeout(()=>acertar(c, c.tipo==='C'?'Você entendeu o texto como um todo!':c.tipo==='P'?'Você descobriu o sentido pelo contexto!':'Boa dedução, detetive!'),450); $$('.op').forEach(b=>b.disabled=true); }
+  else { btn.classList.add('errada'); btn.disabled=true; errar(c,'Essa não é a melhor resposta. Volte ao texto e tente outra.'); }
+}
+
+/* porta final */
+function desenharFinal(p){
+  p.className='ativo'; $('#sala').classList.add('com-painel');
+  const L=R.cads.length;
+  p.innerHTML=`<div class="final">
+    <h3>🔐 A porta final</h3>
+    <p style="color:#F5E3C3;margin:6px 0">Digite os números dos cadeados <b>na ordem das cores</b>:</p>
+    <div class="chaves">${R.cads.map(c=>`<i style="background:${TIPOS[c.tipo].hex}">${TIPOS[c.tipo].icone} ${R.abertos[c.i]}</i>`).join('')}</div>
+    <div class="codigo" id="codigo">${R.cads.map((c,k)=>`<span style="border-color:${TIPOS[c.tipo].hex}">${R.codigo[k]??''}</span>`).join('')}</div>
+    <div class="teclado-num">${[1,2,3,4,5,6,7,8,9,0].map(d=>`<button data-dig="${d}">${d}</button>`).join('')}
+      <button class="apaga" data-dig="back" style="grid-column:span 5" aria-label="Apagar">⌫ apagar</button>
+      <button class="abrir" data-acao="abrir-porta" ${R.codigo.length===L?'':'disabled'}>🗝️ Abrir a porta</button></div></div>`;
+}
+function digitarCodigo(d){
+  if(!R||R.fim||Object.keys(R.abertos).length!==R.cads.length) return;
+  if(d==='back') R.codigo.pop(); else if(R.codigo.length<R.cads.length) R.codigo.push(+d);
+  som('clique'); desenharFinal($('#painel'));
+}
+function abrirPorta(){
+  const certo=R.cads.map(c=>R.abertos[c.i]);
+  if(R.codigo.join('')===certo.join('')) concluirSala();
+  else { som('trava'); const c=$('#codigo'); c.classList.remove('treme'); void c.offsetWidth; c.classList.add('treme'); toast('Código errado! Confira a ordem das cores.'); R.codigo=[]; setTimeout(()=>desenharFinal($('#painel')),400); }
+}
+function concluirSala(){
+  R.fim=true; clearInterval(relogio); pararVoz();
+  if(R.inicio) R.seg=Math.floor((Date.now()-R.inicio)/1000);
+  const pen=R.erros+R.dicas; const est = pen<=1?3 : pen<=3?2 : 1;
+  const s=R.sala;
+  if(s.id!=='custom'){ const a=S.salas[s.id]||{}; S.salas[s.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), tempo: a.tempo? Math.min(a.tempo,R.seg) : R.seg, vezes:(a.vezes||0)+1}; salvar(); }
+  som('abre'); if(est===3) festa();
+  const prox = s.id!=='custom' && s.idx<SALAS.length-1;
+  const ok1=Object.values(R.primeira).filter(Boolean).length;
+  abrirModal(`<h2 style="text-align:center">Você escapou! 🎉</h2>
+    <div class="porta-abre" aria-hidden="true"><div class="luz"></div><div class="folha e"></div><div class="folha d"></div></div>
+    <div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${ok1}/${R.cads.length}</b>cadeados de primeira</div><div><b>${R.erros}</b>tentativas erradas</div><div><b>${R.dicas}</b>dicas</div>${R.inicio?`<div><b>${fmtTempo(R.seg)}</b>tempo</div>`:''}</div>
+    <p class="mini" style="text-align:center">3 estrelas: até 1 erro ou dica · 2 estrelas: até 3 · 1 estrela: mais de 3.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" data-acao="fechar">Rever o texto</button>
+      <button class="btn" data-acao="repetir">↻ Jogar de novo</button>
+      ${prox?'<button class="btn latao" data-acao="prox-sala" data-foco>Próxima sala ➔</button>':'<button class="btn latao" data-ir="relatorio" data-foco>📊 Desempenho</button>'}
+    </div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return ORDEM.filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:TIPOS[k].nome,hab:TIPOS[k].hab,ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){
+  const L=linhasRel(); const feitas=SALAS.filter(s=>(S.salas[s.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome+' ('+l.hab+')');
+  return ['ESCAPE DA LEITURA — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,
+    `Estrelas: ${totalEst()}/18 · Salas concluídas: ${feitas}/6`,'Cadeados abertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome} (${l.hab}): ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),
+    `Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n');
+}
+function telaRelatorio(){
+  const L=linhasRel(); const feitas=SALAS.filter(s=>(S.salas[s.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="corredor">🚪 Salas</button></header>
+  <section class="folha-pg">
+    <div class="resumo" style="justify-content:flex-start"><div><b>★ ${totalEst()}/18</b>estrelas</div><div><b>${feitas}/6</b>salas</div></div>
+    <div class="cartao"><h3>Cadeados abertos na 1ª tentativa</h3>
+      ${L.length?L.map(l=>`<div class="cat"><span>${TIPOS[l.k].icone} ${esc(l.nome)} <span class="mini">${l.hab}</span></span><div class="bar"><i style="width:${l.pct}%;background:${TIPOS[l.k].hex}"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Escape de algumas salas para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn latao" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn claro" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div>
+      <p class="mini" style="margin-top:12px">${ORDEM.map(k=>`<b>${TIPOS[k].hab}</b> — ${TIPOS[k].desc}`).join('<br>')}</p></div>
+  </section>`;
+}
+
+/* ---------- CRIAR SALA ---------- */
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+function telaCriar(){
+  const op=(k)=>`<div class="duas"><div class="campo"><span>✅ Resposta certa</span><input id="${k}-o0" maxlength="140"></div><div class="campo"><span>❌ Errada 1</span><input id="${k}-o1" maxlength="140"></div><div class="campo"><span>❌ Errada 2</span><input id="${k}-o2" maxlength="140"></div><div class="campo"><span>❌ Errada 3</span><input id="${k}-o3" maxlength="140"></div></div>`;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Criar sala</h2><small>Use um texto da sua aula (da Caixa Literária, do livro didático…)</small></div></header>
+  <section class="folha-pg"><div class="cartao">
+    <div class="duas"><div class="campo"><span>Nome da sala</span><input id="c-nome" maxlength="40" placeholder="ex.: A sala do Saci"></div><div class="campo"><span>Gênero do texto</span><input id="c-gen" maxlength="40" placeholder="ex.: Lenda"></div></div>
+    <div class="campo"><span>Título do texto</span><input id="c-tit" maxlength="80"></div>
+    <div class="campo"><span>Texto (um parágrafo por linha) — até 1.500 caracteres</span><textarea id="c-texto" maxlength="1500"></textarea></div>
+    <p class="mini">Preencha pelo menos 2 cadeados. Os que ficarem em branco não aparecem.</p>
+    <details class="bloco" open><summary>🔎 Localizar</summary><div class="campo"><span>Pergunta</span><input id="L-q" maxlength="140"></div><div class="campo"><span>Resposta: a palavra exatamente como está no texto (pode pôr mais de uma, separadas por vírgula)</span><input id="L-r" maxlength="80"></div><div class="campo"><span>Dica (opcional)</span><input id="L-d" maxlength="140"></div></details>
+    <details class="bloco"><summary>🧩 Inferir</summary><div class="campo"><span>Pergunta</span><input id="I-q" maxlength="140"></div>${op('I')}<div class="campo"><span>Trecho do texto que é a pista (opcional, copie igual ao texto)</span><input id="I-p" maxlength="200"></div><div class="campo"><span>Dica (opcional)</span><input id="I-d" maxlength="140"></div></details>
+    <details class="bloco"><summary>📖 Palavra</summary><div class="campo"><span>Pergunta</span><input id="P-q" maxlength="140" placeholder="ex.: No texto, “assombração” quer dizer…"></div><div class="campo"><span>Palavra ou expressão do texto (fica destacada)</span><input id="P-a" maxlength="60"></div>${op('P')}<div class="campo"><span>Dica (opcional)</span><input id="P-d" maxlength="140"></div></details>
+    <details class="bloco"><summary>💡 Ideia central</summary><div class="campo"><span>Pergunta</span><input id="C-q" maxlength="140" placeholder="ex.: Qual é o assunto principal do texto?"></div>${op('C')}<div class="campo"><span>Dica (opcional)</span><input id="C-d" maxlength="140"></div></details>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px"><button class="btn claro" data-acao="testar">▶️ Testar</button><button class="btn latao" data-acao="gerar">🔗 Gerar link da sala</button></div>
+    <div id="c-link"></div></div></section>`;
+}
+function dadosCriar(){
+  const v=id=>($('#'+id)||{}).value?.trim()||'';
+  const x=v('c-texto'); if(x.length<40){ toast('Escreva um texto com pelo menos algumas frases.'); return null; }
+  const c=[];
+  if(v('L-q')&&v('L-r')) c.push({k:'L',q:v('L-q'),r:v('L-r').split(',').map(s=>s.trim()).filter(Boolean),d:v('L-d')});
+  for(const k of ['I','P','C']){ const o=[0,1,2,3].map(n=>v(`${k}-o${n}`)).filter(Boolean); if(v(`${k}-q`)&&o.length>=2&&v(`${k}-o0`)) c.push({k,q:v(`${k}-q`),o,d:v(`${k}-d`),p:k==='I'?v('I-p'):undefined,a:k==='P'?v('P-a'):undefined}); }
+  if(c.length<2){ toast('Preencha pelo menos 2 cadeados (pergunta e respostas).'); return null; }
+  const d={n:v('c-nome')||'Sala secreta', g:v('c-gen')||'Texto', t:v('c-tit')||'Texto', x, c};
+  const sala=salaCustom(d); const T=prepararTexto(sala);
+  const L=sala.cadeados.find(z=>z.tipo==='L'); if(L && !T.toks.some(t=>L.resposta.map(norm).includes(t.n))){ toast('A resposta do cadeado Localizar não foi encontrada no texto. Copie a palavra igual ao texto.'); return null; }
+  return d;
+}
+function salaCustom(d){
+  return {id:'custom', idx:-1, nome:d.n, genero:d.g, ano:'', missao:'Você ficou trancado nesta sala! Leia o texto e abra os cadeados para escapar.',
+    texto:{titulo:d.t, paragrafos:d.x.split('\n').map(s=>s.trim()).filter(Boolean)},
+    cadeados:d.c.map(z=> z.k==='L' ? {tipo:'L',pergunta:z.q,resposta:z.r,dica:z.d||'Releia o texto com calma.'} : {tipo:z.k,pergunta:z.q,opcoes:z.o,dica:z.d||'Volte ao texto e procure as pistas.',pista:z.p||'',alvo:z.a||''})};
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>
+    ${l('ouvir','Botão “Ouvir o texto”','Desligue se a atividade for de leitura silenciosa.')}
+    ${l('relogio','Mostrar o relógio','O tempo não tira estrelas, é só para desafiar.')}
+    ${l('lenta','Voz mais lenta','')}
+    ${l('som','Efeitos sonoros','')}
+    ${l('livre','Liberar todas as salas','Para o professor escolher a sala da aula.')}
+    <div class="acoes"><button class="btn latao" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="tipos-lista">
+    <div><span class="c" style="background:#E8B44C33">📄</span><span><b>Leia o texto</b> todo. Se precisar, use 🔊 para ouvir.</span></div>
+    ${ORDEM.map(k=>`<div><span class="c" style="background:${TIPOS[k].hex}22">${TIPOS[k].icone}</span><span><b>${TIPOS[k].nome}</b> — ${TIPOS[k].desc}${k==='L'?' Você responde <b>tocando na palavra</b> do texto.':''}</span></div>`).join('')}
+    <div><span class="c" style="background:#E8B44C33">🔐</span><span>Cada cadeado aberto mostra um <b>número</b>. No final, digite os números na ordem das cores para abrir a porta.</span></div>
+    <div><span class="c" style="background:#E8B44C33">⭐</span><span>Até 1 erro ou dica: 3 estrelas. Até 3: 2 estrelas.</span></div></div>
+    <div class="acoes"><button class="btn latao" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(modalAberto()) fecharModal(); ir(irB.dataset.ir); return; }
+  const sb=e.target.closest('[data-sala]'); if(sb&&!sb.disabled){ ir('sala',+sb.dataset.sala); return; }
+  const cd=e.target.closest('[data-cad]'); if(cd&&!cd.disabled){ abrirCadeado(+cd.dataset.cad); return; }
+  const tk=e.target.closest('#texto.lupa .tk[data-n]'); if(tk){ tocarPalavra(tk); return; }
+  const op=e.target.closest('.op'); if(op&&!op.disabled){ escolherOpcao(op); return; }
+  const dg=e.target.closest('[data-dig]'); if(dg){ digitarCodigo(dg.dataset.dig); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='corredor') telaCorredor(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar'){ fecharModal(); }
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='li'){ R.leu=true; pararVoz(); iniciarRelogio(); som('clique'); ac.remove(); atualizarCadeados(); desenharPainel(); if(ehMovel()) window.scrollTo({top:0,behavior:'smooth'}); toast('Cadeados liberados! Escolha um. 🔒'); }
+  else if(a==='fechar-cad'){ R.ativo=null; R.msg=null; limparMarcas(); pararVoz(); atualizarCadeados(); desenharPainel(); }
+  else if(a==='dica'){ const c=R.cads[R.ativo]; if(!c) return; R.dicas++; setMsg(`<div class="msg dica">💡 ${esc(c.dica||'Releia o texto com calma.')}</div>`); }
+  else if(a==='ouvir-texto'){ if(VOZ.quem==='texto') return pararVoz(); const segs=R.T.paras.map(p=>{ let txt='',mapa=[]; p.forEach(t=>{ mapa.push({c:txt.length,t:t.i}); txt+=t.raw+' '; }); return {texto:txt,mapa}; }); segs.unshift({texto:R.sala.texto.titulo+'.',mapa:null}); falar(segs,'texto'); }
+  else if(a==='ouvir-perg'){ if(VOZ.quem==='perg') return pararVoz(); const c=R.cads[R.ativo]; if(!c) return; const segs=[{texto:c.pergunta}]; if(c.ordem) c.ordem.forEach((k,n)=>segs.push({texto:'ABCD'[n]+': '+c.opcoes[k]})); falar(segs,'perg'); }
+  else if(a==='abrir-porta') abrirPorta();
+  else if(a==='repetir'){ fecharModal(); ir('sala', R.sala.id==='custom'?R.sala:R.sala.idx); }
+  else if(a==='prox-sala'){ fecharModal(); ir('sala', R.sala.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+  else if(a==='testar'){ const d=dadosCriar(); if(d) ir('sala', salaCustom(d)); }
+  else if(a==='gerar'){ const d=dadosCriar(); if(!d) return; const url=location.href.split('#')[0]+'#d='+b64e(JSON.stringify(d)); $('#c-link').innerHTML=`<div class="link-box">${esc(url)}</div><div style="margin-top:10px"><button class="btn latao" id="c-copiar">📋 Copiar link</button></div>`; $('#c-copiar').onclick=()=>copiar(url); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()){ fecharModal(); return; }
+  if(TELA!=='sala'||!R||modalAberto()) return;
+  const f=document.activeElement; if(f&&/INPUT|TEXTAREA/.test(f.tagName)) return;
+  if(Object.keys(R.abertos).length===R.cads.length && !R.fim){
+    if(/^[0-9]$/.test(e.key)){ digitarCodigo(e.key); e.preventDefault(); }
+    else if(e.key==='Backspace'){ digitarCodigo('back'); e.preventDefault(); }
+    else if(e.key==='Enter' && R.codigo.length===R.cads.length){ abrirPorta(); e.preventDefault(); }
+  }
+});
+
+/* ---------- INÍCIO ---------- */
+(function(){
+  const h=location.hash;
+  if(h.startsWith('#d=')){ try{ const d=JSON.parse(b64d(h.slice(3))); if(d&&typeof d.x==='string'&&Array.isArray(d.c)&&d.c.length){ telaHome(); TELA='sala'; entrarSala(salaCustom(d)); return; } }catch(e){ console.warn('Link de sala inválido'); } }
+  telaHome();
+})();
+</script>
+</body>
+</html>

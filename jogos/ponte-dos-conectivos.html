@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ponte dos Conectivos</title>
+<meta name="description" content="Jogo de conectivos para o 5º ao 9º ano: escolha a palavra que liga as ideias para a capivara atravessar o rio. Habilidades MS.EF05LP07, MS.EF08LP13 e MS.EF69LP18.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ceu:#E0F2FE; --ceu2:#F0FDF4; --tinta:#14261B; --suave:#4D5F55; --mata:#3F7D20; --mata2:#65A30D; --rio:#0EA5B7;
+  --madeira:#A0682F; --madeira-e:#6F4519; --creme:#FFFBF2; --borda:#E4D7BC; --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2; --ouro:#F5B700;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,var(--ceu),var(--ceu2) 60%)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.verde{background:var(--mata);border-color:#2C5A15;color:#fff;box-shadow:0 4px 0 #2C5A15}
+.btn.verde:hover{background:#4A8F27}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--mata);background:#3F7D2018;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:28px 20px 34px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center}
+.hero h1{font-size:clamp(44px,7vw,78px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px}
+.hero h1 span{color:var(--madeira)}
+.lead{font-size:19px;line-height:1.6;color:#33473B;max-width:540px;margin:0 0 16px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena-home{border-radius:24px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0f3d2a33}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#E0F2FEee;backdrop-filter:blur(6px);border-bottom:2px solid #BAE6FD;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.fases{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.fase{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:20px;padding:16px;min-height:170px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.fase:hover:not(:disabled){transform:translateY(-3px)}
+.fase:disabled{opacity:.5;cursor:not-allowed}
+.fase .num{font-family:var(--titulo);font-weight:800;color:var(--madeira);letter-spacing:1px;font-size:14px}
+.fase h3{font-size:22px}
+.fase .cons{font-size:14px;color:var(--suave);line-height:1.4}
+.fase .est{margin-top:auto;font-size:20px;letter-spacing:2px;color:#E2D8C2}
+.fase .est .on{color:var(--ouro)}
+.fase .cad{position:absolute;top:12px;right:14px}
+.fase.atual{border-color:var(--mata);box-shadow:0 0 0 4px #3F7D2033}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:860px;margin:auto;padding:14px 16px 40px}
+.pontos{display:flex;gap:6px;justify-content:center;margin:2px 0 10px;flex-wrap:wrap}
+.pontos i{width:12px;height:12px;border-radius:50%;background:#C7D7CB}
+.pontos i.ok{background:var(--ok)}.pontos i.meio{background:var(--ouro)}.pontos i.agora{box-shadow:0 0 0 3px var(--madeira)}
+.cena{border-radius:20px;overflow:hidden;border:3px solid #fff;box-shadow:0 8px 24px #0f3d2a26;background:#BAE6FD}
+.cena svg{display:block;width:100%;height:auto}
+.prancha{transition:opacity .25s,transform .35s;opacity:0;transform:translateY(-24px)}
+.prancha.on{opacity:1;transform:translateY(0)}
+.capi{transition:transform 1.5s ease-in-out}
+.capi.semtrans{transition:none}
+.capi.balanca{animation:balanca .5s ease 2}
+@keyframes balanca{25%{transform:translateX(60px) rotate(-6deg)}75%{transform:translateX(60px) rotate(6deg)}}
+.cai{animation:cai 1s ease-in forwards}
+@keyframes cai{to{transform:translate(10px,110px) rotate(40deg);opacity:0}}
+.respingo{animation:resp .8s ease-out forwards;transform-origin:center;transform-box:fill-box}
+@keyframes resp{from{transform:scale(.2);opacity:1}to{transform:scale(1.6);opacity:0}}
+.onda{animation:onda 3s linear infinite}
+@keyframes onda{to{transform:translateX(-60px)}}
+.frase-card{margin-top:14px;background:var(--creme);border:3px solid var(--borda);border-radius:20px;padding:18px;font-size:clamp(20px,3vw,25px);line-height:1.6}
+.frase-card .lado{font-weight:400}
+.vao{display:inline-block;min-width:4.2em;text-align:center;border:3px dashed var(--madeira);border-radius:10px;padding:0 .3em;margin:0 .15em;color:var(--madeira);font-weight:700;background:#fff}
+.vao.ok{border-style:solid;border-color:var(--ok);color:var(--ok);background:var(--ok-f)}
+.con{font-weight:700;color:var(--madeira);background:#FDF0DC;border-radius:6px;padding:0 1px}
+.pergunta{font-family:var(--titulo);font-size:20px;margin:14px 0 8px}
+.tabuas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tabua{border:0;border-radius:12px;min-height:58px;padding:10px 14px;font-family:var(--titulo);font-weight:800;font-size:21px;color:#fff;background:repeating-linear-gradient(90deg,#A0682F 0 30px,#97612B 30px 32px);box-shadow:0 5px 0 var(--madeira-e);text-shadow:0 1px 0 #0004;transition:transform .1s}
+.tabua:hover:not(:disabled){transform:translateY(-3px)}
+.tabua:disabled{cursor:default}
+.tabua.quebrada{background:#C9B79F;box-shadow:0 5px 0 #9C8A72;text-decoration:line-through;opacity:.7}
+.tabua.certa{background:var(--ok);box-shadow:0 5px 0 #0F5A2B}
+.placa{border:0;border-radius:12px;min-height:54px;padding:10px 14px;font-weight:700;font-size:17px;background:#fff;border:3px solid var(--borda);text-align:left}
+.placa:hover:not(:disabled){border-color:var(--madeira)}
+.placa.quebrada{opacity:.5;text-decoration:line-through;border-color:var(--erro)}
+.placa.certa{border-color:var(--ok);background:var(--ok-f)}
+.placa small{display:block;font-weight:400;color:var(--suave);font-size:13px}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:3px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+.combo{font-family:var(--titulo);font-weight:800;color:#C2410C}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0f2a1cb3;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.rels{display:grid;gap:8px;margin-top:10px}
+.rels div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:8px 12px;line-height:1.45}
+.rels b{color:var(--madeira)}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ouro)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.texto-final{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:12px 14px;line-height:1.7;margin-top:10px}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* PÁGINAS */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(170px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--madeira)}
+.cat .n{font-weight:700;white-space:nowrap}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:700;font-size:14px;color:var(--suave)}
+.campo input,.campo textarea{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;background:#fff;font-size:16px;color:var(--tinta);font-weight:400;width:100%}
+.campo textarea{min-height:200px;line-height:1.6;resize:vertical}
+.link-box{word-break:break-all;background:#F4EEDF;border-radius:12px;padding:10px;font-size:14px;margin-top:10px}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena-home{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .tabuas{grid-template-columns:1fr 1fr}
+  .tabua{font-size:18px;min-height:52px}
+  .frase-card{padding:14px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   PONTE DOS CONECTIVOS — JRM • Aventuras Educativas (jrmapps.com)
+   Habilidades: MS.EF05LP07 · MS.EF08LP13 · MS.EF69LP18
+   ---------------------------------------------------------
+   Itens de PONTE:  {a:'parte 1', b:'parte 2', ops:['mas:oposição*','porque:causa','e:adição~nota opcional'], nova:true?}
+     * = certo (pode haver mais de um) · ~ = explicação extra para aquela opção
+     nova:true = o conectivo começa uma frase nova (“Além disso, …”)
+   Itens de PLACA (nomear a relação): {tipo:'rel', frase:'texto', con:'por isso', ops:['consequência*','causa','oposição']}
+   ========================================================= */
+
+const RELACOES = {
+  'adição':'soma uma ideia à outra', 'oposição':'mostra uma ideia contrária à anterior', 'causa':'explica o motivo',
+  'consequência':'mostra o resultado', 'conclusão':'fecha um raciocínio', 'condição':'diz o que precisa acontecer',
+  'finalidade':'mostra o objetivo', 'tempo':'situa no tempo', 'concessão':'admite um obstáculo que não impede a ideia principal',
+  'exemplificação':'dá um exemplo', 'explicação':'explica de outro jeito o que foi dito'
+};
+const VIRGULA_ANTES = new Set(['mas','porém','contudo','no entanto','todavia','pois','então','por isso','portanto','logo','de modo que','já que','visto que','embora','ainda que','mesmo que']);
+
+const FASES = [
+ {id:'f1', titulo:'Primeiras pontes', ano:'5º ano', cons:'e · mas · quando', hab:'MS.EF05LP07',
+  itens:[
+   {a:'A capivara nadou no rio', b:'depois descansou na margem.', ops:['e:adição*','mas:oposição','se:condição']},
+   {a:'Queríamos ir ao parque', b:'começou a chover.', ops:['mas:oposição*','e:adição','quando:tempo']},
+   {a:'O ipê fica todo amarelo', b:'chega o fim do inverno.', ops:['quando:tempo*','mas:oposição','e:adição']},
+   {a:'Lucas estudou muito', b:'tirou nota boa na prova.', ops:['e:adição*','mas:oposição~Com “mas”, a segunda parte teria que ser uma surpresa, algo contrário. Estudar e tirar nota boa combinam!','quando:tempo']},
+   {a:'Lucas estudou muito', b:'não conseguiu terminar a prova a tempo.', ops:['mas:oposição*','e:adição','quando:tempo']},
+   {a:'Vovó sorriu', b:'viu os netos chegando.', ops:['quando:tempo*','mas:oposição','e:adição']},
+   {a:'Na feira, comprei pão, leite', b:'frutas.', ops:['e:adição*','mas:oposição','quando:tempo']},
+   {a:'O cachorro latiu muito', b:'ninguém acordou.', ops:['mas:oposição*','e:adição','quando:tempo']}]},
+ {id:'f2', titulo:'Por quê? E se?', ano:'5º ano', cons:'porque · se · para', hab:'MS.EF05LP07',
+  itens:[
+   {a:'Levei o guarda-chuva', b:'o céu estava nublado.', ops:['porque:causa*','se:condição','para:finalidade']},
+   {a:'Vamos jogar bola no recreio', b:'não chover.', ops:['se:condição*','porque:causa','para:finalidade']},
+   {a:'Ana guardou dinheiro', b:'comprar uma bicicleta.', ops:['para:finalidade*','porque:causa','se:condição']},
+   {a:'As plantas murcharam', b:'ninguém regou o jardim.', ops:['porque:causa*','para:finalidade','se:condição']},
+   {a:'Você pode sair mais cedo', b:'terminar a tarefa.', ops:['se:condição*','porque:causa','para:finalidade']},
+   {a:'Fechei a janela', b:'os mosquitos não entrarem.', ops:['para:finalidade*','porque:causa','se:condição']},
+   {a:'O jacaré ficou deitado no sol', b:'precisava se aquecer.', ops:['porque:causa*','se:condição','para:finalidade']},
+   {a:'Leve um casaco', b:'faça frio à noite.', ops:['caso:condição*','porque:causa~Com “porque”, o verbo seria “faz”, e a frase diria que já está fazendo frio.','para:finalidade']}]},
+ {id:'f3', titulo:'Por isso…', ano:'6º ano', cons:'por isso · então · portanto · de modo que', hab:'MS.EF08LP13',
+  itens:[
+   {a:'Choveu a noite toda', b:'o rio encheu.', ops:['por isso:consequência*','porque:causa','mas:oposição']},
+   {a:'O rio encheu', b:'choveu a noite toda.', ops:['porque:causa*','por isso:consequência~Cuidado com a ordem! Aqui a segunda parte é o MOTIVO (a causa), não o resultado.','mas:oposição']},
+   {a:'A ponte estava interditada', b:'pegamos outro caminho.', ops:['então:consequência*','porque:causa','quando:tempo']},
+   {tipo:'rel', frase:'O ônibus atrasou, por isso cheguei tarde à escola.', con:'por isso', ops:['consequência*','causa','oposição','condição']},
+   {a:'Os metais conduzem eletricidade, e o cobre é um metal', b:'o cobre conduz eletricidade.', ops:['portanto:conclusão*','porque:causa','mas:oposição']},
+   {a:'Treinei todos os dias', b:'consegui completar a corrida.', ops:['por isso:consequência*','mas:oposição','se:condição']},
+   {tipo:'rel', frase:'Fiquei com fome porque pulei o lanche.', con:'porque', ops:['causa*','consequência','finalidade','tempo']},
+   {a:'A loja estava fechada', b:'voltamos para casa sem comprar nada.', ops:['de modo que:consequência*','para que:finalidade','se:condição']}]},
+ {id:'f4', titulo:'Pontes formais', ano:'7º ano', cons:'porém · no entanto · pois · a fim de que · assim que', hab:'MS.EF08LP13',
+  itens:[
+   {a:'O time jogou bem', b:'perdeu nos pênaltis.', ops:['porém:oposição*','no entanto:oposição*','pois:causa']},
+   {a:'Saí mais cedo', b:'precisava pegar o ônibus das sete.', ops:['pois:causa*','já que:causa*','porém:oposição']},
+   {a:'A biblioteca ficará aberta até mais tarde', b:'os alunos possam estudar para as provas.', ops:['a fim de que:finalidade*','visto que:causa','porém:oposição']},
+   {a:'Eu lavava a louça', b:'meu irmão secava os pratos.', ops:['enquanto:tempo*','porém:oposição','pois:causa']},
+   {tipo:'rel', frase:'A excursão foi adiada, visto que a previsão era de tempestade.', con:'visto que', ops:['causa*','oposição','finalidade','consequência']},
+   {a:'O filme era longo', b:'ninguém dormiu no cinema.', ops:['contudo:oposição*','já que:causa','a fim de que:finalidade']},
+   {a:'Ligue para mim', b:'chegar em casa.', ops:['assim que:tempo*','porém:oposição','visto que:causa']},
+   {tipo:'rel', frase:'Estudei bastante; no entanto, a prova foi mais difícil do que eu esperava.', con:'no entanto', ops:['oposição*','causa','conclusão','tempo']}]},
+ {id:'f5', titulo:'Mesmo assim…', ano:'8º ano', cons:'embora · ainda que · mesmo que', hab:'MS.EF08LP13',
+  itens:[
+   {a:'Fomos pescar no rio', b:'estivesse nublado.', ops:['embora:concessão*','porque:causa~Com “porque”, o verbo seria “estava”. E nublado não é motivo para pescar!','portanto:conclusão']},
+   {a:'Ele vai terminar o trabalho', b:'precise ficar acordado até tarde.', ops:['ainda que:concessão*','porque:causa','então:consequência']},
+   {a:'Estava nublado', b:'fomos pescar no rio.', ops:['mas:oposição*','embora:concessão~A ideia combina, mas “embora” pede o verbo no subjuntivo: “embora estivesse nublado, fomos pescar”. Aqui o verbo “fomos” não serve.','pois:causa']},
+   {tipo:'rel', frase:'Mesmo que chova, o jogo vai acontecer.', con:'Mesmo que', ops:['concessão*','condição~Parece condição, mas “mesmo que” diz que a chuva NÃO vai impedir o jogo.','causa','tempo']},
+   {a:'A tarefa era difícil', b:'a turma conseguiu resolver.', ops:['no entanto:oposição*','embora:concessão~“Embora” pediria o subjuntivo: “embora a tarefa fosse difícil, a turma conseguiu”.','já que:causa']},
+   {a:'Conseguimos vender todos os bolos', b:'a chuva tenha atrapalhado a feira.', ops:['embora:concessão*','ainda que:concessão*','porque:causa~O verbo “tenha atrapalhado” (subjuntivo) não combina com “porque”. E a chuva não foi o motivo de vender os bolos!']},
+   {tipo:'rel', frase:'Embora fosse tímido, Pedro apresentou o trabalho para a escola inteira.', con:'Embora', ops:['concessão*','causa','consequência','finalidade']},
+   {a:'Não desistiu da corrida', b:'estivesse cansado.', ops:['embora:concessão*','porque:causa','para que:finalidade']}]},
+ {id:'f6', titulo:'Ponte do argumento', ano:'9º ano', cons:'além disso · por outro lado · por exemplo · ou seja · portanto', hab:'MS.EF69LP18', artigo:'Mais ciclovias para a cidade',
+  itens:[
+   {a:'Ciclovias tornam o trânsito mais seguro para quem pedala.', b:'elas incentivam as pessoas a deixar o carro em casa.', nova:true, ops:['além disso:adição*','por outro lado:oposição','ou seja:explicação']},
+   {a:'Andar de bicicleta faz bem à saúde.', b:'pedalar meia hora por dia já ajuda o coração e a disposição.', nova:true, ops:['por exemplo:exemplificação*','portanto:conclusão','por outro lado:oposição']},
+   {a:'Alguns comerciantes temem perder vagas de estacionamento.', b:'em várias cidades, os ciclistas passaram a frequentar mais o comércio do bairro.', nova:true, ops:['por outro lado:oposição*','além disso:adição~“Além disso” somaria mais um argumento do mesmo lado. Aqui a ideia rebate o medo dos comerciantes.','por exemplo:exemplificação']},
+   {tipo:'rel', frase:'A cidade tem muitas ruas largas e planas. Ou seja, há espaço para novas ciclovias.', con:'Ou seja', ops:['explicação*','oposição','exemplificação','adição']},
+   {a:'Muitos pais têm medo de deixar os filhos irem de bicicleta à escola.', b:'com ciclovias protegidas, esse medo tende a diminuir.', nova:true, ops:['no entanto:oposição*','por exemplo:exemplificação','além disso:adição']},
+   {a:'Uma ciclovia mal planejada pode ser perigosa.', b:'é importante ouvir os ciclistas antes de construir.', nova:true, ops:['por isso:consequência*','por exemplo:exemplificação','no entanto:oposição']},
+   {a:'As ciclovias trazem segurança, saúde e movimento para o comércio.', b:'a prefeitura deveria ampliar a rede de ciclovias.', nova:true, ops:['portanto:conclusão*','por exemplo:exemplificação','além disso:adição']},
+   {tipo:'rel', frase:'Em resumo, investir em ciclovias é investir em uma cidade melhor para todos.', con:'Em resumo', ops:['conclusão*','exemplificação','oposição','adição']}]}
+];
+FASES.forEach((f,i)=>f.idx=i);
+const HAB_REL = {'adição':'MS.EF05LP07','oposição':'MS.EF05LP07','tempo':'MS.EF05LP07','causa':'MS.EF05LP07','condição':'MS.EF05LP07','finalidade':'MS.EF05LP07','consequência':'MS.EF08LP13','conclusão':'MS.EF08LP13','concessão':'MS.EF08LP13','exemplificação':'MS.EF69LP18','explicação':'MS.EF69LP18'};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='ponteConectivos.v1';
+function padrao(){ return {nome:'',turma:'',fases:{},stats:{},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const $$=(q,el=document)=>Array.from(el.querySelectorAll(q));
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cap=s=>s?s.charAt(0).toLocaleUpperCase('pt-BR')+s.slice(1):s;
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>FASES.reduce((a,f)=>a+((S.fases[f.id]||{}).estrelas||0),0);
+const MAXEST=FASES.length*3;
+function lerOp(s){ let nota=''; const t=s.indexOf('~'); if(t>=0){ nota=s.slice(t+1); s=s.slice(0,t); } let ok=false; if(s.endsWith('*')){ ok=true; s=s.slice(0,-1); } const [con,rel='']=s.split(':'); return {con:con.trim(), rel:rel.trim(), ok, nota}; }
+function juntar(it, con, marcar){
+  const c = marcar ? `<span class="con">${esc(it.nova?cap(con):con)}</span>` : esc(it.nova?cap(con):con);
+  if(it.nova) return `${esc(it.a)} ${c}, ${esc(it.b)}`;
+  const virg = VIRGULA_ANTES.has(con.toLocaleLowerCase('pt-BR')) ? ',' : '';
+  return `${esc(it.a)}${virg} ${c} ${esc(it.b)}`;
+}
+const textoPuro=(it,con)=>juntar(it,con,false).replace(/<[^>]+>/g,'').replace(/&amp;/g,'&');
+
+/* ---------- VOZ / SOM ---------- */
+const VOZ={ok:'speechSynthesis' in window,voz:null};
+if(VOZ.ok){ const e=()=>{ const v=speechSynthesis.getVoices(); VOZ.voz=v.find(x=>/pt[-_]BR/i.test(x.lang))||v.find(x=>/^pt/i.test(x.lang))||null; }; e(); speechSynthesis.onvoiceschanged=e; }
+function falar(t){ if(!VOZ.ok) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'')); u.lang='pt-BR'; if(VOZ.voz) u.voice=VOZ.voz; u.rate=.95; setTimeout(()=>speechSynthesis.speak(u),60); }
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.07],[1047,.16]],erro:[[180,.1],[140,.25]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]],toc:[[600,.04]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'sawtooth':'sine'; o.frequency.value=f; g.gain.setValueAtTime(t==='erro'?.05:.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- CENA (SVG) ---------- */
+function capiSvg(){ return `<g>
+  <ellipse cx="60" cy="50" rx="44" ry="24" fill="#9A6A3F"/>
+  <ellipse cx="98" cy="38" rx="22" ry="17" fill="#A87447"/>
+  <rect x="104" y="34" width="22" height="17" rx="8" fill="#8B5E36"/>
+  <circle cx="90" cy="22" r="5" fill="#8B5E36"/>
+  <circle cx="101" cy="33" r="2.8" fill="#1F1208"/>
+  <circle cx="120" cy="39" r="1.6" fill="#1F1208"/>
+  <path d="M112 46 q5 3 9 0" stroke="#1F1208" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <rect x="30" y="66" width="9" height="12" rx="3" fill="#7A522E"/><rect x="52" y="68" width="9" height="11" rx="3" fill="#7A522E"/>
+  <rect x="76" y="68" width="9" height="11" rx="3" fill="#7A522E"/><rect x="90" y="64" width="9" height="13" rx="3" fill="#7A522E"/>
+  <ellipse cx="44" cy="40" rx="14" ry="6" fill="#B07D4E" opacity=".5"/></g>`; }
+function cenaSvg(id){
+  const pranchas=[0,1,2,3,4,5].map(k=>`<rect class="prancha" data-p="${k}" x="${202+k*33}" y="96" width="30" height="12" rx="3" fill="#A0682F" stroke="#6F4519" stroke-width="2" style="transition-delay:${k*90}ms"/>`).join('');
+  return `<svg id="${id}" viewBox="0 0 600 200" role="img" aria-label="Uma capivara precisa atravessar o rio por uma ponte">
+    <defs><linearGradient id="g-ceu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BAE6FD"/><stop offset="1" stop-color="#E0F2FE"/></linearGradient>
+      <linearGradient id="g-rio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22B8CF"/><stop offset="1" stop-color="#0E7490"/></linearGradient></defs>
+    <rect width="600" height="200" fill="url(#g-ceu)"/>
+    <circle cx="530" cy="38" r="20" fill="#FDE047"/>
+    <path d="M40 70 q12 -26 24 0 M70 72 q10 -20 20 0" stroke="#3F7D20" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <rect x="0" y="118" width="600" height="82" fill="url(#g-rio)"/>
+    <g class="onda"><path d="M0 140 q15 -6 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0" stroke="#A5F3FC" stroke-width="2" fill="none" opacity=".7"/>
+      <path d="M0 170 q15 -6 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0" stroke="#A5F3FC" stroke-width="2" fill="none" opacity=".5"/></g>
+    <path d="M0 100 H196 L214 200 H0Z" fill="#65A30D"/><path d="M0 100 H196 L200 118 H0Z" fill="#4D7C0F"/>
+    <path d="M404 100 H600 V200 H386Z" fill="#65A30D"/><path d="M404 100 H600 V118 H400Z" fill="#4D7C0F"/>
+    <rect x="192" y="84" width="8" height="36" fill="#6F4519"/><rect x="400" y="84" width="8" height="36" fill="#6F4519"/>
+    <g id="${id}-pr">${pranchas}</g>
+    <g id="${id}-placa" class="hidden"><rect x="296" y="40" width="6" height="58" fill="#6F4519"/><rect x="236" y="22" width="126" height="34" rx="8" fill="#FFFBF2" stroke="#6F4519" stroke-width="3"/><text id="${id}-placa-t" x="299" y="45" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="18" fill="#6F4519">?</text></g>
+    <g id="${id}-queda"></g>
+    <g id="${id}-capi" class="capi" style="transform:translate(70px,40px) scale(.7)">${capiSvg()}</g>
+  </svg>`;
+}
+function cenaReset(id, comPonte){
+  const c=$('#'+id+'-capi'); if(!c) return;
+  c.classList.add('semtrans'); c.style.transform='translate(70px,40px) scale(.7)'; void c.getBoundingClientRect(); c.classList.remove('semtrans');
+  $$('#'+id+'-pr .prancha').forEach(p=>p.classList.toggle('on',!!comPonte));
+  $('#'+id+'-placa').classList.toggle('hidden',!comPonte); $('#'+id+'-placa-t').textContent='?';
+  $('#'+id+'-queda').innerHTML='';
+}
+function cenaAtravessar(id, placa){
+  $$('#'+id+'-pr .prancha').forEach(p=>p.classList.add('on'));
+  if(placa){ $('#'+id+'-placa').classList.remove('hidden'); $('#'+id+'-placa-t').textContent=placa; }
+  setTimeout(()=>{ const c=$('#'+id+'-capi'); if(c) c.style.transform='translate(460px,40px) scale(.7)'; },620);
+}
+function cenaQueda(id){
+  const g=$('#'+id+'-queda'); if(!g) return;
+  g.innerHTML=`<g style="transform-box:fill-box"><rect class="cai" x="285" y="96" width="30" height="12" rx="3" fill="#A0682F" stroke="#6F4519" stroke-width="2"/></g>
+    <circle class="respingo" cx="300" cy="140" r="14" fill="none" stroke="#E0F2FE" stroke-width="4" style="animation-delay:.7s;opacity:0"/>
+    <circle class="respingo" cx="300" cy="140" r="24" fill="none" stroke="#E0F2FE" stroke-width="3" style="animation-delay:.8s;opacity:0"/>`;
+  const c=$('#'+id+'-capi'); if(c){ c.classList.remove('balanca'); void c.getBoundingClientRect(); }
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='fase') iniciarFase(arg); else if(t==='relatorio') telaRelatorio(); else if(t==='criar') telaCriar(); }
+const liberada=f=>S.cfg.livre||f.idx===0||!!(S.fases[FASES[f.idx-1].id]||{}).feita;
+
+function telaHome(){
+  app.innerHTML=`<section class="home"><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS</span>
+    <h1>Ponte dos <span>Conectivos</span></h1>
+    <p class="lead">A capivara Capi quer atravessar os rios do Pantanal, mas as pontes só aguentam se você escolher a <b>palavra que liga as ideias</b> do jeito certo. <b>Mas</b>, <b>porque</b>, <b>por isso</b>, <b>embora</b>… Escolha errado e a tábua cai na água!</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 7º C" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn verde grande" data-ir="mapa">Atravessar o rio 🌉</button><button class="btn" data-ir="criar">✍️ Criar fase</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena-home">${cenaSvg('home')}</div></div>
+  <div class="info"><div><b>6</b>fases do 5º ao 9º ano</div><div><b>48</b>pontes</div><div><b>11</b>relações de sentido</div><div><b>★ ${totalEst()}/${MAXEST}</b>suas estrelas</div></div>
+  <p class="rodape">Habilidades <b>MS.EF05LP07</b> (conjunções e relações de adição, oposição, tempo, causa, condição e finalidade) · <b>MS.EF08LP13</b> (efeitos de sentido de conjunções e articuladores) · <b>MS.EF69LP18</b> (articuladores em textos argumentativos) · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+  setTimeout(()=>{ cenaReset('home',true); cenaAtravessar('home'); },400);
+}
+function telaMapa(){
+  const atual=FASES.find(f=>liberada(f)&&!(S.fases[f.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Os rios do Pantanal</h2><small>Complete uma fase para liberar a próxima</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="fases">${FASES.map(f=>{ const r=S.fases[f.id]||{}; const lib=liberada(f);
+    return `<button class="fase ${atual&&atual.id===f.id?'atual':''}" data-fase="${f.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="num">FASE ${f.idx+1} · ${esc(f.ano)}</span><h3>${esc(f.titulo)}</h3><span class="cons">${esc(f.cons)}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Cada fase tem 8 pontes. Algumas pedem o conectivo; outras pedem o <b>nome da relação</b> (placa da ponte). Professor(a): em ⚙️ dá para liberar todas as fases.</p></section>`;
+}
+
+/* ---------- FASE ---------- */
+let F=null;
+function iniciarFase(f){
+  if(typeof f==='number') f=FASES[f];
+  const itens=f.itens.map(it=> it.tipo==='rel' ? Object.assign({},it,{opsL:embaralhar(it.ops.map(lerOp))}) : Object.assign({},it,{opsL:embaralhar(it.ops.map(lerOp))}));
+  F={f, itens:f.artigo?itens:embaralhar(itens), i:0, res:[], combo:0, melhorCombo:0, quebradas:new Set(), resolvido:false, primeira:{}};
+  telaFase();
+  const rels=[...new Set(f.itens.flatMap(it=> it.tipo==='rel' ? it.ops.map(lerOp).filter(o=>o.ok).map(o=>o.con) : it.ops.map(lerOp).filter(o=>o.ok).map(o=>o.rel)))].filter(r=>RELACOES[r]);
+  abrirModal(`<span class="selo">FASE ${f.idx>=0?f.idx+1:'★'} · ${esc(f.ano||'')} · ${esc(f.hab||'')}</span><h2 style="margin-top:10px">${esc(f.titulo)}</h2>
+    <p>${f.artigo?`As pontes desta fase formam um <b>artigo de opinião</b>: “${esc(f.artigo)}”. Os conectivos começam frases novas e organizam os argumentos.`:'Escolha a tábua com o conectivo certo para ligar as duas partes. Se errar, a tábua cai no rio e você tenta de novo.'}</p>
+    ${rels.length?`<div class="rels">${rels.map(r=>`<div><b>${cap(r)}</b> — ${RELACOES[r]}</div>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn verde" data-acao="fechar" data-foco>Vamos atravessar! 🌉</button></div>`);
+}
+function telaFase(){
+  const f=F.f;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="${f.id==='custom'?'home':'mapa'}" aria-label="Voltar">←</button><div class="tit"><h2>${f.idx>=0?'Fase '+(f.idx+1)+' · ':''}${esc(f.titulo)}</h2><small>${esc(f.cons||'')}</small></div><span class="chip-topo combo" id="combo">🔥 ${F.combo}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="pontos" id="pontos"></div><div class="cena">${cenaSvg('rio')}</div><div id="item"></div></section>`;
+  desenharItem();
+}
+function desenharPontos(){ $('#pontos').innerHTML=F.itens.map((_,k)=>{ const r=F.res[k]; return `<i class="${r===true?'ok':r===false?'meio':''} ${k===F.i?'agora':''}"></i>`; }).join(''); }
+function desenharItem(){
+  const it=F.itens[F.i]; F.quebradas=new Set(); F.resolvido=false;
+  desenharPontos();
+  const rel=it.tipo==='rel';
+  cenaReset('rio', rel);
+  if(rel){
+    $('#item').innerHTML=`<div class="frase-card">${destacarCon(it.frase,it.con)}</div>
+      <div class="pergunta">🪧 Que relação o conectivo <span class="con">${esc(it.con)}</span> cria? Escolha a placa da ponte.</div>
+      <div class="tabuas">${it.opsL.map((o,k)=>`<button class="placa" data-op="${k}">${esc(cap(o.con))}<small>${esc(RELACOES[o.con]||'')}</small></button>`).join('')}</div><div id="ret"></div>`;
+  } else {
+    $('#item').innerHTML=`<div class="frase-card">${esc(it.a)} <span class="vao" id="vao">?</span> ${it.nova?'':''}${esc(it.b)}</div>
+      <div class="pergunta">🪵 Qual tábua liga as duas ideias?</div>
+      <div class="tabuas">${it.opsL.map((o,k)=>`<button class="tabua" data-op="${k}">${esc(it.nova?cap(o.con):o.con)}</button>`).join('')}</div><div id="ret"></div>`;
+  }
+}
+function destacarCon(frase,con){ const i=frase.toLocaleLowerCase('pt-BR').indexOf(con.toLocaleLowerCase('pt-BR')); if(i<0) return esc(frase); return esc(frase.slice(0,i))+`<span class="con">${esc(frase.slice(i,i+con.length))}</span>`+esc(frase.slice(i+con.length)); }
+function relCorreta(it){ return it.tipo==='rel' ? it.opsL.find(o=>o.ok).con : it.opsL.find(o=>o.ok).rel; }
+function registrar(ok){
+  const it=F.itens[F.i]; if(F.primeira[F.i]!=null) return; F.primeira[F.i]=ok; F.res[F.i]=ok;
+  const r=relCorreta(it)||'outros'; S.stats[r]=S.stats[r]||{ok:0,total:0}; S.stats[r].total++; if(ok) S.stats[r].ok++; salvar();
+}
+function escolher(k, btn){
+  if(F.resolvido) return;
+  const it=F.itens[F.i], o=it.opsL[k];
+  if(o.ok){
+    registrar(true); F.resolvido=true; F.combo++; F.melhorCombo=Math.max(F.melhorCombo,F.combo); som('ok');
+    btn.classList.add('certa'); $$('[data-op]').forEach(b=>b.disabled=true);
+    const outros=it.opsL.filter(x=>x.ok&&x!==o);
+    let html;
+    if(it.tipo==='rel'){
+      html=`<div class="retorno ok"><span class="t">✅ Placa certa: ${esc(cap(o.con))}!</span>“${esc(it.con)}” ${RELACOES[o.con]?RELACOES[o.con]+'.':''}</div>`;
+      cenaAtravessar('rio', cap(o.con));
+    } else {
+      const v=$('#vao'); v.textContent=it.nova?cap(o.con):o.con; v.classList.add('ok');
+      html=`<div class="retorno ok"><span class="t">✅ A ponte aguentou!</span>${juntar(it,o.con,true)}<br><span class="mini" style="font-size:15px">${o.rel?`Relação de <b>${esc(o.rel)}</b>: o conectivo ${RELACOES[o.rel]||'liga as ideias'}.`:''}${outros.length?` Também daria certo: <b>${outros.map(x=>esc(x.con)).join(', ')}</b>.`:''}</span></div>`;
+      cenaAtravessar('rio');
+    }
+    const fraseFala = it.tipo==='rel'? it.frase : textoPuro(it,o.con);
+    $('#ret').innerHTML=html+`<div class="seguir">${VOZ.ok?`<button class="btn" data-acao="ouvir" data-frase="${esc(fraseFala)}">🔊 Ouvir</button>`:''}<button class="btn verde" data-acao="seguir" data-foco>${F.i<F.itens.length-1?'Próxima ponte ➔':'Fim da fase ✔'}</button></div>`;
+    $('[data-acao="seguir"]').focus();
+  } else {
+    registrar(false); F.combo=0; som('erro'); btn.classList.add('quebrada'); btn.disabled=true; cenaQueda('rio');
+    const certo=relCorreta(it);
+    let txt;
+    if(it.tipo==='rel') txt=`“${esc(cap(o.con))}” ${RELACOES[o.con]?'('+RELACOES[o.con]+')':''} não é a relação aqui. Leia a frase de novo: o que a parte com “${esc(it.con)}” faz com a outra?`;
+    else txt= o.rel ? `Você escolheu “<b>${esc(o.con)}</b>”, que indica <b>${esc(o.rel)}</b>${RELACOES[o.rel]?' ('+RELACOES[o.rel]+')':''}. Aqui a relação entre as ideias é outra.` : `“<b>${esc(o.con)}</b>” não liga bem essas duas ideias. Leia as duas partes de novo e pense na relação entre elas.`;
+    if(o.nota) txt+=`<br>💡 ${esc(o.nota)}`;
+    $('#ret').innerHTML=`<div class="retorno no"><span class="t">💦 Splash! A tábua caiu no rio.</span>${txt}</div>`;
+  }
+  const c=$('#combo'); if(c) c.textContent='🔥 '+F.combo;
+  desenharPontos();
+}
+function seguir(){ F.i++; if(F.i>=F.itens.length) return concluir(); desenharItem(); window.scrollTo(0,0); }
+function concluir(){
+  const ok=Object.values(F.primeira).filter(Boolean).length, n=F.itens.length; const acc=ok/n; const est=acc>=.875?3:acc>=.625?2:1;
+  const f=F.f;
+  if(f.id!=='custom'){ const a=S.fases[f.id]||{}; S.fases[f.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar(); }
+  som('fim');
+  let artigo='';
+  if(f.artigo){ artigo=`<div class="texto-final"><b>${esc(f.artigo)}</b><br>${F.itens.map(it=> it.tipo==='rel'? destacarCon(it.frase,it.con) : juntar(it, it.opsL.find(o=>o.ok).con, true)).join(' ')}</div><p class="mini">Repare como os conectivos organizam o artigo: somam argumentos, dão exemplos, rebatem objeções e concluem.</p>`; }
+  const prox = f.id!=='custom' && f.idx<FASES.length-1;
+  abrirModal(`<h2 style="text-align:center">Rio atravessado! 🦫🌉</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${ok}/${n}</b>pontes de primeira</div><div><b>🔥 ${F.melhorCombo}</b>maior sequência</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 7 ou 8 de primeira · 2 estrelas: 5 ou 6.</p>${artigo}
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn verde" data-acao="prox" data-foco>Próxima fase ➔</button>':'<button class="btn verde" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(RELACOES).concat(['outros']).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:k==='outros'?'Fases criadas':cap(k),hab:HAB_REL[k]||'',ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=FASES.filter(x=>(S.fases[x.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['PONTE DOS CONECTIVOS — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Estrelas: ${totalEst()}/${MAXEST} · Fases: ${f}/${FASES.length}`,'Acertos na 1ª tentativa, por relação de sentido:',
+    ...(L.length?L.map(l=>`- ${l.nome}${l.hab?' ('+l.hab+')':''}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=FASES.filter(x=>(S.fases[x.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">🌉 Fases</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${f}/${FASES.length}</b>fases</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa, por relação de sentido</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)} ${l.hab?`<span class="mini">${l.hab}</span>`:''}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas fases para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn verde" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CRIAR ---------- */
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+function lerCriada(txt){
+  return txt.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,15).map(l=>{ const p=l.split('|').map(s=>s.trim()); if(p.length<4) return null;
+    const a=p[0], b=p[p.length-1], ops=p.slice(1,-1).map((o,k)=>{ const m=o.match(/^(.+?)\s*\(([^)]+)\)$/); const con=(m?m[1]:o).trim(), rel=(m?m[2]:'').trim().toLocaleLowerCase('pt-BR'); return `${con}:${rel}${k===0?'*':''}`; });
+    return {a,b,ops}; }).filter(Boolean);
+}
+function telaCriar(){
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Criar fase</h2><small>Monte pontes com frases da sua aula</small></div></header>
+  <section class="pg"><div class="cartao">
+    <div class="campo"><span>Nome da fase</span><input id="c-tit" maxlength="50" placeholder="ex.: Conectivos da notícia"></div>
+    <div class="campo"><span>Uma ponte por linha: parte 1 | conectivo CERTO | errado | errado | parte 2. Se quiser, coloque a relação entre parênteses.</span>
+      <textarea id="c-txt" placeholder="Fui à escola | mas (oposição) | porque (causa) | para (finalidade) | esqueci o caderno.&#10;Estudei muito | por isso (consequência) | embora (concessão) | se (condição) | passei na prova."></textarea></div>
+    <p class="mini" id="c-info"></p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-acao="testar">▶️ Testar</button><button class="btn verde" data-acao="gerar">🔗 Gerar link</button></div><div id="c-link"></div></div></section>`;
+  $('#c-txt').oninput=()=>{ const n=lerCriada($('#c-txt').value).length; $('#c-info').textContent=n?`${n} ponte(s) reconhecida(s)`:''; };
+}
+function dadosCriar(){ const l=lerCriada($('#c-txt').value); if(l.length<2){ toast('Escreva pelo menos 2 pontes no formato: parte 1 | certo | errado | errado | parte 2'); return null; } return {t:$('#c-tit').value.trim()||'Fase especial', x:$('#c-txt').value}; }
+function faseCustom(d){ return {id:'custom', idx:-1, titulo:d.t, ano:'', cons:'', hab:'', itens:lerCriada(d.x)}; }
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as fases','Para o professor escolher a fase da aula.')}<div class="acoes"><button class="btn verde" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="rels">
+    <div>🪵 <b>Pontes:</b> leia as duas partes e escolha a tábua com o conectivo que liga as ideias. Errou? A tábua cai e você tenta de novo.</div>
+    <div>🪧 <b>Placas:</b> o conectivo já está na frase. Escolha o nome da relação que ele cria.</div>
+    <div>🔥 <b>Sequência:</b> acertos seguidos de primeira aumentam o fogo.</div>
+    <div>⭐ <b>Estrelas:</b> 7 ou 8 pontes de primeira = 3 estrelas.</div></div>
+    <div class="rels" style="margin-top:14px">${Object.entries(RELACOES).map(([k,v])=>`<div><b>${cap(k)}</b> — ${v}</div>`).join('')}</div>
+    <div class="acoes"><button class="btn verde" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(modalAberto()) fecharModal(); ir(irB.dataset.ir); return; }
+  const fb=e.target.closest('[data-fase]'); if(fb&&!fb.disabled){ ir('fase',+fb.dataset.fase); return; }
+  const op=e.target.closest('[data-op]'); if(op&&!op.disabled&&F){ escolher(+op.dataset.op, op); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='ouvir') falar(ac.dataset.frase||'');
+  else if(a==='repetir'){ fecharModal(); ir('fase', F.f.id==='custom'?F.f:F.f.idx); }
+  else if(a==='prox'){ fecharModal(); ir('fase', F.f.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+  else if(a==='testar'){ const d=dadosCriar(); if(d) ir('fase', faseCustom(d)); }
+  else if(a==='gerar'){ const d=dadosCriar(); if(!d) return; const url=location.href.split('#')[0]+'#d='+b64e(JSON.stringify(d)); $('#c-link').innerHTML=`<div class="link-box">${esc(url)}</div><div style="margin-top:10px"><button class="btn verde" id="c-copiar">📋 Copiar link</button></div>`; $('#c-copiar').onclick=()=>copiar(url); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()){ fecharModal(); return; }
+  if(TELA!=='fase'||!F||modalAberto()) return;
+  const f=document.activeElement; if(f&&/INPUT|TEXTAREA/.test(f.tagName)) return;
+  if(/^[1-4]$/.test(e.key)){ const b=$$('[data-op]')[+e.key-1]; if(b&&!b.disabled) b.click(); }
+});
+
+/* ---------- INÍCIO ---------- */
+(function(){
+  const h=location.hash;
+  if(h.startsWith('#d=')){ try{ const d=JSON.parse(b64d(h.slice(3))); if(d&&typeof d.x==='string'&&lerCriada(d.x).length){ telaHome(); TELA='fase'; iniciarFase(faseCustom(d)); return; } }catch(e){ console.warn('Link inválido'); } }
+  telaHome();
+})();
+</script>
+</body>
+</html>

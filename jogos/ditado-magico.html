@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ditado Mágico</title>
+<meta name="description" content="Ditado com voz para o 3º ao 5º ano: R/RR, S/SS, C/QU, G/GU, LH/NH/CH, M antes de P e B, ditongos e acentos. Habilidades MS.EF03LP01, MS.EF03LP03, MS.EF03LP04 e MS.EF04LP02.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noite:#21184A; --noite2:#33246E; --roxo:#6D4AFF; --roxo-e:#5233D6; --lilas:#C9B8FF;
+  --ouro:#F4C430; --ouro-e:#C99A0F; --pocao:#2BD9A8; --pergaminho:#FFF7E6; --borda:#EBD9B4;
+  --tinta:#231A45; --suave:#6A6288; --ok:#16A34A; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2; --laranja:#EA7A0B; --laranja-f:#FFEDD5;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Andika','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:var(--texto);font-size:17px;color:#fff;-webkit-tap-highlight-color:transparent}
+body{background:var(--noite);background-image:
+  radial-gradient(circle at 12% 18%,#ffffffcc 0 1.2px,transparent 2px),radial-gradient(circle at 78% 9%,#ffffffaa 0 1px,transparent 2px),
+  radial-gradient(circle at 42% 34%,#ffffff88 0 1px,transparent 2px),radial-gradient(circle at 88% 46%,#ffffffbb 0 1.3px,transparent 2px),
+  radial-gradient(circle at 25% 62%,#ffffff77 0 1px,transparent 2px),radial-gradient(circle at 63% 75%,#ffffff99 0 1.1px,transparent 2px),
+  linear-gradient(180deg,var(--noite) 0%,var(--noite2) 100%);background-attachment:fixed}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+.btn{border:2px solid #ffffff33;background:#ffffff14;color:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;gap:8px;justify-content:center;min-height:48px;transition:transform .12s,background .12s}
+.btn:hover{transform:translateY(-2px);background:#ffffff22}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.ouro{background:var(--ouro);border-color:var(--ouro-e);color:var(--tinta);box-shadow:0 4px 0 var(--ouro-e)}
+.btn.ouro:hover{background:#FFD24D}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.claro{background:#fff;border-color:var(--borda);color:var(--tinta)}
+.btn.claro:hover{background:#FFFBF2}
+.btn.icone{padding:10px 14px}
+:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--ouro);background:#F4C43022;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:28px 20px 34px}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:center}
+.hero h1{font-size:clamp(46px,7vw,80px);font-weight:800;margin:14px 0 8px;letter-spacing:-1px}
+.hero h1 span{color:var(--ouro)}
+.lead{font-size:19px;line-height:1.6;color:#E3DCFF;max-width:540px;margin:0 0 18px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--lilas)}
+.campos input{border:2px solid #ffffff33;background:#ffffff12;border-radius:12px;padding:10px 12px;width:190px;font-size:17px;color:#fff}
+.campos label:last-child input{width:110px}
+.campos input::placeholder{color:#ffffff66}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.arte{position:relative;height:310px;display:grid;place-items:center}
+.arte .lumi{width:230px;animation:flutua 3s ease-in-out infinite}
+.arte .letras span{position:absolute;font-family:var(--titulo);font-weight:800;font-size:34px;color:var(--ouro);opacity:.85;animation:brilha 2.4s ease-in-out infinite}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes brilha{0%,100%{opacity:.25;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+.info div{flex:1;min-width:150px;background:#ffffff10;border:2px solid #ffffff22;border-radius:16px;padding:12px 16px;font-size:14px;color:var(--lilas)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:#fff}
+.rodape{font-size:13px;color:#BFB5E8;line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:20;background:#21184Aee;backdrop-filter:blur(6px);border-bottom:2px solid #ffffff1f;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--lilas);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.gemas{font-family:var(--titulo);font-weight:800;background:#ffffff14;border:2px solid #ffffff2a;border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:20px 16px 40px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.pagina{position:relative;text-align:left;background:var(--pergaminho);color:var(--tinta);border:3px solid var(--borda);border-radius:20px;padding:16px;min-height:150px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.pagina:hover:not(:disabled){transform:translateY(-3px) rotate(-.4deg)}
+.pagina .num{font-family:var(--titulo);font-weight:800;color:var(--roxo);font-size:14px;letter-spacing:1px}
+.pagina h3{font-size:24px}
+.pagina .ex{font-size:15px;color:var(--suave)}
+.pagina .est{margin-top:auto;font-size:20px;letter-spacing:2px;color:#E2D3B5}
+.pagina .est .on{color:#E9A800}
+.pagina:disabled{opacity:.5;cursor:not-allowed}
+.pagina .cad{position:absolute;top:12px;right:14px}
+.pagina.atual{box-shadow:0 0 0 4px var(--ouro),0 0 30px #F4C43066}
+.pagina.especial{background:linear-gradient(135deg,#FFF7E6,#F3E9FF)}
+.nota{color:var(--lilas);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:900px;margin:auto;padding:14px 16px 380px}
+.palco{display:flex;gap:14px;align-items:center}
+.palco .lumi{width:84px;flex:none}
+.palco .lumi.feliz{animation:pula .5s ease 2}
+@keyframes pula{50%{transform:translateY(-12px) rotate(-6deg)}}
+.cartao-frase{flex:1;background:var(--pergaminho);color:var(--tinta);border:3px solid var(--borda);border-radius:20px;padding:14px 16px}
+.frase{font-size:clamp(19px,3.2vw,24px);line-height:1.5}
+.lacuna{display:inline-block;min-width:3.6em;border-bottom:3px dashed var(--roxo);margin:0 .1em;transform:translateY(-.15em)}
+.ouvir{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ouvir .btn{min-height:42px;padding:6px 12px;font-size:15px}
+.pocao{width:62px;flex:none}
+.progresso{display:flex;gap:6px;justify-content:center;margin:14px 0 4px}
+.progresso i{width:12px;height:12px;border-radius:50%;background:#ffffff2a}
+.progresso i.ok{background:var(--pocao)}
+.progresso i.meio{background:var(--ouro)}
+.progresso i.agora{box-shadow:0 0 0 3px #fff}
+.caixas{display:flex;flex-wrap:nowrap;justify-content:center;gap:clamp(3px,1vw,8px);margin:2px 0 4px}
+.cx{--w:min(56px,calc((100vw - 28px) / var(--n) - 6px));width:var(--w);height:calc(var(--w) * 1.2);border-radius:10px;background:#fff;color:var(--tinta);display:grid;place-items:center;font-size:calc(var(--w) * .68);font-weight:700;border:3px dashed #B9A9F5;transition:transform .1s}
+.cx.cheia{border-style:solid;border-color:var(--roxo)}
+.cx.cursor{box-shadow:0 0 0 4px var(--ouro)}
+.cx.foco{background:#FFF4C2;border-color:var(--ouro)}
+.cx.certa{background:var(--ok-f);border-color:var(--ok);border-style:solid}
+.cx.pop{animation:pop .15s ease}
+@keyframes pop{50%{transform:scale(1.12)}}
+.livre{min-height:60px;margin:2px auto 4px;width:100%;max-width:560px;background:#fff;color:var(--tinta);border-radius:16px;border:3px solid var(--roxo);display:flex;align-items:center;justify-content:center;font-size:clamp(28px,6vw,42px);font-weight:700;letter-spacing:2px;padding:8px 14px}
+.livre .pisca{display:inline-block;width:3px;height:1em;background:var(--roxo);margin-left:3px;animation:pisca 1s steps(2) infinite}
+@keyframes pisca{50%{opacity:0}}
+.retorno{scroll-margin-top:70px;margin:12px auto 4px;max-width:640px;border-radius:18px;padding:14px 16px;background:var(--pergaminho);color:var(--tinta);border:3px solid var(--borda);line-height:1.55}
+.retorno.certo{border-color:#86EFAC;background:#F0FDF4}
+.retorno.errado{border-color:#FDBA74;background:#FFF7ED}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.comparar{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;margin:8px 0}
+.comparar span.r{font-size:13px;color:var(--suave);font-weight:700}
+.pal{font-size:30px;font-weight:700;letter-spacing:2px}
+.pal .e{color:var(--erro);background:var(--erro-f);border-radius:4px}
+.pal .x{color:var(--erro);text-decoration:line-through;background:var(--erro-f);border-radius:4px}
+.pal .f{color:var(--laranja);background:var(--laranja-f);border-radius:4px;text-decoration:underline;text-decoration-thickness:3px}
+.pal .falt{display:inline-block;width:.5em;border-bottom:3px solid var(--erro)}
+.regra-txt b{color:var(--roxo-e)}
+
+.teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#1A1340f2;backdrop-filter:blur(6px);border-top:2px solid #ffffff22;padding:8px 8px calc(10px + env(safe-area-inset-bottom))}
+.teclado-in{max-width:760px;margin:auto;display:flex;flex-direction:column;gap:6px}
+.teclas{display:flex;flex-direction:column;gap:6px}
+.linha-t{display:flex;gap:5px;justify-content:center}
+.tecla{flex:1;max-width:62px;height:48px;border-radius:10px;border:0;background:#fff;color:var(--tinta);font-size:22px;font-weight:700;box-shadow:0 3px 0 #B9A9F5;padding:0}
+.tecla:active{transform:translateY(2px);box-shadow:0 1px 0 #B9A9F5}
+.tecla.acento{background:#EFE9FF;font-size:20px}
+.tecla.apaga{max-width:90px;flex:1.5;background:#FFE4E6;font-size:20px}
+.teclado.trava .linha-t{opacity:.35;pointer-events:none}
+.acao-principal{display:flex;gap:8px}
+.acao-principal .btn{flex:1;min-height:52px;font-size:18px}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0d0826b8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--pergaminho);color:var(--tinta);border-radius:26px;max-width:640px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0007}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.modal .btn:not(.ouro){background:#fff;border-color:var(--borda);color:var(--tinta)}
+.regras{display:grid;gap:10px;margin-top:10px}
+.regras div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px;line-height:1.55}
+.regras b{color:var(--roxo-e)}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:64px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D3B5;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:#E9A800}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.lista-pal{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.lista-pal span{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 10px;font-size:18px;font-weight:700}
+.lista-pal span.ok{border-color:#86EFAC}
+.lista-pal span.no{border-color:#FDBA74}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* PÁGINAS CLARAS */
+.folha{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:var(--pergaminho);color:var(--tinta);border:3px solid var(--borda);border-radius:22px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(160px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EFE3CB;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--roxo)}
+.cat .n{font-weight:700;white-space:nowrap}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-weight:700;font-size:14px;color:var(--suave)}
+.campo input,textarea{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;background:#fff;font-size:17px;color:var(--tinta);font-weight:400}
+textarea{width:100%;min-height:200px;line-height:1.6;resize:vertical}
+.link-box{word-break:break-all;background:#F3E9FF;border-radius:12px;padding:10px;font-size:14px;margin-top:10px}
+
+#toast{position:fixed;left:50%;bottom:300px;transform:translateX(-50%);z-index:60;background:#fff;color:var(--tinta);padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px #0005}
+#toast.on{opacity:1}
+.faisca{position:fixed;z-index:70;pointer-events:none;font-size:22px;animation:sobe 1.1s ease-out forwards}
+@keyframes sobe{to{transform:translate(var(--dx),-140px) scale(.4);opacity:0}}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .arte{height:190px;order:-1}
+  .arte .lumi{width:150px}
+  .topo h2{font-size:17px}
+  .palco{gap:8px}
+  .palco .lumi{width:48px}
+  .pocao{width:36px}
+  .ouvir .btn{min-height:38px;padding:4px 10px;font-size:14px}
+  .teclas,.teclado-in{gap:5px}
+  .cartao-frase{padding:10px 12px}
+  .tecla{height:41px;font-size:19px}
+  .acao-principal .btn{min-height:46px}
+  .linha-t{gap:4px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="lumi" viewBox="0 0 120 130">
+    <path d="M60 4 L86 44 L34 44 Z" fill="#2B2163"/>
+    <path d="M60 4 Q70 22 86 44" stroke="#3B2E86" stroke-width="3" fill="none"/>
+    <ellipse cx="60" cy="45" rx="34" ry="6" fill="#2B2163"/>
+    <path d="M58 18 l3 6 6 1 -5 4 1 6 -5 -3 -5 3 1 -6 -5 -4 6 -1z" fill="#F4C430"/>
+    <ellipse cx="60" cy="88" rx="38" ry="38" fill="#7B5CFF"/>
+    <ellipse cx="60" cy="100" rx="24" ry="24" fill="#C9B8FF"/>
+    <path d="M24 86 Q12 104 26 118 Q30 100 34 92Z" fill="#5B3FE0"/>
+    <path d="M96 86 Q108 104 94 118 Q90 100 86 92Z" fill="#5B3FE0"/>
+    <circle cx="46" cy="72" r="14" fill="#fff"/><circle cx="74" cy="72" r="14" fill="#fff"/>
+    <circle cx="48" cy="73" r="7" fill="#231A45"/><circle cx="72" cy="73" r="7" fill="#231A45"/>
+    <circle cx="50" cy="70" r="2.4" fill="#fff"/><circle cx="74" cy="70" r="2.4" fill="#fff"/>
+    <path d="M55 84 L65 84 L60 93 Z" fill="#F59E0B"/>
+    <path d="M50 124 l-4 5 M56 125 l0 5 M64 125 l0 5 M70 124 l4 5" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   DITADO MÁGICO — JRM • Aventuras Educativas (jrmapps.com)
+   Habilidades: MS.EF03LP01 · MS.EF03LP03 · MS.EF03LP04 · MS.EF04LP02
+   ---------------------------------------------------------
+   COMO ESCREVER PALAVRAS NAS PÁGINAS
+   "ca[rr]o|O ~ do meu tio é azul.|rr"
+     - entre [ ] fica a parte difícil (ela é destacada na correção)
+     - depois da 1ª barra: frase de apoio; o ~ marca o lugar da palavra
+     - depois da 2ª barra: qual explicação da página usar (chave de "regras")
+   ========================================================= */
+
+const PAGINAS = [
+ {id:'p1', titulo:'R ou RR?', hab:'MS.EF03LP01', ex:'carro · caro · rato · enrolar',
+  dica:'Escute bem o som do R: ele é forte ou fraco? Ele está no começo, no meio ou depois de consoante?',
+  regras:{
+    rr:'Entre duas vogais, o R com <b>som forte</b> se escreve com <b>RR</b>: ca<b>rr</b>o, te<b>rr</b>a.',
+    rf:'Entre duas vogais, <b>um R só</b> tem <b>som fraco</b>: ca<b>r</b>o, ba<b>r</b>ata.',
+    r1:'No <b>começo da palavra</b>, o R já tem som forte e se escreve com <b>um R só</b>: <b>r</b>ato, <b>r</b>ua.',
+    rc:'Depois de <b>N, L ou S</b>, o R tem som forte, mas se escreve com <b>um R só</b>: en<b>r</b>olar, hon<b>r</b>a.'},
+  itens:['ca[rr]o|O ~ do meu tio é azul.|rr','ca[r]o|Esse brinquedo é muito ~, custa muito dinheiro.|rf','te[rr]a|A minhoca vive dentro da ~.|rr',
+   '[r]ato|O ~ comeu o queijo.|r1','ga[rr]afa|Encha a ~ de água.|rr','ba[r]ata|A ~ correu para baixo do armário.|rf',
+   'cacho[rr]o|O ~ abanou o rabo.|rr','[r]ua|As crianças brincam na ~.|r1','a[rr]oz|No almoço tem ~ e feijão.|rr',
+   'ca[r]eta|O palhaço fez uma ~ engraçada.|rf','ca[rr]eta|A ~ levava os bois para a fazenda.|rr','bete[rr]aba|O suco de ~ fica roxinho.|rr',
+   'en[r]olar|Vou ~ a linha da pipa.|rc','gi[r]afa|A ~ tem o pescoço comprido.|rf','co[rr]ida|A ~ de bicicleta foi divertida.|rr',
+   '[r]elógio|O ~ marca a hora certa.|r1','to[rr]e|A ~ da igreja é bem alta.|rr']},
+ {id:'p2', titulo:'S ou SS?', hab:'MS.EF03LP01', ex:'pássaro · casa · sapo · bolsa',
+  dica:'Escute: entre as vogais, o som é de S (como em sapo) ou de Z (como em zebra)?',
+  regras:{
+    ss:'Entre duas vogais, para ter <b>som de S</b> usamos <b>SS</b>: pá<b>ss</b>aro, o<b>ss</b>o.',
+    sz:'Entre duas vogais, <b>um S só</b> tem <b>som de Z</b>: ca<b>s</b>a, me<b>s</b>a.',
+    s1:'No <b>começo da palavra</b>, um S só já tem som de S: <b>s</b>apo.',
+    sc:'Depois de <b>consoante</b> (como L ou N), um S só tem som de S: bol<b>s</b>a, pen<b>s</b>ar.'},
+  itens:['pá[ss]aro|O ~ fez um ninho na árvore.|ss','ca[s]a|Minha ~ tem um quintal grande.|sz','o[ss]o|O cachorro enterrou o ~.|ss',
+   'me[s]a|O prato está em cima da ~.|sz','a[ss]obio|Ouvi o ~ do vovô chamando o cachorro.|ss','ro[s]a|A ~ é uma flor perfumada.|sz',
+   'pe[ss]oa|Cada ~ da fila ganhou um livro.|ss','va[s]o|Coloquei a planta no ~.|sz','ma[ss]a|A vovó fez ~ de pastel.|ss',
+   'a[s]a|O passarinho machucou a ~.|sz','a[ss]a|A mamãe ~ o bolo no forno.|ss','[s]apo|O ~ pulou na lagoa.|s1',
+   'bol[s]a|A professora guardou o caderno na ~.|sc','pen[s]ar|Vou ~ bem antes de responder.|sc','trave[ss]eiro|Dormi com a cabeça no ~ macio.|ss',
+   'cami[s]a|Vesti a ~ do uniforme.|sz']},
+ {id:'p3', titulo:'C ou QU?', hab:'MS.EF03LP01', ex:'queijo · coelho · esquilo · cubo',
+  dica:'Olhe a vogal que vem depois do som de K. É A, O, U ou é E, I?',
+  regras:{
+    qu:'Antes de <b>E</b> e de <b>I</b>, o som de K se escreve com <b>QU</b>: <b>qu</b>eijo, <b>qu</b>ilo.',
+    c:'Antes de <b>A, O e U</b>, o som de K se escreve só com <b>C</b>: <b>c</b>opo, <b>c</b>ubo, va<b>c</b>a.'},
+  itens:['[qu]eijo|O ~ é feito de leite.|qu','[c]oelho|O ~ come cenoura.|c','es[qu]ilo|O ~ guardou nozes na árvore.|qu',
+   'pe[qu]eno|O filhote é muito ~.|qu','[c]ubo|O dado tem forma de ~.|c','má[qu]ina|A ~ de lavar está ligada.|qu',
+   'ca[qu]i|O ~ é uma fruta laranja e doce.|qu','bone[c]a|A ~ tem um vestido rosa.|c','[qu]ente|Cuidado, a sopa está ~!|qu',
+   'peri[qu]ito|O ~ é um passarinho verde.|qu','[c]opo|Bebi um ~ de água.|c','[qu]ilo|Comprei um ~ de arroz.|qu',
+   'va[c]a|A ~ dá leite.|c','co[qu]eiro|O coco nasce no ~.|qu','[c]ola|Use ~ para grudar o desenho.|c','mole[qu]e|O ~ subiu na árvore.|qu']},
+ {id:'p4', titulo:'G ou GU?', hab:'MS.EF03LP01', ex:'foguete · gato · guitarra · gota',
+  dica:'Olhe a vogal que vem depois do G. Antes de E e I, o G sozinho tem som de J!',
+  regras:{
+    gu:'Antes de <b>E</b> e de <b>I</b>, para o G ter o som de <i>gato</i>, escrevemos <b>GU</b>: fo<b>gu</b>ete, <b>gu</b>itarra.',
+    g:'Antes de <b>A, O e U</b>, <b>um G só</b> já tem esse som: <b>g</b>ato, <b>g</b>ota, a<b>g</b>ulha.'},
+  itens:['fo[gu]ete|O ~ subiu até as nuvens.|gu','[g]ato|O ~ dormiu no sofá.|g','[gu]itarra|Meu primo toca ~ na banda.|gu',
+   '[g]ota|Caiu uma ~ de chuva no meu nariz.|g','man[gu]eira|Molhei as plantas com a ~.|gu','formi[g]a|A ~ carrega uma folha.|g',
+   'pre[gu]iça|A ~ é um animal bem lento.|gu','a[g]ulha|A costureira passou a linha na ~.|g','fo[gu]eira|Na festa junina tem ~.|gu',
+   '[g]alinha|A ~ botou um ovo.|g','[gu]erreiro|O ~ da história era muito corajoso.|gu','formi[gu]eiro|As formigas voltaram para o ~.|gu',
+   '[g]oiaba|A ~ estava madura e doce.|g','[gu]indaste|O ~ levantou a caixa pesada.|gu','fi[g]o|O ~ é uma fruta roxa por dentro.|g']},
+ {id:'p5', titulo:'LH, NH, CH', hab:'MS.EF03LP03', ex:'palhaço · ninho · chave',
+  dica:'Aqui tem duas letras juntas fazendo um som só. Quais são?',
+  regras:{
+    lh:'<b>LH</b> é um dígrafo: duas letras para um som só, como em pa<b>lh</b>aço e abe<b>lh</b>a.',
+    nh:'<b>NH</b> é um dígrafo: duas letras para um som só, como em ni<b>nh</b>o e u<b>nh</b>a.',
+    ch:'<b>CH</b> é um dígrafo com som parecido com o do X: <b>ch</b>ave, <b>ch</b>uva.'},
+  itens:['ni[nh]o|O passarinho fez um ~.|nh','[ch]ave|Perdi a ~ de casa.|ch','pa[lh]aço|O ~ fez todo mundo rir.|lh',
+   'abe[lh]a|A ~ faz mel.|lh','[ch]uva|A ~ molhou o quintal.|ch','u[nh]a|Cortei a ~ do dedão.|nh','o[lh]o|Tenho um cisco no ~.|lh',
+   'mi[nh]oca|A ~ vive embaixo da terra.|nh','[ch]ocolate|Ganhei um ovo de ~.|ch','ove[lh]a|A ~ tem lã branquinha.|lh',
+   'rai[nh]a|A ~ usava uma coroa.|nh','bi[ch]o|Que ~ é esse no jardim?|ch','te[lh]ado|O gato subiu no ~.|lh',
+   'ba[nh]eiro|Lavei as mãos no ~.|nh','ma[ch]ucado|Meu joelho está ~.|ch','joe[lh]o|Caí e ralei o ~.|lh','so[nh]o|Tive um ~ muito bom.|nh']},
+ {id:'p6', titulo:'O ou U? E ou I?', hab:'MS.EF03LP01', ex:'bolo · leite · sapato',
+  dica:'No final da palavra, a gente fala de um jeito e escreve de outro. Pense na escrita!',
+  regras:{
+    o:'No <b>fim da palavra</b>, a gente fala "u", mas escreve <b>O</b>: bol<b>o</b>, sapat<b>o</b>.',
+    e:'No <b>fim da palavra</b>, a gente fala "i", mas escreve <b>E</b>: leit<b>e</b>, dent<b>e</b>.'},
+  itens:['bol[o]|A vovó fez um ~ de cenoura.|o','leit[e]|O bebê tomou ~.|e','sapat[o]|Amarrei o cadarço do ~.|o','dent[e]|Meu ~ de leite caiu.|e',
+   'tomat[e]|A salada tem ~ e alface.|e','menin[o]|O ~ ganhou uma bola.|o','pent[e]|Arrumei o cabelo com o ~.|e','sorvet[e]|O ~ derreteu no sol.|e',
+   'livr[o]|Li um ~ de aventuras.|o','elefant[e]|O ~ tem uma tromba comprida.|e','pat[o]|O ~ nada na lagoa.|o','noit[e]|De ~, a lua aparece.|e',
+   'tijol[o]|O pedreiro colocou mais um ~ na parede.|o','pont[e]|Atravessamos a ~ sobre o rio.|e','carrinh[o]|Meu irmão brinca de ~.|o']},
+ {id:'p7', titulo:'M, N ou til?', hab:'MS.EF03LP01', ex:'campo · canto · limão',
+  dica:'Esse som sai pelo nariz. Qual letra vem depois dele? Ou será que é o til?',
+  regras:{
+    mpb:'Antes de <b>P</b> e de <b>B</b>, usamos <b>M</b>: ca<b>m</b>po, so<b>m</b>bra.',
+    n:'Antes das <b>outras consoantes</b>, usamos <b>N</b>: ca<b>n</b>to, mu<b>n</b>do.',
+    til:'O <b>til (~)</b> mostra o som nasal, que sai pelo nariz: m<b>ã</b>o, lim<b>ã</b>o.'},
+  itens:['ca[m]po|Os bois pastam no ~.|mpb','te[m]po|Não tenho ~ para brincar agora.|mpb','bo[m]bo[m]|Ganhei um ~ de chocolate.|mpb',
+   'li[m]po|O chão está ~.|mpb','so[m]bra|Sentei na ~ da árvore.|mpb','ta[m]pa|Feche a ~ da panela.|mpb','ca[n]to|O ~ do sabiá é bonito.|n',
+   'mu[n]do|O ~ é muito grande.|n','ci[n]to|Meu pai usa ~ na calça.|n','m[ã]o|Levante a ~ para falar.|til','maç[ã]|Comi uma ~ vermelha.|til',
+   'lim[ã]o|O suco de ~ é azedinho.|til','irm[ã]|Minha ~ mais velha estuda à tarde.|til','avi[ã]o|O ~ pousou no aeroporto.|til',
+   'e[m]brulho|Abri o ~ do presente.|mpb']},
+ {id:'p8', titulo:'Vogal escondida', hab:'MS.EF04LP02', ex:'peixe · caixa · roupa',
+  dica:'Tem uma vogal escondida que a gente quase não fala. Qual é?',
+  regras:{
+    ei:'Na fala, muitas vezes o <b>I</b> some, mas na escrita ele aparece: pe<b>i</b>xe, cade<b>i</b>ra.',
+    ai:'Na fala, muitas vezes o <b>I</b> some, mas na escrita ele aparece: ca<b>i</b>xa, ba<b>i</b>xo.',
+    ou:'Na fala, o <b>U</b> some, mas na escrita ele aparece: ro<b>u</b>pa, lo<b>u</b>ça.'},
+  itens:['pe[i]xe|O ~ nada no rio.|ei','ca[i]xa|Guardei os brinquedos na ~.|ai','cade[i]ra|Sente na ~, por favor.|ei','lo[u]ça|Depois do almoço, lavamos a ~.|ou',
+   'fe[i]ra|Comprei frutas na ~.|ei','ro[u]pa|Coloquei a ~ no varal.|ou','ba[i]xo|Fale mais ~, o bebê está dormindo.|ai','mante[i]ga|Passei ~ no pão.|ei',
+   'vasso[u]ra|Varri a sala com a ~.|ou','che[i]ro|Que ~ bom de bolo!|ei','o[u]ro|O anel é de ~.|ou','prime[i]ro|Cheguei em ~ lugar na corrida.|ei',
+   'ceno[u]ra|O coelho come ~.|ou','be[i]jo|Dei um ~ na vovó.|ei','fa[i]xa|O campeão ganhou uma ~.|ai']},
+ {id:'p9', titulo:'Acento no final', hab:'MS.EF03LP04', ex:'café · sofá · avô · tatu',
+  dica:'Onde está a sílaba mais forte? E o som dela é aberto (é, á, ó) ou fechado (ê, ô)?',
+  regras:{
+    acento:'Palavras com a <b>sílaba mais forte no final</b>, terminadas em <b>A, E ou O</b>, levam acento: caf<b>é</b>, sof<b>á</b>, av<b>ô</b>. O acento agudo (´) deixa o som aberto; o circunflexo (^) deixa fechado.',
+    sem:'Palavras terminadas em <b>I ou U</b>, com a sílaba forte no final, <b>não levam acento</b>: tat<b>u</b>, sac<b>i</b>.'},
+  itens:['caf[é]|O vovô toma ~ de manhã.|acento','sof[á]|O gato dormiu no ~.|acento','jacar[é]|O ~ tomava sol na beira do rio.|acento',
+   'av[ó]|Minha ~ faz chipa deliciosa.|acento','av[ô]|Meu ~ conta histórias antigas.|acento','voc[ê]|~ quer brincar comigo?|acento',
+   'beb[ê]|O ~ está dormindo.|acento','picol[é]|Comprei um ~ de morango.|acento','maracuj[á]|O ~ é uma fruta amarela e azeda.|acento',
+   'p[é]|Machuquei o ~ no futebol.|acento','ch[á]|A mamãe fez ~ de camomila.|acento','rob[ô]|O ~ da feira de ciências andava sozinho.|acento',
+   'tat[u]|O ~ cavou um buraco.|sem','caj[u]|O suco de ~ é gostoso.|sem','sac[i]|O ~ é um personagem do folclore.|sem','urub[u]|O ~ voava bem alto.|sem']},
+ {id:'p10', titulo:'Grande Ditado', hab:'Todas', ex:'Palavras de todas as páginas', especial:true,
+  dica:'Pense na regra: qual parte desta palavra costuma confundir?', regras:{intro:'Palavras de <b>todas as páginas</b>, misturadas. Use tudo o que você aprendeu: R ou RR, S ou SS, C ou QU, G ou GU, LH, NH, CH, M ou N, vogais escondidas e acentos!'}, itens:[]}
+];
+const POR_ID = {}; PAGINAS.forEach((p,i)=>{p.idx=i; POR_ID[p.id]=p;});
+const RODADA = 8;
+
+/* ---------- ESTADO ---------- */
+const CHAVE='ditadoMagico.v1';
+function padrao(){ return {nome:'',turma:'',paginas:{},stats:{},treino:{},gemas:0,cfg:{som:true,lenta:false,semCaixas:false,abc:false,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const letras=w=>Array.from(w.normalize('NFC'));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+const lumi=(cls='')=>`<svg class="lumi ${cls}" viewBox="0 0 120 130" role="img" aria-label="Lumi, a coruja maga"><use href="#lumi"/></svg>`;
+function pocaoSvg(pct){
+  const h=Math.max(0,Math.min(1,pct))*78;
+  return `<svg class="pocao" viewBox="0 0 70 110" role="img" aria-label="Poção ${Math.round(pct*100)}% cheia">
+    <defs><clipPath id="frasco"><path d="M26 8h18v28c14 6 22 18 22 34 0 22-14 36-31 36S4 92 4 70c0-16 8-28 22-34z"/></clipPath></defs>
+    <path d="M26 8h18v28c14 6 22 18 22 34 0 22-14 36-31 36S4 92 4 70c0-16 8-28 22-34z" fill="#ffffff22"/>
+    <g clip-path="url(#frasco)"><rect x="0" y="${106-h}" width="70" height="${h}" fill="#2BD9A8"/><rect x="0" y="${106-h}" width="70" height="5" fill="#7BF2CF"/>
+      ${h>10?'<circle cx="24" cy="95" r="3" fill="#fff8"/><circle cx="40" cy="88" r="2" fill="#fff8"/>':''}</g>
+    <path d="M26 8h18v28c14 6 22 18 22 34 0 22-14 36-31 36S4 92 4 70c0-16 8-28 22-34z" fill="none" stroke="#fff" stroke-width="3"/>
+    <rect x="22" y="2" width="26" height="8" rx="3" fill="#C99A0F"/></svg>`;
+}
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+function faiscas(el){
+  const r=(el||document.body).getBoundingClientRect();
+  for(let i=0;i<14;i++){ const s=document.createElement('span'); s.className='faisca'; s.textContent=['✨','⭐','💫'][i%3];
+    s.style.left=(r.left+r.width/2+(Math.random()*80-40))+'px'; s.style.top=(r.top+r.height/2)+'px'; s.style.setProperty('--dx',(Math.random()*160-80)+'px');
+    s.style.animationDelay=(Math.random()*.2)+'s'; document.body.appendChild(s); setTimeout(()=>s.remove(),1500); }
+}
+
+/* ---------- ITENS ---------- */
+function lerItem(str, pagId){
+  const [w,frase='',chave='']=str.split('|');
+  let palavra='', dentro=false; const foco=[];
+  for(const ch of w.normalize('NFC').trim()){ if(ch==='['){dentro=true;continue;} if(ch===']'){dentro=false;continue;} if(dentro) foco.push(letras(palavra).length); palavra+=ch; }
+  palavra=palavra.toLocaleLowerCase('pt-BR');
+  return {palavra, frase:frase.trim(), chave:chave.trim(), foco, pag:pagId};
+}
+function itensDaPagina(p){
+  if(p.id==='p10'){ const todos=[]; PAGINAS.filter(x=>x.itens.length).forEach(x=>x.itens.forEach(s=>todos.push(lerItem(s,x.id)))); return todos; }
+  if(p.id==='custom') return p.lista;
+  return p.itens.map(s=>lerItem(s,p.id));
+}
+function sortear(p){
+  if(p.id==='treino') return p._itens;
+  const todos=itensDaPagina(p);
+  if(p.id==='custom') return embaralhar(todos);
+  const vistos=new Set(); return embaralhar(todos).filter(it=>{ if(vistos.has(it.palavra)) return false; vistos.add(it.palavra); return true; }).slice(0,RODADA);
+}
+function explicacao(it){ const p=POR_ID[it.pag]; return (p && p.regras[it.chave]) || 'Compare letra por letra a sua escrita com a escrita certa.'; }
+function dicaDe(it){ const p=POR_ID[it.pag]; return (p && p.dica) || 'Escute de novo, bem devagar, e pense em cada som.'; }
+function catDe(it){ return it.pag && POR_ID[it.pag] ? it.pag : 'livre'; }
+const NOME_CAT = {p1:'R ou RR',p2:'S ou SS',p3:'C ou QU',p4:'G ou GU',p5:'Dígrafos LH, NH, CH',p6:'O/U e E/I no final',p7:'M antes de P/B, N e til',p8:'Ditongos (ei, ai, ou)',p9:'Acentuação no final da palavra',livre:'Ditados criados'};
+const HAB_CAT = {p1:'EF03LP01',p2:'EF03LP01',p3:'EF03LP01',p4:'EF03LP01',p5:'EF03LP03',p6:'EF03LP01',p7:'EF03LP01',p8:'EF04LP02',p9:'EF03LP04',livre:''};
+
+/* ---------- VOZ ---------- */
+const VOZ={ok:'speechSynthesis' in window, voz:null, sessao:0};
+if(VOZ.ok){ const esc2=()=>{ const vs=speechSynthesis.getVoices(); VOZ.voz=vs.find(v=>/pt[-_]BR/i.test(v.lang))||vs.find(v=>/^pt/i.test(v.lang))||null; }; esc2(); speechSynthesis.onvoiceschanged=esc2; }
+function pararVoz(){ VOZ.sessao++; if(VOZ.ok) speechSynthesis.cancel(); }
+function falar(partes){
+  if(!VOZ.ok) return;
+  pararVoz(); const s=++VOZ.sessao; let i=0;
+  const prox=()=>{ if(s!==VOZ.sessao||i>=partes.length) return; const [txt,rate]=partes[i++];
+    const u=new SpeechSynthesisUtterance(txt); u.lang='pt-BR'; if(VOZ.voz) u.voice=VOZ.voz; u.rate=rate*(S.cfg.lenta?.8:1); u.pitch=1.05;
+    u.onend=()=>setTimeout(prox,350); u.onerror=()=>{}; speechSynthesis.speak(u); };
+  setTimeout(prox,80);
+}
+function ditar(it, modo){
+  const frase = it.frase ? it.frase.replace(/~/g,it.palavra) : '';
+  if(modo==='devagar') falar([[it.palavra,.5],[it.palavra,.5]]);
+  else if(modo==='palavra') falar([[it.palavra,.85]]);
+  else falar(frase ? [[it.palavra,.85],[frase,.9],[it.palavra,.85]] : [[it.palavra,.85],[it.palavra,.75]]);
+}
+
+/* ---------- SONS ---------- */
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={tecla:[[700,.035]],apaga:[[350,.05]],ok:[[659,.08],[784,.08],[1047,.16]],erro:[[294,.12],[247,.18]],fim:[[523,.1],[659,.1],[784,.1],[1047,.1],[1319,.25]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f;
+    g.gain.setValueAtTime(.1,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+/* ---------- MODAL ---------- */
+function abrirModal(html){ $('#modal').innerHTML=html; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- TELAS ---------- */
+let TELA='home';
+function ir(t,arg){ pararVoz(); TELA=t; window.scrollTo(0,0);
+  ({home:telaHome, mapa:telaMapa, relatorio:telaRelatorio, criar:telaCriar}[t]||(()=>{}))(arg);
+  if(t==='jogo') iniciar(arg);
+}
+const totalEst=()=>PAGINAS.reduce((a,p)=>a+((S.paginas[p.id]||{}).estrelas||0),0);
+const liberada=p=>S.cfg.livre||p.idx===0||!!(S.paginas[PAGINAS[p.idx-1].id]||{}).feita;
+const nTreino=()=>Object.keys(S.treino).length;
+
+function telaHome(){
+  app.innerHTML=`
+  <section class="home">
+    <div class="hero">
+      <div>
+        <span class="selo">JRM • AVENTURAS EDUCATIVAS</span>
+        <h1>Ditado <span>Mágico</span></h1>
+        <p class="lead">A coruja Lumi precisa de palavras bem escritas para encher a poção mágica. <b>Escute</b>, <b>escreva</b> e descubra as regras secretas da escrita!</p>
+        <div class="campos">
+          <label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label>
+          <label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 3º B" value="${esc(S.turma)}"></label>
+        </div>
+        <div class="acoes">
+          <button class="btn ouro grande" data-ir="mapa">Abrir o livro de magias ✨</button>
+          <button class="btn" data-acao="treino" ${nTreino()?'':'disabled'}>📒 Treinar palavras (${nTreino()})</button>
+          <button class="btn" data-ir="criar">✍️ Criar ditado</button>
+          <button class="btn" data-ir="relatorio">📊 Desempenho</button>
+          <button class="btn" data-acao="ajuda">❓ Como jogar</button>
+          <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+        </div>
+      </div>
+      <div class="arte" aria-hidden="true">
+        <div class="letras"><span style="left:8%;top:14%">rr</span><span style="right:10%;top:8%;animation-delay:.6s">qu</span><span style="left:14%;bottom:16%;animation-delay:1.2s">nh</span><span style="right:6%;bottom:22%;animation-delay:1.8s">ç</span><span style="left:46%;top:2%;animation-delay:.9s">ã</span></div>
+        ${lumi()}
+      </div>
+    </div>
+    <div class="info">
+      <div><b>10</b>páginas de magia</div>
+      <div><b>140+</b>palavras com frase</div>
+      <div><b>🔊</b>a voz dita para você</div>
+      <div><b>★ ${totalEst()}/30</b>suas estrelas</div>
+    </div>
+    <p class="rodape">Para o 3º ao 5º ano · Habilidades <b>MS.EF03LP01</b> (R/RR, S/SS, C/QU, G/GU, O/E final, M/N e til), <b>MS.EF03LP03</b> (LH, NH, CH), <b>MS.EF03LP04</b> (acentuação) e <b>MS.EF04LP02</b> (ditongos) · Teclado próprio na tela, sem corretor automático · Progresso salvo neste navegador.${VOZ.ok?'':' <b>Atenção:</b> este navegador não tem leitura em voz alta; use o Chrome ou o Edge, ou peça ao professor para ditar.'}</p>
+  </section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+
+function telaMapa(){
+  const atual=PAGINAS.find(p=>liberada(p)&&!(S.paginas[p.id]||{}).feita);
+  app.innerHTML=`
+  <header class="topo">
+    <button class="btn" data-ir="home" aria-label="Início">←</button>
+    <div class="tit"><h2>Livro de magias</h2><small>Cada página guarda uma regra da escrita</small></div>
+    <span class="gemas">★ ${totalEst()}/30</span>
+    <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+  </header>
+  <section class="mapa">
+    <div class="grade">
+    ${PAGINAS.map(p=>{ const r=S.paginas[p.id]||{}; const lib=liberada(p);
+      return `<button class="pagina ${p.especial?'especial':''} ${atual&&atual.id===p.id?'atual':''}" data-pag="${p.idx}" ${lib?'':'disabled'}>
+        ${lib?'':'<span class="cad">🔒</span>'}
+        <span class="num">PÁGINA ${p.idx+1}</span><h3>${esc(p.titulo)}</h3><span class="ex">${esc(p.ex)}</span>
+        <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}
+    </div>
+    <p class="nota">Cada rodada sorteia ${RODADA} palavras da página, então dá para jogar várias vezes. Professor(a): em ⚙️ dá para liberar todas as páginas.</p>
+  </section>`;
+}
+
+/* ---------- JOGO ---------- */
+let G=null;
+function iniciar(p){
+  if(typeof p==='number') p=PAGINAS[p];
+  G={pag:p, itens:sortear(p), i:0, digitado:[], estado:'escrever', resultados:[], pontos:0, dicaUsada:false, mostrarFoco:false};
+  if(!G.itens.length){ toast('Não há palavras para treinar.'); ir('home'); return; }
+  telaJogo();
+  if(p.regras && Object.keys(p.regras).length) mostrarRegras(true); else ditar(atual());
+}
+const atual=()=>G.itens[G.i];
+function mostrarRegras(comecar){
+  const p=G.pag;
+  abrirModal(`<span class="selo" style="color:#7B5CFF;background:#7B5CFF18">PÁGINA ${p.idx+1} · ${esc(p.hab)}</span>
+    <h2 style="margin-top:10px">${esc(p.titulo)}</h2>
+    <div class="regras">${Object.values(p.regras).map(r=>`<div>${r}</div>`).join('')}</div>
+    <p class="mini">Escute cada palavra, escreva com o teclado e clique em <b>Conferir</b>. Se errar, a Lumi mostra onde foi e você escreve de novo.</p>
+    <div class="acoes"><button class="btn ouro" data-acao="${comecar?'comecar':'fechar'}" data-foco>${comecar?'Começar o ditado ✨':'Voltar ao ditado'}</button></div>`);
+}
+function telaJogo(){
+  const p=G.pag; const it=atual();
+  const titulo = p.id==='custom' ? 'Ditado: '+p.titulo : p.id==='treino' ? 'Caderno de treino' : 'Página '+(p.idx+1)+' · '+p.titulo;
+  const sub = p.id==='custom' ? (p.autor?'Criado por '+p.autor:'Ditado personalizado') : p.id==='treino' ? 'Palavras que você errou antes' : p.hab;
+  const maxPts=G.itens.length*3;
+  app.innerHTML=`
+  <header class="topo">
+    <button class="btn" data-ir="${p.id==='custom'||p.id==='treino'?'home':'mapa'}" aria-label="Voltar">←</button>
+    <div class="tit"><h2>${esc(titulo)}</h2><small>${esc(sub)} · palavra ${G.i+1} de ${G.itens.length}</small></div>
+    ${p.regras&&Object.keys(p.regras).length?'<button class="btn icone" data-acao="regras" aria-label="Ver regras">📖</button>':''}
+    <button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button>
+  </header>
+  <section class="jogo">
+    <div class="palco">
+      ${lumi(G.estado==='certo'?'feliz':'')}
+      <div class="cartao-frase">
+        <div class="frase">${it.frase? esc(it.frase).replace(/~/g,'<span class="lacuna"></span>') : '<i>Escute a palavra e escreva.</i>'}</div>
+        <div class="ouvir">
+          ${VOZ.ok?`<button class="btn claro" data-acao="ouvir">🔊 Ouvir</button><button class="btn claro" data-acao="devagar">🐢 Devagar</button>`
+                  :`<button class="btn claro" data-acao="espiar">👁️ Ver a palavra (3 s)</button>`}
+          <button class="btn claro" data-acao="dica" ${G.dicaUsada||G.estado!=='escrever'?'disabled':''}>💡 Dica</button>
+        </div>
+      </div>
+      ${pocaoSvg(G.pontos/maxPts)}
+    </div>
+    <div class="progresso">${G.itens.map((_,k)=>{ const r=G.resultados[k]; return `<i class="${r===3||r===2?'ok':r===1?'meio':''} ${k===G.i?'agora':''}"></i>`; }).join('')}</div>
+    <div id="retorno"></div>
+  </section>
+  <nav class="teclado ${G.estado==='certo'||G.estado==='copiado'?'trava':''}" aria-label="Teclado">
+    <div class="teclado-in"><div id="escrita"></div><div id="teclado" class="teclas"></div></div>
+  </nav>`;
+  desenharEscrita(); desenharTeclado(); desenharRetorno(); ajustarEspaco();
+}
+function ajustarEspaco(){ const d=$('.teclado'), j=$('.jogo'); if(d&&j) j.style.paddingBottom=(d.offsetHeight+24)+'px'; }
+window.addEventListener('resize',()=>{ if(TELA==='jogo') ajustarEspaco(); });
+function alvoLen(){ return letras(atual().palavra).length; }
+function usaCaixas(){ return !S.cfg.semCaixas || G.estado==='copiar'; }
+function desenharEscrita(pop){
+  const el=$('#escrita'); if(!el) return; const it=atual(); const L=letras(it.palavra);
+  if(usaCaixas()){
+    el.innerHTML=`<div class="caixas" style="--n:${L.length}" aria-label="Sua escrita">${L.map((_,k)=>{ const c=G.digitado[k]||'';
+      const cls=['cx', c?'cheia':'', k===G.digitado.length&&G.estado!=='certo'&&G.estado!=='copiado'?'cursor':'', G.mostrarFoco&&it.foco.includes(k)?'foco':'', (G.estado==='certo'||G.estado==='copiado')?'certa':'', pop&&k===G.digitado.length-1?'pop':''].filter(Boolean).join(' ');
+      return `<div class="${cls}">${esc(c)}</div>`; }).join('')}</div>`;
+  } else {
+    el.innerHTML=`<div class="livre" aria-label="Sua escrita">${esc(G.digitado.join(''))}${G.estado==='escrever'?'<span class="pisca"></span>':''}</div>`;
+  }
+}
+function desenharTeclado(){
+  const t=$('#teclado'); if(!t) return;
+  const linhas = S.cfg.abc ? ['abcdefghij','klmnopqrs','tuvwxyzç'] : ['qwertyuiop','asdfghjklç','zxcvbnm'];
+  const acentos='áâãéêíóôõú';
+  const tecla=(k,cls='')=>`<button class="tecla ${cls}" data-k="${k}" aria-label="${k}">${k}</button>`;
+  let h=linhas.map((l,i)=>`<div class="linha-t">${letras(l).map(k=>tecla(k)).join('')}${i===2?'<button class="tecla apaga" data-k="back" aria-label="Apagar">⌫</button>':''}</div>`).join('');
+  h+=`<div class="linha-t">${letras(acentos).map(k=>tecla(k,'acento')).join('')}</div>`;
+  let acao='';
+  if(G.estado==='escrever'||G.estado==='copiar') acao=`<button class="btn ouro" data-acao="conferir" ${G.digitado.length?'':'disabled'}>✔ Conferir</button>`;
+  else acao=`<button class="btn ouro" data-acao="proxima" data-foco>${G.i<G.itens.length-1?'Próxima palavra ➔':'Ver resultado ✨'}</button>`;
+  t.innerHTML=h+`<div class="acao-principal">${acao}</div>`;
+  $('.teclado').classList.toggle('trava', G.estado==='certo'||G.estado==='copiado');
+}
+function atualizarConferir(){ const b=$('[data-acao="conferir"]'); if(b) b.disabled=!G.digitado.length; }
+function digitar(k){
+  if(!(G.estado==='escrever'||G.estado==='copiar')) return;
+  if(k==='back'){ if(G.digitado.length){ G.digitado.pop(); som('apaga'); } }
+  else { const lim = usaCaixas()? alvoLen() : 22; if(G.digitado.length>=lim){ toast(usaCaixas()?'Todas as caixinhas já estão cheias. Use ⌫ para apagar.':'Palavra muito longa.'); return; } G.digitado.push(k); som('tecla'); }
+  desenharEscrita(k!=='back'); atualizarConferir();
+}
+
+/* alinhamento letra a letra (distância de edição) */
+function alinhar(a,b){
+  const n=a.length,m=b.length, d=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=0;i<=n;i++) d[i][0]=i; for(let j=0;j<=m;j++) d[0][j]=j;
+  for(let i=1;i<=n;i++) for(let j=1;j<=m;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  const ops=[]; let i=n,j=m;
+  while(i>0||j>0){
+    if(i>0&&j>0&&d[i][j]===d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)){ ops.unshift({t:a[i-1]===b[j-1]?'=':'~',a:a[i-1],b:b[j-1],j:j-1}); i--; j--; }
+    else if(i>0&&d[i][j]===d[i-1][j]+1){ ops.unshift({t:'+',a:a[i-1]}); i--; }
+    else { ops.unshift({t:'-',b:b[j-1],j:j-1}); j--; }
+  }
+  return ops;
+}
+function conferir(){
+  const it=atual(); const tent=G.digitado.join(''); const certo=it.palavra;
+  if(G.estado==='copiar'){
+    if(tent===certo){ G.estado='copiado'; som('ok'); faiscas($('#escrita')); telaJogo(); }
+    else { som('erro'); toast('Ainda não. Olhe a palavra com calma e tente de novo.'); G.digitado=[]; desenharEscrita(); atualizarConferir(); }
+    return;
+  }
+  const cat=catDe(it); S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++;
+  if(tent===certo){
+    const pts=G.dicaUsada?2:3; G.resultados[G.i]=pts; G.pontos+=pts; S.gemas+=pts; S.stats[cat].ok++;
+    delete S.treino[certo];
+    salvar(); G.estado='certo'; som('ok'); telaJogo(); faiscas($('#escrita'));
+  } else {
+    G.resultados[G.i]=1; G.pontos+=1; S.gemas+=1;
+    S.treino[certo]={item:[it.palavra,it.frase,it.chave,it.foco.join(',')].join('|'), pag:it.pag||'livre'}; salvar();
+    G.ultimaTentativa=tent; G.estado='copiar'; G.digitado=[]; som('erro'); telaJogo(); const rr=$('#retorno .retorno'); if(rr && innerWidth<760) rr.scrollIntoView({block:'start'});
+  }
+}
+function htmlComparacao(tent, certo, foco){
+  const ops=alinhar(letras(tent),letras(certo));
+  const erradasJ=new Set(ops.filter(o=>o.t==='~'||o.t==='-').map(o=>o.j));
+  const voce=ops.map(o=> o.t==='='?esc(o.a) : o.t==='~'?`<span class="e">${esc(o.a)}</span>` : o.t==='+'?`<span class="x">${esc(o.a)}</span>` : '<span class="falt"></span>').join('');
+  const certa=letras(certo).map((c,j)=> erradasJ.has(j)||foco.includes(j) ? `<span class="${erradasJ.has(j)?'f':''}" style="${!erradasJ.has(j)?'text-decoration:underline;text-decoration-thickness:3px;text-decoration-color:#7B5CFF':''}">${esc(c)}</span>` : esc(c)).join('');
+  return `<div class="comparar"><span class="r">Você escreveu</span><span class="pal">${voce||'<span class="mini">(nada)</span>'}</span><span class="r">Escrita certa</span><span class="pal">${certa}</span></div>`;
+}
+function desenharRetorno(){
+  const r=$('#retorno'); if(!r) return; const it=atual();
+  if(G.estado==='escrever'){
+    r.innerHTML = G.mostrarFoco ? `<div class="retorno"><span class="t">💡 Dica</span>${esc(dicaDe(it))} As caixinhas amarelas mostram onde prestar atenção.</div>` : '';
+    return;
+  }
+  if(G.estado==='certo'){
+    r.innerHTML=`<div class="retorno certo"><span class="t">✨ Muito bem! "${esc(it.palavra)}"</span><span class="regra-txt">${explicacao(it)}</span></div>`; return;
+  }
+  if(G.estado==='copiar'){
+    r.innerHTML=`<div class="retorno errado"><span class="t">Quase! Veja a diferença:</span>${htmlComparacao(G.ultimaTentativa,it.palavra,it.foco)}
+      <span class="regra-txt">${explicacao(it)}</span><p style="margin:8px 0 0"><b>Agora escreva a palavra certinha nas caixinhas.</b></p></div>`; return;
+  }
+  if(G.estado==='copiado'){
+    r.innerHTML=`<div class="retorno certo"><span class="t">Isso! Agora você escreveu "${esc(it.palavra)}" certinho.</span>A palavra foi guardada no seu 📒 caderno de treino para praticar depois.</div>`;
+  }
+}
+function proxima(){
+  if(G.i<G.itens.length-1){ G.i++; G.digitado=[]; G.estado='escrever'; G.dicaUsada=false; G.mostrarFoco=false; telaJogo(); ditar(atual()); }
+  else fim();
+}
+function usarDica(){
+  if(G.dicaUsada||G.estado!=='escrever') return;
+  G.dicaUsada=true; G.mostrarFoco=true;
+  if(S.cfg.semCaixas) toast(dicaDe(atual()));
+  desenharEscrita(); desenharRetorno(); const b=$('[data-acao="dica"]'); if(b) b.disabled=true;
+}
+function fim(){
+  const n=G.itens.length; const primeira=G.resultados.filter(r=>r>=2).length;
+  const frac=primeira/n; let est = frac>=1?3 : frac>=.75?2 : 1;
+  const p=G.pag;
+  if(p.idx!=null && p.id!=='custom' && p.id!=='treino'){ const a=S.paginas[p.id]||{}; S.paginas[p.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; }
+  salvar(); som('fim');
+  const lista=G.itens.map((it,k)=>`<span class="${G.resultados[k]>=2?'ok':'no'}">${G.resultados[k]>=2?'✅':'🔁'} ${esc(it.palavra)}</span>`).join('');
+  const temProx = p.idx!=null && p.idx>=0 && p.idx<PAGINAS.length-1 && p.id!=='custom' && p.id!=='treino';
+  abrirModal(`<h2 style="text-align:center">Poção pronta! ✨</h2>
+    <div style="display:flex;justify-content:center;align-items:center;gap:14px">${lumi('feliz').replace('class="lumi','style="width:90px" class="lumi')}${pocaoSvg(1).replace('class="pocao"','class="pocao" style="width:60px"')}</div>
+    <div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${primeira}/${n}</b>certas de primeira</div><div><b>${G.pontos}</b>gotas de magia</div><div><b>${nTreino()}</b>no caderno de treino</div></div>
+    <div class="lista-pal">${lista}</div>
+    <p class="mini">🔁 = palavra que você corrigiu. Ela fica no caderno de treino até você acertar de primeira.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" data-acao="repetir">↻ Jogar de novo</button>
+      ${nTreino()?'<button class="btn" data-acao="treino">📒 Treinar erros</button>':''}
+      ${temProx?'<button class="btn ouro" data-acao="prox-pag" data-foco>Próxima página ➔</button>':'<button class="btn ouro" data-ir="relatorio" data-foco>📊 Desempenho</button>'}
+    </div>`);
+}
+function iniciarTreino(){
+  const lista=Object.entries(S.treino).map(([w,v])=>{ const [pal,frase,chave,foco]=v.item.split('|'); return {palavra:pal, frase:frase||'', chave:chave||'', foco:(foco||'').split(',').filter(x=>x!=='').map(Number), pag:v.pag==='livre'?null:v.pag}; });
+  if(!lista.length){ toast('Seu caderno de treino está vazio. 🎉'); return; }
+  fecharModal(); TELA='jogo'; pararVoz();
+  iniciar({id:'treino', idx:null, titulo:'Caderno de treino', hab:'Revisão', regras:{}, lista:null, _itens:embaralhar(lista).slice(0,RODADA)});
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(NOME_CAT).filter(c=>S.stats[c]&&S.stats[c].total).map(c=>({c,nome:NOME_CAT[c],hab:HAB_CAT[c],ok:S.stats[c].ok,total:S.stats[c].total,pct:Math.round(100*S.stats[c].ok/S.stats[c].total)})); }
+function textoRel(){
+  const L=linhasRel(); const feitas=PAGINAS.filter(p=>(S.paginas[p.id]||{}).feita).length; const ret=L.filter(l=>l.total>=4&&l.pct<60).map(l=>l.nome);
+  return ['DITADO MÁGICO — Relatório', `Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,
+    `Estrelas: ${totalEst()}/30 · Páginas concluídas: ${feitas}/10`, 'Acertos de primeira, por regra:',
+    ...(L.length?L.map(l=>`- ${l.nome}${l.hab?' ('+l.hab+')':''}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),
+    `Palavras para treinar: ${Object.keys(S.treino).join(', ')||'nenhuma'}`, `Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n');
+}
+function telaRelatorio(){
+  const L=linhasRel(); const feitas=PAGINAS.filter(p=>(S.paginas[p.id]||{}).feita).length; const ret=L.filter(l=>l.total>=4&&l.pct<60);
+  app.innerHTML=`
+  <header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button>
+    <div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div>
+    <button class="btn" data-ir="mapa">📖 Páginas</button></header>
+  <section class="folha">
+    <div class="resumo" style="justify-content:flex-start"><div><b>★ ${totalEst()}/30</b>estrelas</div><div><b>${feitas}/10</b>páginas</div><div><b>${S.gemas}</b>gotas de magia</div></div>
+    <div class="cartao"><h3>Acertos de primeira, por regra</h3>
+      ${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}${l.hab?` <span class="mini">${l.hab}</span>`:''}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas páginas para ver seus resultados aqui.</p>'}
+    </div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>📒 Caderno de treino (${nTreino()})</h3>
+      ${nTreino()?`<div class="lista-pal">${Object.keys(S.treino).map(w=>`<span class="no">${esc(w)}</span>`).join('')}</div><button class="btn ouro" data-acao="treino">Treinar agora</button>`:'<p class="mini">Nenhuma palavra para treinar. 🎉</p>'}
+    </div>
+    <div class="cartao"><h3>Enviar para o professor</h3>
+      <p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ouro" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn claro" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div>
+    </div>
+  </section>`;
+}
+
+/* ---------- CRIAR DITADO ---------- */
+function b64e(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; return decodeURIComponent(escape(atob(s))); }
+function lerListaCriada(txt){
+  return txt.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,20).map(l=>{
+    let [w,frase='']=l.split('|').map(x=>x.trim()); w=w.normalize('NFC').toLocaleLowerCase('pt-BR').replace(/[^a-zà-öø-ÿç]/gi,'');
+    if(frase && !frase.includes('~')){ const re=new RegExp('(^|[^a-zà-öø-ÿç])('+w+')(?=$|[^a-zà-öø-ÿç])','i'); frase=frase.replace(re,(m,a)=>a+'~'); if(!frase.includes('~')) frase=''; }
+    return {palavra:w, frase, chave:'', foco:[], pag:null};
+  }).filter(x=>x.palavra.length>=1);
+}
+function telaCriar(){
+  app.innerHTML=`
+  <header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Criar ditado</h2><small>Monte um ditado e mande o link para a turma ou para um colega</small></div></header>
+  <section class="folha"><div class="cartao">
+    <h3>Uma palavra por linha</h3>
+    <p class="mini">Se quiser, depois da palavra coloque uma barra | e uma frase usando a palavra. Até 20 palavras.</p>
+    <div class="campo"><span>Nome do ditado</span><input id="c-titulo" maxlength="40" placeholder="ex.: Animais do Pantanal"></div>
+    <div class="campo"><span>Criado por</span><input id="c-autor" maxlength="20" value="${esc(S.nome)}"></div>
+    <textarea id="c-lista" placeholder="capivara | A capivara nadou no rio.&#10;tuiuiú | O tuiuiú é a ave símbolo do Pantanal.&#10;jacaré&#10;arara | A arara azul voou alto."></textarea>
+    <p class="mini" id="c-info"></p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px"><button class="btn claro" data-acao="testar">▶️ Testar</button><button class="btn ouro" data-acao="gerar">🔗 Gerar link</button></div>
+    <div id="c-link"></div>
+  </div></section>`;
+  $('#c-lista').oninput=()=>{ const n=lerListaCriada($('#c-lista').value).length; $('#c-info').textContent=n?`${n} palavra(s)`:''; };
+}
+function dadosCriar(){ const raw=$('#c-lista').value; const l=lerListaCriada(raw); if(!l.length){ toast('Escreva pelo menos uma palavra.'); return null; }
+  return {t:$('#c-titulo').value.trim()||'Meu ditado', a:$('#c-autor').value.trim(), w:raw.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,20)}; }
+function paginaCustom(d){ return {id:'custom', idx:null, titulo:d.t||'Ditado', autor:d.a||'', hab:'', regras:{}, lista:lerListaCriada((d.w||[]).join('\n'))}; }
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>
+    ${l('som','Efeitos sonoros','Sons ao digitar e ao acertar.')}
+    ${l('lenta','Voz mais lenta','Bom para quem está começando.')}
+    ${l('abc','Teclado em ordem alfabética','A B C D… em vez do teclado de computador.')}
+    ${l('semCaixas','Modo desafio','Não mostra quantas letras a palavra tem.')}
+    ${l('livre','Liberar todas as páginas','Para o professor escolher a regra da aula.')}
+    ${VOZ.ok?'':'<p class="cartao" style="padding:12px">Este navegador não tem leitura em voz alta. Use o Chrome ou o Edge, ou o professor pode ditar e o estudante escreve.</p>'}
+    <div class="acoes"><button class="btn ouro" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="regras">
+    <div>🔊 <b>Escute</b> a palavra. A Lumi fala a palavra, uma frase com ela e a palavra de novo. Use 🐢 para ouvir bem devagar.</div>
+    <div>⌨️ <b>Escreva</b> com o teclado da tela (ou do computador) e clique em <b>Conferir</b>.</div>
+    <div>🔍 <b>Errou?</b> A Lumi mostra onde foi, explica a regra e você escreve a palavra certinha. Ela vai para o 📒 caderno de treino.</div>
+    <div>⭐ <b>Estrelas</b>: todas certas de primeira = 3 estrelas. Com dica, a palavra vale 2 gotas em vez de 3.</div>
+    <div>✍️ Em <b>Criar ditado</b> você monta uma lista e gera um link para os colegas.</div></div>
+    <div class="acoes"><button class="btn ouro" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const ok=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');ok();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(ok).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const irB=e.target.closest('[data-ir]'); if(irB){ if(modalAberto()) fecharModal(); ir(irB.dataset.ir); return; }
+  const pg=e.target.closest('[data-pag]'); if(pg&&!pg.disabled){ ir('jogo',+pg.dataset.pag); return; }
+  const tk=e.target.closest('[data-k]'); if(tk&&G){ digitar(tk.dataset.k); return; }
+  const cf=e.target.closest('[data-cfg]'); if(cf){ const k=cf.dataset.cfg; S.cfg[k]=!S.cfg[k]; cf.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='jogo'&&G){ desenharEscrita(); desenharTeclado(); } if(TELA==='mapa') telaMapa(); return; }
+  const ac=e.target.closest('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='comecar'){ fecharModal(); ditar(atual()); }
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='regras') mostrarRegras(false);
+  else if(a==='ouvir') ditar(atual());
+  else if(a==='devagar') ditar(atual(),'devagar');
+  else if(a==='espiar'){ const el=$('#retorno'); el.innerHTML=`<div class="retorno"><span class="pal">${esc(atual().palavra)}</span></div>`; setTimeout(()=>desenharRetorno(),3000); }
+  else if(a==='dica') usarDica();
+  else if(a==='conferir') conferir();
+  else if(a==='proxima') proxima();
+  else if(a==='repetir'){ fecharModal(); const p=G.pag; if(p.id==='treino') iniciarTreino(); else { TELA='jogo'; iniciar(p); } }
+  else if(a==='prox-pag'){ fecharModal(); const n=G.pag.idx+1; ir(liberada(PAGINAS[n])?'jogo':'mapa', n); }
+  else if(a==='treino') iniciarTreino();
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+  else if(a==='testar'){ const d=dadosCriar(); if(d){ TELA='jogo'; iniciar(paginaCustom(d)); } }
+  else if(a==='gerar'){ const d=dadosCriar(); if(!d) return; const url=location.href.split('#')[0]+'#d='+b64e(JSON.stringify(d)); $('#c-link').innerHTML=`<div class="link-box">${esc(url)}</div><div style="margin-top:10px"><button class="btn ouro" id="c-copiar">📋 Copiar link</button></div>`; $('#c-copiar').onclick=()=>copiar(url); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()){ fecharModal(); return; }
+  if(TELA!=='jogo'||!G||modalAberto()) return;
+  const f=document.activeElement; if(f&&/INPUT|TEXTAREA/.test(f.tagName)) return;
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  if(e.key==='Enter'){ e.preventDefault(); if(G.estado==='escrever'||G.estado==='copiar'){ if(G.digitado.length) conferir(); } else proxima(); return; }
+  if(e.key==='Backspace'){ e.preventDefault(); digitar('back'); return; }
+  if(e.key.length===1 && /^[a-zà-öø-ÿç]$/i.test(e.key)){ e.preventDefault(); digitar(e.key.toLocaleLowerCase('pt-BR')); }
+});
+
+/* ---------- INÍCIO ---------- */
+(function(){
+  const h=location.hash;
+  if(h.startsWith('#d=')){ try{ const d=JSON.parse(b64d(h.slice(3))); if(d&&Array.isArray(d.w)&&d.w.length){ TELA='jogo'; telaHome(); iniciar(paginaCustom(d)); return; } }catch(e){ console.warn('Link de ditado inválido'); } }
+  telaHome();
+})();
+</script>
+</body>
+</html>

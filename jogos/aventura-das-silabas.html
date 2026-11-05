@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aventura das Sílabas e Frases</title>
+  
+  <!-- Tailwind CSS para os estilos visuais -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Bibliotecas React para o funcionamento do jogo -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel para traduzir o código diretamente no navegador -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+
+    // --- SISTEMA DE ÁUDIO OTIMIZADO ---
+    let audioCtx = null;
+    const tocarSom = (tipo, ativo) => {
+      if (!ativo) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        const agora = audioCtx.currentTime;
+        
+        if (tipo === 'acerto') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, agora);
+          osc.frequency.exponentialRampToValueAtTime(880, agora + 0.1);
+          gain.gain.setValueAtTime(0.1, agora);
+          gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+          osc.start(agora);
+          osc.stop(agora + 0.3);
+        } else if (tipo === 'erro') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(300, agora);
+          osc.frequency.exponentialRampToValueAtTime(200, agora + 0.2);
+          gain.gain.setValueAtTime(0.1, agora);
+          gain.gain.exponentialRampToValueAtTime(0.01, agora + 0.3);
+          osc.start(agora);
+          osc.stop(agora + 0.3);
+        } else if (tipo === 'vitoria') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, agora);
+          osc.frequency.setValueAtTime(659.25, agora + 0.1);
+          osc.frequency.setValueAtTime(783.99, agora + 0.2);
+          osc.frequency.setValueAtTime(1046.50, agora + 0.3);
+          gain.gain.setValueAtTime(0.1, agora);
+          gain.gain.linearRampToValueAtTime(0, agora + 0.6);
+          osc.start(agora);
+          osc.stop(agora + 0.6);
+        }
+      } catch (e) {
+        console.error("Erro ao tocar som", e);
+      }
+    };
+
+    // --- BANCO DE DADOS CORRIGIDO ---
+    const bancoSimplesBruto = [
+      "🐱||TO|GA", "🎂||LO|BO", "🐸||PO|SA", "🦆||TO|PA", "🎲||DO|DA", "⚽||LA|BO", "🦭||CA|FO", "🐁||TO|RA", 
+      "🦁|LE||ÃO|ÃO,AM,AN", "🪑||SA|ME", "🗑️||XO|LI", "🔪||CA|FA", "🧤||VA|LU", "🥤||CO|SU", "🐄||CA|VA", 
+      "🪁||PA|PI", "🧴||LA|CO", "☝️||DO|DE", "🔥||GO|FO", "🐺||BO|LO", "🧳||LA|MA", "🪀||LA|MO", "🛏️||MA|CA", 
+      "🏠||SA|CA", "🐦|BI||CO|CO,CA,CU", "👢||TA|BO", "🔌||BO|CA", "🥛||PO|CO", "🧚||DA|FA", "🐓||LO|GA", 
+      "🧊||LO|GE|GE,GI,GA", "🚙||PE|JI", "🔎||PA|LU", "🗺️||PA|MA", "🌿||TO|MA", "🧱||RO|MU", "🛸||VE|NA", 
+      "🌨️||VE|NE", "🪶||NA|PE", "⚖️||SO|PE", "🎳||NO|PI", "🎡||DA|RO", "🌿||MO|RA", "🛍️||CO|SA", "✉️||LO|SE", 
+      "🔔||NO|SI", "🛋️||FÁ|SO|SO,SA,SU", "🏠|TE||TO", "🍅|TO|TE|MA", "🦜|TU|NO|CA", "🐻||SO|UR|UR,AR,ER", 
+      "🏺||SO|VA", "🕯️||LA|VE", "🧣||LE|XA", "☕|XÍ|RA|CA|CA,CO,CU", "🦓||BRA|ZE|ZE,ZA,ZO", "0️⃣||RO|ZE", 
+      "📯|BU|NA|ZI|ZI,ZE,ZA", "⛺|CA|NA|BA", "🔒|CA|DO|DEA|DEA,DIO,DIA", "💇|CA|LO|BE", "🐎|CA|LO|VA", 
+      "🥥|CO|DA|CA", "🦉|CO|JA|RU", "🗄️|GA|TA|VE", "🦒|GI|FA|RA", "🪟|JA|LA|NE", "🐒|MA|CO|CA", "🥘|PA|LA|NE", 
+      "🏸|PE|CA|TE", "🍦|PI|LÉ|CO|CO,CA,CU", "🧴|PO|DA|MA", "🥗|SA|DA|LA", "👞|SA|TO|PA", "🕌|TA|TE|PE", 
+      "🎸|VIO||LÃO|LÃO,LAM,LAN", "🧅|CE|LA|BO|BO,BA,BE", "🥕|CE|RA|NOU|NOU,NAU,NEU", "🍌|BA|NA|NA|NA,NO,NE", 
+      "🍉|ME|CIA|LAN|LAN,LEN,LIN", "🍇||VA|U|U,A,O", "🍍|A|CAXI|BA|BA,BO,BE", "🍓|MO|GO|RAN|RAN,REN,RIN", 
+      "🍐||RA|PE|PE,PA,PO", "🍋|LI||MÃO|MÃO,MAN,MAM", "🥥||CO|CO|CO,CA,CU", "🥝||WI|KI|KI,KA,KO", 
+      "🍑|PÊ|GO|SE", "🍒|CE|JA|RE|RE,RA,RO", "🍎|MA||ÇÃ|ÇÃ,ÇA,ÇO", "✈️|A|IÃO|V|V,B,D", 
+      "🚁|HELI|TERO|CÓP|CÓP,CÁP,CUP", "🛳️|NA|O|VI|VI,VA,VO", "🚀|FO|TE|GUE|GUE,GUI,GUA", "🛶|CA|A|NO|NO,NA,NU", 
+      "⛵|BAR||CO|CO,CA,CU", "🛸|DIS|VOADOR|CO|CO,CA,CU", "👕|CA|SA|MI|MI,MA,ME", "👖|CAL||ÇA|ÇA,ÇO,ÇU", 
+      "👗|VES|DO|TI|TI,TA,TE", "🧦|MEI||A|A,E,O", "🧥|CA|CO|SA|SA,SE,SO", "👒|CHA||PÉU|PÉU,PAU,POU", 
+      "👑|CO|A|RO|RO,RA,RE", "☀️||L|SO|SO,SA,SU", "🌙||A|LU|LU,LA,LO", "☁️|NU||VEM|VEM,VAM,VIM", "❄️||VE|NE", 
+      "💧|Á||GUA|GUA,GOA,GEA", "🌊|ON||DA|DA,DO,DE", "⛰️|MON|NHA|TA|TA,TE,TO", "👁️||LHO|O|O,A,E", 
+      "👂|O|LHA|RE|RE,RA,RO", "👃|NA||RIZ|RIZ,REZ,RAZ", "👄|BO||CA|CA,CO,CU", "🦷|DEN||TE|TE,TA,TO", 
+      "👅|LÍN||GUA|GUA,GOA,GIA", "🦵|PER||NA|NA,NO,NE", "🦶|||PÉ|PÉ,PA,PO", "👨|||PAI|PAI,PEI,PAU", 
+      "👩|||MÃE|MÃE,MÃO,MIA", "👦|ME|NO|NI|NI,NA,NO", "👧|ME|NA|NI|NI,NA,NO", "👶|BE||BÊ|BÊ,BA,BO", 
+      "👴|A||VÔ|VÔ,VA,VE", "👵|A||VÓ|VÓ,VA,VE", "👨‍👩‍👦|FA|LIA|MÍ|MÍ,MÁ,MÉ"
+    ];
+
+    const bancoCompostosBruto = [
+      "🧙‍♀️||XA|BRU|BRA,BRU,BLU", "🍽️||TO|PRA|PLA,PAR,PRA", "🌸||R|FLO|FLO,FRO,FOL", "🚂||M|TRE|TRA,TER,TRE", 
+      "🚲|BI|CLETA|CI|CI,SI,CHI", "🐉||GÃO|DRA|DAR,DRA,DLA", "🐍|CO||BRA|BRA,BLA,BAR", "📖|LI||VRO|VRO,VLO,VOR", 
+      "🐯|TI||GRE|GLE,GER,GRE", "🪴||TA|PLAN|PRAN,PLAN,PAN", "🌎||BO|GLO|GRO,GOL,GLO", "🍎||TA|FRU|FLU,FUR,FRU", 
+      "🪟|VI||DRO|DLO,DOR,DRO", "🪨|PE||DRA|DLA,DAR,DRA", "🚜||TOR|TRA|TLA,TAR,TRA", "⭐|ES|LA|TRE|TLE,TER,TRE", 
+      "🎁||SENTE|PRE|PLE,PER,PRE", "🌧️||MA|CLI|CRI,CIL,CLI", "🗝️|CHA||VE|VE,VA,VI", "👑|CO|A|RO|RO,LO,RRO", 
+      "💪|BRA||ÇO|BRA,BLA,BAR", "🌺||VO|CRA|CLA,CAR,CRA", "👶||DA|FRAL|FRAL,FLAL,FARL", "🚧||DE|GRA|GRA,GLA,GAR", 
+      "🏖️||IA|PRA|PRA,PLA,PAR", "🍀||VO|TRE|TRE,TLE,TER", "👚||SA|BLU|BLU,BRU,BUL", "🥚||RA|CLA|CLA,CRA,CAL", 
+      "🏹||CHA|FLE|FLE,FRE,FEL", "🛑||CA|PLA|PLA,PRA,PAL", "🏃|AT|TA|LE|LE,RE,LHE", "🪹|NI||NHO|NHO,LHO,MHO", 
+      "🌽|MI||LHO|LHO,NHO,RHO", "☔||VA|CHU|CHU,XU,SU", "🐶|CA|RO|CHOR|CHOR,COR,XOR", "💰|DI|RO|NHEI|NHEI,NEI,LHEI", 
+      "🤡|PA|ÇO|LHA|LHA,NHA,CHA", "🍼|CHU|TA|PE|PE,BE,DE", "💎||CO|BRIN|BRIN,BLIN,BIRN", "🪵||CO|TRON|TRON,TLON,TORN", 
+      "🍗||GO|FRAN|FRAN,FLAN,FARN", "⛪|I|JA|GRE|GRE,GLE,GER", "⬛||TO|PRE|PRE,PLE,PER", "⬜||CO|BRAN|BRAN,BLAN,BARN", 
+      "🧊||SO|GROS|GROS,GLOS,GORS", "🥶||O|FRI|FRI,FLI,FIR", "🔨||GO|PRE|PRE,PLE,PER", "🧁||ME|CRE|CRE,CLE,CER", 
+      "⛪|PA||DRE|DRE,DLE,DER", "🟩|QUA|DO|DRA|DRA,DLA,DAR", "😢|PO||BRE|BRE,BLE,BER", "🛤️||LHA|TRI|TRI,TLI,TIR", 
+      "🦗||LO|GRI|GRI,GLI,GIR", "🪈||TA|FLAU|FLAU,FRAU,FALU", "🐑|O|VE|LHA|LHA,NHA,CHA", "🕷️|A|RA|NHA|NHA,LHA,MHA", 
+      "🎒|MO|LA|CHI|CHI,XI,CI", "🍳||GIDEIRA|FRI|FRI,FLI,FIR", "🚁|HELI|TERO|CÓP|CÓP,CÁP,CUP", "🏰||TELO|CAS|CAS,CAZ,CAX", 
+      "🦇||CEGO|MOR|MOR,MUL,MUR", "🛹||TE|SKA|SKA,SCA,ESCA", "🎭|TEA||TRO|TRO,TLO,TOR", "🎨||TURA|PIN|PIN,PIM,PEN", 
+      "💡||PADA|LÂM|LÂM,LAN,LAM", "🚿||VEIRO|CHU|CHU,XU,SU", "🛁|BA|RA|NHEI|NHEI,LHEI,MEI", "🚽||VADA|PRI|PRI,PLI,PIR", 
+      "🧻|PA||PEL|PEL,BEL,MEL", "🪥||COVA|ES|ES,EX,EZ", "🧴||PU|XAM|XAM,CHAM,XAN", "🧹||SOURA|VAS|VAS,VAZ,VAX", 
+      "🧽|ES|JA|PON|PON,POM,PUM", "🧺||TO|CES|CES,CEZ,SES", "🗑️|LI|RA|XEI|XEI,CHEI,JEI", "🪣||DE|BAL|BAL,BAU,BOL"
+    ];
+
+    const bancoFrasesBruto = [
+      "O gato bebe leite.", "A menina gosta de ler.", "Nós vamos para a escola.", "O sol brilha muito hoje.", 
+      "A bola é azul.", "Eu gosto de maçã.", "A borboleta voa alto.", "O carro é muito rápido.", 
+      "A casa tem um quintal.", "O macaco come banana.", "A abelha faz mel doce.", "O peixe nada no rio.", 
+      "A flor tem um cheiro bom.", "Eu leio um livro legal.", "O cachorro late muito alto.", 
+      "O pássaro canta na árvore.", "A vaca dá leite fresco.", "O rato fugiu do gato.", 
+      "A formiga trabalha todo dia.", "A aranha tece a teia.", "O sapo pula na lagoa.", "A cobra rasteja no chão.", 
+      "O leão ruge na selva.", "O tigre é muito forte.", "O elefante tem uma tromba.", "O urso gosta de mel.", 
+      "O cavalo corre no pasto.", "A galinha bota ovo branco.", "O galo canta de manhã.", "O pato nada na lagoa.", 
+      "O pintinho pia o dia todo.", "O porco vive no chiqueiro.", "A ovelha tem lã macia.", 
+      "O coelho come muita cenoura.", "A tartaruga anda devagar.", "O jacaré vive na água.", "O tubarão nada no mar.", 
+      "A baleia é muito grande.", "O polvo tem muitos braços.", "O menino joga bola fora.", 
+      "A menina brinca de boneca.", "As crianças correm no parque.", "Eles jogam futebol no campo.", 
+      "Eu pulo corda com meus amigos.", "Ela anda de bicicleta na rua.", "Nós soltamos pipa no vento.", 
+      "Ele brinca com o carrinho.", "Eu monto o quebra cabeça.", "Nós desenhamos com lápis de cor.", 
+      "Ela pinta um quadro bonito.", "Ele lê um livro de histórias.", "Nós ouvimos uma música legal.", 
+      "Eu canto uma canção feliz.", "Ela dança com a música.", "Nós assistimos a um filme.", 
+      "Ele dorme na cama quente.", "Eu acordo cedo todo dia.", "Ela escova os dentes logo.", "O céu é muito azul.", 
+      "As nuvens são bem brancas.", "O sol aquece a terra.", "A lua brilha de noite.", "As estrelas piscam no céu.", 
+      "A chuva molha as plantas.", "O vento sopra bem forte.", "A neve é muito fria.", "O dia está muito ensolarado.", 
+      "A noite está muito escura.", "A árvore tem folhas verdes.", "A grama é macia e verde.", 
+      "A fruta é doce e suculenta.", "A maçã é muito vermelha.", "A banana é amarela e doce.", 
+      "A laranja tem muito suco.", "A uva é roxa e pequena.", "O morango é vermelho e gostoso.", 
+      "A melancia é grande e pesada.", "O bolo é de chocolate.", "O pão é macio e quentinho.", 
+      "O queijo é amarelo e saboroso.", "O ovo é frito ou cozido.", "O arroz é branco e soltinho.", 
+      "O feijão é muito nutritivo.", "A carne é assada ou cozida.", "A salada tem folhas verdes.", 
+      "A sopa é quente e gostosa.", "A água é muito importante.", "O leite é bom para os ossos.", 
+      "O suco é feito de frutas.", "O café é quente e escuro.", "O chá é feito com ervas.", 
+      "O ônibus leva muita gente.", "O caminhão carrega muitas coisas.", "A moto é muito rápida.", 
+      "A bicicleta tem duas rodas.", "O avião voa no céu.", "O navio navega no mar.", "O trem anda no trilho.", 
+      "A casa tem muitas portas.", "A janela está bem aberta.", "A mesa é feita de madeira.", 
+      "A cadeira é para sentar.", "A cama é macia e grande.", "O sofá é muito confortável.", 
+      "A televisão mostra muitas coisas.", "O rádio toca muita música.", "O computador é muito útil.", 
+      "O telefone serve para falar.", "O caderno é para escrever.", "O lápis é para desenhar.", 
+      "A borracha apaga o erro.", "A caneta escreve com tinta.", "A tesoura corta o papel.", 
+      "A cola junta as partes.", "A mochila guarda o material.", "A escola ensina muitas coisas.", 
+      "O professor ensina os alunos.", "Eu amo a minha família."
+    ];
+
+    const decodificarSilabas = (listaStrings) => {
+      return listaStrings.map(item => {
+        const p = item.split('|');
+        const correta = p[3].trim();
+        let opcoes = p[4] ? p[4].split(',').map(s => s.trim()) : [];
+
+        if (opcoes.length === 0) {
+          const vogais = ['A', 'E', 'I', 'O', 'U'];
+          const ultima = correta.slice(-1);
+          const base = correta.slice(0, -1);
+          let fakeVogais = vogais.filter(v => v !== ultima).sort(() => 0.5 - Math.random());
+          opcoes = [correta, base + fakeVogais[0], base + fakeVogais[1]];
+        }
+
+        opcoes = opcoes.sort(() => 0.5 - Math.random());
+
+        return { 
+          emoji: p[0], 
+          inicio: p[1] || '', 
+          fim: p[2] || '', 
+          correta, 
+          opcoes, 
+          palavra: `${p[1]||''}${correta}${p[2]||''}` 
+        };
+      });
+    };
+
+    const decodificarFrases = (listaStrings) => {
+      return listaStrings.map(frase => {
+        const palavras = frase.split(' ');
+        const baralhadas = [...palavras].sort(() => 0.5 - Math.random());
+        return { palavras, baralhadas };
+      });
+    };
+
+    const bancoSimples = decodificarSilabas(bancoSimplesBruto);
+    const bancoCompostos = decodificarSilabas(bancoCompostosBruto);
+    const bancoFrases = decodificarFrases(bancoFrasesBruto);
+
+    const sortearItens = (array, quantidade) => {
+      const embaralhado = [...array].sort(() => 0.5 - Math.random());
+      return embaralhado.slice(0, quantidade);
+    };
+
+    function App() {
+      const [telaAtual, setTelaAtual] = useState('menu'); 
+      const [perguntasRodada, setPerguntasRodada] = useState([]);
+      const [indicePergunta, setIndicePergunta] = useState(0);
+      
+      const [pontuacaoRodada, setPontuacaoRodada] = useState(0);
+      const [pontuacaoGlobal, setPontuacaoGlobal] = useState(0);
+      const [somAtivado, setSomAtivado] = useState(true);
+      const [pontosAnimacao, setPontosAnimacao] = useState(false);
+      const [isFullScreen, setIsFullScreen] = useState(false);
+      const [mensagemAlerta, setMensagemAlerta] = useState(null);
+
+      const [feedback, setFeedback] = useState(null); 
+      
+      const [palavrasDisponiveis, setPalavrasDisponiveis] = useState([]);
+      const [fraseConstruida, setFraseConstruida] = useState([]);
+
+      useEffect(() => {
+        const handleFullScreenChange = () => {
+          setIsFullScreen(!!document.fullscreenElement);
+        };
+        document.addEventListener('fullscreenchange', handleFullScreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+      }, []);
+
+      const toggleFullScreen = () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Erro ao entrar em tela cheia: ${err.message}`);
+            setMensagemAlerta("A tela cheia pode estar bloqueada neste navegador.");
+            setTimeout(() => setMensagemAlerta(null), 3000);
+          });
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      };
+
+      const iniciarJogo = (modo) => {
+        let selecionadas = [];
+        if (modo === 'simples') selecionadas = sortearItens(bancoSimples, 10);
+        else if (modo === 'compostas') selecionadas = sortearItens(bancoCompostos, 10);
+        else if (modo === 'frases') selecionadas = sortearItens(bancoFrases, 7); 
+
+        setPerguntasRodada(selecionadas);
+        setTelaAtual(modo);
+        setIndicePergunta(0);
+        setPontuacaoRodada(0);
+        setFeedback(null);
+        
+        if (modo === 'frases') prepararPerguntaFrase(0, selecionadas);
+      };
+
+      const prepararPerguntaFrase = (indice, perguntas = perguntasRodada) => {
+        if (perguntas[indice]) {
+          const baralhadasNovamente = [...perguntas[indice].baralhadas].sort(() => 0.5 - Math.random());
+          setPalavrasDisponiveis(baralhadasNovamente);
+          setFraseConstruida([]);
+        }
+      };
+
+      const animarPontos = () => {
+        setPontosAnimacao(true);
+        setTimeout(() => setPontosAnimacao(false), 1000);
+      };
+
+      const verificarSilaba = (silabaSelecionada, silabaCorreta) => {
+        if (silabaSelecionada === silabaCorreta) {
+          tocarSom('acerto', somAtivado);
+          setFeedback('correto');
+          setPontuacaoRodada(prev => prev + 10);
+          setPontuacaoGlobal(prev => prev + 10);
+          animarPontos();
+        } else {
+          tocarSom('erro', somAtivado);
+          setFeedback('incorreto');
+        }
+      };
+
+      const proximaPerguntaSilaba = () => {
+        if (indicePergunta + 1 < perguntasRodada.length) {
+          setIndicePergunta(indicePergunta + 1);
+          setFeedback(null);
+        } else {
+          tocarSom('vitoria', somAtivado);
+          setTelaAtual('fim');
+        }
+      };
+
+      const moverParaConstruida = (palavra, index) => {
+        const novasDisponiveis = [...palavrasDisponiveis];
+        novasDisponiveis.splice(index, 1);
+        setPalavrasDisponiveis(novasDisponiveis);
+        setFraseConstruida([...fraseConstruida, palavra]);
+      };
+
+      const moverParaDisponivel = (palavra, index) => {
+        const novaConstruida = [...fraseConstruida];
+        novaConstruida.splice(index, 1);
+        setFraseConstruida(novaConstruida);
+        setPalavrasDisponiveis([...palavrasDisponiveis, palavra]);
+      };
+
+      const desfazerUltimaPalavra = () => {
+        if (fraseConstruida.length > 0) {
+          const index = fraseConstruida.length - 1;
+          const palavra = fraseConstruida[index];
+          moverParaDisponivel(palavra, index);
+        }
+      };
+
+      const verificarFrase = () => {
+        const fraseCorreta = perguntasRodada[indicePergunta].palavras.join(' ');
+        const fraseAtual = fraseConstruida.join(' ');
+
+        if (fraseAtual === fraseCorreta) {
+          tocarSom('acerto', somAtivado);
+          setFeedback('correto');
+          setPontuacaoRodada(prev => prev + 20); 
+          setPontuacaoGlobal(prev => prev + 20);
+          animarPontos();
+        } else {
+          tocarSom('erro', somAtivado);
+          setFeedback('incorreto');
+          setTimeout(() => {
+            setFeedback(null);
+            prepararPerguntaFrase(indicePergunta);
+          }, 2500);
+        }
+      };
+
+      const proximaPerguntaFrase = () => {
+        if (indicePergunta + 1 < perguntasRodada.length) {
+          setIndicePergunta(indicePergunta + 1);
+          setFeedback(null);
+          prepararPerguntaFrase(indicePergunta + 1);
+        } else {
+          tocarSom('vitoria', somAtivado);
+          setTelaAtual('fim');
+        }
+      };
+
+      const Header = () => (
+        <div className="fixed top-0 left-0 w-full p-4 flex justify-between items-center z-50 pointer-events-none">
+          <div className="flex gap-4 pointer-events-auto">
+            {telaAtual !== 'menu' && (
+              <button 
+                onClick={() => setTelaAtual('menu')}
+                className="bg-white hover:bg-gray-100 text-blue-600 py-3 px-6 rounded-xl font-extrabold shadow-lg transition-transform transform hover:scale-105 border-4 border-blue-300 cursor-pointer"
+              >
+                ← Voltar ao Menu
+              </button>
+            )}
+            <div className="bg-white py-2 px-6 rounded-xl font-bold shadow-lg border-4 border-yellow-300 text-yellow-600 flex items-center gap-2 relative">
+              <span className="text-xl">⭐ Global: {pontuacaoGlobal}</span>
+              {pontosAnimacao && <span className="absolute -bottom-8 left-4 text-green-600 font-extrabold text-xl animate-bounce">+ Pontos!</span>}
+            </div>
+          </div>
+          
+          <div className="flex gap-3 pointer-events-auto">
+            <button 
+              onClick={toggleFullScreen}
+              className="bg-white hover:bg-gray-100 text-gray-700 p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 border-4 border-gray-200 cursor-pointer flex items-center justify-center w-14 h-14"
+              title={isFullScreen ? "Sair da tela cheia" : "Tela cheia"}
+            >
+              {isFullScreen ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+              )}
+            </button>
+            <button 
+              onClick={() => setSomAtivado(!somAtivado)}
+              className="bg-white hover:bg-gray-100 text-3xl p-3 rounded-full shadow-lg transition-transform transform hover:scale-110 border-4 border-gray-200 cursor-pointer flex items-center justify-center w-14 h-14"
+              title={somAtivado ? "Desativar Som" : "Ativar Som"}
+            >
+              {somAtivado ? '🔊' : '🔇'}
+            </button>
+          </div>
+        </div>
+      );
+
+      const renderizarMenu = () => (
+        <div className="flex flex-col items-center justify-center h-full space-y-6 text-center pt-24 pb-8">
+          <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-lg w-full border-4 border-blue-300 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-green-400 via-blue-400 to-purple-400"></div>
+            <h1 className="text-4xl font-extrabold text-blue-600 mb-2 mt-4">Aventura das Palavras</h1>
+            <p className="text-gray-600 mb-8 text-lg">Milhares de combinações! Escolha sua aventura:</p>
+            
+            <div className="space-y-5">
+              <button onClick={() => iniciarJogo('simples')} className="w-full py-5 px-6 bg-green-400 hover:bg-green-500 text-white font-bold text-3xl rounded-2xl shadow-md transition-transform transform hover:scale-105 border-b-4 border-green-600 cursor-pointer">
+                🧩 Sílabas Simples
+              </button>
+              <button onClick={() => iniciarJogo('compostas')} className="w-full py-5 px-6 bg-yellow-400 hover:bg-yellow-500 text-white font-bold text-3xl rounded-2xl shadow-md transition-transform transform hover:scale-105 border-b-4 border-yellow-600 cursor-pointer">
+                ⭐ Sílabas Compostas
+              </button>
+              <button onClick={() => iniciarJogo('frases')} className="w-full py-5 px-6 bg-purple-400 hover:bg-purple-500 text-white font-bold text-3xl rounded-2xl shadow-md transition-transform transform hover:scale-105 border-b-4 border-purple-600 cursor-pointer">
+                📝 Formar Frases
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
+      const renderizarJogoSilabas = () => {
+        if (!perguntasRodada.length) return null;
+        const pergunta = perguntasRodada[indicePergunta];
+
+        return (
+          <div className="flex flex-col items-center justify-center h-full pt-24 pb-8 px-4">
+            <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-2xl w-full text-center border-4 border-blue-300 relative">
+              <div className="flex justify-between items-center mb-6 text-gray-500 font-bold bg-gray-100 p-3 rounded-xl">
+                <span>Rodada {indicePergunta + 1} de {perguntasRodada.length}</span>
+                <span className="text-blue-500 text-xl">Pontos da Rodada: {pontuacaoRodada}</span>
+              </div>
+
+              <div className="text-8xl mb-6 animate-bounce">{pergunta.emoji}</div>
+              
+              <div className="flex justify-center items-center gap-4 mb-10 text-6xl font-extrabold tracking-widest text-gray-800 uppercase flex-wrap">
+                {pergunta.inicio && <span>{pergunta.inicio}</span>}
+                
+                <div className={`min-w-[120px] px-4 h-24 flex items-center justify-center border-b-8 border-dashed rounded-2xl
+                  ${feedback === 'correto' ? 'border-green-500 text-green-500 bg-green-50' : 
+                    feedback === 'incorreto' ? 'border-red-500 text-red-500 bg-red-50' : 'border-blue-400 text-blue-600 bg-blue-50 shadow-inner'}`}
+                >
+                  {feedback === 'correto' ? pergunta.correta : '?'}
+                </div>
+                
+                {pergunta.fim && <span>{pergunta.fim}</span>}
+              </div>
+
+              {!feedback && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {pergunta.opcoes.map((opcao, i) => (
+                    <button
+                      key={i}
+                      onClick={() => verificarSilaba(opcao, pergunta.correta)}
+                      className="py-6 bg-gradient-to-b from-blue-100 to-blue-200 hover:from-blue-200 hover:to-blue-300 text-blue-800 font-bold text-5xl rounded-2xl shadow-lg transition-transform transform hover:-translate-y-2 border-2 border-blue-400 uppercase cursor-pointer"
+                    >
+                      {opcao}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {feedback === 'correto' && (
+                <div className="animate-pulse">
+                  <p className="text-4xl font-bold text-green-500 mb-6">🎉 Muito bem!</p>
+                  <button onClick={proximaPerguntaSilaba} className="py-4 px-10 bg-green-500 hover:bg-green-600 text-white font-bold text-3xl rounded-2xl shadow-lg border-b-4 border-green-700 cursor-pointer">
+                    Próxima ➔
+                  </button>
+                </div>
+              )}
+
+              {feedback === 'incorreto' && (
+                <div>
+                  <p className="text-3xl font-bold text-red-500 mb-6">Ops! Tente outra vez.</p>
+                  <button onClick={() => setFeedback(null)} className="py-3 px-8 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-2xl rounded-2xl border-b-4 border-gray-400 cursor-pointer">
+                    Tentar Novamente
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      const renderizarJogoFrases = () => {
+        if (!perguntasRodada.length) return null;
+
+        return (
+          <div className="flex flex-col items-center justify-center h-full pt-24 pb-8 px-4">
+            <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-4xl w-full text-center border-4 border-purple-300">
+              <div className="flex justify-between items-center mb-6 text-gray-500 font-bold bg-gray-100 p-3 rounded-xl">
+                <span>Frase {indicePergunta + 1} de {perguntasRodada.length}</span>
+                <span className="text-purple-500 text-xl">Pontos da Rodada: {pontuacaoRodada}</span>
+              </div>
+
+              <h2 className="text-3xl font-bold text-purple-700 mb-6">Ordene as palavras para formar a frase:</h2>
+
+              <div className="min-h-[140px] p-6 bg-purple-50 rounded-2xl border-4 border-dashed border-purple-400 mb-4 flex flex-wrap gap-4 justify-center items-center shadow-inner relative">
+                {fraseConstruida.length === 0 && (
+                  <span className="text-purple-300 text-2xl font-medium">Sua frase vai aparecer aqui...</span>
+                )}
+                {fraseConstruida.map((palavra, i) => (
+                  <button
+                    key={i}
+                    onClick={() => !feedback && moverParaDisponivel(palavra, i)}
+                    className="py-4 px-6 bg-gradient-to-b from-purple-500 to-purple-600 text-white font-bold text-3xl rounded-xl shadow-md hover:from-purple-600 hover:to-purple-700 transition-colors transform hover:-translate-y-1 cursor-pointer"
+                    disabled={feedback === 'correto'}
+                    title="Clique para devolver a palavra"
+                  >
+                    {palavra}
+                  </button>
+                ))}
+              </div>
+
+              {fraseConstruida.length > 0 && !feedback && (
+                 <div className="mb-8">
+                   <button 
+                      onClick={desfazerUltimaPalavra}
+                      className="py-2 px-6 bg-purple-100 hover:bg-purple-200 text-purple-700 font-bold text-lg rounded-xl border-2 border-purple-300 transition-colors inline-flex items-center gap-2 cursor-pointer shadow-sm"
+                    >
+                      ↶ Desfazer última palavra
+                   </button>
+                 </div>
+              )}
+
+              {!feedback && (
+                <div className="flex flex-wrap gap-4 justify-center mb-8 bg-gray-50 p-6 rounded-2xl border-2 border-gray-200">
+                  {palavrasDisponiveis.map((palavra, i) => (
+                    <button
+                      key={i}
+                      onClick={() => moverParaConstruida(palavra, i)}
+                      className="py-4 px-6 bg-white border-2 border-gray-300 text-gray-800 font-bold text-3xl rounded-xl shadow-md hover:bg-gray-100 hover:border-purple-400 transition-colors transform hover:-translate-y-1 cursor-pointer"
+                    >
+                      {palavra}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!feedback && palavrasDisponiveis.length === 0 && fraseConstruida.length > 0 && (
+                <button onClick={verificarFrase} className="py-4 px-12 bg-blue-500 hover:bg-blue-600 text-white font-bold text-3xl rounded-2xl shadow-xl animate-bounce border-b-4 border-blue-700 mt-4 cursor-pointer">
+                  Verificar Frase ✓
+                </button>
+              )}
+
+              {feedback === 'correto' && (
+                <div className="animate-pulse mt-6">
+                  <p className="text-4xl font-bold text-green-500 mb-6">🎉 Frase Perfeita!</p>
+                  <button onClick={proximaPerguntaFrase} className="py-4 px-10 bg-green-500 hover:bg-green-600 text-white font-bold text-3xl rounded-2xl shadow-lg border-b-4 border-green-700 cursor-pointer">
+                    Próxima Frase ➔
+                  </button>
+                </div>
+              )}
+
+              {feedback === 'incorreto' && (
+                <div className="mt-6 bg-red-50 p-4 rounded-xl border-2 border-red-200">
+                  <p className="text-2xl font-bold text-red-600">A frase não está bem assim. As palavras vão voltar para tentar de novo!</p>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      const renderizarFim = () => (
+        <div className="flex flex-col items-center justify-center h-full pt-24 pb-8 px-4">
+          <div className="bg-white p-12 rounded-3xl shadow-2xl max-w-xl w-full text-center border-8 border-yellow-400 relative overflow-hidden">
+            <div className="absolute -top-10 -left-10 text-9xl opacity-20">⭐</div>
+            <div className="absolute -bottom-10 -right-10 text-9xl opacity-20">🎉</div>
+            
+            <div className="text-9xl mb-6 relative z-10 animate-bounce">🏆</div>
+            <h1 className="text-5xl font-extrabold text-blue-600 mb-6 relative z-10">Fim da Rodada!</h1>
+            
+            <div className="bg-yellow-50 p-6 rounded-2xl mb-8 border-2 border-yellow-200 relative z-10">
+              <p className="text-2xl text-gray-700 mb-2">Pontos nesta rodada:</p>
+              <p className="text-6xl font-black text-yellow-500">{pontuacaoRodada}</p>
+            </div>
+
+            <button onClick={() => setTelaAtual('menu')} className="w-full py-5 px-8 bg-blue-500 hover:bg-blue-600 text-white font-bold text-3xl rounded-2xl shadow-xl transition-transform transform hover:scale-105 border-b-4 border-blue-700 relative z-10 cursor-pointer">
+              Jogar Novamente ➔
+            </button>
+          </div>
+        </div>
+      );
+
+      return (
+        <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-100 via-purple-100 to-green-100 font-sans relative overflow-x-hidden">
+          <div className="fixed top-20 left-10 w-32 h-32 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob pointer-events-none"></div>
+          <div className="fixed top-40 right-10 w-32 h-32 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000 pointer-events-none"></div>
+          <div className="fixed -bottom-8 left-20 w-32 h-32 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 pointer-events-none"></div>
+
+          <Header />
+
+          {mensagemAlerta && (
+            <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-white px-6 py-3 rounded-2xl shadow-2xl z-[100] font-bold text-xl animate-bounce border-4 border-yellow-600 text-center w-[90%] max-w-md">
+              ⚠️ {mensagemAlerta}
+            </div>
+          )}
+
+          <div className="relative z-10 min-h-screen">
+            {telaAtual === 'menu' && renderizarMenu()}
+            {(telaAtual === 'simples' || telaAtual === 'compostas') && renderizarJogoSilabas()}
+            {telaAtual === 'frases' && renderizarJogoFrases()}
+            {telaAtual === 'fim' && renderizarFim()}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Banco de Desafios – Matemática em Ação</title>
+<meta name="description" content="Banco de Desafios Digitais: situações-problema criadas pelos estudantes, para resolver e jogar em circuito.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --verde:#0E4D45; --verde-esc:#08332D; --verde-claro:#E7F2EF;
+    --latao:#C9962B; --latao-claro:#E8C066;
+    --papel:#FFF6DC; --borda:#CDBF96;
+    --tinta:#1B2430; --suave:#5b5440;
+    --ok:#2E9E5B; --erro:#D64545;
+    --raio:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:18px;line-height:1.5;color:var(--tinta);
+    background:var(--verde);background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.06) 1px,transparent 0);
+    background-size:22px 22px;min-height:100vh}
+  h1,h2,h3,.num{font-family:"Baloo 2",system-ui,sans-serif;line-height:1.15}
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  :focus-visible{outline:3px solid var(--latao-claro);outline-offset:3px}
+  .oculto{display:none!important}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  .btn{border:0;border-radius:999px;padding:.55em 1.25em;font-weight:700;background:var(--latao);color:var(--tinta);
+    box-shadow:0 4px 0 #8C6516;transition:transform .08s,box-shadow .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #8C6516}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-sec{background:#fff;border:2px solid var(--borda);border-radius:999px;padding:.4em 1em;font-weight:700}
+  .link{background:none;border:0;padding:0;color:#6B5A2A;text-decoration:underline;font-size:.95rem}
+  .link:disabled{opacity:.6;text-decoration:none;cursor:default}
+
+  /* topo */
+  header.topo{color:#fff;padding:28px 16px 0;max-width:1180px;margin:0 auto}
+  .marca{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .pilha{width:58px;height:58px;position:relative;flex:none}
+  .pilha span{position:absolute;inset:0;border-radius:10px;background:var(--papel);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+  .pilha span:nth-child(1){transform:rotate(-10deg);background:#f3e2b3}
+  .pilha span:nth-child(2){transform:rotate(6deg);background:#f8ecc8}
+  .pilha span:nth-child(3){display:grid;place-items:center;font-family:"Baloo 2";font-weight:800;color:var(--verde);font-size:1.6rem}
+  header h1{margin:0;font-size:clamp(2rem,5vw,2.9rem);color:var(--latao-claro)}
+  header .sub{margin:2px 0 0;opacity:.9}
+  nav.abas{display:flex;gap:6px;margin-top:22px;flex-wrap:wrap}
+  nav.abas button{border:0;background:rgba(255,255,255,.1);color:#fff;padding:.6em 1.2em;border-radius:12px 12px 0 0;font-weight:700}
+  nav.abas button[aria-selected=true]{background:var(--papel);color:var(--tinta)}
+
+  main{max-width:1180px;margin:0 auto;padding:0 16px 48px}
+  .painel{background:var(--papel);border-radius:0 var(--raio) var(--raio) var(--raio);padding:24px;box-shadow:0 10px 0 rgba(0,0,0,.18)}
+  .fonte{font-size:.92rem;color:var(--suave);margin:0 0 16px}
+
+  /* filtros */
+  .filtros{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-bottom:18px}
+  .campo{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:.95rem}
+  .campo input,.campo select{font-weight:400;padding:.45em .7em;border:2px solid var(--borda);border-radius:10px;background:#fff;min-width:150px}
+  .campo.grande input{min-width:240px}
+  .contagem{margin-left:auto;font-size:.95rem;color:var(--suave)}
+
+  /* cartões do banco */
+  .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  .desafio{background:#fff;border:2px solid #EADDB5;border-radius:var(--raio);padding:18px;display:flex;flex-direction:column;gap:10px}
+  .desafio.resolvido{border-color:var(--ok);background:#F4FBF6}
+  .etiquetas{display:flex;gap:6px;flex-wrap:wrap}
+  .etq{font-size:.82rem;font-weight:700;padding:.15em .65em;border-radius:999px;background:var(--verde-claro);color:var(--verde)}
+  .etq.turma{background:#FBEFC8;color:#6B5A2A}
+  .desafio .enun{margin:0;flex:1}
+  .autoria{margin:0;font-size:.9rem;color:var(--suave)}
+  .resolver{display:flex;gap:8px}
+  .resolver input{flex:1;min-width:0;padding:.4em .7em;border:2px solid var(--borda);border-radius:10px;background:#fff;font-size:1.1rem}
+  .linha{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:28px}
+  .dica,.passo{margin:0;padding:10px 12px;border-radius:0 8px 8px 0;font-size:.97rem}
+  .dica{border-left:4px solid var(--latao);background:#FBEFC8}
+  .passo{border-left:4px solid var(--ok);background:#E8F5EC}
+  .fb{margin:0;font-weight:700;min-height:1.5em}
+  .fb.ok{color:var(--ok)} .fb.erro{color:var(--erro)}
+  .vazio{padding:28px;text-align:center;color:var(--suave)}
+
+  /* circuito */
+  .config{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end;max-width:820px}
+  .placar{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .placar .item{font-size:.95rem;color:var(--suave)}
+  .placar b{font-family:"Baloo 2";font-size:1.5rem;color:var(--tinta);margin-left:4px}
+  .trilha{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+  .trilha span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:700;
+    background:#EADDB5;color:var(--suave)}
+  .trilha span.atual{background:var(--latao);color:var(--tinta);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--latao)}
+  .trilha span.certo{background:var(--ok);color:#fff}
+  .trilha span.errado{background:var(--erro);color:#fff}
+  .estacao{background:#fff;border:2px solid #EADDB5;border-radius:var(--raio);padding:22px;max-width:760px;display:flex;flex-direction:column;gap:12px}
+  .estacao h3{margin:0;font-size:1.5rem}
+  .estacao .enun{font-size:1.15rem;margin:0}
+  .pontos-ganhos{font-family:"Baloo 2";font-size:1.3rem;color:var(--ok)}
+  .resultado{text-align:center;max-width:620px;margin:0 auto}
+  .resultado h2{font-size:2.4rem;margin:.2em 0;color:var(--verde)}
+  .resultado .total{font-family:"Baloo 2";font-size:4.5rem;line-height:1;color:var(--latao)}
+  .resultado ul{text-align:left;display:inline-block;margin:16px 0}
+
+  /* professor */
+  .prof{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+  .prof h2{margin:0 0 8px;font-size:1.5rem}
+  .prof p{margin:0 0 12px}
+  .prof .acoes{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .prof input[type=url]{width:100%;padding:.5em .7em;border:2px solid var(--borda);border-radius:10px;background:#fff}
+  .status{padding:10px 14px;border-radius:10px;background:var(--verde-claro);font-weight:700;margin:0 0 14px}
+  .status.erro{background:#FBE3E3;color:#8E2424}
+  .passos{padding-left:1.3em;margin:0}
+  .passos li{margin:0 0 10px}
+  table.campos{width:100%;border-collapse:collapse;font-size:.92rem;margin:8px 0 4px;background:#fff}
+  .campos th,.campos td{border:1px solid #E2D5AE;padding:6px 8px;text-align:left;vertical-align:top}
+  .campos th{background:#F6EBC9}
+  code{background:#F6EBC9;padding:.05em .35em;border-radius:5px;font-size:.9em}
+
+  footer{color:rgba(255,255,255,.7);text-align:center;font-size:.85rem;padding:0 16px 24px}
+
+  @media (max-width:820px){ .prof{grid-template-columns:minmax(0,1fr)} }
+  @media (max-width:560px){
+    body{font-size:17px}
+    .painel{padding:18px;border-radius:0 0 var(--raio) var(--raio)}
+    .grade{grid-template-columns:minmax(0,1fr)}
+    .campo,.campo input,.campo select,.campo.grande input{min-width:0;width:100%}
+    .filtros .campo{flex:1 1 100%}
+    .contagem{margin-left:0}
+    nav.abas button{flex:1;padding:.6em .4em}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="marca">
+    <div class="pilha" aria-hidden="true"><span></span><span></span><span>?</span></div>
+    <div>
+      <h1>Banco de Desafios</h1>
+      <p class="sub">Problemas de Matemática criados pelos estudantes, para resolver e jogar em circuito.</p>
+    </div>
+  </div>
+  <nav class="abas" role="tablist" aria-label="Seções">
+    <button role="tab" id="aba-banco" aria-controls="sec-banco" aria-selected="true">Banco</button>
+    <button role="tab" id="aba-circuito" aria-controls="sec-circuito" aria-selected="false">Circuito</button>
+    <button role="tab" id="aba-prof" aria-controls="sec-prof" aria-selected="false">Professor</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ================= BANCO ================= -->
+  <section id="sec-banco" class="painel" role="tabpanel" aria-labelledby="aba-banco">
+    <p class="fonte" id="fonteTxt"></p>
+    <div class="filtros">
+      <label class="campo">Turma<select id="fTurma"></select></label>
+      <label class="campo">Tema<select id="fTema"></select></label>
+      <label class="campo grande">Buscar<input id="fBusca" type="search" placeholder="Palavra do enunciado ou nome do grupo"></label>
+      <span class="contagem" id="contagem" aria-live="polite"></span>
+    </div>
+    <div class="grade" id="grade"></div>
+  </section>
+
+  <!-- ================= CIRCUITO ================= -->
+  <section id="sec-circuito" class="painel oculto" role="tabpanel" aria-labelledby="aba-circuito">
+    <div id="cConfig">
+      <h2 style="margin:0 0 6px">Circuito Matemático</h2>
+      <p style="margin:0 0 18px;max-width:46em">A equipe resolve uma sequência de desafios criados pelos colegas. Acertar de primeira vale 10 pontos. Cada erro tira 2 pontos e a dica tira 3. Depois de 3 erros, a página mostra a resolução e passa para o próximo.</p>
+      <form class="config" id="formCircuito">
+        <label class="campo">Nome da equipe<input id="cEquipe" type="text" maxlength="30" placeholder="Ex.: Equipe Azul" autocomplete="off"></label>
+        <label class="campo">Turma dos desafios<select id="cTurma"></select></label>
+        <label class="campo">Quantidade<select id="cQtd">
+          <option value="5">5 desafios</option><option value="8" selected>8 desafios</option>
+          <option value="10">10 desafios</option><option value="0">Todos</option></select></label>
+        <div><button class="btn" type="submit">Começar o circuito</button></div>
+      </form>
+      <p class="fb erro" id="cAviso" style="margin-top:12px"></p>
+    </div>
+
+    <div id="cJogo" class="oculto">
+      <div class="placar">
+        <span class="item">Equipe <b id="cNome"></b></span>
+        <span class="item">Pontos <b id="cPontos">0</b></span>
+        <span class="item">Tempo <b id="cTempo">00:00</b></span>
+      </div>
+      <div class="trilha" id="cTrilha" aria-label="Progresso do circuito"></div>
+      <div class="estacao" id="cEstacao"></div>
+    </div>
+
+    <div id="cFim" class="oculto resultado"></div>
+  </section>
+
+  <!-- ================= PROFESSOR ================= -->
+  <section id="sec-prof" class="painel oculto" role="tabpanel" aria-labelledby="aba-prof">
+    <div class="prof">
+      <div>
+        <h2>De onde vêm os desafios</h2>
+        <p class="status" id="profStatus"></p>
+        <label for="pLink" style="font-weight:700">Link CSV da planilha de respostas</label>
+        <input type="url" id="pLink" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+        <div class="acoes">
+          <button class="btn" id="pCarregar" type="button">Carregar da planilha</button>
+          <label class="btn-sec" style="cursor:pointer">Abrir arquivo CSV<input type="file" id="pArquivo" accept=".csv,text/csv" class="sr"></label>
+          <button class="btn-sec" id="pExemplos" type="button">Usar os exemplos</button>
+        </div>
+        <p style="font-size:.95rem;color:var(--suave)">O link fica salvo só neste computador. Para todos os computadores da escola abrirem o banco automaticamente, cole o link na linha <code>LINK_PLANILHA</code>, no começo do código desta página, e publique de novo no site.</p>
+        <p style="margin-top:18px"><button class="btn-sec" id="pModelo" type="button">Baixar modelo de planilha (CSV)</button></p>
+      </div>
+      <div>
+        <h2>Como montar o formulário</h2>
+        <ol class="passos">
+          <li>Crie um Formulário Google com estas perguntas, nesta ordem:
+            <table class="campos">
+              <thead><tr><th>Pergunta</th><th>Tipo</th></tr></thead>
+              <tbody>
+                <tr><td>Nome do grupo</td><td>Resposta curta</td></tr>
+                <tr><td>Turma</td><td>Lista suspensa (6º A, 7º A, 8º A, 9º A)</td></tr>
+                <tr><td>Tema do cotidiano</td><td>Lista suspensa (Cantina, Escola, Compras, Esporte, Viagem, Outro)</td></tr>
+                <tr><td>Enunciado do problema</td><td>Parágrafo</td></tr>
+                <tr><td>Resposta (só o número)</td><td>Resposta curta, com validação de número</td></tr>
+                <tr><td>Unidade da resposta</td><td>Resposta curta (ex.: reais, ônibus, metros)</td></tr>
+                <tr><td>Dica para quem travar</td><td>Parágrafo</td></tr>
+                <tr><td>Como resolver (passo a passo)</td><td>Parágrafo</td></tr>
+                <tr><td>Habilidade</td><td>Resposta curta (opcional, preenchida pelo professor)</td></tr>
+              </tbody>
+            </table>
+          </li>
+          <li>Na aba Respostas, clique em <strong>Ver no Planilhas</strong>. Na planilha, crie uma última coluna chamada <strong>Aprovado</strong>.</li>
+          <li>Revise cada desafio com a turma. Quando estiver certo, escreva <strong>SIM</strong> na coluna Aprovado. Só os aprovados aparecem no banco.</li>
+          <li>Na planilha, vá em <strong>Arquivo › Compartilhar › Publicar na Web</strong>, escolha a aba de respostas e o formato <strong>CSV</strong>. Copie o link e cole ao lado.</li>
+        </ol>
+        <p style="font-size:.95rem;color:var(--suave);margin-top:10px">Se a conta da escola não deixar publicar na Web, baixe a planilha em <strong>Arquivo › Fazer download › CSV</strong> e use o botão Abrir arquivo CSV.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Matemática em Ação · Banco de Desafios Digitais · Desafios criados pelos estudantes</footer>
+
+<script>
+/* ======================================================================
+   Para todos os computadores carregarem a planilha automaticamente,
+   cole aqui o link CSV publicado (Arquivo › Compartilhar › Publicar na Web):
+   ====================================================================== */
+const LINK_PLANILHA = '';
+
+(() => {
+  const $ = id => document.getElementById(id);
+  const CHAVE_LINK = 'bancoDesafios.link';
+
+  // ---------- exemplos (aparecem até a planilha ser ligada) ----------
+  const EXEMPLOS = [
+    { grupo: 'Exemplo do professor', turma: '6º ano', tema: 'Cantina', enunciado: 'A cantina vendeu 128 salgados de manhã e 96 à tarde. Cada salgado custa R$ 4. Quanto a cantina arrecadou?', resposta: '896', unidade: 'reais', dica: 'Some os salgados da manhã e da tarde e depois multiplique pelo preço.', resolucao: '128 + 96 = 224 salgados. 224 × 4 = 896 reais.' },
+    { grupo: 'Exemplo do professor', turma: '6º ano', tema: 'Viagem', enunciado: 'A escola vai levar 245 estudantes a um passeio em ônibus de 40 lugares. Quantos ônibus são necessários, no mínimo?', resposta: '7', unidade: 'ônibus', dica: 'Divida e olhe o resto da divisão.', resolucao: '245 ÷ 40 = 6, com resto 5. Os 5 estudantes que sobram precisam de mais um ônibus: 7 ônibus.' },
+    { grupo: 'Exemplo do professor', turma: '6º ano', tema: 'Escola', enunciado: 'Uma mensagem foi enviada para 3 pessoas. Cada uma repassou para 3 novas pessoas, e assim por diante. Quantas pessoas recebem a mensagem na 4ª rodada?', resposta: '81', unidade: 'pessoas', dica: 'Rodada por rodada: 3, depois 3 × 3...', resolucao: '3⁴ = 3 × 3 × 3 × 3 = 81 pessoas.' },
+    { grupo: 'Exemplo do professor', turma: '6º ano', tema: 'Compras', enunciado: 'Ana tem R$ 80. Comprou 2 livros de R$ 27 e um marcador de página de R$ 5. Quanto sobrou?', resposta: '21', unidade: 'reais', dica: 'Calcule quanto ela gastou em tudo e tire dos R$ 80.', resolucao: '2 × 27 = 54. 54 + 5 = 59. 80 − 59 = 21 reais.' },
+    { grupo: 'Exemplo do professor', turma: '7º ano', tema: 'Compras', enunciado: 'Um tênis custa R$ 80 e está com 10% de desconto. Quanto vou pagar?', resposta: '72', unidade: 'reais', dica: '10% de um valor é o mesmo que dividir esse valor por 10.', resolucao: '10% de 80 = 8. 80 − 8 = 72 reais.' },
+    { grupo: 'Exemplo do professor', turma: '7º ano', tema: 'Outro', enunciado: 'De manhã, a temperatura em uma cidade era de −3 °C. À tarde, chegou a 5 °C. Quantos graus a temperatura subiu?', resposta: '8', unidade: 'graus', dica: 'Conte quantos graus há de −3 até 0 e de 0 até 5.', resolucao: 'De −3 até 0 são 3 graus; de 0 até 5 são mais 5. 3 + 5 = 8 graus.' },
+    { grupo: 'Exemplo do professor', turma: '8º ano', tema: 'Compras', enunciado: 'Um celular custava R$ 1.200 e teve um aumento de 15%. Qual é o novo preço?', resposta: '1380', unidade: 'reais', dica: 'Calcule 10% e 5% de 1.200 e some.', resolucao: '10% de 1.200 = 120 e 5% = 60. Aumento de 180. 1.200 + 180 = 1.380 reais.' },
+    { grupo: 'Exemplo do professor', turma: '9º ano', tema: 'Viagem', enunciado: 'Uma corrida de táxi custa R$ 5 fixos mais R$ 3 por quilômetro. Quanto custa uma corrida de 12 km?', resposta: '41', unidade: 'reais', dica: 'O preço é 5 + 3 × (quilômetros).', resolucao: '3 × 12 = 36. 36 + 5 = 41 reais.' },
+    { grupo: 'Exemplo do professor', turma: '6º ano', tema: 'Esporte', enunciado: 'No interclasse, 4 turmas jogam uma vez contra cada outra. Quantos jogos acontecem ao todo?', resposta: '6', unidade: 'jogos', dica: 'Liste as partidas: A×B, A×C...', resolucao: 'A×B, A×C, A×D, B×C, B×D, C×D: 6 jogos.' }
+  ];
+
+  // ---------- utilidades ----------
+  function el(tag, attrs = {}, ...filhos) {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') e.className = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (v !== false && v != null) e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const f of filhos.flat()) if (f != null && f !== false) e.append(f instanceof Node ? f : document.createTextNode(String(f)));
+    return e;
+  }
+  const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  function numero(s) {
+    if (s == null) return NaN;
+    s = String(s).replace(/−/g, '-').replace(/R\$|%|\s/gi, '');
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    else if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+    s = s.replace(/[^0-9.\-]/g, '');
+    return s === '' || s === '-' ? NaN : Number(s);
+  }
+  const fmt = n => n.toLocaleString('pt-BR', { maximumFractionDigits: 2 });
+  const embaralhar = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const lerLS = k => { try { return localStorage.getItem(k) || ''; } catch (_) { return ''; } };
+  const salvarLS = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (_) {} };
+
+  // ---------- CSV ----------
+  function parseCSV(txt) {
+    txt = txt.replace(/^﻿/, '');
+    const primeira = txt.split(/\r?\n/)[0] || '';
+    const sep = (primeira.match(/;/g) || []).length > (primeira.match(/,/g) || []).length ? ';' : ',';
+    const linhas = []; let linha = [], campo = '', aspas = false;
+    for (let i = 0; i < txt.length; i++) {
+      const c = txt[i];
+      if (aspas) {
+        if (c === '"') { if (txt[i + 1] === '"') { campo += '"'; i++; } else aspas = false; }
+        else campo += c;
+      } else if (c === '"') aspas = true;
+      else if (c === sep) { linha.push(campo); campo = ''; }
+      else if (c === '\n') { linha.push(campo); linhas.push(linha); linha = []; campo = ''; }
+      else if (c !== '\r') campo += c;
+    }
+    if (campo !== '' || linha.length) { linha.push(campo); linhas.push(linha); }
+    return linhas.filter(l => l.some(x => x.trim() !== ''));
+  }
+
+  // ordem importa: "Unidade da resposta" precisa virar unidade, não resposta
+  const REGRAS = [
+    ['aprovado', /aprovad/], ['unidade', /unidade/], ['dica', /dica/],
+    ['resolucao', /como resolver|resolucao|passo a passo|explica/], ['resposta', /resposta/],
+    ['enunciado', /enunciado|problema|desafio/], ['habilidade', /habilidade/],
+    ['turma', /turma|ano/], ['tema', /tema|contexto|assunto/], ['grupo', /grupo|autor|nome|equipe/]
+  ];
+  function linhasParaDesafios(linhas) {
+    if (linhas.length < 2) return { lista: [], pendentes: 0, erro: 'A planilha está vazia.' };
+    const cab = linhas[0].map(norm), mapa = {};
+    for (const [chave, re] of REGRAS) {
+      const idx = cab.findIndex((h, i) => re.test(h) && !Object.values(mapa).includes(i));
+      if (idx >= 0) mapa[chave] = idx;
+    }
+    if (mapa.enunciado == null || mapa.resposta == null)
+      return { lista: [], pendentes: 0, erro: 'Não achei as colunas "Enunciado do problema" e "Resposta". Confira os nomes das perguntas do formulário.' };
+    const temAprov = mapa.aprovado != null;
+    let pendentes = 0; const lista = [];
+    for (const l of linhas.slice(1)) {
+      const g = k => (mapa[k] != null ? (l[mapa[k]] || '').trim() : '');
+      const d = { grupo: g('grupo'), turma: g('turma'), tema: g('tema'), enunciado: g('enunciado'), resposta: g('resposta'),
+                  unidade: g('unidade'), dica: g('dica'), resolucao: g('resolucao'), habilidade: g('habilidade') };
+      if (!d.enunciado || isNaN(numero(d.resposta))) continue;
+      if (temAprov && !/^s/.test(norm(g('aprovado')))) { pendentes++; continue; }
+      lista.push(d);
+    }
+    return { lista, pendentes, temAprov };
+  }
+
+  // ---------- estado e fonte ----------
+  let DESAFIOS = [];
+  let fonteDesc = '';
+
+  function usar(lista, desc) {
+    DESAFIOS = lista.map((d, i) => ({ ...d, id: i, valor: numero(d.resposta) }));
+    fonteDesc = desc;
+    $('fonteTxt').textContent = desc;
+    montarFiltros(); desenharBanco(); montarConfigCircuito();
+  }
+  function status(msg, erro) { const s = $('profStatus'); s.textContent = msg; s.classList.toggle('erro', !!erro); }
+
+  function usarExemplos(msgExtra) {
+    usar(EXEMPLOS, 'Mostrando desafios de exemplo. Na aba Professor, ligue a planilha com os desafios da turma.');
+    status(msgExtra || `Usando ${EXEMPLOS.length} desafios de exemplo.`, !!msgExtra);
+  }
+  function aplicarCSV(texto, origem) {
+    const r = linhasParaDesafios(parseCSV(texto));
+    if (r.erro) { status(r.erro, true); return false; }
+    if (!r.lista.length) {
+      status(r.pendentes ? `A planilha tem ${r.pendentes} desafio(s), mas nenhum aprovado ainda. Escreva SIM na coluna Aprovado.` : 'Nenhum desafio válido encontrado na planilha.', true);
+      return false;
+    }
+    const pend = r.pendentes ? ` ${r.pendentes} aguardando aprovação.` : '';
+    const semCol = r.temAprov ? '' : ' A planilha não tem a coluna Aprovado, então todos aparecem.';
+    usar(r.lista, `${r.lista.length} desafios criados pelos estudantes (${origem}).`);
+    status(`${r.lista.length} desafios carregados ${origem === 'arquivo' ? 'do arquivo' : 'da planilha'}.${pend}${semCol}`);
+    return true;
+  }
+  async function carregarLink(url) {
+    status('Carregando a planilha...');
+    try {
+      const resp = await fetch(url, { cache: 'no-store' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const txt = await resp.text();
+      if (/^\s*</.test(txt)) throw new Error('não é CSV');
+      return aplicarCSV(txt, 'planilha');
+    } catch (e) {
+      usarExemplos('Não consegui abrir o link. Confira se a planilha foi publicada na Web no formato CSV. Por enquanto, aparecem os exemplos.');
+      return false;
+    }
+  }
+
+  // ---------- banco ----------
+  function opcoes(sel, valores, rotuloTodos) {
+    const atual = sel.value; sel.innerHTML = '';
+    sel.append(el('option', { value: '' }, rotuloTodos));
+    valores.forEach(v => sel.append(el('option', { value: v }, v)));
+    if (valores.includes(atual)) sel.value = atual;
+  }
+  const unicos = campo => [...new Set(DESAFIOS.map(d => d[campo]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR', { numeric: true }));
+  function montarFiltros() { opcoes($('fTurma'), unicos('turma'), 'Todas'); opcoes($('fTema'), unicos('tema'), 'Todos'); }
+
+  function filtrados() {
+    const t = $('fTurma').value, te = $('fTema').value, b = norm($('fBusca').value);
+    return DESAFIOS.filter(d => (!t || d.turma === t) && (!te || d.tema === te) &&
+      (!b || norm(d.enunciado + ' ' + d.grupo).includes(b)));
+  }
+
+  function desenharBanco() {
+    const g = $('grade'); g.innerHTML = '';
+    const lista = filtrados();
+    $('contagem').textContent = `${lista.length} de ${DESAFIOS.length} desafios`;
+    if (!lista.length) { g.append(el('p', { class: 'vazio' }, 'Nenhum desafio com esses filtros. Tente outra turma ou tema.')); return; }
+    lista.forEach(d => g.append(cartaoBanco(d)));
+  }
+
+  function cartaoBanco(d) {
+    const fb = el('p', { class: 'fb', 'aria-live': 'polite' });
+    const inp = el('input', { type: 'text', inputmode: 'decimal', placeholder: 'Resposta', autocomplete: 'off', 'aria-label': 'Resposta' });
+    const dicaBox = el('p', { class: 'dica oculto' }, d.dica);
+    const passo = el('p', { class: 'passo oculto' });
+    let erros = 0;
+    const btnDica = el('button', { class: 'link', type: 'button', onclick: () => { dicaBox.classList.remove('oculto'); btnDica.disabled = true; } }, 'Ver dica');
+    if (!d.dica) btnDica.classList.add('oculto');
+    const card = el('article', { class: 'desafio' });
+    function revelar() {
+      passo.textContent = `Resposta: ${fmt(d.valor)}${d.unidade ? ' ' + d.unidade : ''}.` + (d.resolucao ? ' ' + d.resolucao : '');
+      passo.classList.remove('oculto');
+    }
+    const form = el('form', { class: 'resolver', novalidate: true, onsubmit: ev => {
+      ev.preventDefault();
+      if (card.classList.contains('resolvido')) return;
+      const v = numero(inp.value);
+      if (isNaN(v)) { fb.className = 'fb erro'; fb.textContent = 'Digite um número.'; return; }
+      if (Math.abs(v - d.valor) < 1e-6) {
+        card.classList.add('resolvido'); fb.className = 'fb ok'; fb.textContent = 'Resposta certa!';
+        inp.readOnly = true; revelar();
+      } else {
+        erros++; fb.className = 'fb erro';
+        fb.textContent = erros >= 3 ? 'Veja como resolver:' : 'Ainda não. Tente de novo.';
+        if (erros >= 3) revelar();
+      }
+    } }, inp, el('button', { class: 'btn', type: 'submit' }, 'Verificar'));
+    card.append(
+      el('div', { class: 'etiquetas' }, d.turma && el('span', { class: 'etq turma' }, d.turma), d.tema && el('span', { class: 'etq' }, d.tema)),
+      el('p', { class: 'enun' }, d.enunciado),
+      el('p', { class: 'autoria' }, 'Criado por ' + (d.grupo || 'estudantes')),
+      form,
+      el('div', { class: 'linha' }, btnDica),
+      dicaBox, fb, passo
+    );
+    return card;
+  }
+
+  // ---------- circuito ----------
+  let C = null, relogio = null;
+  function montarConfigCircuito() { opcoes($('cTurma'), unicos('turma'), 'Todas as turmas'); }
+
+  function comecarCircuito(ev) {
+    ev.preventDefault();
+    const turma = $('cTurma').value, qtd = +$('cQtd').value;
+    let lista = embaralhar(DESAFIOS.filter(d => !turma || d.turma === turma));
+    if (!lista.length) { $('cAviso').textContent = 'Não há desafios para essa turma.'; return; }
+    $('cAviso').textContent = '';
+    if (qtd) lista = lista.slice(0, qtd);
+    C = { equipe: $('cEquipe').value.trim() || 'Equipe', lista, i: 0, pontos: 0, acertos: 0, inicio: Date.now(), marcas: [] };
+    $('cNome').textContent = C.equipe; $('cPontos').textContent = '0';
+    $('cConfig').classList.add('oculto'); $('cFim').classList.add('oculto'); $('cJogo').classList.remove('oculto');
+    clearInterval(relogio); relogio = setInterval(() => { $('cTempo').textContent = tempo(); }, 1000); $('cTempo').textContent = '00:00';
+    estacao();
+  }
+  const tempo = () => { const s = Math.floor((Date.now() - C.inicio) / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+
+  function trilha() {
+    const t = $('cTrilha'); t.innerHTML = '';
+    C.lista.forEach((_, k) => t.append(el('span', { class: k === C.i ? 'atual' : (C.marcas[k] || '') }, k + 1)));
+  }
+
+  function estacao() {
+    trilha();
+    const d = C.lista[C.i], box = $('cEstacao'); box.innerHTML = '';
+    let erros = 0, usouDica = false, fim = false;
+    const fb = el('p', { class: 'fb', 'aria-live': 'polite' });
+    const inp = el('input', { type: 'text', inputmode: 'decimal', placeholder: 'Resposta', autocomplete: 'off', 'aria-label': 'Resposta' });
+    const btnVer = el('button', { class: 'btn', type: 'submit' }, 'Verificar');
+    const dicaBox = el('p', { class: 'dica oculto' }, d.dica);
+    const passo = el('p', { class: 'passo oculto' });
+    const prox = el('button', { class: 'btn oculto', type: 'button', onclick: avancar }, C.i < C.lista.length - 1 ? 'Próximo desafio' : 'Ver resultado');
+    const btnDica = el('button', { class: 'link', type: 'button', onclick: () => { usouDica = true; dicaBox.classList.remove('oculto'); btnDica.disabled = true; } }, 'Ver dica (−3 pontos)');
+    if (!d.dica) btnDica.classList.add('oculto');
+
+    function encerrar(ganhou) {
+      fim = true; inp.readOnly = true; btnVer.disabled = true; btnDica.disabled = true;
+      passo.textContent = `Resposta: ${fmt(d.valor)}${d.unidade ? ' ' + d.unidade : ''}.` + (d.resolucao ? ' ' + d.resolucao : '');
+      passo.classList.remove('oculto'); prox.classList.remove('oculto'); prox.focus();
+      C.marcas[C.i] = ganhou ? 'certo' : 'errado';
+    }
+    const form = el('form', { class: 'resolver', novalidate: true, onsubmit: ev => {
+      ev.preventDefault(); if (fim) return;
+      const v = numero(inp.value);
+      if (isNaN(v)) { fb.className = 'fb erro'; fb.textContent = 'Digite um número.'; return; }
+      if (Math.abs(v - d.valor) < 1e-6) {
+        const pts = Math.max(2, 10 - 2 * erros - (usouDica ? 3 : 0));
+        C.pontos += pts; C.acertos++; $('cPontos').textContent = C.pontos;
+        fb.className = 'fb ok'; fb.textContent = `Resposta certa! +${pts} pontos.`;
+        encerrar(true);
+      } else {
+        erros++;
+        if (erros >= 3) { fb.className = 'fb erro'; fb.textContent = 'Três tentativas. Veja a resolução e siga em frente.'; encerrar(false); }
+        else { fb.className = 'fb erro'; fb.textContent = `Ainda não. Restam ${3 - erros} tentativa(s).`; inp.select(); }
+      }
+    } }, inp, btnVer);
+
+    box.append(
+      el('div', { class: 'etiquetas' }, el('span', { class: 'etq' }, `Desafio ${C.i + 1} de ${C.lista.length}`), d.turma && el('span', { class: 'etq turma' }, d.turma), d.tema && el('span', { class: 'etq' }, d.tema)),
+      el('p', { class: 'enun' }, d.enunciado),
+      el('p', { class: 'autoria' }, 'Desafio criado por ' + (d.grupo || 'estudantes')),
+      form, el('div', { class: 'linha' }, btnDica), dicaBox, fb, passo, el('div', {}, prox)
+    );
+    setTimeout(() => inp.focus({ preventScroll: true }), 30);
+  }
+
+  function avancar() {
+    C.i++;
+    if (C.i < C.lista.length) { estacao(); return; }
+    clearInterval(relogio);
+    const max = C.lista.length * 10;
+    const fimBox = $('cFim'); fimBox.innerHTML = '';
+    fimBox.append(
+      el('h2', {}, 'Circuito completo!'),
+      el('p', { style: 'margin:0' }, C.equipe),
+      el('div', { class: 'total' }, C.pontos),
+      el('p', { style: 'margin:0;color:var(--suave)' }, `pontos de ${max} possíveis`),
+      el('ul', {},
+        el('li', {}, `Desafios certos: ${C.acertos} de ${C.lista.length}`),
+        el('li', {}, `Tempo: ${tempo()}`)),
+      el('div', {}, el('button', { class: 'btn', type: 'button', onclick: () => {
+        $('cFim').classList.add('oculto'); $('cConfig').classList.remove('oculto'); $('cEquipe').focus();
+      } }, 'Jogar outra vez'))
+    );
+    $('cJogo').classList.add('oculto'); fimBox.classList.remove('oculto');
+  }
+
+  // ---------- abas ----------
+  const ABAS = ['banco', 'circuito', 'prof'];
+  function abrirAba(nome) {
+    ABAS.forEach(a => {
+      $('aba-' + a).setAttribute('aria-selected', a === nome);
+      $('sec-' + a).classList.toggle('oculto', a !== nome);
+    });
+  }
+  ABAS.forEach((a, i) => {
+    const b = $('aba-' + a);
+    b.addEventListener('click', () => abrirAba(a));
+    b.addEventListener('keydown', ev => {
+      if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+      const n = ABAS[(i + (ev.key === 'ArrowRight' ? 1 : ABAS.length - 1)) % ABAS.length];
+      abrirAba(n); $('aba-' + n).focus();
+    });
+  });
+
+  // ---------- professor ----------
+  $('pCarregar').addEventListener('click', async () => {
+    const url = $('pLink').value.trim();
+    if (!/^https?:\/\//.test(url)) { status('Cole um link que comece com https://', true); return; }
+    if (await carregarLink(url)) salvarLS(CHAVE_LINK, url);
+  });
+  $('pArquivo').addEventListener('change', ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => aplicarCSV(String(r.result), 'arquivo');
+    r.readAsText(f, 'utf-8');
+    ev.target.value = '';
+  });
+  $('pExemplos').addEventListener('click', () => { salvarLS(CHAVE_LINK, ''); $('pLink').value = ''; usarExemplos(); });
+  $('pModelo').addEventListener('click', () => {
+    const cab = ['Carimbo de data/hora', 'Nome do grupo', 'Turma', 'Tema do cotidiano', 'Enunciado do problema', 'Resposta (só o número)', 'Unidade da resposta', 'Dica para quem travar', 'Como resolver (passo a passo)', 'Habilidade', 'Aprovado'];
+    const q = s => '"' + String(s).replace(/"/g, '""') + '"';
+    const linhas = [cab.map(q).join(',')].concat(EXEMPLOS.slice(0, 3).map(d =>
+      ['', d.grupo, d.turma, d.tema, d.enunciado, d.resposta, d.unidade, d.dica, d.resolucao, '', 'SIM'].map(q).join(',')));
+    const blob = new Blob(['﻿' + linhas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = el('a', { href: URL.createObjectURL(blob), download: 'modelo-banco-de-desafios.csv' });
+    document.body.append(a); a.click(); a.remove();
+  });
+
+  // ---------- eventos do banco e do circuito ----------
+  ['fTurma', 'fTema'].forEach(id => $(id).addEventListener('change', desenharBanco));
+  $('fBusca').addEventListener('input', desenharBanco);
+  $('formCircuito').addEventListener('submit', comecarCircuito);
+
+  // ---------- início ----------
+  const link = LINK_PLANILHA || lerLS(CHAVE_LINK);
+  $('pLink').value = link;
+  usarExemplos();
+  if (link) carregarLink(link);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Treino de Letra Cursiva</title>
+    <!-- Tailwind CSS para o visual -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonte Cursiva -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap');
+        .cursive { font-family: 'Dancing Script', cursive; }
+        body, html { margin: 0; padding: 0; touch-action: manipulation; }
+        
+        /* Oculta o cabeçalho principal quando em tela cheia */
+        :fullscreen #main-header { display: none; }
+        :fullscreen #app-container { height: 100vh; max-width: 100%; border-radius: 0; border: none; }
+    </style>
+</head>
+<body class="bg-sky-100 flex flex-col items-center min-h-screen py-6 px-4 font-sans transition-all duration-300" id="body">
+
+    <!-- Cabeçalho -->
+    <header id="main-header" class="mb-6 text-center">
+        <h1 class="text-3xl md:text-5xl font-bold text-sky-800 mb-2 drop-shadow-sm">Treino de Letra Cursiva</h1>
+        <p class="text-sky-600 font-medium md:text-lg">Cubra as letras e aprenda a escrever de forma bonita!</p>
+    </header>
+
+    <!-- Container Principal -->
+    <div id="app-container" class="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col border-4 border-sky-200 transition-all duration-300 flex-1">
+        
+        <!-- Barra de Navegação Superior -->
+        <div class="bg-sky-50 p-4 border-b border-sky-100 flex flex-col lg:flex-row justify-between items-center gap-4">
+            
+            <div class="flex w-full lg:w-auto items-center justify-between gap-2">
+                <!-- Seletor de Categoria -->
+                <div id="category-container" class="flex bg-white rounded-xl p-1 shadow-inner border border-sky-200 overflow-x-auto w-full lg:w-auto">
+                    <!-- Botões injetados via JS -->
+                </div>
+
+                <!-- Botão Tela Cheia (Mobile) -->
+                <button id="btn-fullscreen-mobile" class="lg:hidden p-3 bg-white rounded-xl shadow border border-sky-200 text-sky-600 hover:bg-sky-100 transition-colors" title="Tela Cheia">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                </button>
+            </div>
+
+            <!-- Navegador de Palavras -->
+            <div class="flex items-center gap-4 w-full lg:w-auto justify-center">
+                <button id="btn-prev" class="p-3 bg-white rounded-full shadow hover:bg-sky-100 text-sky-600 transition-colors active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <div id="word-display" class="text-3xl md:text-4xl cursive font-bold text-sky-900 min-w-[150px] md:min-w-[200px] px-2 text-center select-none truncate">
+                    <!-- Palavra -->
+                </div>
+                <button id="btn-next" class="p-3 bg-white rounded-full shadow hover:bg-sky-100 text-sky-600 transition-colors active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+
+                <!-- Botão Tela Cheia (Desktop) -->
+                <button id="btn-fullscreen-desktop" class="hidden lg:flex p-3 bg-white rounded-full shadow hover:bg-sky-100 text-sky-600 transition-colors active:scale-95 ml-2" title="Alternar Tela Cheia">
+                    <svg id="icon-maximize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Área de Desenho (Canvases) -->
+        <div id="canvas-container" class="relative w-full flex-1 min-h-[300px] md:min-h-[400px] bg-white" style="cursor: crosshair;">
+            <canvas id="bgCanvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+            <canvas id="drawCanvas" class="absolute inset-0 w-full h-full touch-none"></canvas>
+        </div>
+
+        <!-- Rodapé de Ferramentas -->
+        <div class="bg-slate-50 p-4 border-t border-slate-200 flex flex-wrap justify-center md:justify-between items-center gap-4">
+            
+            <!-- Paleta de Cores -->
+            <div class="flex items-center gap-2" id="color-container">
+                <svg class="text-slate-400 mr-2 hidden md:block" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                <!-- Botões de cor injetados via JS -->
+            </div>
+
+            <!-- Ferramentas -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <div class="flex bg-white rounded-xl p-1 shadow-inner border border-slate-200 mr-1 md:mr-2" id="size-container">
+                    <!-- Botões de tamanho injetados via JS -->
+                </div>
+
+                <button id="btn-eraser" class="p-3 bg-white text-slate-600 rounded-xl shadow hover:bg-slate-100 transition-colors flex items-center gap-2 border-2 border-transparent">
+                    <svg id="icon-pen" class="hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                    <svg id="icon-eraser" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+                    <span class="hidden sm:inline font-medium" id="eraser-text">Borracha</span>
+                </button>
+
+                <button id="btn-clear" class="p-3 bg-red-50 text-red-600 rounded-xl shadow hover:bg-red-100 transition-colors flex items-center gap-2 border-2 border-red-100 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    <span class="hidden sm:inline font-medium">Limpar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados
+        const categories = {
+            'Maiúsculas': "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z".split(" "),
+            'Minúsculas': "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" "),
+            'Palavras': [
+                "abacate", "abelha", "amigo", "amor", "avião", "bala", "barco", "boca", "bola", "boneca",
+                "cachorro", "café", "cama", "caneta", "carro", "casa", "chuva", "coelho", "copo", "coração",
+                "dado", "dedo", "dente", "dia", "doce", "elefante", "escola", "estrela", "fada", "festa",
+                "flor", "fogo", "foguete", "gato", "gelo", "girafa", "gota", "hoje", "homem", "hora",
+                "igreja", "ilha", "índio", "jacaré", "janela", "jogo", "kiwi", "lápis", "leão", "leite",
+                "livro", "lua", "mãe", "mala", "mato", "menina", "menino", "mesa", "mola", "navio",
+                "neve", "ninho", "noite", "nuvem", "olho", "onda", "osso", "ovo", "pai", "pato",
+                "peixe", "pena", "pipoca", "porta", "pulo", "queijo", "quero", "rato", "rei", "roda",
+                "rua", "sapo", "selo", "sino", "sol", "suco", "tatu", "tela", "tijolo", "trem",
+                "urso", "uva", "vaca", "vaso", "vela", "vento", "vida", "vovó", "xadrez", "xícara",
+                "zebra", "zero"
+            ],
+            'Frases': [
+                "Bom dia", "Boa tarde", "Boa noite", "Eu amo você", "A casa é bela",
+                "O gato bebe leite", "O cão late", "O pássaro voa", "A flor é cheirosa",
+                "O sol brilha", "A lua é linda", "O céu é azul", "A bola rola",
+                "O carro é veloz", "A maçã é doce", "O menino joga", "A menina canta",
+                "Vovó faz bolo", "Eu gosto de ler", "A escola é legal"
+            ],
+            'Folha Livre': [
+                "Caderno de Caligrafia"
+            ]
+        };
+
+        const colors = ['#000000', '#2563eb', '#dc2626', '#16a34a', '#9333ea', '#ea580c'];
+        const sizes = [4, 8, 14];
+
+        // Estado
+        let currentCategory = 'Minúsculas';
+        let currentIndex = 0;
+        let currentColor = colors[1];
+        let currentSize = sizes[1];
+        let isEraser = false;
+        let isDrawing = false;
+
+        // Elementos DOM
+        const bgCanvas = document.getElementById('bgCanvas');
+        const drawCanvas = document.getElementById('drawCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        const drawCtx = drawCanvas.getContext('2d');
+        const wordDisplay = document.getElementById('word-display');
+        const categoryContainer = document.getElementById('category-container');
+        const colorContainer = document.getElementById('color-container');
+        const sizeContainer = document.getElementById('size-container');
+        
+        // Renderização Inicial UI
+        function renderCategories() {
+            categoryContainer.innerHTML = '';
+            Object.keys(categories).forEach(cat => {
+                const btn = document.createElement('button');
+                btn.innerText = cat;
+                btn.className = `flex-1 lg:flex-none px-3 py-2 md:px-4 rounded-lg font-medium text-sm md:text-base transition-all whitespace-nowrap ${currentCategory === cat ? 'bg-sky-400 text-white shadow-md' : 'text-sky-600 hover:bg-sky-100'}`;
+                btn.onclick = () => { currentCategory = cat; currentIndex = 0; updateApp(); };
+                categoryContainer.appendChild(btn);
+            });
+        }
+
+        function renderColors() {
+            const svgIcon = colorContainer.querySelector('svg');
+            colorContainer.innerHTML = '';
+            if(svgIcon) colorContainer.appendChild(svgIcon);
+
+            colors.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = `w-10 h-10 md:w-12 md:h-12 rounded-full shadow-md border-2 transition-transform ${currentColor === c && !isEraser ? 'scale-110 border-slate-400' : 'border-white hover:scale-105'}`;
+                btn.style.backgroundColor = c;
+                btn.onclick = () => { currentColor = c; isEraser = false; updateEraserUI(); renderColors(); };
+                colorContainer.appendChild(btn);
+            });
+        }
+
+        function renderSizes() {
+            sizeContainer.innerHTML = '';
+            sizes.forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = `w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg transition-colors ${currentSize === s ? 'bg-slate-200' : 'hover:bg-slate-100'}`;
+                const dot = document.createElement('div');
+                dot.className = "bg-slate-800 rounded-full";
+                dot.style.width = s + 'px';
+                dot.style.height = s + 'px';
+                btn.appendChild(dot);
+                btn.onclick = () => { currentSize = s; renderSizes(); };
+                sizeContainer.appendChild(btn);
+            });
+        }
+
+        function updateEraserUI() {
+            const btn = document.getElementById('btn-eraser');
+            const iconPen = document.getElementById('icon-pen');
+            const iconEraser = document.getElementById('icon-eraser');
+            const text = document.getElementById('eraser-text');
+            
+            if (isEraser) {
+                btn.className = "p-3 rounded-xl shadow transition-colors flex items-center gap-2 bg-indigo-100 text-indigo-700 border-2 border-indigo-300";
+                iconPen.classList.remove('hidden');
+                iconEraser.classList.add('hidden');
+                text.innerText = "Caneta";
+            } else {
+                btn.className = "p-3 rounded-xl shadow transition-colors flex items-center gap-2 bg-white text-slate-600 hover:bg-slate-100 border-2 border-transparent";
+                iconPen.classList.add('hidden');
+                iconEraser.classList.remove('hidden');
+                text.innerText = "Borracha";
+            }
+        }
+
+        function getCurrentWord() {
+            return categories[currentCategory][currentIndex];
+        }
+
+        // Lógica do Canvas
+        function initCanvases() {
+            const parent = bgCanvas.parentElement;
+            const width = parent.clientWidth;
+            const height = parent.clientHeight;
+
+            // Recalcula o tamanho das áreas de desenho internas
+            bgCanvas.width = width;
+            bgCanvas.height = height;
+            drawCanvas.width = width;
+            drawCanvas.height = height;
+
+            drawBackground(width, height);
+        }
+
+        function drawBackground(width, height) {
+            bgCtx.clearRect(0, 0, width, height);
+            bgCtx.fillStyle = "white";
+            bgCtx.fillRect(0, 0, width, height);
+
+            const isMobile = width < 600;
+
+            // Função auxiliar para desenhar o trio de linhas
+            function drawLines(midY, spacing) {
+                bgCtx.strokeStyle = "#cbd5e1";
+                bgCtx.lineWidth = 2;
+                
+                bgCtx.beginPath(); bgCtx.moveTo(0, midY - spacing); bgCtx.lineTo(width, midY - spacing); bgCtx.stroke();
+                bgCtx.beginPath(); bgCtx.moveTo(0, midY + spacing); bgCtx.lineTo(width, midY + spacing); bgCtx.stroke();
+                
+                bgCtx.beginPath(); bgCtx.setLineDash([8, 8]); bgCtx.moveTo(0, midY); bgCtx.lineTo(width, midY); bgCtx.stroke();
+                bgCtx.setLineDash([]);
+            }
+
+            if (currentCategory === 'Folha Livre') {
+                // Modo Folha em Branco: Desenha 4 trios de linhas
+                const numLines = 4;
+                const segmentHeight = height / numLines;
+                const spacing = segmentHeight * 0.25; // Espaçamento proporcional para as 4 linhas
+
+                for (let i = 0; i < numLines; i++) {
+                    const midY = (segmentHeight * i) + (segmentHeight / 2);
+                    drawLines(midY, spacing);
+                }
+            } else {
+                // Modo Normal: Desenha 1 trio de linhas e o texto guia no fundo
+                const midY = height / 2;
+                const spacing = isMobile ? 45 : 65;
+                drawLines(midY, spacing);
+
+                // Texto Guia
+                const word = getCurrentWord();
+                let fontSize = isMobile ? 130 : 180;
+                bgCtx.font = `${fontSize}px 'Dancing Script', cursive`;
+
+                let textWidth = bgCtx.measureText(word).width;
+                if (textWidth > width - 40) {
+                    const scale = (width - 40) / textWidth;
+                    fontSize = Math.floor(fontSize * scale);
+                    bgCtx.font = `${fontSize}px 'Dancing Script', cursive`;
+                }
+
+                bgCtx.fillStyle = "rgba(0, 0, 0, 0.12)";
+                bgCtx.textAlign = "center";
+                bgCtx.textBaseline = "alphabetic";
+                bgCtx.fillText(word, width / 2, midY + (spacing * 0.85));
+            }
+        }
+
+        function updateApp() {
+            wordDisplay.innerText = getCurrentWord();
+            renderCategories();
+            initCanvases();
+        }
+
+        // --- CORREÇÃO AQUI: FATOR DE ESCALA EXATO ---
+        function getCoordinates(e) {
+            const rect = drawCanvas.getBoundingClientRect();
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            // Fator de escala garante que as coordenadas do CSS combinem com os pixels reais da tela
+            const scaleX = drawCanvas.width / rect.width;
+            const scaleY = drawCanvas.height / rect.height;
+
+            return { 
+                x: (clientX - rect.left) * scaleX, 
+                y: (clientY - rect.top) * scaleY 
+            };
+        }
+
+        function startDrawing(e) {
+            if(e.type.includes('touch')) e.preventDefault();
+            isDrawing = true;
+            const { x, y } = getCoordinates(e);
+
+            drawCtx.beginPath();
+            drawCtx.moveTo(x, y);
+            drawCtx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+            drawCtx.fillStyle = isEraser ? 'rgba(0,0,0,1)' : currentColor;
+            const radius = (isEraser ? currentSize * 3 : currentSize) / 2;
+            drawCtx.arc(x, y, radius, 0, Math.PI * 2);
+            drawCtx.fill();
+            drawCtx.beginPath();
+            drawCtx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            if(e.type.includes('touch')) e.preventDefault();
+            const { x, y } = getCoordinates(e);
+
+            drawCtx.lineTo(x, y);
+            drawCtx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+            drawCtx.strokeStyle = isEraser ? 'rgba(0,0,0,1)' : currentColor;
+            drawCtx.lineWidth = isEraser ? currentSize * 3 : currentSize;
+            drawCtx.lineCap = "round";
+            drawCtx.lineJoin = "round";
+            drawCtx.stroke();
+        }
+
+        function stopDrawing() { isDrawing = false; }
+
+        drawCanvas.addEventListener('mousedown', startDrawing);
+        drawCanvas.addEventListener('mousemove', draw);
+        drawCanvas.addEventListener('mouseup', stopDrawing);
+        drawCanvas.addEventListener('mouseout', stopDrawing);
+        
+        drawCanvas.addEventListener('touchstart', startDrawing, {passive: false});
+        drawCanvas.addEventListener('touchmove', draw, {passive: false});
+        drawCanvas.addEventListener('touchend', stopDrawing);
+        drawCanvas.addEventListener('touchcancel', stopDrawing);
+
+        // Ações dos Botões
+        document.getElementById('btn-prev').onclick = () => {
+            const list = categories[currentCategory];
+            currentIndex = (currentIndex - 1 + list.length) % list.length;
+            updateApp();
+        };
+
+        document.getElementById('btn-next').onclick = () => {
+            const list = categories[currentCategory];
+            currentIndex = (currentIndex + 1) % list.length;
+            updateApp();
+        };
+
+        document.getElementById('btn-clear').onclick = () => {
+            drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+        };
+
+        document.getElementById('btn-eraser').onclick = () => {
+            isEraser = !isEraser;
+            renderColors(); // Atualiza bordas das cores se necessário
+            updateEraserUI();
+        };
+
+        // Fullscreen Logic
+        const toggleFullScreen = () => {
+            const body = document.documentElement;
+            if (!document.fullscreenElement) {
+                body.requestFullscreen().catch(err => console.error(err));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        };
+
+        document.getElementById('btn-fullscreen-mobile').onclick = toggleFullScreen;
+        document.getElementById('btn-fullscreen-desktop').onclick = toggleFullScreen;
+
+        // --- CORREÇÃO AQUI: ATRASO DE 350ms ---
+        document.addEventListener('fullscreenchange', () => {
+            const body = document.getElementById('body');
+            if (document.fullscreenElement) {
+                body.classList.remove('py-6', 'px-4');
+                body.classList.add('p-0');
+            } else {
+                body.classList.add('py-6', 'px-4');
+                body.classList.remove('p-0');
+            }
+            // Espera a animação do CSS (300ms) terminar totalmente antes de recalcular
+            setTimeout(initCanvases, 350);
+        });
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(initCanvases, 350);
+        });
+
+        // Inicialização
+        document.fonts.ready.then(() => {
+            renderCategories();
+            renderColors();
+            renderSizes();
+            updateEraserUI();
+            updateApp();
+        });
+    </script>
+</body>
+</html>
