@@ -50,6 +50,11 @@ const JOGOS = [
     descricao: 'Cubra letras, palavras e frases em letra cursiva com o dedo ou a caneta, no tablet ou no celular.',
     habilidades: [] },
 
+  { arquivo: 'guardioes-do-pantanal.html', titulo: 'Guardiões do Pantanal', componente: 'cie', anos: [6,7],
+    tipo: 'Missões', icone: '🐆',
+    descricao: 'Monte cadeias alimentares do Pantanal e do Cerrado, reconheça os biomas de MS e preveja os efeitos do fogo, da caça e do desmatamento.',
+    habilidades: ['MS.EF07CI07', 'MS.EF07CI08', 'MS.EF04CI04'] },
+
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
     descricao: 'Monte a situação-problema peça por peça, confira se tem todos os dados, planeje e resolva.',
