@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz STE ao vivo — Painel do professor</title>
+<meta name="description" content="Quiz ao vivo para revisão em sala: o professor projeta as perguntas e os estudantes respondem pelo celular, com pontuação por velocidade e ranking com toda a turma.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="quiz.css">
+<script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<header class="topo">
+  <a class="btn icone" href="../index.html" aria-label="Voltar para a plataforma">←</a>
+  <div class="marca"><span class="logo">⚡</span><div><b>Quiz STE</b><small>AO VIVO · PAINEL DO PROFESSOR</small></div></div>
+  <span style="flex:1"></span>
+  <button class="btn pequeno hidden" id="btn-alunos" data-acao="alunos">👥 <span id="n-alunos">0</span></button>
+  <button class="btn pequeno hidden" id="btn-qr" data-acao="qr">📱 Entrada</button>
+  <span class="estado-con" id="con"><i></i><span>Conectando…</span></span>
+</header>
+<main class="palco" id="app"></main>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+/* =========================================================
+   QUIZ STE AO VIVO — painel do professor
+   Criado pelo Prof. José Rene Miranda (rede estadual de MS),
+   versão on-line para a plataforma JRM • Aventuras Educativas.
+   Pontuação: acerto vale de 1.000 (imediato) a 200 pontos (fim do tempo).
+   Ranking com TODOS os participantes.
+   ========================================================= */
+import {conectar, TS} from './rede.js';
+
+const PONTOS_MAX=1000, PONTOS_MIN=200, MARGEM=1.25;
+const FORMAS=['▲','◆','●','■'];
+const CORES_AV=['#7C3AED','#DB2777','#2563EB','#059669','#D97706','#DC2626','#0891B2','#4F46E5','#65A30D','#C026D3'];
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const corDe=n=>{ let h=0; for(const c of String(n)) h=(h*31+c.charCodeAt(0))>>>0; return CORES_AV[h%CORES_AV.length]; };
+const avatar=n=>`<span class="av" style="background:${corDe(n)}">${esc((String(n).trim()[0]||'?').toUpperCase())}</span>`;
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3200); }
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- Banco de quizzes (fica neste navegador) ---------- */
+const CH_Q='quizSTE.quizzes', CH_CFG='quizSTE.cfg', CH_SESSAO='quizSTE.sessao';
+const ler=(k,p)=>{ try{ const v=JSON.parse(localStorage.getItem(k)); return v??p; }catch(e){ return p; } };
+const gravar=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ toast('Não foi possível salvar neste navegador.'); } };
+let QUIZZES=ler(CH_Q,null);
+let CFG=Object.assign({tempo:30}, ler(CH_CFG,{}));
+const EXEMPLO={id:'exemplo', titulo:'Quiz de exemplo — Mato Grosso do Sul', atualizado:Date.now(), perguntas:[
+  {texto:'Qual é a capital de Mato Grosso do Sul?', opcoes:['Dourados','Campo Grande','Corumbá','Três Lagoas'], correta:2, tempo:null},
+  {texto:'Em que ano foi criado o estado de Mato Grosso do Sul?', opcoes:['1977','1889','1822','2000'], correta:1, tempo:null},
+  {texto:'Qual bioma de MS fica alagado na época das cheias?', opcoes:['Caatinga','Pampa','Pantanal','Amazônia'], correta:3, tempo:null},
+  {texto:'Quanto é 7 × 8?', opcoes:['54','56','48','64'], correta:2, tempo:20},
+  {texto:'Qual destes animais é símbolo do Pantanal?', opcoes:['Pinguim','Camelo','Urso-polar','Tuiuiú'], correta:4, tempo:null}
+]};
+if(!Array.isArray(QUIZZES)){ QUIZZES=[EXEMPLO]; gravar(CH_Q,QUIZZES); }
+const salvarQuizzes=()=>gravar(CH_Q,QUIZZES);
+const novoId=()=>'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+
+/* CSV no formato do Quiz STE original:
+   pergunta;opção 1;opção 2;opção 3;opção 4;correta (1 a 4);tempo (opcional) */
+function lerCSV(txt){
+  const out=[];
+  txt.replace(/^﻿/,'').split(/\r?\n/).forEach(l=>{
+    if(!l.trim()) return;
+    const c=l.split(';').map(s=>s.trim().replace(/^"(.*)"$/,'$1').replace(/""/g,'"'));
+    if(c.length<6) return;
+    const correta=parseInt(c[5]); if(!(correta>=1&&correta<=4)) return;   // pula cabeçalho
+    const t=parseInt(c[6]);
+    out.push({texto:c[0], opcoes:[c[1],c[2],c[3],c[4]], correta, tempo:(t>0?t:null)});
+  });
+  return out.filter(q=>q.texto && q.opcoes[q.correta-1]);
+}
+async function lerArquivo(f){
+  const buf=await f.arrayBuffer();
+  let txt=new TextDecoder('utf-8').decode(buf);
+  if(txt.includes('�')) txt=new TextDecoder('windows-1252').decode(buf);   // CSV salvo pelo Excel
+  return txt;
+}
+function paraCSV(q){
+  const cel=s=>{ s=String(s??''); return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  return '﻿'+q.perguntas.map(p=>[p.texto,...p.opcoes,p.correta,p.tempo||''].map(cel).join(';')).join('\r\n');
+}
+function baixar(nome,conteudo,tipo='text/csv;charset=utf-8'){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo})); a.download=nome; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+}
+const nomeArquivo=t=>String(t||'quiz').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w-]+/g,'-').replace(/-+/g,'-').toLowerCase().slice(0,50);
+
+/* ---------- Estado do jogo ---------- */
+let R=null;           // rede
+let PIN=null, QUIZ=null, IDX=-1, FASE='inicio';
+let ENTRADA={}, PLACAR={}, ESTADO=null, ALERTAS={}, alertasVistos=new Set();
+let ouvintes=[], ouvResp=null, timerId=null, revelando=false, armadoEncerrar=false;
+const tempoDe=p=>p.tempo||CFG.tempo;
+const sessao=()=>ler(CH_SESSAO,null);
+function salvarSessao(){ try{ sessionStorage.setItem(CH_SESSAO, JSON.stringify({pin:PIN, quizId:QUIZ&&QUIZ.id, idx:IDX})); }catch(e){} }
+function lerSessao(){ try{ return JSON.parse(sessionStorage.getItem(CH_SESSAO)); }catch(e){ return null; } }
+function limparSessao(){ try{ sessionStorage.removeItem(CH_SESSAO); }catch(e){} }
+const urlAluno=()=>{ const u=new URL('jogar.html', location.href); u.search=''; u.searchParams.set('pin',PIN); if(R&&R.tipo==='teste') u.searchParams.set('teste','1'); return u.toString(); };
+
+/* ---------- Telas ---------- */
+function telaInicio(){
+  FASE='inicio'; $('#btn-alunos').classList.add('hidden'); $('#btn-qr').classList.add('hidden');
+  app.innerHTML=`<div class="grade2">
+    <section class="card">
+      <span class="selo">QUIZ AO VIVO PARA REVISÃO</span>
+      <h1 style="font-size:clamp(30px,4vw,46px);margin:10px 0 6px">Transforme a revisão num <span style="color:#7C3AED">game show</span></h1>
+      <p class="muted" style="margin:0">Projete esta tela, os estudantes entram pelo celular com um PIN e respondem ao vivo. Funciona pela internet, sem precisar de um computador servidor na escola.</p>
+      <div class="passos"><div><b>1</b>Escolha ou crie um quiz</div><div><b>2</b>Abra a sala e mostre o QR Code</div><div><b>3</b>Comece e acompanhe o ranking</div></div>
+      <label class="campo" for="tempo">Tempo padrão por pergunta</label>
+      <select id="tempo">${[10,15,20,30,45,60,90].map(t=>`<option value="${t}" ${t==CFG.tempo?'selected':''}>${t} segundos</option>`).join('')}</select>
+      <p class="mini" style="margin-top:6px">Perguntas com tempo próprio no CSV mantêm o tempo delas.</p>
+      <div class="linha-acoes"><button class="btn" data-acao="modelo">⬇ Baixar modelo CSV</button><button class="btn" data-acao="ajuda">❓ Como funciona</button></div>
+    </section>
+    <section class="card">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="flex:1">Meus quizzes</h2>
+        <button class="btn roxo pequeno" data-acao="novo">＋ Criar</button>
+        <label class="btn pequeno" style="cursor:pointer">📂 Importar CSV<input type="file" id="csv" accept=".csv,.txt" hidden></label></div>
+      <p class="mini" style="margin:2px 0 0">Ficam salvos neste navegador. Baixe o CSV para levar para outro computador.</p>
+      <div class="quizzes">${QUIZZES.length?QUIZZES.map(q=>`<div class="quiz-item"><span class="ic">📝</span><div class="info2"><b>${esc(q.titulo)}</b><small>${q.perguntas.length} pergunta${q.perguntas.length!==1?'s':''}</small></div>
+        <div class="acoes2"><button class="btn roxo pequeno" data-abrir="${q.id}" ${q.perguntas.length?'':'disabled'}>▶ Abrir sala</button><button class="btn pequeno" data-editar="${q.id}" aria-label="Editar">✏️</button><button class="btn pequeno" data-csv="${q.id}" aria-label="Baixar CSV">⬇</button><button class="btn pequeno perigo" data-apagar="${q.id}" aria-label="Apagar">🗑</button></div></div>`).join('')
+        :'<div class="vazio">Nenhum quiz ainda. Crie um ou importe o seu CSV.</div>'}</div>
+    </section></div>`;
+  $('#tempo').onchange=e=>{ CFG.tempo=+e.target.value; gravar(CH_CFG,CFG); };
+  $('#csv').onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
+    const ps=lerCSV(await lerArquivo(f));
+    if(!ps.length){ toast('Não encontrei perguntas no arquivo. Confira o separador ponto e vírgula.'); return; }
+    QUIZZES.unshift({id:novoId(), titulo:f.name.replace(/\.(csv|txt)$/i,''), perguntas:ps, atualizado:Date.now()}); salvarQuizzes();
+    toast(`${ps.length} perguntas importadas!`); telaInicio(); };
+}
+
+/* ---------- Editor ---------- */
+let ED=null;
+function telaEditor(id){
+  const base=id?QUIZZES.find(q=>q.id===id):null;
+  ED=base?JSON.parse(JSON.stringify(base)):{id:novoId(), titulo:'', perguntas:[{texto:'',opcoes:['','','',''],correta:1,tempo:null}]};
+  FASE='editor'; desenharEditor();
+}
+function desenharEditor(){
+  app.innerHTML=`<section class="card"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="flex:1">${QUIZZES.some(q=>q.id===ED.id)?'Editar quiz':'Novo quiz'}</h2>
+      <button class="btn" data-acao="cancelar-ed">Cancelar</button><button class="btn roxo" data-acao="salvar-ed">💾 Salvar quiz</button></div>
+    <label class="campo" for="ed-tit">Título (ex.: Revisão de frações — 6º A)</label><input class="inp" id="ed-tit" maxlength="80" value="${esc(ED.titulo)}">
+    <div id="ed-qs">${ED.perguntas.map((p,i)=>`<div class="q-ed" data-q="${i}">
+      <div class="cab-q"><b>Pergunta ${i+1}</b>
+        <select data-campo="tempo" style="width:auto;padding:6px 8px" aria-label="Tempo"><option value="">Tempo padrão</option>${[10,15,20,30,45,60,90].map(t=>`<option value="${t}" ${p.tempo==t?'selected':''}>${t}s</option>`).join('')}</select>
+        <button class="btn pequeno" data-mover="-1" ${i===0?'disabled':''} aria-label="Subir">↑</button><button class="btn pequeno" data-mover="1" ${i===ED.perguntas.length-1?'disabled':''} aria-label="Descer">↓</button>
+        <button class="btn pequeno perigo" data-tirar="1" ${ED.perguntas.length<2?'disabled':''} aria-label="Remover">🗑</button></div>
+      <textarea data-campo="texto" maxlength="300" placeholder="Digite a pergunta">${esc(p.texto)}</textarea>
+      <div class="alts">${[0,1,2,3].map(j=>`<label class="alt a${j+1}"><span class="forma">${FORMAS[j]}</span><input type="text" data-op="${j}" maxlength="120" placeholder="Alternativa ${j+1}${j>1?' (opcional)':''}" value="${esc(p.opcoes[j]||'')}"><input type="radio" name="c${i}" value="${j+1}" ${p.correta===j+1?'checked':''} aria-label="Marcar como correta" title="Correta"></label>`).join('')}</div>
+      <p class="mini" style="margin:6px 0 0">Marque a bolinha da alternativa correta.</p></div>`).join('')}</div>
+    <div class="linha-acoes"><button class="btn" data-acao="add-q">＋ Adicionar pergunta</button></div></section>`;
+}
+function lerEditor(){
+  ED.titulo=$('#ed-tit').value.trim();
+  document.querySelectorAll('.q-ed').forEach(div=>{ const i=+div.dataset.q, p=ED.perguntas[i];
+    p.texto=$('[data-campo="texto"]',div).value.trim(); p.tempo=+$('[data-campo="tempo"]',div).value||null;
+    p.opcoes=[0,1,2,3].map(j=>$(`[data-op="${j}"]`,div).value.trim());
+    const r=$('input[type=radio]:checked',div); p.correta=r?+r.value:1; });
+}
+function salvarEditor(){
+  lerEditor();
+  if(!ED.titulo){ toast('Dê um título ao quiz.'); $('#ed-tit').focus(); return; }
+  for(let i=0;i<ED.perguntas.length;i++){ const p=ED.perguntas[i];
+    if(!p.texto){ toast(`A pergunta ${i+1} está sem texto.`); return; }
+    if(p.opcoes.filter(Boolean).length<2){ toast(`A pergunta ${i+1} precisa de pelo menos 2 alternativas.`); return; }
+    if(!p.opcoes[p.correta-1]){ toast(`Na pergunta ${i+1}, a alternativa marcada como correta está vazia.`); return; } }
+  ED.atualizado=Date.now();
+  const k=QUIZZES.findIndex(q=>q.id===ED.id); if(k>=0) QUIZZES[k]=ED; else QUIZZES.unshift(ED);
+  salvarQuizzes(); toast('Quiz salvo!'); telaInicio();
+}
+
+/* ---------- Sala ---------- */
+async function abrirSala(quizId){
+  QUIZ=QUIZZES.find(q=>q.id===quizId); if(!QUIZ) return;
+  if(!R){ toast('Sem conexão com o servidor do quiz.'); return; }
+  try{
+    let pin, tent=0;
+    do{ pin=String(100000+Math.floor(Math.random()*900000)); tent++; } while(await R.get('salas/'+pin+'/dono') && tent<8);
+    PIN=pin; IDX=-1;
+    await R.set('salas/'+PIN, {dono:R.uid, criadaEm:TS, titulo:QUIZ.titulo, estado:{fase:'lobby', idx:-1, total:QUIZ.perguntas.length}});
+    salvarSessao(); ouvirSala(); telaLobby();
+    R.salasVelhas(86400000).then(ks=>ks.forEach(k=>R.remove('salas/'+k).catch(()=>{})));
+  }catch(e){ console.error(e); toast('Não foi possível abrir a sala. Verifique a internet e as regras do Firebase.'); }
+}
+function pararOuvintes(){ ouvintes.forEach(f=>{ try{f();}catch(e){} }); ouvintes=[]; if(ouvResp){ try{ouvResp();}catch(e){} ouvResp=null; } clearInterval(timerId); }
+function ouvirSala(){
+  pararOuvintes();
+  ouvintes.push(R.on('salas/'+PIN+'/entrada', v=>{ ENTRADA=v||{}; atualizarJogadores(); }));
+  ouvintes.push(R.on('salas/'+PIN+'/placar', v=>{ PLACAR=v||{}; }));
+  ouvintes.push(R.on('salas/'+PIN+'/estado', v=>{ ESTADO=v; if(v&&v.fase==='pergunta'&&FASE==='pergunta') iniciarRelogio(); }));
+  ouvintes.push(R.on('salas/'+PIN+'/alertas', v=>{ ALERTAS=v||{}; Object.entries(ALERTAS).forEach(([k,a])=>{ if(!alertasVistos.has(k)){ alertasVistos.add(k); if(alertasVistos.size>0&&FASE!=='lobby') toast(`🛡️ ${a.nome} saiu da tela do quiz.`); } }); atualizarJogadores(); }));
+  $('#btn-alunos').classList.remove('hidden'); $('#btn-qr').classList.remove('hidden');
+}
+const violacoes=uid=>Object.values(ALERTAS).filter(a=>a.uid===uid).length;
+function atualizarJogadores(){
+  const n=Object.keys(ENTRADA).length; $('#n-alunos').textContent=n;
+  const lista=$('#lista-jog'); if(lista){ lista.innerHTML=n?Object.entries(ENTRADA).sort((a,b)=>(a[1].em||0)-(b[1].em||0)).map(([u,j])=>`<span class="jog">${avatar(j.nome)}${esc(j.nome)}${violacoes(u)?`<span class="alerta" title="Saídas da tela">🛡️${violacoes(u)}</span>`:''}<button class="x" data-remover="${u}" aria-label="Remover ${esc(j.nome)}">×</button></span>`).join(''):'<p class="muted">Aguardando os estudantes…</p>'; }
+  const c=$('#cont-jog'); if(c) c.textContent=n;
+  const b=$('#btn-comecar'); if(b) b.disabled=!n;
+  if(FASE==='pergunta') atualizarRespostas();
+  if($('#modal-alunos')) modalAlunos();
+}
+function telaLobby(){
+  FASE='lobby';
+  app.innerHTML=`<div class="grade2">
+    <section class="card centro">
+      <span class="selo">${esc(QUIZ.titulo)} · ${QUIZ.perguntas.length} perguntas</span>
+      <p style="margin:14px 0 2px;font-weight:700">Entre pelo celular e digite o PIN</p>
+      <div class="pin-grande">${PIN.slice(0,3)} ${PIN.slice(3)}</div>
+      <div style="display:flex;justify-content:center"><div class="qr" id="qr"></div></div>
+      <div class="link-aluno"><input id="link" readonly value="${esc(urlAluno())}" aria-label="Link para os estudantes"><button class="btn pequeno" data-acao="copiar">Copiar</button></div>
+    </section>
+    <section class="card">
+      <div style="display:flex;align-items:center;gap:10px"><h2 style="flex:1">Na sala: <span class="contador" id="cont-jog">0</span></h2><button class="btn pequeno perigo" data-acao="remover-todos">🧹 Remover todos</button></div>
+      <div class="jogadores" id="lista-jog"></div>
+      <div class="linha-acoes"><button class="btn roxo grande" id="btn-comecar" data-acao="comecar" disabled>Começar o quiz ▶</button></div>
+      <div class="linha-acoes"><button class="btn pequeno" data-acao="trocar">🔁 Trocar de quiz</button><button class="btn pequeno perigo" data-acao="encerrar">⏹ Encerrar sala</button></div>
+      <p class="mini" style="margin-top:10px">Toque no × para remover um nome. Quem sair da tela durante as perguntas aparece com 🛡️.</p>
+    </section></div>`;
+  desenharQR($('#qr'),200); atualizarJogadores();
+}
+function desenharQR(el,tam){ el.innerHTML=''; if(window.QRCode) new QRCode(el,{text:urlAluno(),width:tam,height:tam,correctLevel:QRCode.CorrectLevel.M}); else el.textContent='Use o link abaixo.'; }
+
+/* ---------- Pergunta ---------- */
+async function mandarPergunta(i){
+  IDX=i; salvarSessao(); revelando=false; RESP={};
+  const p=QUIZ.perguntas[i];
+  const part={}; Object.keys(ENTRADA).forEach(u=>part[u]=true);
+  const opcoes=p.opcoes.map(o=>o||'');
+  await R.update('salas/'+PIN, {estado:{fase:'pergunta', idx:i, total:QUIZ.perguntas.length, tempo:tempoDe(p), inicio:TS, pergunta:{texto:p.texto, opcoes}, part}});
+  FASE='pergunta'; telaPergunta();
+  if(ouvResp) ouvResp();
+  ouvResp=R.on('salas/'+PIN+'/respostas/'+i, v=>{ RESP=v||{}; atualizarRespostas(); });
+}
+let RESP={};
+function telaPergunta(revelada){
+  const p=QUIZ.perguntas[IDX], e=ESTADO||{};
+  const dist=e.dist||[0,0,0,0], tot=dist.reduce((a,b)=>a+b,0)||1;
+  app.innerHTML=`<div class="barra-jogo"><span class="tag">Pergunta ${IDX+1} de ${QUIZ.perguntas.length}</span>
+      <div class="respostas-st"><b id="txt-resp">Aguardando respostas…</b><div class="prog"><i id="prog-resp"></i></div></div>
+      <div class="relogio" id="relogio"><span id="seg">${tempoDe(p)}</span></div></div>
+    <div class="enunc">${esc(p.texto)}</div>
+    <div class="alternativas">${p.opcoes.map((o,j)=>o?`<div class="alternativa c${j+1} ${revelada?(j+1===p.correta?'correta':'apagada'):''}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span>${revelada?`<span class="qt">${dist[j]||0}</span><span class="bar-d" style="width:${100*(dist[j]||0)/tot}%"></span>`:''}</div>`:'').join('')}</div>
+    <div class="acoes-jogo">${revelada
+      ?`<button class="btn" data-acao="ranking">🏆 Ver ranking</button>${IDX<QUIZ.perguntas.length-1?'<button class="btn roxo grande" data-acao="proxima">Próxima pergunta ➔</button>':'<button class="btn roxo grande" data-acao="final">🏁 Pódio final</button>'}`
+      :'<button class="btn" data-acao="revelar">⏱ Encerrar tempo e mostrar a resposta</button>'}</div>`;
+  if(revelada){ $('#seg').textContent='✔'; $('#relogio').style.setProperty('--p','0%'); }
+  atualizarRespostas();
+  if(!revelada) iniciarRelogio();
+}
+function iniciarRelogio(){
+  clearInterval(timerId);
+  const tic=()=>{
+    if(FASE!=='pergunta'||!ESTADO||ESTADO.fase!=='pergunta'||typeof ESTADO.inicio!=='number') return;
+    const resta=Math.max(0,(ESTADO.inicio+ESTADO.tempo*1000-R.agora())/1000);
+    const s=$('#seg'), rel=$('#relogio'); if(!s) return;
+    s.textContent=Math.ceil(resta); rel.style.setProperty('--p',(100*resta/ESTADO.tempo)+'%'); rel.classList.toggle('urgente',resta<=5);
+    if(resta<=0) revelar();
+  };
+  tic(); timerId=setInterval(tic,250);
+}
+function atualizarRespostas(){
+  if(!ESTADO||ESTADO.fase==='lobby') return;
+  const part=Object.keys(ESTADO.part||{}).filter(u=>ENTRADA[u]);
+  const n=part.filter(u=>RESP[u]).length, t=part.length;
+  const tx=$('#txt-resp'), pr=$('#prog-resp');
+  if(tx){ tx.textContent=`${n} de ${t} responderam`; pr.style.width=(t?100*n/t:0)+'%'; }
+  if(FASE==='pergunta'&&ESTADO.fase==='pergunta'&&t>0&&n>=t) revelar();
+}
+function pontosPorTempo(seg,lim){ const prop=Math.min(Math.max(seg,0),lim)/Math.max(lim,.1); return Math.max(PONTOS_MIN,Math.min(PONTOS_MAX,Math.round(PONTOS_MAX-(PONTOS_MAX-PONTOS_MIN)*prop))); }
+async function revelar(){
+  if(revelando||FASE!=='pergunta') return; revelando=true; clearInterval(timerId);
+  const p=QUIZ.perguntas[IDX], e=ESTADO;
+  const resp=(await R.get('salas/'+PIN+'/respostas/'+IDX))||{};
+  const placar=JSON.parse(JSON.stringify(PLACAR||{})), dist=[0,0,0,0];
+  Object.entries(ENTRADA).forEach(([u,j])=>{ if(!placar[u]) placar[u]={nome:j.nome,pontos:0,acertos:0,tempoAcertos:0}; placar[u].nome=j.nome; placar[u].ultimo={r:0,pts:0,acertou:false,participou:!!(e.part||{})[u]}; });
+  Object.entries(resp).forEach(([u,r])=>{
+    if(!placar[u]||!(e.part||{})[u]) return;
+    const seg=(r.t-e.inicio)/1000; if(seg>e.tempo+MARGEM) return;
+    dist[r.r-1]=(dist[r.r-1]||0)+1;
+    const ok=r.r===p.correta, pts=ok?pontosPorTempo(seg,e.tempo):0;
+    placar[u].ultimo={r:r.r,pts,acertou:ok,participou:true};
+    if(ok){ placar[u].pontos+=pts; placar[u].acertos+=1; placar[u].tempoAcertos=+(placar[u].tempoAcertos+Math.min(seg,e.tempo)).toFixed(2); }
+  });
+  PLACAR=placar;
+  await R.update('salas/'+PIN, {placar, 'estado/fase':'revelada', 'estado/correta':p.correta, 'estado/dist':dist});
+  ESTADO=Object.assign({},ESTADO,{fase:'revelada',correta:p.correta,dist});
+  FASE='revelada'; telaPergunta(true);
+}
+
+/* ---------- Ranking ---------- */
+function ordenar(){ return Object.entries(PLACAR||{}).filter(([u])=>ENTRADA[u]).map(([u,p])=>({u,...p})).sort((a,b)=>(b.pontos-a.pontos)||(b.acertos-a.acertos)||(a.tempoAcertos-b.tempoAcertos)||a.nome.localeCompare(b.nome,'pt-BR')); }
+async function telaRanking(final){
+  await R.update('salas/'+PIN, {'estado/fase':final?'fim':'ranking'});
+  FASE=final?'fim':'ranking';
+  const L=ordenar(), ultimo=IDX>=QUIZ.perguntas.length-1;
+  const podio=final&&L.length?`<div class="podio">${[1,0,2].map(k=>L[k]?`<div class="degrau d${k+1}">${avatar(L[k].nome).replace('class="av"','class="av"')}<b>${esc(L[k].nome)}</b><small>${L[k].pontos} pts</small><div class="bloco">${k+1}º</div></div>`:'<div></div>').join('')}</div>`:'';
+  app.innerHTML=`<section class="card">
+    <div class="centro"><div style="font-size:48px">${final?'🏆':'📊'}</div><h1 style="font-size:clamp(28px,4vw,44px)">${final?'Pódio final':'Ranking da turma'}</h1>
+    <p class="muted" style="margin:4px 0 10px">${final?esc(QUIZ.titulo):`Depois da pergunta ${IDX+1} de ${QUIZ.perguntas.length}`} · ${L.length} participante${L.length!==1?'s':''}</p></div>
+    ${podio}
+    <div class="ranking">${L.map((j,i)=>`<div class="rk ${i<3?'top'+(i+1):''}"><span class="pos">${i+1}º</span>${avatar(j.nome)}<span class="nm">${esc(j.nome)}</span><span class="dl ${j.ultimo&&j.ultimo.pts?'':'zero'}">${j.ultimo&&j.ultimo.pts?'+'+j.ultimo.pts:'+0'}</span><span class="pts">${j.pontos}</span></div>`).join('')||'<p class="muted centro">Ninguém pontuou ainda.</p>'}</div>
+    <p class="dicas-proj">Pontos: acerto rápido vale até 1.000; no fim do tempo, 200. Empate: mais acertos e depois menor tempo.</p>
+    <div class="acoes-jogo">${final
+      ?`<button class="btn" data-acao="exportar">⬇ Baixar resultado (CSV)</button><button class="btn" data-acao="trocar">🔁 Jogar outro quiz com a turma</button><button class="btn perigo" data-acao="encerrar">⏹ Encerrar sala</button>`
+      :(ultimo?'<button class="btn roxo grande" data-acao="final">🏁 Pódio final</button>':'<button class="btn roxo grande" data-acao="proxima">Próxima pergunta ➔</button>')}</div></section>`;
+}
+function exportar(){
+  const L=ordenar();
+  const linhas=[['Posição','Nome','Pontos','Acertos','Perguntas','Saídas da tela'],...L.map((j,i)=>[i+1,j.nome,j.pontos,j.acertos,QUIZ.perguntas.length,violacoes(j.u)])];
+  baixar(`resultado-${nomeArquivo(QUIZ.titulo)}-${new Date().toISOString().slice(0,10)}.csv`, '﻿'+linhas.map(l=>l.join(';')).join('\r\n'));
+}
+
+/* ---------- Gerenciar ---------- */
+function modalAlunos(){
+  const L=Object.entries(ENTRADA);
+  abrirModal(`<div id="modal-alunos"><h2>Estudantes na sala (${L.length})</h2>
+    <div class="ranking" style="margin-top:10px">${L.map(([u,j])=>`<div class="rk" style="grid-template-columns:34px 1fr auto auto">${avatar(j.nome)}<span class="nm">${esc(j.nome)}</span><span class="muted" style="font-size:13px">${violacoes(u)?'🛡️ '+violacoes(u)+' saída'+(violacoes(u)>1?'s':''):'—'}</span><button class="btn pequeno perigo" data-remover="${u}">Remover</button></div>`).join('')||'<p class="muted">Ninguém na sala.</p>'}</div>
+    <p class="mini" style="margin-top:10px">🛡️ conta quantas vezes o estudante saiu da tela do quiz durante uma pergunta (trocou de aba ou de aplicativo). Um site não consegue bloquear isso, só registrar.</p>
+    <div class="acoes"><button class="btn roxo" data-acao="fechar">Fechar</button></div></div>`);
+}
+function modalQR(){
+  abrirModal(`<div class="centro"><h2>Entrada dos estudantes</h2><div class="pin-grande" style="font-size:64px;margin:8px 0">${PIN.slice(0,3)} ${PIN.slice(3)}</div>
+    <div style="display:flex;justify-content:center"><div class="qr" id="qr-m" style="width:300px;height:300px"></div></div>
+    <p class="mini">${esc(urlAluno())}</p><div class="acoes"><button class="btn roxo" data-acao="fechar">Fechar</button></div></div>`);
+  desenharQR($('#qr-m'),280);
+}
+async function removerJogador(u){
+  await R.update('salas/'+PIN, {['entrada/'+u]:null, ['placar/'+u]:null});
+  toast('Estudante removido.');
+}
+async function removerTodos(){
+  if(!Object.keys(ENTRADA).length) return;
+  await R.update('salas/'+PIN, {entrada:null, placar:null});
+  toast('Sala limpa.');
+}
+function modalTrocar(){
+  abrirModal(`<h2>Escolha o próximo quiz</h2><p class="muted">Os estudantes continuam na sala e a pontuação começa do zero.</p>
+    <div class="quizzes">${QUIZZES.filter(q=>q.perguntas.length).map(q=>`<div class="quiz-item"><span class="ic">📝</span><div class="info2"><b>${esc(q.titulo)}</b><small>${q.perguntas.length} perguntas</small></div><button class="btn roxo pequeno" data-trocar="${q.id}">Usar este</button></div>`).join('')}</div>
+    <div class="acoes"><button class="btn" data-acao="fechar">Cancelar</button></div>`);
+}
+async function trocarQuiz(id){
+  QUIZ=QUIZZES.find(q=>q.id===id); IDX=-1; salvarSessao(); fecharModal();
+  await R.update('salas/'+PIN, {titulo:QUIZ.titulo, placar:null, respostas:null, estado:{fase:'lobby', idx:-1, total:QUIZ.perguntas.length}});
+  PLACAR={}; telaLobby();
+}
+async function encerrarSala(){
+  pararOuvintes();
+  try{ await R.remove('salas/'+PIN); }catch(e){}
+  PIN=null; limparSessao(); ENTRADA={}; PLACAR={}; ALERTAS={}; alertasVistos=new Set(); ESTADO=null;
+  toast('Sala encerrada.'); telaInicio();
+}
+
+function ajuda(){
+  abrirModal(`<h2>Como funciona</h2><div class="lista">
+    <div>📝 <b>Quizzes:</b> crie aqui ou importe o mesmo CSV do Quiz STE (pergunta;alt1;alt2;alt3;alt4;correta;tempo). Eles ficam salvos neste navegador.</div>
+    <div>📱 <b>Entrada:</b> os estudantes leem o QR Code ou acessam o link e digitam o PIN. Pode ser no Wi-Fi da escola ou nos dados móveis.</div>
+    <div>⚡ <b>Pontos:</b> acerto rápido vale até 1.000 pontos; no fim do tempo, 200. Erro vale 0.</div>
+    <div>🏆 <b>Ranking:</b> aparece com todos os participantes. No celular, cada estudante vê a própria posição.</div>
+    <div>🛡️ <b>Fiscalização:</b> o painel registra quem sai da tela durante as perguntas.</div>
+    <div>🔒 <b>Privacidade:</b> só o primeiro nome e os pontos ficam no servidor, e a sala é apagada quando você encerra.</div></div>
+    <div class="acoes"><button class="btn roxo" data-acao="fechar">Entendi</button></div>`);
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener('click', async e=>{
+  const el=e.target.closest('button'); if(!el||el.disabled) return;
+  const d=el.dataset;
+  if(d.abrir) return abrirSala(d.abrir);
+  if(d.editar) return telaEditor(d.editar);
+  if(d.csv){ const q=QUIZZES.find(x=>x.id===d.csv); return baixar(nomeArquivo(q.titulo)+'.csv', paraCSV(q)); }
+  if(d.apagar){ if(el.dataset.armado){ QUIZZES=QUIZZES.filter(q=>q.id!==d.apagar); salvarQuizzes(); telaInicio(); } else { el.dataset.armado=1; el.textContent='Apagar?'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🗑'; } },3000); } return; }
+  if(d.remover) return removerJogador(d.remover);
+  if(d.trocar) return trocarQuiz(d.trocar);
+  if(d.mover||d.tirar){ lerEditor(); const i=+el.closest('.q-ed').dataset.q;
+    if(d.tirar) ED.perguntas.splice(i,1); else { const j=i+(+d.mover); [ED.perguntas[i],ED.perguntas[j]]=[ED.perguntas[j],ED.perguntas[i]]; }
+    return desenharEditor(); }
+  const a=d.acao; if(!a) return;
+  if(a==='fechar') fecharModal();
+  else if(a==='novo') telaEditor(null);
+  else if(a==='add-q'){ lerEditor(); ED.perguntas.push({texto:'',opcoes:['','','',''],correta:1,tempo:null}); desenharEditor(); const qs=document.querySelectorAll('.q-ed'); qs[qs.length-1].scrollIntoView({behavior:'smooth'}); }
+  else if(a==='salvar-ed') salvarEditor();
+  else if(a==='cancelar-ed') telaInicio();
+  else if(a==='modelo') baixar('modelo-quiz-ste.csv','﻿'+'Qual é a capital de Mato Grosso do Sul?;Dourados;Campo Grande;Corumbá;Três Lagoas;2;30\r\nQuanto é 7 x 8?;54;56;48;64;2;20\r\n');
+  else if(a==='ajuda') ajuda();
+  else if(a==='copiar'){ const i=$('#link'); i.select(); try{ await navigator.clipboard.writeText(i.value); }catch(err){ document.execCommand('copy'); } toast('Link copiado!'); }
+  else if(a==='comecar') mandarPergunta(0);
+  else if(a==='revelar') revelar();
+  else if(a==='ranking') telaRanking(false);
+  else if(a==='proxima') mandarPergunta(IDX+1);
+  else if(a==='final') telaRanking(true);
+  else if(a==='exportar') exportar();
+  else if(a==='alunos') modalAlunos();
+  else if(a==='qr') modalQR();
+  else if(a==='trocar') modalTrocar();
+  else if(a==='remover-todos'){ if(el.dataset.armado){ removerTodos(); } else { el.dataset.armado=1; el.textContent='Confirmar?'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🧹 Remover todos'; } },3000); } }
+  else if(a==='encerrar'){ if(el.dataset.armado){ encerrarSala(); } else { el.dataset.armado=1; el.textContent='Clique de novo para encerrar'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='⏹ Encerrar sala'; } },3500); } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharModal(); });
+window.addEventListener('beforeunload', e=>{ if(PIN&&['pergunta','revelada','ranking'].includes(FASE)){ e.preventDefault(); e.returnValue=''; } });
+
+/* para diagnóstico no console do navegador */
+window.quizSTE={ ordenar, get fase(){return FASE;}, get pin(){return PIN;} };
+
+/* ---------- Início ---------- */
+function semConfig(){
+  app.innerHTML=`<section class="card" style="max-width:720px;margin:20px auto"><h2>⚙️ Quiz em configuração</h2>
+    <p>O quiz ao vivo precisa de um servidor em tempo real (Firebase). Assim que a configuração for colocada no arquivo <code>quiz/config.js</code>, esta página passa a funcionar.</p>
+    <p class="mini">Para testar neste navegador, abra <a href="?teste=1">o modo de teste</a> (funciona só entre abas do mesmo computador).</p></section>`;
+}
+(async()=>{
+  telaInicio();
+  try{
+    R=await conectar();
+    R.aoConectar(v=>{ const c=$('#con'); c.classList.toggle('on',v); c.lastChild.textContent=v?(R.tipo==='teste'?'Modo de teste':'Conectado'):'Sem conexão'; });
+    const s=lerSessao();
+    if(s&&s.pin){
+      const sala=await R.get('salas/'+s.pin);
+      const q=QUIZZES.find(x=>x.id===s.quizId);
+      if(sala&&sala.dono===R.uid&&q){
+        PIN=s.pin; QUIZ=q; IDX=s.idx??-1; PLACAR=sala.placar||{}; ESTADO=sala.estado; ouvirSala();
+        const f=sala.estado&&sala.estado.fase;
+        if(f==='pergunta'){ FASE='pergunta'; telaPergunta(); ouvResp=R.on('salas/'+PIN+'/respostas/'+IDX, v=>{ RESP=v||{}; atualizarRespostas(); }); }
+        else if(f==='revelada'){ FASE='revelada'; telaPergunta(true); }
+        else if(f==='ranking'||f==='fim'){ telaRanking(f==='fim'); }
+        else telaLobby();
+        toast('Sala retomada.');
+      } else limparSessao();
+    }
+  }catch(e){
+    if(String(e.message)==='sem-config'){ semConfig(); $('#con').lastChild.textContent='Não configurado'; }
+    else { console.error(e); toast('Não foi possível conectar ao servidor do quiz.'); $('#con').lastChild.textContent='Erro de conexão'; }
+  }
+})();
+</script>
+</body>
+</html>

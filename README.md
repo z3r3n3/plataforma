@@ -22,3 +22,12 @@ Plataforma de jogos educativos gratuitos, alinhados ao Currículo de Referência
 ## Publicação
 
 O site é publicado pelo GitHub Pages: **Settings → Pages → Branch `main` / pasta `/ (root)`**.
+
+## Quiz STE ao vivo (`quiz/`)
+
+Versão on-line do Quiz STE do Prof. José Rene: o professor abre `quiz/` e projeta, os estudantes entram em `quiz/jogar.html` com o PIN.
+
+- `rede.js`: conexão com o Firebase Realtime Database (ou modo de teste local com `?teste=1`).
+- `config.js`: configuração do app Web do Firebase (não é senha).
+- `regras-firebase.json`: regras de segurança, para colar em Realtime Database → Regras.
+- CSV aceito: `pergunta;alt1;alt2;alt3;alt4;correta(1-4);tempo(opcional)`, em UTF-8 ou no formato do Excel.

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6D28D9">
+<title>Quiz STE — Entrar no jogo</title>
+<meta name="description" content="Entre no quiz ao vivo da sua turma com o PIN mostrado pelo professor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="quiz.css">
+<script src="config.js"></script>
+</head>
+<body>
+<header class="topo">
+  <div class="marca"><span class="logo">⚡</span><div><b>Quiz STE</b><small id="sub">ARENA DO CONHECIMENTO</small></div></div>
+  <span style="flex:1"></span>
+  <span class="estado-con" id="con"><i></i><span>Conectando…</span></span>
+</header>
+<main class="aluno-palco" id="app"></main>
+<div id="aviso" class="aviso-saida hidden" role="alert"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+/* =========================================================
+   QUIZ STE AO VIVO — tela do estudante
+   Guarda no servidor só o primeiro nome, as respostas e os pontos,
+   e tudo é apagado quando o professor encerra a sala.
+   ========================================================= */
+import {conectar, TS} from './rede.js';
+
+const FORMAS=['▲','◆','●','■'];
+const CORES_AV=['#7C3AED','#DB2777','#2563EB','#059669','#D97706','#DC2626','#0891B2','#4F46E5','#65A30D','#C026D3'];
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const corDe=n=>{ let h=0; for(const c of String(n)) h=(h*31+c.charCodeAt(0))>>>0; return CORES_AV[h%CORES_AV.length]; };
+const avatar=n=>`<span class="av" style="background:${corDe(n)}">${esc((String(n).trim()[0]||'?').toUpperCase())}</span>`;
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3000); }
+function vibrar(p){ try{ navigator.vibrate&&navigator.vibrate(p); }catch(e){} }
+
+const CH='quizSTE.aluno';
+let R=null, PIN=null, NOME='', ESTADO=null, PLACAR={}, ENTRADA={}, ouvintes=[], timerId=null;
+let respondida={}, ultimoAlerta=0, saidas=0, renderKey='', wake=null;
+const params=new URLSearchParams(location.search);
+
+function guardar(){ try{ sessionStorage.setItem(CH, JSON.stringify({pin:PIN, nome:NOME})); localStorage.setItem(CH+'.nome', NOME); }catch(e){} }
+function lerGuardado(){ try{ return JSON.parse(sessionStorage.getItem(CH)); }catch(e){ return null; } }
+function esquecer(){ try{ sessionStorage.removeItem(CH); }catch(e){} }
+
+/* ---------- Entrada ---------- */
+function telaEntrar(msg){
+  pararOuvintes(); ESTADO=null; renderKey='';
+  let nomeSalvo=''; try{ nomeSalvo=localStorage.getItem(CH+'.nome')||''; }catch(e){}
+  app.innerHTML=`<section class="card">
+    <div class="grande-icone">🎮</div>
+    <h1 class="centro" style="font-size:36px;margin:8px 0 4px">Entre na <span style="color:#7C3AED">arena!</span></h1>
+    <p class="centro muted" style="margin:0 0 10px">Digite seu primeiro nome e o PIN que aparece na tela do professor.</p>
+    <label class="campo" for="nome">Seu primeiro nome</label>
+    <input class="inp" id="nome" maxlength="20" autocomplete="given-name" placeholder="Como o professor te conhece" value="${esc(nomeSalvo)}">
+    <label class="campo" for="pin">PIN da sala</label>
+    <input class="inp" id="pin" inputmode="numeric" pattern="[0-9]*" maxlength="7" placeholder="Ex.: 482 913" value="${esc(params.get('pin')||'')}" style="font-size:24px;letter-spacing:.15em;font-family:var(--titulo);font-weight:800">
+    <div id="erro">${msg?`<div class="retorno no" style="margin-top:12px"><span class="t">Atenção</span>${esc(msg)}</div>`:''}</div>
+    <button class="btn roxo grande" id="entrar" style="width:100%;margin-top:14px">Entrar no jogo →</button>
+    <p class="mini centro" style="margin-top:10px">💡 Use só o primeiro nome (ou nome e inicial do sobrenome). Não precisa de cadastro.</p>
+  </section>`;
+  const ent=$('#entrar'); ent.onclick=entrar;
+  [$('#nome'),$('#pin')].forEach(i=>i.addEventListener('keydown',e=>{ if(e.key==='Enter') entrar(); }));
+  (params.get('pin')&&!nomeSalvo?$('#nome'):(!params.get('pin')?$('#pin'):$('#nome'))).focus();
+}
+async function entrar(){
+  const nome=$('#nome').value.replace(/\s+/g,' ').trim().slice(0,20);
+  const pin=$('#pin').value.replace(/\D/g,'');
+  const erro=m=>{ $('#erro').innerHTML=`<div class="retorno no" style="margin-top:12px"><span class="t">Atenção</span>${esc(m)}</div>`; };
+  if(nome.length<2) return erro('Digite seu nome.');
+  if(pin.length!==6) return erro('O PIN tem 6 números.');
+  if(!R) return erro('Ainda conectando… tente de novo em alguns segundos.');
+  const b=$('#entrar'); b.disabled=true; b.textContent='Entrando…';
+  try{
+    const sala=await R.get('salas/'+pin);
+    if(!sala||!sala.dono){ b.disabled=false; b.textContent='Entrar no jogo →'; return erro('Sala não encontrada. Confira o PIN na tela do professor.'); }
+    const igual=Object.entries(sala.entrada||{}).find(([u,j])=>u!==R.uid && j.nome.toLocaleLowerCase('pt-BR')===nome.toLocaleLowerCase('pt-BR'));
+    if(igual){ b.disabled=false; b.textContent='Entrar no jogo →'; return erro('Já tem alguém com esse nome na sala. Acrescente a inicial do sobrenome.'); }
+    await R.set('salas/'+pin+'/entrada/'+R.uid, {nome, em:TS});
+    PIN=pin; NOME=nome; guardar(); entrarNaSala();
+  }catch(e){ console.error(e); b.disabled=false; b.textContent='Entrar no jogo →'; erro('Não foi possível entrar. Verifique a internet e tente de novo.'); }
+}
+
+/* ---------- Na sala ---------- */
+function pararOuvintes(){ ouvintes.forEach(f=>{ try{f();}catch(e){} }); ouvintes=[]; clearInterval(timerId); }
+function entrarNaSala(){
+  pararOuvintes();
+  $('#sub').textContent='PIN '+PIN.slice(0,3)+' '+PIN.slice(3);
+  pedirTelaAcesa();
+  let jaEntrou=false;
+  ouvintes.push(R.on('salas/'+PIN+'/entrada', v=>{
+    ENTRADA=v||{};
+    if(ENTRADA[R.uid]) jaEntrou=true;
+    else if(jaEntrou){ jaEntrou=false; const pin=PIN; esquecer();
+      R.get('salas/'+pin+'/dono').then(d=>{ if(d) telaEntrar('Você foi removido da sala pelo professor. Se foi engano, entre de novo.'); else telaFim('O professor encerrou a sala. Obrigado por jogar! 👋'); }).catch(()=>telaEntrar());
+      pararOuvintes(); return; }
+    if(ESTADO&&ESTADO.fase==='lobby') desenhar(true);
+  }));
+  ouvintes.push(R.on('salas/'+PIN+'/dono', v=>{ if(!v){ esquecer(); telaFim('O professor encerrou a sala. Obrigado por jogar! 👋'); } }));
+  ouvintes.push(R.on('salas/'+PIN+'/placar', v=>{ PLACAR=v||{}; if(ESTADO&&['revelada','ranking','fim'].includes(ESTADO.fase)) desenhar(true); }));
+  ouvintes.push(R.on('salas/'+PIN+'/estado', v=>{ ESTADO=v; desenhar(); }));
+}
+function telaFim(msg){ pararOuvintes(); app.innerHTML=`<section class="card centro"><div class="grande-icone">🏁</div><h2 style="margin:10px 0">${esc(msg)}</h2><button class="btn roxo" id="denovo">Entrar em outra sala</button></section>`; $('#denovo').onclick=()=>telaEntrar(); }
+
+function ordenar(){ return Object.entries(PLACAR||{}).filter(([u])=>ENTRADA[u]).map(([u,p])=>({u,...p})).sort((a,b)=>(b.pontos-a.pontos)||(b.acertos-a.acertos)||(a.tempoAcertos-b.tempoAcertos)||a.nome.localeCompare(b.nome,'pt-BR')); }
+function minhaPosicao(){ const L=ordenar(); const i=L.findIndex(j=>j.u===R.uid); return {L, i, eu:L[i]}; }
+
+function desenhar(forcar){
+  const e=ESTADO; if(!e) return;
+  if(e.fase==='lobby') respondida={};
+  const key=e.fase+'|'+e.idx+'|'+(respondida[e.idx]?'r':'');
+  if(key===renderKey && !forcar) return; renderKey=key;
+  clearInterval(timerId);
+  if(e.fase==='lobby') return telaEspera();
+  if(e.fase==='pergunta') return telaPergunta();
+  if(e.fase==='revelada') return telaResultado();
+  if(e.fase==='ranking'||e.fase==='fim') return telaRanking(e.fase==='fim');
+}
+function telaEspera(){
+  const nomes=Object.values(ENTRADA).map(j=>j.nome);
+  app.innerHTML=`<section class="card centro">
+    <div class="grande-icone pulsa">🚀</div>
+    <span class="selo" style="margin-top:10px;display:inline-block">Você está dentro, ${esc(NOME)}!</span>
+    <h2 style="margin:10px 0 4px">A partida vai começar</h2>
+    <p class="muted" style="margin:0">Fique de olho na tela do professor. Mantenha esta página aberta.</p>
+    <p style="font-weight:700;margin:14px 0 6px">👥 ${nomes.length} na sala</p>
+    <div class="jogadores" style="justify-content:center">${nomes.map(n=>`<span class="jog" style="padding-right:12px">${avatar(n)}${esc(n)}</span>`).join('')}</div>
+  </section>`;
+}
+function telaPergunta(){
+  const e=ESTADO, p=e.pergunta||{opcoes:[]};
+  if(!(e.part||{})[R.uid]){
+    app.innerHTML=`<section class="card centro"><div class="grande-icone">⏳</div><h2 style="margin:10px 0">Você chegou no meio de uma pergunta</h2><p class="muted">Espere a próxima para começar a pontuar.</p></section>`; return;
+  }
+  if(respondida[e.idx]){
+    app.innerHTML=`<section class="card centro"><div class="grande-icone pulsa">${FORMAS[respondida[e.idx]-1]}</div><h2 style="margin:10px 0">Resposta enviada!</h2><p class="muted">Aguarde o tempo acabar para ver se acertou.</p><p class="mini">Pergunta ${e.idx+1} de ${e.total}</p></section>`; return;
+  }
+  app.innerHTML=`<div class="barra-jogo"><span class="tag">${e.idx+1}/${e.total}</span><span style="flex:1"></span><div class="relogio" id="relogio"><span id="seg">${e.tempo}</span></div></div>
+    <div class="enunc" style="font-size:clamp(20px,5.4vw,28px);padding:16px">${esc(p.texto)}</div>
+    <div class="alt-aluno">${p.opcoes.map((o,j)=>o?`<button class="alternativa c${j+1}" data-r="${j+1}"><span class="forma">${FORMAS[j]}</span><span>${esc(o)}</span></button>`:'').join('')}</div>`;
+  const tic=()=>{ if(typeof e.inicio!=='number') return; const resta=Math.max(0,(e.inicio+e.tempo*1000-R.agora())/1000);
+    const s=$('#seg'), rel=$('#relogio'); if(!s) return; s.textContent=Math.ceil(resta); rel.style.setProperty('--p',(100*resta/e.tempo)+'%'); rel.classList.toggle('urgente',resta<=5);
+    if(resta<=0){ clearInterval(timerId); document.querySelectorAll('[data-r]').forEach(b=>b.disabled=true); s.textContent='0'; } };
+  tic(); timerId=setInterval(tic,250);
+  // se recarregou a página depois de responder
+  R.get('salas/'+PIN+'/respostas/'+e.idx+'/'+R.uid).then(v=>{ if(v&&ESTADO&&ESTADO.idx===e.idx&&!respondida[e.idx]){ respondida[e.idx]=v.r; desenhar(true); } }).catch(()=>{});
+}
+async function responder(r){
+  const e=ESTADO; if(!e||e.fase!=='pergunta'||respondida[e.idx]) return;
+  document.querySelectorAll('[data-r]').forEach(b=>b.disabled=true);
+  respondida[e.idx]=r; vibrar(30);
+  try{ await R.set('salas/'+PIN+'/respostas/'+e.idx+'/'+R.uid, {r, t:TS}); desenhar(true); }
+  catch(err){ console.warn(err); toast('O tempo acabou antes de a resposta chegar. 😕'); desenhar(true); }
+}
+function telaResultado(){
+  const e=ESTADO, eu=(PLACAR||{})[R.uid], u=eu&&eu.ultimo;
+  const p=e.pergunta||{opcoes:[]}, certa=p.opcoes[(e.correta||1)-1];
+  const {i}=minhaPosicao();
+  let cls='neutro', titulo='Fim do tempo', icone='⏰', linha='';
+  if(u&&u.participou){
+    if(u.acertou){ cls='ok'; titulo='Acertou!'; icone='🎉'; linha=`<div class="pts">+${u.pts}</div><p style="margin:0">pontos nesta pergunta</p>`; vibrar([40,40,40]); }
+    else if(u.r){ cls='no'; titulo='Não foi dessa vez'; icone='💪'; linha='<p style="margin:0">+0 pontos. Na próxima você consegue!</p>'; vibrar(120); }
+    else { linha='<p style="margin:0">Você não respondeu a tempo.</p>'; }
+  } else { titulo='Rodada encerrada'; icone='⏳'; linha='<p style="margin:0">Você participa a partir da próxima pergunta.</p>'; }
+  app.innerHTML=`<section class="resultado ${cls}"><div class="grande-icone">${icone}</div><h2>${titulo}</h2>${linha}</section>
+    <section class="card" style="margin-top:12px"><p class="mini" style="margin:0">Resposta certa</p><p style="font-size:20px;font-weight:700;margin:4px 0 10px">${FORMAS[(e.correta||1)-1]} ${esc(certa)}</p>
+    <div style="display:flex;justify-content:space-around;text-align:center"><div><b style="font-family:var(--titulo);font-size:28px">${eu?eu.pontos:0}</b><br><small class="muted">pontos</small></div><div><b style="font-family:var(--titulo);font-size:28px">${i>=0?i+1+'º':'–'}</b><br><small class="muted">posição</small></div><div><b style="font-family:var(--titulo);font-size:28px">${eu?eu.acertos:0}</b><br><small class="muted">acertos</small></div></div></section>`;
+}
+function telaRanking(final){
+  const {L,i,eu}=minhaPosicao();
+  const msg = i<0?'':(i===0?'Você está em 1º lugar! 🥇':i<3?`Você está no pódio: ${i+1}º lugar!`:`Você está em ${i+1}º de ${L.length}.`);
+  app.innerHTML=`<section class="card"><div class="centro"><div class="grande-icone">${final?'🏆':'📊'}</div><h2 style="margin:6px 0">${final?'Resultado final':'Ranking da turma'}</h2>
+    ${eu?`<p style="font-weight:700;font-size:18px;margin:0 0 10px;color:#5B21B6">${msg} · ${eu.pontos} pts</p>`:''}</div>
+    <div class="ranking" id="rk">${L.map((j,k)=>`<div class="rk ${k<3?'top'+(k+1):''} ${j.u===R.uid?'eu':''}" ${j.u===R.uid?'id="eu"':''}><span class="pos">${k+1}º</span>${avatar(j.nome)}<span class="nm">${esc(j.nome)}${j.u===R.uid?' (você)':''}</span><span class="dl ${j.ultimo&&j.ultimo.pts?'':'zero'}">${j.ultimo&&j.ultimo.pts?'+'+j.ultimo.pts:''}</span><span class="pts">${j.pontos}</span></div>`).join('')}</div>
+    ${final?'<p class="centro muted" style="margin-top:12px">Obrigado por jogar! Aguarde as orientações do professor.</p>':'<p class="centro mini" style="margin-top:10px">Prepare-se para a próxima pergunta…</p>'}</section>`;
+  const me=$('#eu'); if(me) setTimeout(()=>me.scrollIntoView({block:'center',behavior:'smooth'}),200);
+}
+
+/* ---------- Fiscalização (registra saídas da tela durante a pergunta) ---------- */
+function registrarSaida(tipo){
+  if(!ESTADO||ESTADO.fase!=='pergunta'||respondida[ESTADO.idx]||!(ESTADO.part||{})[R.uid]) return;
+  const agora=Date.now(); if(agora-ultimoAlerta<1500) return; ultimoAlerta=agora; saidas++;
+  R.set('salas/'+PIN+'/alertas/'+R.pushChave('salas/'+PIN+'/alertas'), {uid:R.uid, nome:NOME, tipo, hora:TS}).catch(()=>{});
+  const a=$('#aviso'); a.textContent=`⚠️ Você saiu da tela do quiz (${saidas}x). O professor recebe um aviso.`; a.classList.remove('hidden'); clearTimeout(a._t); a._t=setTimeout(()=>a.classList.add('hidden'),4500);
+}
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) registrarSaida('trocou_aba'); else pedirTelaAcesa(); });
+window.addEventListener('blur',()=>registrarSaida('perdeu_foco'));
+async function pedirTelaAcesa(){ try{ if('wakeLock' in navigator && !document.hidden) wake=await navigator.wakeLock.request('screen'); }catch(e){} }
+
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-r]'); if(b&&!b.disabled) responder(+b.dataset.r); });
+
+/* ---------- Início ---------- */
+(async()=>{
+  telaEntrar();
+  try{
+    R=await conectar();
+    R.aoConectar(v=>{ const c=$('#con'); c.classList.toggle('on',v); c.lastChild.textContent=v?'Conectado':'Reconectando…'; });
+    const g=lerGuardado();
+    if(g&&g.pin&&g.nome){
+      const minha=await R.get('salas/'+g.pin+'/entrada/'+R.uid);
+      if(minha){ PIN=g.pin; NOME=g.nome; entrarNaSala(); toast('Você voltou para a sala!'); }
+      else esquecer();
+    }
+  }catch(e){
+    const m=String(e.message)==='sem-config'?'O quiz ao vivo ainda está sendo configurado pelo professor.':'Não foi possível conectar. Verifique a internet.';
+    $('#con').lastChild.textContent='Sem conexão'; telaEntrar(m);
+  }
+})();
+</script>
+</body>
+</html>
