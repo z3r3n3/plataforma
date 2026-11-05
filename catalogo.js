@@ -72,6 +72,10 @@ const JOGOS = [
     tipo: 'Mapa interativo', icone: '🧭',
     descricao: 'Rosa dos ventos com as cidades de MS, estados e países vizinhos, cidades-gêmeas, bacias do Paraguai e do Paraná e paisagens do estado.',
     habilidades: ['MS.EF06GE00.n.05', 'MS.EF07GE00.n.01', 'MS.EF06GE12', 'MS.EF06GE05'] },
+  { arquivo: 'volta-ao-mundo.html', titulo: 'Volta ao Mundo', componente: 'geo', anos: [8,9],
+    tipo: 'Mapa-múndi interativo', icone: '🌍',
+    descricao: 'Continentes, oceanos e 44 países no mapa-múndi, blocos econômicos e a globalização vista de MS: soja, gás da Bolívia e Rota Bioceânica.',
+    habilidades: ['MS.EF09GE14', 'MS.EF08GE18', 'MS.EF09GE16', 'MS.EF08GE12', 'MS.EF09GE05'] },
 
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
