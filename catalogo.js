@@ -58,6 +58,10 @@ const JOGOS = [
     tipo: 'Laboratório virtual', icone: '🧪',
     descricao: 'Misture materiais no béquer, reconheça transformações químicas e escolha o método certo para separar cada mistura.',
     habilidades: ['MS.EF06CI01', 'MS.EF06CI02', 'MS.EF06CI03'] },
+  { arquivo: 'expedicao-corpo-humano.html', titulo: 'Expedição Corpo Humano', componente: 'cie', anos: [6],
+    tipo: 'Missões', icone: '🫀',
+    descricao: 'Da célula ao organismo, o comando do sistema nervoso, a clínica do olhar com lentes corretivas e o movimento de ossos e músculos.',
+    habilidades: ['MS.EF06CI06', 'MS.EF06CI07', 'MS.EF06CI08', 'MS.EF06CI09'] },
 
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
