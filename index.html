@@ -167,6 +167,7 @@
 
   $('#breve').innerHTML = Object.keys(COMPONENTES).filter(k => !usados.includes(k))
     .map(k => `<span>${COMPONENTES[k].icone} ${COMPONENTES[k].nome}</span>`).join('');
+  if (!$('#breve').innerHTML) document.querySelector('.breve').hidden = true;   // todos os componentes já têm jogos
 
   function filtrar() {
     const b = norm(estado.busca);
