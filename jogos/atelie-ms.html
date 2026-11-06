@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ateliê MS</title>
+<meta name="description" content="Jogo de Arte para o 6º ao 9º ano: cores e elementos visuais, artistas e manifestações de Mato Grosso do Sul, linguagens da arte e propriedades do som com áudio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--agua:#831843;--agua2:#BE185D;--mata2:#EA580C;--terra:#BE185D}
+body{background:linear-gradient(180deg,#FCE7F3 0%,#F7F3EA 100%)}
+.topo{background:#FFF1F8ee;border-bottom-color:#F5CBE0}
+.trilho{background:#F6D4E5}
+.trilho i,.bar i{background:var(--mata2)}
+.selo{background:#BE185D14}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #EA580C33}
+
+.mistura{display:flex;align-items:center;justify-content:center;gap:14px;background:#fff;border:2px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:14px;flex-wrap:wrap}
+.gota{width:86px;height:86px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;border:3px solid #0002;box-shadow:inset -8px -10px 0 #0001}
+.gota.q{display:grid;place-items:center;background:repeating-conic-gradient(#F3F4F6 0 25%,#fff 0 50%) 0/20px 20px;font-family:var(--titulo);font-size:40px;color:#9CA3AF}
+.sinal{font-family:var(--titulo);font-weight:800;font-size:40px;color:#9CA3AF}
+.cores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.corbt{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:700;transition:transform .1s}
+.corbt i{width:54px;height:54px;border-radius:50%;border:3px solid #0002;display:block}
+.corbt:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.corbt.certa{border-color:var(--ok);background:var(--ok-f)}
+.corbt.errada{border-color:var(--erro);background:var(--erro-f);opacity:.6}
+.corbt:disabled{cursor:default}
+.amostra{background:#fff;border:2px solid var(--borda);border-radius:20px;padding:10px;margin-bottom:14px;display:grid;place-items:center}
+.amostra svg{width:100%;max-width:420px;height:auto;display:block}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duas button{border:0;border-radius:16px;min-height:76px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 5px 0 #0003;padding:6px}
+.duas button small{font-family:var(--texto);font-weight:400;font-size:13px;opacity:.95}
+.duas button:disabled{opacity:.35;cursor:default}
+.duas button.marcado{opacity:1;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--ok)}
+.duas button.errado{opacity:1;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--erro)}
+.b-a{background:#EA580C}.b-b{background:#2563EB}
+.ling{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ling button{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:700;font-size:16px;transition:transform .1s}
+.ling button .em{font-size:34px}
+.ling button:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.ling button.certa{border-color:var(--ok);background:var(--ok-f)}
+.ling button.errada{border-color:var(--erro);background:var(--erro-f);opacity:.6}
+.ling button:disabled{cursor:default}
+.som-box{display:flex;align-items:center;justify-content:center;gap:16px;background:#fff;border:2px solid var(--borda);border-radius:20px;padding:20px;margin-bottom:14px;flex-wrap:wrap}
+.tocar{width:96px;height:96px;border-radius:50%;border:0;background:linear-gradient(135deg,#F97316,#BE185D);color:#fff;font-size:40px;box-shadow:0 6px 0 #831843;transition:transform .1s}
+.tocar:active{transform:translateY(3px);box-shadow:0 3px 0 #831843}
+.tocar.tocando{animation:pulsaS .5s ease-in-out infinite}
+@keyframes pulsaS{50%{transform:scale(1.08)}}
+.ondas{display:flex;gap:4px;align-items:flex-end;height:60px}
+.ondas i{width:8px;background:#F9A8D4;border-radius:4px;transition:height .15s}
+@media (max-width:820px){
+  .cores{grid-template-columns:repeat(2,1fr)}
+  .ling{grid-template-columns:repeat(2,1fr)}
+  .gota{width:66px;height:66px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   ATELIÊ MS — JRM • Aventuras Educativas
+   Arte · 6º ao 9º ano
+   MS.EF69AR04.s.04 elementos visuais (ponto, linha, forma, textura, cor)
+   MS.EF69AR01.s.01 e MS.EF69AR33.s.36 artistas e matrizes culturais (foco em MS)
+   MS.EF69AR31.s.34 linguagens da arte e seus contextos
+   MS.EF69AR20.s.23 propriedades do som (altura, intensidade, duração, andamento)
+   ========================================================= */
+
+/* ---------- MISSÃO 1: cores e elementos ---------- */
+const C = {vermelho:'#DC2626', amarelo:'#FACC15', azul:'#2563EB', laranja:'#F97316', verde:'#16A34A', roxo:'#7C3AED', branco:'#FFFFFF', preto:'#111827', rosa:'#F9A8D4', cinza:'#9CA3AF', marrom:'#92400E'};
+const MISTURAS = [
+  {a:'vermelho', b:'amarelo', r:'laranja', x:'Vermelho e amarelo são cores primárias. Juntas, formam a secundária laranja.'},
+  {a:'azul', b:'amarelo', r:'verde', x:'Azul e amarelo são primárias. Juntas, formam a secundária verde.'},
+  {a:'vermelho', b:'azul', r:'roxo', x:'Vermelho e azul são primárias. Juntas, formam a secundária roxo (violeta).'},
+  {a:'vermelho', b:'branco', r:'rosa', x:'Branco clareia a cor. Vermelho com branco vira rosa: é um tom mais claro.'},
+  {a:'preto', b:'branco', r:'cinza', x:'Preto e branco juntos formam o cinza, uma cor neutra.'}
+];
+const TEMPERATURA = [['vermelho','q'],['laranja','q'],['amarelo','q'],['azul','f'],['verde','f'],['roxo','f']];
+const COMPLEMENTAR = [['vermelho','verde'],['azul','laranja'],['amarelo','roxo']];
+const ELEMENTOS = {ponto:'Ponto', linha:'Linha', forma:'Forma', textura:'Textura'};
+const ELEM_X = {
+  ponto:'O ponto é o elemento mais simples. Muitos pontos juntos podem formar imagens, como no pontilhismo.',
+  linha:'A linha pode ser reta, curva, quebrada ou ondulada. Ela dá direção e movimento à imagem.',
+  forma:'A forma é a área limitada por um contorno: círculos, quadrados, triângulos e formas livres.',
+  textura:'A textura é a sensação de superfície: áspera, lisa, rugosa. Na imagem, ela é visual.'
+};
+function svgElemento(k){
+  let s='';
+  const r=(()=>{ let x=11; return ()=>{ x=(x*9301+49297)%233280; return x/233280; }; })();
+  if(k==='ponto') for(let i=0;i<220;i++){ const x=20+r()*360, y=15+r()*170, d=Math.hypot(x-200,y-100); s+=`<circle cx="${x}" cy="${y}" r="${d<70?5:3}" fill="${d<70?'#DC2626':'#2563EB'}"/>`; }
+  if(k==='linha'){ for(let i=0;i<7;i++) s+=`<path d="M10 ${30+i*22} C 110 ${i%2?0:200}, 280 ${i%2?200:0}, 390 ${30+i*22}" fill="none" stroke="${['#BE185D','#EA580C','#2563EB','#16A34A'][i%4]}" stroke-width="4"/>`; s+=`<polyline points="20,180 60,150 100,180 140,150 180,180 220,150 260,180 300,150 340,180 380,150" fill="none" stroke="#111" stroke-width="4"/>`; }
+  if(k==='forma') s+=`<circle cx="80" cy="100" r="55" fill="#F97316"/><rect x="160" y="45" width="100" height="100" fill="#2563EB"/><polygon points="330,40 390,160 270,160" fill="#16A34A"/><path d="M40 190 Q 120 150 200 190 T 360 190" fill="#FACC15" opacity=".8"/>`;
+  if(k==='textura'){ s+=`<defs><pattern id="tx" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M0 14 L14 0 M-3 3 L3 -3 M11 17 L17 11" stroke="#92400E" stroke-width="2"/><circle cx="4" cy="10" r="1.6" fill="#78350F"/></pattern><pattern id="tx2" width="18" height="18" patternUnits="userSpaceOnUse"><path d="M0 9 Q 4.5 0 9 9 T 18 9" fill="none" stroke="#1E3A8A" stroke-width="2"/></pattern></defs><rect x="10" y="10" width="185" height="180" rx="16" fill="#FDE68A"/><rect x="10" y="10" width="185" height="180" rx="16" fill="url(#tx)"/><rect x="205" y="10" width="185" height="180" rx="16" fill="#BFDBFE"/><rect x="205" y="10" width="185" height="180" rx="16" fill="url(#tx2)"/>`; }
+  return `<svg viewBox="0 0 400 200" role="img" aria-label="Imagem para analisar"><rect width="400" height="200" fill="#fff"/>${s}</svg>`;
+}
+
+/* ---------- MISSÃO 2: arte de MS ---------- */
+const ARTE_MS = {
+  conceicao:{n:'Conceição dos Bugres', e:'🪵', t:'Esculpia troncos de madeira com uma pequena machadinha e cobria as figuras humanas com cera e tinta. As peças ficaram conhecidas como "bugres".', x:'Artista autodidata de origem indígena, viveu em Mato Grosso do Sul. Suas obras já foram expostas em museus importantes, como o MASP.'},
+  humberto:{n:'Humberto Espíndola', e:'🐂', t:'Pintor que criou a "Bovinocultura": obras sobre o boi e a pecuária, que fazem pensar sobre a economia e o poder em MS.', x:'O boi é tema central de sua obra há mais de 50 anos. Ele é um dos artistas mais importantes da arte sul-mato-grossense.'},
+  lidia:{n:'Lídia Baís', e:'🖼️', t:'Pintora nascida em Campo Grande no início do século XX, considerada pioneira das artes visuais no estado. A casa da sua família virou centro cultural.', x:'A Morada dos Baís, em Campo Grande, guarda a memória da artista e da cidade.'},
+  kadiweu:{n:'Cerâmica Kadiwéu', e:'⚱️', t:'Peças de barro decoradas com desenhos geométricos muito elaborados, feitas principalmente pelas mulheres desse povo indígena.', x:'Os mesmos padrões aparecem na pintura corporal. É arte de matriz indígena, com saberes passados entre gerações.'},
+  viola:{n:'Viola de cocho', e:'🪕', t:'Instrumento feito a partir de um tronco de madeira inteiro, escavado. É usado no cururu e no siriri, no Pantanal.', x:'O modo de fazer a viola de cocho é reconhecido como patrimônio cultural do Brasil.'},
+  helena:{n:'Helena Meirelles', e:'🎸', t:'Violeira nascida em Bataguassu que tocava em bailes e festas do interior. Ficou famosa no mundo depois de ser escolhida por uma revista dos EUA como uma das melhores instrumentistas.', x:'A revista Guitar Player a incluiu entre os 100 maiores instrumentistas de guitarra e violão do mundo.'},
+  chamame:{n:'Chamamé', e:'🪗', t:'Ritmo de origem argentina e paraguaia, tocado com acordeão (sanfona) e violão, muito presente nos bailes e festas de MS.', x:'O chamamé mostra como a cultura de fronteira faz parte da identidade sul-mato-grossense.'},
+  polca:{n:'Polca paraguaia e guarânia', e:'🎵', t:'Ritmos vindos do Paraguai, muitas vezes tocados com harpa paraguaia, que fazem parte da música de MS.', x:'A fronteira com o Paraguai trouxe ritmos, comidas e palavras em guarani para o cotidiano de MS.'}
+};
+
+/* ---------- MISSÃO 3: linguagens ---------- */
+const LING = {vis:{n:'Artes visuais', e:'🎨'}, danca:{n:'Dança', e:'💃'}, mus:{n:'Música', e:'🎵'}, teatro:{n:'Teatro', e:'🎭'}};
+const MANIFEST = [
+  {t:'Um grafite colorido pintado num muro da cidade.', r:'vis', x:'O grafite é arte visual urbana. Ele transforma os muros em espaço de expressão.'},
+  {t:'Uma escultura feita com sucata reciclada.', r:'vis', x:'Escultura é arte visual tridimensional: tem altura, largura e profundidade.'},
+  {t:'Uma fotografia artística do pôr do sol no Pantanal.', r:'vis', x:'A fotografia também é uma linguagem das artes visuais.'},
+  {t:'O siriri, com pares girando e batendo palmas ao som da viola de cocho.', r:'danca', x:'O siriri é uma dança tradicional do Pantanal. A música acompanha, mas o foco é o movimento do corpo.'},
+  {t:'Uma coreografia de hip-hop criada pelos estudantes para o festival da escola.', r:'danca', x:'Coreografia é a organização dos movimentos da dança no tempo e no espaço.'},
+  {t:'A catira, com sapateado e palmas em fileiras.', r:'danca', x:'A catira é uma dança tradicional do interior do Brasil, também presente em MS.'},
+  {t:'Uma roda de chamamé com acordeão e violão.', r:'mus', x:'O chamamé é um gênero musical da fronteira.'},
+  {t:'A orquestra da escola tocando uma peça com violinos.', r:'mus', x:'Orquestra é um grupo de instrumentos que tocam juntos.'},
+  {t:'Uma batucada feita só com sons do corpo: palmas, estalos e pés.', r:'mus', x:'É percussão corporal: o corpo vira instrumento musical.'},
+  {t:'Uma peça em que os atores representam a história da Retirada da Laguna.', r:'teatro', x:'No teatro, atores representam personagens diante de um público.'},
+  {t:'Um teatro de bonecos (fantoches) na praça.', r:'teatro', x:'O teatro de bonecos é uma forma de teatro muito antiga e popular.'},
+  {t:'Uma improvisação em que os estudantes criam uma cena na hora, sem roteiro.', r:'teatro', x:'A improvisação é um jogo teatral muito usado para criar cenas.'}
+];
+
+/* ---------- MISSÃO 4: propriedades do som ---------- */
+const PROPS = {
+  altura:{n:'Altura', pq:'O segundo som é mais agudo ou mais grave que o primeiro?', a:['Mais agudo','fino'], b:['Mais grave','grosso'], x:'A altura é o quanto o som é agudo (fino, como um apito) ou grave (grosso, como um tambor grande).'},
+  intens:{n:'Intensidade', pq:'O segundo som é mais forte ou mais fraco que o primeiro?', a:['Mais forte','volume alto'], b:['Mais fraco','volume baixo'], x:'A intensidade é o volume do som: forte ou fraco. Na partitura se usa f (forte) e p (piano, fraco).'},
+  duracao:{n:'Duração', pq:'O segundo som é mais longo ou mais curto que o primeiro?', a:['Mais longo','demora mais'], b:['Mais curto','acaba rápido'], x:'A duração é o tempo que o som dura: longo ou curto. Ela é a base do ritmo.'},
+  andam:{n:'Andamento', pq:'A batida está rápida ou lenta?', a:['Rápida','allegro'], b:['Lenta','lento'], x:'O andamento é a velocidade da música. Músicas de festa costumam ser rápidas; canções de ninar, lentas.'}
+};
+function gerarSom(){
+  const tipos=Object.keys(PROPS); const t=tipos[Math.floor(Math.random()*tipos.length)];
+  const resp=Math.random()<.5?'a':'b';
+  return {t, resp};
+}
+
+const MISSOES = [
+  {id:'m1', tipo:'cor', titulo:'Cores e elementos', ic:'🎨', hab:'MS.EF69AR04.s.04', desc:'Misture as cores primárias, descubra as quentes, as frias e as complementares, e reconheça ponto, linha, forma e textura.'},
+  {id:'m2', tipo:'ms', titulo:'Arte feita em MS', ic:'🐂', hab:'MS.EF69AR01.s.01 · MS.EF69AR33.s.36', desc:'Conceição dos Bugres, Humberto Espíndola, Helena Meirelles, cerâmica Kadiwéu, viola de cocho e mais.'},
+  {id:'m3', tipo:'ling', titulo:'Linguagens da arte', ic:'🎭', hab:'MS.EF69AR31.s.34', desc:'Artes visuais, dança, música ou teatro? Classifique as manifestações artísticas.'},
+  {id:'m4', tipo:'som', titulo:'Ouvido musical', ic:'🎧', hab:'MS.EF69AR20.s.23', desc:'Ouça e descubra: agudo ou grave, forte ou fraco, longo ou curto, rápido ou lento.'}
+];
+MISSOES.forEach((m,i)=>m.idx=i);
+const CATS = {mist:'Mistura de cores (MS.EF69AR04)', temp:'Cores quentes e frias (MS.EF69AR04)', comp:'Cores complementares (MS.EF69AR04)', elem:'Ponto, linha, forma e textura (MS.EF69AR04)', ms:'Arte de Mato Grosso do Sul (MS.EF69AR01, AR33)', ling:'Linguagens da arte (MS.EF69AR31)', som:'Propriedades do som (MS.EF69AR20)'};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='atelieMS.v1';
+function padrao(){ return {nome:'',turma:'',missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const MAXEST=MISSOES.length*3;
+function patente(){ const e=totalEst(); return e>=11?'🏅 Mestre do ateliê':e>=8?'🖌️ Artista':e>=4?'✏️ Aprendiz':'🎒 Visitante'; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[MISSOES[m.idx-1].id]||{}).feita;
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+
+let AC=null;
+function ctx(){ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); return AC; }
+function tom(f,ini,dur,vol,tipo='sine'){ const a=ctx(), o=a.createOscillator(), g=a.createGain(); o.type=tipo; o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,ini); g.gain.exponentialRampToValueAtTime(vol,ini+.02); g.gain.setValueAtTime(vol,ini+Math.max(.03,dur-.06)); g.gain.exponentialRampToValueAtTime(0.0001,ini+dur);
+  o.connect(g); g.connect(a.destination); o.start(ini); o.stop(ini+dur+.02); }
+function som(t){ if(!S.cfg.som) return; try{ const a=ctx(); let x=a.currentTime;
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  N.forEach(([f,d])=>{ tom(f,x,d,.08,t==='erro'?'triangle':'sine'); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0);
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+
+function telaHome(){
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ARTE</span>
+    <h1>Ateliê <span>MS</span></h1>
+    <p class="lead">Entre no ateliê! Misture cores, leia imagens, conheça artistas e tradições de Mato Grosso do Sul, descubra as linguagens da arte e treine o ouvido com sons de verdade.</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 7º B" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">Abrir o ateliê 🎨</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena" style="background:#fff;display:grid;place-items:center;padding:16px">
+    <div class="mistura" style="border:0;margin:0"><span class="gota" style="background:${C.vermelho}"></span><span class="sinal">+</span><span class="gota" style="background:${C.amarelo}"></span><span class="sinal">=</span><span class="gota" style="background:${C.laranja}"></span></div>
+    <div style="font-size:54px;letter-spacing:8px">🐂🪕⚱️🎭</div></div></div>
+  <div class="info"><div><b>4</b>missões</div><div><b>8</b>artistas e tradições de MS</div><div><b>4</b>propriedades do som</div><div><b>${patente()}</b>★ ${totalEst()}/${MAXEST}</div></div>
+  <p class="rodape">Arte · 6º ao 9º ano · Habilidades <b>MS.EF69AR04.s.04</b> (elementos visuais) · <b>MS.EF69AR01.s.01</b> e <b>MS.EF69AR33.s.36</b> (artistas e matrizes culturais, com foco em MS) · <b>MS.EF69AR31.s.34</b> (linguagens e contextos da arte) · <b>MS.EF69AR20.s.23</b> (propriedades do som) · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Salas do ateliê</h2><small>${patente()}</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">MISSÃO ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma missão para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function itensCor(){
+  const nomesCor=['laranja','verde','roxo','rosa','cinza','marrom'];
+  const it=[];
+  embaralhar(MISTURAS).slice(0,4).forEach(m=>it.push({tipo:'mist',...m,certo:m.r,ops:embaralhar([m.r,...embaralhar(nomesCor.filter(c=>c!==m.r)).slice(0,3)])}));
+  embaralhar(TEMPERATURA).slice(0,3).forEach(([c,r])=>it.push({tipo:'temp',c,certo:r}));
+  embaralhar(COMPLEMENTAR).slice(0,2).forEach(([a,b])=>{ const [c,r]=Math.random()<.5?[a,b]:[b,a]; it.push({tipo:'comp',c,certo:r,ops:embaralhar([r,...embaralhar(['vermelho','verde','azul','laranja','amarelo','roxo'].filter(x=>x!==r&&x!==c)).slice(0,3)])}); });
+  embaralhar(Object.keys(ELEMENTOS)).slice(0,3).forEach(k=>it.push({tipo:'elem',k,certo:k}));
+  return it;
+}
+function iniciar(idx){
+  const m=MISSOES[idx]; let itens;
+  if(m.tipo==='cor') itens=itensCor();
+  else if(m.tipo==='ms'){ const ks=Object.keys(ARTE_MS); itens=embaralhar(ks).map(k=>({k,certo:k,ops:embaralhar([k,...embaralhar(ks.filter(x=>x!==k)).slice(0,3)])})); }
+  else if(m.tipo==='ling') itens=embaralhar(MANIFEST).slice(0,10).map(x=>({...x,certo:x.r}));
+  else itens=Array.from({length:10},(_,k)=>{ const g=gerarSom(); if(k<4){ g.t=['altura','intens','duracao','andam'][k]; } return {...g, certo:g.resp}; });
+  M={m, itens, i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  const intro={
+    cor:`<p>As cores <b>primárias</b> são vermelho, amarelo e azul. Misturando duas delas, nascem as <b>secundárias</b>: laranja, verde e roxo.</p><div class="lista"><div>🔥 <b>Quentes:</b> vermelho, laranja, amarelo</div><div>❄️ <b>Frias:</b> azul, verde, roxo</div><div>🔄 <b>Complementares:</b> ficam em lados opostos no círculo das cores</div></div>`,
+    ms:`<p>Mato Grosso do Sul tem uma arte rica, feita por povos indígenas, por artistas da cidade e do campo e pela cultura de fronteira com o Paraguai e a Bolívia.</p><p class="mini">Leia a descrição e descubra quem é o artista ou qual é a tradição.</p>`,
+    ling:`<p>A arte se expressa por várias linguagens:</p><div class="lista">${Object.values(LING).map(l=>`<div>${l.e} <b>${l.n}</b></div>`).join('')}</div><p class="mini">Muitas manifestações misturam linguagens. Escolha a principal.</p>`,
+    som:`<p>Todo som tem propriedades. Aperte ▶, ouça com atenção (de preferência com fone) e responda.</p><div class="lista">${Object.values(PROPS).map(p=>`<div><b>${p.n}</b>: ${p.a[0].toLowerCase()} ou ${p.b[0].toLowerCase()}</div>`).join('')}</div>`
+  }[m.tipo];
+  abrirModal(`<span class="selo">MISSÃO ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${intro}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Vamos criar! 🎨</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>Missão ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+function desenhar(){
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  ({cor:desenharCor, ms:desenharMS, ling:desenharLing, som:desenharSom})[M.m.tipo]();
+  const b=$('[data-acao="seguir"]'); if(b) b.focus();
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir missão ✔'}</button></div>`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const item=()=>M.itens[M.i];
+function tentar(it,k,cat,chave,dica){
+  if(k===it.certo){ registrar(chave,cat,true); som('ok'); it.feito=true; it.msg=''; }
+  else { registrar(chave,cat,false); som('erro'); it.err=(it.err||[]).concat(k); it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica}</div>`; }
+}
+const okBox=(t,x)=>`<div class="retorno ok"><span class="t">✅ ${t}</span>${x}</div>${botaoSeguir()}`;
+const corBotoes=(it)=>`<div class="cores">${it.ops.map(c=>{ const er=(it.err||[]).includes(c);
+  return `<button class="corbt ${er?'errada':''} ${it.feito&&c===it.certo?'certa':''}" data-cor="${c}" ${er||it.feito?'disabled':''}><i style="background:${C[c]}"></i>${cap(c)}</button>`; }).join('')}</div>`;
+
+/* --- 1. cores e elementos --- */
+function desenharCor(){
+  const it=item(); let h='';
+  if(it.tipo==='mist'){
+    h=`<p class="enunciado">Que cor nasce desta mistura?</p>
+      <div class="mistura"><span class="gota" style="background:${C[it.a]}" title="${it.a}"></span><span class="sinal">+</span><span class="gota" style="background:${C[it.b]}" title="${it.b}"></span><span class="sinal">=</span>${it.feito?`<span class="gota" style="background:${C[it.r]}"></span>`:'<span class="gota q">?</span>'}</div>
+      <p class="centro" style="margin:-6px 0 12px;font-weight:700">${cap(it.a)} + ${it.b}</p>${corBotoes(it)}
+      <div id="ret">${it.feito?okBox(cap(it.r)+'!',esc(it.x)):(it.msg||'')}</div>`;
+  } else if(it.tipo==='temp'){
+    const q=it.certo==='q';
+    h=`<p class="enunciado">Esta cor é quente ou fria?</p>
+      <div class="mistura"><span class="gota" style="background:${C[it.c]};width:120px;height:120px"></span><b style="font-size:26px">${cap(it.c)}</b></div>
+      <div class="duas"><button class="b-a ${it.feito&&q?'marcado':''} ${(it.err||[]).includes('q')?'errado':''}" data-temp="q" ${it.feito||(it.err||[]).includes('q')?'disabled':''}>🔥 Quente<small>lembra fogo e sol</small></button><button class="b-b ${it.feito&&!q?'marcado':''} ${(it.err||[]).includes('f')?'errado':''}" data-temp="f" ${it.feito||(it.err||[]).includes('f')?'disabled':''}>❄️ Fria<small>lembra água e gelo</small></button></div>
+      <div id="ret">${it.feito?okBox(q?'Cor quente!':'Cor fria!',q?'Cores quentes parecem se aproximar de nós e passam energia.':'Cores frias parecem se afastar e passam calma.'):(it.msg||'')}</div>`;
+  } else if(it.tipo==='comp'){
+    h=`<p class="enunciado">Qual é a cor complementar?</p>
+      <div class="mistura"><span class="gota" style="background:${C[it.c]}"></span><span class="sinal">↔</span>${it.feito?`<span class="gota" style="background:${C[it.certo]}"></span>`:'<span class="gota q">?</span>'}</div>
+      <p class="centro" style="margin:-6px 0 12px;font-weight:700">A complementar de ${it.c} é…</p>${corBotoes(it)}
+      <div id="ret">${it.feito?okBox(`${cap(it.c)} e ${it.certo}!`,'Complementares ficam opostas no círculo cromático. Lado a lado, uma faz a outra "vibrar" mais.'):(it.msg||'')}</div>`;
+  } else {
+    h=`<p class="enunciado">Qual elemento visual mais se destaca nesta imagem?</p><div class="amostra">${svgElemento(it.k)}</div>
+      <div class="ling">${Object.entries(ELEMENTOS).map(([k,n])=>{ const er=(it.err||[]).includes(k);
+        return `<button class="${er?'errada':''} ${it.feito&&k===it.certo?'certa':''}" data-elem="${k}" ${er||it.feito?'disabled':''}><span class="em">${{ponto:'⚫',linha:'〰️',forma:'🔷',textura:'🧱'}[k]}</span>${n}</button>`; }).join('')}</div>
+      <div id="ret">${it.feito?okBox(ELEMENTOS[it.k]+'!',esc(ELEM_X[it.k])):(it.msg||'')}</div>`;
+  }
+  $('#area').innerHTML=h;
+}
+function responderCor(c){ const it=item(); const cat=it.tipo==='mist'?'mist':'comp';
+  tentar(it,c,cat,'c'+M.i, it.tipo==='mist'?'Imagine as tintas se misturando no pincel.':'Pense no círculo cromático: a complementar de uma primária é a secundária formada pelas outras duas.'); desenharCor(); }
+function responderTemp(k){ const it=item(); tentar(it,k,'temp','t'+M.i,'Pense em fogo e sol (quentes) ou em água, gelo e mata (frias).'); desenharCor(); }
+function responderElem(k){ const it=item(); tentar(it,k,'elem','e'+M.i,'Observe o que se repete e ocupa a imagem.'); desenharCor(); }
+
+/* --- 2. arte de MS --- */
+function desenharMS(){
+  const it=item(), A=ARTE_MS[it.k];
+  $('#area').innerHTML=`<p class="enunciado">Quem é o artista ou qual é a tradição?</p>
+    <div class="ficha"><span class="em" aria-hidden="true">${it.feito?A.e:'🔎'}</span><span class="txt" style="font-size:clamp(17px,2.4vw,21px)">${esc(A.t)}</span></div>
+    <div class="opcoes">${it.ops.map((k,j)=>{ const er=(it.err||[]).includes(k);
+      return `<button class="op ${er?'errada':''} ${it.feito&&k===it.certo?'certa':''}" data-ms="${k}" ${er||it.feito?'disabled':''}><b>${'ABCD'[j]}</b><span>${ARTE_MS[k].e} ${esc(ARTE_MS[k].n)}</span></button>`; }).join('')}</div>
+    <div id="ret">${it.feito?okBox(esc(A.n)+'!',esc(A.x)):(it.msg||'')}</div>`;
+}
+function responderMS(k){ const it=item(); tentar(it,k,'ms','m'+M.i,'Releia a descrição: é uma pessoa, um instrumento, um ritmo ou um tipo de arte de um povo?'); desenharMS(); }
+
+/* --- 3. linguagens --- */
+function desenharLing(){
+  const it=item();
+  $('#area').innerHTML=`<p class="enunciado">Qual é a linguagem principal?</p>
+    <div class="ficha"><span class="em" aria-hidden="true">${it.feito?LING[it.r].e:'❓'}</span><span class="txt">${esc(it.t)}</span></div>
+    <div class="ling">${Object.entries(LING).map(([k,l])=>{ const er=(it.err||[]).includes(k);
+      return `<button class="${er?'errada':''} ${it.feito&&k===it.certo?'certa':''}" data-ling="${k}" ${er||it.feito?'disabled':''}><span class="em">${l.e}</span>${l.n}</button>`; }).join('')}</div>
+    <div id="ret">${it.feito?okBox(LING[it.r].n+'!',esc(it.x)):(it.msg||'')}</div>`;
+}
+function responderLing(k){ const it=item(); tentar(it,k,'ling','l'+M.i,'O que está no centro: a imagem, o movimento do corpo, o som ou a representação de personagens?'); desenharLing(); }
+
+/* --- 4. som --- */
+function tocarItem(it){
+  const a=ctx(); let x=a.currentTime+.08; const P=it.t, maior=it.resp==='a';
+  if(P==='altura'){ const f1=392, f2=maior?f1*2:f1/2; tom(f1,x,.7,.22,'triangle'); tom(f2,x+1.0,.7,.22,'triangle'); return 1800; }
+  if(P==='intens'){ const v1=.12, v2=maior?.35:.025; tom(330,x,.7,v1,'triangle'); tom(330,x+1.0,.7,v2,'triangle'); return 1800; }
+  if(P==='duracao'){ const d2=maior?1.5:.18; tom(440,x,.6,.2,'triangle'); tom(440,x+1.0,d2,.2,'triangle'); return 1000+d2*1000+200; }
+  if(P==='andam'){ const ib=maior?.18:.7; for(let k=0;k<8;k++) tom(k%4?600:900,x+k*ib,.07,.25,'square'); return 8*ib*1000+200; }
+}
+function desenharSom(){
+  const it=item(), P=PROPS[it.t];
+  const bt=(lado)=>{ const r=P[lado]; const er=(it.err||[]).includes(lado);
+    return `<button class="${lado==='a'?'b-a':'b-b'} ${it.feito&&lado===it.certo?'marcado':''} ${er?'errado':''}" data-som="${lado}" ${it.feito||er?'disabled':''}>${r[0]}<small>${r[1]}</small></button>`; };
+  $('#area').innerHTML=`<p class="enunciado">🎧 ${P.n}</p>
+    <div class="som-box"><button class="tocar" data-acao="tocar" aria-label="Tocar o som">▶</button><div class="ondas" id="ondas">${Array.from({length:12},()=>'<i style="height:8px"></i>').join('')}</div></div>
+    <p class="pergunta">${P.pq}</p>
+    <div class="duas">${bt('a')}${bt('b')}</div>
+    <div id="ret">${it.feito?okBox(P[it.certo][0]+'!',esc(P.x)):(it.msg||(it.ouviu?'':'<p class="mini centro">Aperte ▶ para ouvir. Pode ouvir quantas vezes quiser.</p>'))}</div>`;
+}
+let animOndas=null;
+function tocar(){
+  const it=item(); it.ouviu=true; let ms=1800;
+  try{ ms=tocarItem(it); }catch(e){ toast('Este navegador não conseguiu tocar o som.'); }
+  const b=$('.tocar'); if(b){ b.classList.add('tocando'); setTimeout(()=>b&&b.classList.remove('tocando'),ms); }
+  clearInterval(animOndas); const fim=Date.now()+ms;
+  animOndas=setInterval(()=>{ const o=$('#ondas'); if(!o||Date.now()>fim){ clearInterval(animOndas); if(o) o.querySelectorAll('i').forEach(i=>i.style.height='8px'); return; }
+    o.querySelectorAll('i').forEach(i=>i.style.height=(8+Math.random()*50)+'px'); },120);
+}
+function responderSom(l){ const it=item(); if(!it.ouviu){ toast('Primeiro aperte ▶ para ouvir!'); return; } tentar(it,l,'som','s'+M.i,'Ouça de novo com atenção, comparando os dois sons.'); desenharSom(); }
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">Obra concluída! 🎨</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn ipe" data-acao="prox" data-foco>Próxima missão ➔</button>':'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['ATELIÊ MS — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${MAXEST} · Missões: ${f}/${MISSOES.length}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">🎨 Missões</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${f}/${MISSOES.length}</b>missões</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Faça algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros de acerto e erro','Os sons da missão Ouvido musical tocam sempre.')}${l('livre','Liberar todas as missões','Para o professor escolher a missão da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="lista">
+    <div>🎨 <b>Cores e elementos:</b> misture cores, classifique quentes e frias, ache as complementares e reconheça ponto, linha, forma e textura.</div>
+    <div>🐂 <b>Arte feita em MS:</b> descubra artistas e tradições do estado pela descrição.</div>
+    <div>🎭 <b>Linguagens da arte:</b> artes visuais, dança, música ou teatro?</div>
+    <div>🎧 <b>Ouvido musical:</b> aperte ▶, ouça e compare os sons. Use fone de ouvido.</div>
+    <div>⭐ As estrelas contam os acertos de primeira e sobem o seu título.</div></div>
+    <div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-cor]')){ responderCor(el.dataset.cor); return; }
+  if(el=q('[data-temp]')){ responderTemp(el.dataset.temp); return; }
+  if(el=q('[data-elem]')){ responderElem(el.dataset.elem); return; }
+  if(el=q('[data-ms]')){ responderMS(el.dataset.ms); return; }
+  if(el=q('[data-ling]')){ responderLing(el.dataset.ling); return; }
+  if(el=q('[data-som]')){ responderSom(el.dataset.som); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='tocar') tocar();
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modalAberto()) fecharModal(); });
+
+telaHome();
+</script>
+</body>
+</html>
