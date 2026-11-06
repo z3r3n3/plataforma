@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Poético</title>
+<meta name="description" content="Painel Poético: o varal on-line com os poemas dos estudantes, com QR Code, declamação e modo exposição para saraus. Projeto Tecendo Palavras · JRM Aventuras Educativas.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M0 10 Q20 18 40 10' stroke='%23E8A93B' stroke-width='2' fill='none'/%3E%3Crect x='11' y='14' width='18' height='22' rx='2' fill='%23FBF6EC'/%3E%3Crect x='18' y='9' width='4' height='9' rx='1' fill='%23D2603A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Caveat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noite:#1B1E48; --noite2:#2B2F66; --noite3:#363B7D; --creme:#FBF6EC; --creme2:#F1E6CF; --tinta:#1F2340; --suave:#C9CBEA; --suave2:#6B6478;
+  --terra:#D2603A; --terra-e:#A8452A; --ouro:#E8A93B; --teal:#2A8C80; --rosa:#D24E68;
+  --titulo:'Fraunces',Georgia,serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif; --mao:'Caveat','Segoe Print',cursive;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{font-family:var(--texto);font-size:17px;line-height:1.5;color:var(--creme);background:var(--noite);
+  background-image:radial-gradient(ellipse at 50% -10%,#3A3F8A 0%,transparent 60%);min-height:100vh;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--ouro)}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0;font-weight:800}
+.hidden{display:none!important}
+:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.btn{border:2px solid #4A4F95;background:var(--noite2);color:var(--creme);border-radius:12px;padding:9px 15px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;text-decoration:none;transition:transform .12s,border-color .12s}
+.btn:hover{transform:translateY(-2px);border-color:var(--ouro)}
+.btn.pri{background:var(--terra);border-color:var(--terra-e);box-shadow:0 4px 0 var(--terra-e);color:#fff}
+.btn.ouro{background:var(--ouro);border-color:#B8811E;color:var(--tinta);box-shadow:0 4px 0 #B8811E}
+.btn.peq{min-height:36px;padding:5px 11px;font-size:15px}
+.btn.claro{background:#fff;color:var(--tinta);border-color:#D9CDB3}
+
+/* CABEÇALHO */
+.cab{max-width:1200px;margin:auto;padding:20px 20px 0}
+.cab .voltar{font-size:14px;color:var(--suave);text-decoration:none;font-weight:700}
+.cab .voltar:hover{color:#fff}
+.cab-in{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-top:10px}
+.kicker{font-weight:700;letter-spacing:3px;font-size:13px;color:var(--ouro);text-transform:uppercase}
+.cab h1{font-size:clamp(46px,7vw,84px);letter-spacing:-1px;margin-top:6px}
+.cab h1 em{color:var(--ouro)}
+.cab p{margin:6px 0 0;color:var(--suave);max-width:560px}
+.acoes-cab{display:flex;gap:8px;flex-wrap:wrap}
+.filtros{max-width:1200px;margin:22px auto 0;padding:0 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filtros input,.filtros select{background:var(--noite2);border:2px solid #4A4F95;border-radius:12px;padding:9px 12px;min-height:44px;color:var(--creme)}
+.filtros input{flex:1;min-width:200px}
+.fonte-info{max-width:1200px;margin:10px auto 0;padding:0 20px;font-size:14px;color:var(--suave)}
+.fonte-info b{color:#fff}
+
+/* VARAL */
+.varal{max-width:1200px;margin:20px auto 0;padding:10px 20px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));grid-auto-rows:380px;gap:0 26px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='380' preserveAspectRatio='none' viewBox='0 0 400 380'%3E%3Cpath d='M0 30 Q200 52 400 30' stroke='%23E8A93B' stroke-width='2' fill='none' opacity='.7'/%3E%3C/svg%3E");
+  background-size:100% 380px;background-repeat:repeat-y;background-position:0 10px}
+.prendido{position:relative;padding-top:36px;height:380px}
+.prendido .pregador{position:absolute;top:22px;left:50%;width:14px;height:36px;margin-left:-7px;border-radius:3px;background:var(--terra);box-shadow:inset -3px 0 0 #0002;z-index:2}
+.prendido:nth-child(3n+2) .pregador{background:var(--teal)}
+.prendido:nth-child(3n) .pregador{background:var(--rosa)}
+.folha{display:flex;flex-direction:column;width:100%;height:320px;text-align:left;background:var(--creme);color:var(--tinta);border:0;border-radius:4px;padding:26px 20px 16px;box-shadow:0 14px 28px #0006;transform-origin:50% 0;transition:transform .2s;overflow:hidden;position:relative}
+.prendido:nth-child(odd) .folha{transform:rotate(-1.4deg)}
+.prendido:nth-child(even) .folha{transform:rotate(1.2deg)}
+.folha:hover{transform:rotate(0) translateY(-4px)!important}
+.folha .faixa{position:absolute;top:0;left:0;right:0;height:8px}
+.folha h3{font-size:22px;margin-bottom:8px}
+.folha pre{flex:1;margin:0;font-family:var(--titulo);font-size:16px;line-height:1.5;white-space:pre-wrap;overflow:hidden;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.folha .assina{font-family:var(--mao);font-size:24px;color:var(--terra-e);margin-top:6px}
+.folha .tags{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--suave2)}
+.folha .tags span{background:var(--creme2);border-radius:20px;padding:2px 8px}
+.vazio{grid-column:1/-1;text-align:center;color:var(--suave);padding:40px 0}
+
+/* POEMA */
+.poema-pag{max-width:1100px;margin:auto;padding:20px 20px 60px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
+.poema-folha{position:relative;background:var(--creme);color:var(--tinta);border-radius:6px;padding:48px 52px 40px;box-shadow:0 24px 50px #0007;margin-top:28px}
+.poema-folha .faixa{position:absolute;top:0;left:0;right:0;height:10px;border-radius:6px 6px 0 0}
+.poema-folha .pregador{position:absolute;top:-22px;left:50%;width:16px;height:44px;margin-left:-8px;border-radius:3px;background:var(--terra)}
+.poema-folha .tags{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;color:var(--suave2);margin-bottom:12px}
+.poema-folha .tags span{background:var(--creme2);border-radius:20px;padding:3px 10px}
+.poema-folha h1{font-size:clamp(32px,5vw,52px);margin-bottom:22px}
+.poema-folha .texto{font-family:var(--titulo);font-size:clamp(19px,2.4vw,24px);line-height:1.65;white-space:pre-wrap}
+.poema-folha .assina{font-family:var(--mao);font-size:34px;color:var(--terra-e);margin-top:24px}
+.lado{position:sticky;top:20px;display:flex;flex-direction:column;gap:14px;margin-top:28px}
+.caixa{background:var(--noite2);border:2px solid #4A4F95;border-radius:18px;padding:16px}
+.caixa h3{font-size:18px;margin-bottom:10px}
+.caixa .btn{width:100%;margin-bottom:8px}
+.caixa canvas{width:100%;max-width:220px;aspect-ratio:1;display:block;margin:auto;border-radius:10px;image-rendering:pixelated;background:#fff}
+.mini{font-size:13px;color:var(--suave)}
+.erro-box{max-width:620px;margin:60px auto;text-align:center;padding:0 20px}
+
+/* EXPOSIÇÃO */
+.expo{position:fixed;inset:0;z-index:80;background:var(--noite);background-image:radial-gradient(ellipse at 50% 0%,#3A3F8A 0%,transparent 65%);display:grid;grid-template-rows:1fr auto;color:var(--creme)}
+.expo .palco{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4vw;align-items:center;padding:5vh 6vw 2vh;min-height:0}
+.expo .pt{min-width:0;overflow:hidden;max-height:82vh}
+.expo h2{font-size:clamp(30px,4.4vw,64px);color:var(--ouro);margin-bottom:2.4vh}
+.expo .tx{font-family:var(--titulo);line-height:1.5;white-space:pre-wrap;font-size:30px}
+.expo .as{font-family:var(--mao);font-size:clamp(28px,3vw,44px);margin-top:2vh;color:#F5C5A8}
+.expo .qr{background:#fff;border-radius:16px;padding:14px;text-align:center;color:var(--tinta);font-weight:700;font-size:16px}
+.expo .qr canvas{width:min(22vw,240px);height:min(22vw,240px);display:block;image-rendering:pixelated}
+.expo .barra{display:flex;justify-content:center;gap:10px;padding:12px;align-items:center;flex-wrap:wrap}
+.expo .barra select{background:var(--noite2);border:2px solid #4A4F95;border-radius:12px;padding:6px 10px;color:var(--creme);min-height:40px}
+.expo .cont{font-weight:700;color:var(--suave);min-width:70px;text-align:center}
+.expo .prog{position:absolute;top:0;left:0;height:4px;background:var(--ouro);width:0}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:90;background:#0B0D25cc;display:grid;place-items:center;padding:16px}
+.modal{background:var(--creme);color:var(--tinta);border-radius:20px;max-width:720px;width:100%;max-height:90vh;overflow:auto;padding:24px;box-shadow:0 30px 60px #0008}
+.modal h2{font-size:28px;margin-bottom:6px}
+.modal h3{font-size:20px;margin:18px 0 6px}
+.modal ol{padding-left:1.3em;margin:6px 0}
+.modal li{margin:6px 0}
+.modal code{background:var(--creme2);border-radius:6px;padding:1px 6px;font-size:.92em}
+.modal .mini{color:var(--suave2)}
+.modal label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:14px;color:var(--suave2);margin:10px 0}
+.modal input{border:2px solid #D9CDB3;border-radius:10px;padding:9px 11px;background:#fff;font-size:15px;color:var(--tinta);width:100%}
+.modal .linha{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.modal .linha label{flex:1;min-width:220px;margin:0}
+.modal .acoes{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+.status{border-radius:12px;padding:10px 12px;margin-top:10px;font-size:15px;background:#fff;border:2px solid #D9CDB3}
+.status.ok{border-color:var(--teal);background:#E6F4F1}
+.status.no{border-color:var(--rosa);background:#FBE6EA}
+.gerado{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:center;background:#fff;border:2px solid #D9CDB3;border-radius:14px;padding:12px;margin-top:10px}
+.gerado input{font-size:13px}
+.gerado canvas{width:120px;height:120px;image-rendering:pixelated}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99;background:#fff;color:var(--tinta);padding:12px 18px;border-radius:12px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px #0006}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .poema-pag{grid-template-columns:1fr}
+  .lado{position:static;margin-top:0}
+  .poema-folha{padding:40px 24px 30px}
+  .expo .palco{grid-template-columns:1fr;gap:2vh;padding:4vh 5vw 1vh}
+  .expo .qr{justify-self:center;padding:8px;font-size:13px}
+  .expo .qr canvas{width:120px;height:120px}
+}
+@media (max-width:480px){
+  .varal{grid-template-columns:1fr;grid-auto-rows:360px}
+  .prendido{height:360px}
+  .folha{height:300px}
+  .gerado{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+'use strict';
+/* =========================================================
+   PAINEL POÉTICO — JRM • Aventuras Educativas
+   Projeto "Tecendo Palavras: Painel Histórico-Poético"
+   Habilidades: MS.EF69LP46 (compartilhar leituras: saraus, varais) · MS.EF69LP53 · EF09CO09
+
+   Como funciona (sem servidor e sem cadastro):
+   - Cada poema vem DENTRO do link criado na Oficina do Poeta (#p=...).
+   - O professor recebe os links por um Google Formulário. Na planilha de respostas,
+     cria a coluna "Aprovado" e escreve "sim" nos poemas liberados.
+   - A planilha publicada na Web (CSV) alimenta o painel. Só aparecem os aprovados.
+   ========================================================= */
+
+/* Professor: para o painel oficial do site abrir sempre a planilha da escola,
+   cole aqui o link CSV publicado (Arquivo › Compartilhar › Publicar na Web › CSV): */
+const LINK_PLANILHA = '';
+/* E aqui o link curto do formulário da turma (https://forms.gle/...), se quiser: */
+const LINK_FORMULARIO = '';
+
+const CHAVE_CSV = 'painelPoetico.csv';
+const CHAVE_FORM = 'painelPoetico.form';
+
+const EXEMPLOS = [
+ {ti:'Herança', t:'Minha avó guardava em lata\nas fotos de antigamente;\ncada rosto que me olha\né um pedaço da gente.\n\nHerdei dela o jeito manso,\no café forte, a oração,\ne um riso que, quando eu canso,\nacende no coração.', a:'Exemplo', tu:'6º ano', te:'Minhas raízes', f:'Quadra', vi:'papel'},
+ {ti:'Garça', t:'Garça na lagoa\no sol balança com ela\nno fim do verão.', a:'Exemplo', tu:'7º ano', te:'MS em versos', f:'Haicai', vi:'pantanal'},
+ {ti:'Vozes', t:'Antes de mim\nvieram mãos que plantaram\nsem colher,\nvozes que cantaram\nmesmo quando o canto era proibido.\n\nEu carrego essas vozes\nno nome,\nno cabelo,\nno jeito de rir alto.\n\nQuando eu falo,\nfala junto\numa história inteira.', a:'Exemplo', tu:'9º ano', te:'Vozes que fizeram história', f:'Verso livre', vi:'noite'},
+ {ti:'Recreio', t:'Assim que bate o sinal\no pátio vira uma festa:\ntem bola, tem figurinha,\ntem conversa que não presta,\ntem amigo dividindo\no pão de queijo que resta.', a:'Exemplo', tu:'8º ano', te:'Minha escola, meu tempo', f:'Cordel (sextilha)', vi:'sol'},
+ {ti:'Tuiuiú', t:'Na beira do rio Paraguai\no tuiuiú abre a asa,\na tarde devagar se vai\ne a lua acende a casa.', a:'Exemplo', tu:'6º ano', te:'MS em versos', f:'Quadra', vi:'pantanal'},
+ {ti:'Ler', t:'Livro aberto é janela,\nEm cada página, um lugar,\nRio que me leva a navegar.', a:'Exemplo', tu:'7º ano', te:'Minha escola, meu tempo', f:'Acróstico', vi:'ipe'}
+];
+const CORES_VI = {noite:'#2B2F66', papel:'#D2603A', pantanal:'#1F5B4D', sol:'#E07B45', ipe:'#D0608E', lousa:'#2F4A3A'};
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const $$=(q,el=document)=>Array.from(el.querySelectorAll(q));
+const app=$('#app');
+const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function lerLS(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+function gravarLS(k,v){ try{ v?localStorage.setItem(k,v):localStorage.removeItem(k); }catch(e){} }
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+async function copiar(t){ try{ await navigator.clipboard.writeText(t); toast('Copiado!'); }catch(e){ const a=document.createElement('textarea'); a.value=t; document.body.appendChild(a); a.select(); try{ document.execCommand('copy'); toast('Copiado!'); }catch(_){ toast('Selecione e copie.'); } a.remove(); } }
+function falar(txt){
+  if(!('speechSynthesis' in window)){ toast('Este navegador não tem leitura em voz alta.'); return; }
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt); u.lang='pt-BR'; u.rate=.88;
+  const v=speechSynthesis.getVoices().find(v=>/pt[-_]BR/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^pt/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u);
+}
+const csvValido = u => /^https:\/\/docs\.google\.com\/spreadsheets\//.test(u||'');
+const formValido = u => /^https:\/\/(forms\.gle\/|docs\.google\.com\/forms\/)/.test(u||'');
+const BASE = location.href.split('#')[0].split('?')[0];
+const HOME = location.href.split('#')[0]; /* mantém ?csv= da turma */
+const URL_OFICINA = new URL('oficina-do-poeta.html', BASE).href;
+
+/* ---------- CODIFICAÇÃO DO POEMA ---------- */
+function b64url(bytes){ let s=''; bytes.forEach(b=>s+=String.fromCharCode(b)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function deB64url(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const bin=atob(s); return Uint8Array.from(bin,c=>c.charCodeAt(0)); }
+async function codificar(obj){
+  const bytes=new TextEncoder().encode(JSON.stringify(obj));
+  if(typeof CompressionStream==='function'){ try{ const cs=new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw')); return 'z'+b64url(new Uint8Array(await new Response(cs).arrayBuffer())); }catch(e){} }
+  return 'j'+b64url(bytes);
+}
+async function decodificar(cod){
+  if(!cod || cod.length>12000) throw new Error('tamanho');
+  const tipo=cod[0], bytes=deB64url(cod.slice(1));
+  let txt;
+  if(tipo==='z'){
+    if(typeof DecompressionStream!=='function') throw new Error('navegador');
+    const ds=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    txt=await new Response(ds).text();
+  } else if(tipo==='j') txt=new TextDecoder().decode(bytes);
+  else throw new Error('formato');
+  return limpar(JSON.parse(txt));
+}
+function limpar(o){
+  const s=(v,n)=>typeof v==='string'?v.slice(0,n):'';
+  const p={ti:s(o.ti,80), t:s(o.t,3000), a:s(o.a,24), tu:s(o.tu,10), te:s(o.te,40), f:s(o.f,30), vi:s(o.vi,12), au:s(o.au,300)};
+  if(!/^https:\/\//.test(p.au)) p.au='';
+  if(!p.t.trim()) throw new Error('vazio');
+  return p;
+}
+const linkDoPoema = cod => BASE+'#p='+cod;
+
+/* ---------- QR ---------- */
+(function(){ if(typeof qrcode==='function') return; const s=document.createElement('script'); s.src='https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'; document.head.appendChild(s); })();
+function desenharQR(cv, txt){
+  const ctx=cv.getContext('2d'); const W=cv.width;
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,W);
+  if(typeof qrcode!=='function'){ ctx.fillStyle='#6B6478'; ctx.font='16px sans-serif'; ctx.textAlign='center'; ctx.fillText('QR indisponível',W/2,W/2); return false; }
+  let q=null; for(const n of ['M','L']){ try{ q=qrcode(0,n); q.addData(txt); q.make(); break; }catch(e){ q=null; } }
+  if(!q) return false;
+  const m=q.getModuleCount(), b=3, cel=W/(m+b*2); ctx.fillStyle='#111';
+  for(let r=0;r<m;r++) for(let c=0;c<m;c++) if(q.isDark(r,c)) ctx.fillRect(Math.floor((c+b)*cel),Math.floor((r+b)*cel),Math.ceil(cel),Math.ceil(cel));
+  return true;
+}
+
+/* ---------- PLANILHA (CSV) ---------- */
+function parseCSV(txt){
+  const linhas=[]; let linha=[], campo='', aspas=false;
+  for(let i=0;i<txt.length;i++){
+    const c=txt[i];
+    if(aspas){ if(c==='"'){ if(txt[i+1]==='"'){ campo+='"'; i++; } else aspas=false; } else campo+=c; }
+    else if(c==='"') aspas=true;
+    else if(c===','){ linha.push(campo); campo=''; }
+    else if(c==='\n'){ linha.push(campo); linhas.push(linha); linha=[]; campo=''; }
+    else if(c!=='\r') campo+=c;
+  }
+  if(campo!==''||linha.length){ linha.push(campo); linhas.push(linha); }
+  return linhas;
+}
+const APROVADO=/^\s*(sim|s|x|ok|aprovado|aprovada|yes|✔|✓)\s*$/i;
+async function carregarPlanilha(url){
+  const r=await fetch(url,{cache:'no-store'});
+  if(!r.ok) throw new Error('http');
+  const linhas=parseCSV(await r.text()).filter(l=>l.some(c=>c.trim()));
+  if(!linhas.length) return {poemas:[], total:0, aprovados:0, invalidos:0, semColuna:false};
+  const cab=linhas[0].map(c=>c.trim());
+  const iAprov=cab.findIndex(c=>/aprov/i.test(c));
+  const corpo=linhas.slice(1);
+  const res={poemas:[], total:corpo.length, aprovados:0, invalidos:0, semColuna:iAprov<0};
+  if(iAprov<0) return res;
+  const vistos=new Set();
+  const tarefas=corpo.filter(l=>APROVADO.test(l[iAprov]||'')).map(async l=>{
+    res.aprovados++;
+    const cel=l.find(c=>/#p=[A-Za-z0-9_-]+/.test(c));
+    const m=cel && cel.match(/#p=([A-Za-z0-9_-]+)/);
+    if(!m || vistos.has(m[1])){ if(!m) res.invalidos++; return null; }
+    vistos.add(m[1]);
+    try{ const p=await decodificar(m[1]); p.cod=m[1]; return p; }catch(e){ res.invalidos++; return null; }
+  });
+  res.poemas=(await Promise.all(tarefas)).filter(Boolean).reverse();
+  return res;
+}
+
+/* ---------- ESTADO ---------- */
+const params=new URLSearchParams(location.search);
+const csvParam=params.get('csv');
+function fonteCSV(){ if(csvValido(csvParam)) return csvParam; if(csvValido(LINK_PLANILHA)) return LINK_PLANILHA; const l=lerLS(CHAVE_CSV); return csvValido(l)?l:''; }
+function fonteForm(){ if(formValido(LINK_FORMULARIO)) return LINK_FORMULARIO; const l=lerLS(CHAVE_FORM); return formValido(l)?l:''; }
+let LISTA=[], ORIGEM='exemplos', AVISO='';
+let filtro={q:'',tu:'',te:''};
+
+async function carregarLista(){
+  const url=fonteCSV();
+  if(url){
+    try{
+      const r=await carregarPlanilha(url);
+      if(r.semColuna){ AVISO='A planilha não tem a coluna “Aprovado”. Crie a coluna e escreva “sim” nos poemas liberados.'; }
+      LISTA=r.poemas; ORIGEM='planilha';
+      if(!LISTA.length && !AVISO) AVISO='Ainda não há poemas aprovados na planilha.';
+      return;
+    }catch(e){ AVISO='Não consegui abrir a planilha. Confira se ela foi publicada na Web no formato CSV.'; }
+  }
+  LISTA=EXEMPLOS.map(p=>Object.assign({},p)); ORIGEM='exemplos';
+}
+
+/* ---------- ROTAS ---------- */
+window.addEventListener('hashchange',rota);
+async function rota(){
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  const h=location.hash.slice(1);
+  if(h.startsWith('p=')){ await telaPoemaCodigo(h.slice(2)); }
+  else if(h.startsWith('n=')){ const i=+h.slice(2); if(!LISTA.length) await carregarLista(); const p=LISTA[i]; if(p) telaPoema(p,i); else { location.hash=''; } }
+  else { await telaVaral(); }
+  window.scrollTo(0,0);
+}
+
+/* ---------- VARAL ---------- */
+let carregado=false;
+async function telaVaral(){
+  if(!carregado){ app.innerHTML='<div class="erro-box"><p>Pendurando os poemas no varal…</p></div>'; await carregarLista(); carregado=true; }
+  const turmas=[...new Set(LISTA.map(p=>p.tu).filter(Boolean))].sort();
+  const temas=[...new Set(LISTA.map(p=>p.te).filter(Boolean))].sort();
+  app.innerHTML=`
+  <header class="cab">
+    <a class="voltar" href="../">← JRM Aventuras Educativas</a>
+    <div class="cab-in">
+      <div><div class="kicker">Projeto Tecendo Palavras</div><h1>Painel <em>Poético</em></h1>
+        <p>O varal de poemas da turma. Clique num poema para ler, ouvir e pegar o QR Code.</p></div>
+      <div class="acoes-cab">
+        <button class="btn ouro" id="bExpo">▶ Modo exposição</button>
+        <a class="btn pri" href="oficina-do-poeta.html">✍️ Escrever o meu</a>
+        <button class="btn" id="bProf">⚙️ Professor</button>
+      </div>
+    </div>
+  </header>
+  <div class="filtros">
+    <input id="fQ" type="search" placeholder="Buscar por título, palavra ou autor" value="${esc(filtro.q)}" aria-label="Buscar">
+    ${turmas.length>1?`<select id="fTu" aria-label="Turma"><option value="">Todas as turmas</option>${turmas.map(t=>`<option ${filtro.tu===t?'selected':''}>${esc(t)}</option>`).join('')}</select>`:''}
+    ${temas.length>1?`<select id="fTe" aria-label="Tema"><option value="">Todos os temas</option>${temas.map(t=>`<option ${filtro.te===t?'selected':''}>${esc(t)}</option>`).join('')}</select>`:''}
+  </div>
+  <p class="fonte-info">${ORIGEM==='planilha'?`<b>${LISTA.length}</b> ${LISTA.length===1?'poema aprovado':'poemas aprovados'} pelo professor.`:'<b>Poemas de exemplo.</b> Quando o professor conectar a planilha da turma, os poemas dos estudantes aparecem aqui.'}${AVISO?` <span style="color:#F5C5A8">⚠ ${esc(AVISO)}</span>`:''}</p>
+  <main class="varal" id="varal"></main>`;
+  const desenhar=()=>{
+    const q=filtro.q.toLowerCase();
+    const vis=LISTA.map((p,i)=>({p,i})).filter(({p})=>(!filtro.tu||p.tu===filtro.tu)&&(!filtro.te||p.te===filtro.te)&&(!q||(p.ti+' '+p.t+' '+p.a).toLowerCase().includes(q)));
+    $('#varal').innerHTML = vis.length? vis.map(({p,i})=>`
+      <div class="prendido"><span class="pregador"></span>
+        <button class="folha" data-n="${i}" aria-label="Ler ${esc(p.ti||'poema')}">
+          <span class="faixa" style="background:${CORES_VI[p.vi]||'#D2603A'}"></span>
+          <span class="tags">${p.f?`<span>${esc(p.f)}</span>`:''}${p.te?`<span>${esc(p.te)}</span>`:''}</span>
+          <h3>${esc(p.ti||'Sem título')}</h3>
+          <pre>${esc(p.t)}</pre>
+          <span class="assina">— ${esc([p.a,p.tu].filter(Boolean).join(', ')||'Anônimo')}</span>
+        </button></div>`).join('') : `<p class="vazio">${LISTA.length?'Nenhum poema encontrado com esse filtro.':'O varal ainda está vazio.'}</p>`;
+    $$('[data-n]').forEach(b=>b.onclick=()=>{ location.hash='n='+b.dataset.n; });
+  };
+  desenhar();
+  $('#fQ').oninput=e=>{ filtro.q=e.target.value; desenhar(); };
+  const ft=$('#fTu'); if(ft) ft.onchange=e=>{ filtro.tu=e.target.value; desenhar(); };
+  const fe=$('#fTe'); if(fe) fe.onchange=e=>{ filtro.te=e.target.value; desenhar(); };
+  $('#bExpo').onclick=()=>exposicao();
+  $('#bProf').onclick=()=>painelProfessor();
+}
+
+/* ---------- POEMA ---------- */
+async function telaPoemaCodigo(cod){
+  try{ const p=await decodificar(cod); p.cod=cod; telaPoema(p,null); }
+  catch(e){
+    app.innerHTML=`<div class="erro-box"><h1 style="font-size:40px">Poema não encontrado</h1><p class="mini" style="font-size:16px">${e.message==='navegador'?'Este navegador é antigo demais para abrir o poema. Tente o Chrome, o Edge ou o Safari atualizado.':'O link parece incompleto. Peça ao autor para copiar o link inteiro de novo.'}</p><p><a class="btn" href="${esc(HOME)}">Ver o Painel Poético</a></p></div>`;
+  }
+}
+async function telaPoema(p, idx){
+  const cod = p.cod || await codificar(p);
+  const link = linkDoPoema(cod);
+  const autoria=[p.a,p.tu].filter(Boolean).join(', ');
+  app.innerHTML=`
+  <header class="cab"><a class="voltar" href="${esc(HOME)}">← Painel Poético</a></header>
+  <main class="poema-pag">
+    <article class="poema-folha">
+      <span class="faixa" style="background:${CORES_VI[p.vi]||'#D2603A'}"></span><span class="pregador"></span>
+      <div class="tags">${p.f?`<span>${esc(p.f)}</span>`:''}${p.te?`<span>${esc(p.te)}</span>`:''}</div>
+      <h1>${esc(p.ti||'Sem título')}</h1>
+      <div class="texto">${esc(p.t)}</div>
+      ${autoria?`<div class="assina">— ${esc(autoria)}</div>`:''}
+    </article>
+    <aside class="lado">
+      <div class="caixa"><h3>Ouvir</h3>
+        <button class="btn" id="bOuvir">🔊 Voz do computador</button>
+        ${p.au?`<a class="btn ouro" href="${esc(p.au)}" target="_blank" rel="noopener noreferrer">🎧 Declamação do autor ↗</a>`:'<p class="mini" style="margin:0">O autor ainda não colocou a gravação da declamação.</p>'}
+      </div>
+      <div class="caixa"><h3>Compartilhar</h3>
+        <canvas id="qr" width="264" height="264" aria-label="QR Code deste poema"></canvas>
+        <p class="mini" style="text-align:center">Aponte a câmera para abrir este poema.</p>
+        <button class="btn" id="bCop">📋 Copiar link</button>
+        ${idx!=null && LISTA.length>1?`<div style="display:flex;gap:8px"><button class="btn" id="bAnt" aria-label="Poema anterior">←</button><button class="btn" id="bProx" aria-label="Próximo poema">→</button></div>`:''}
+      </div>
+      <a class="btn pri" href="oficina-do-poeta.html">✍️ Escreva o seu na Oficina</a>
+    </aside>
+  </main>`;
+  desenharQR($('#qr'), link);
+  $('#bOuvir').onclick=()=>falar((p.ti?p.ti+'. ':'')+p.t.replace(/\n\n/g,'. ').replace(/\n/g,', '));
+  $('#bCop').onclick=()=>copiar(link);
+  if($('#bAnt')){ const n=LISTA.length; $('#bAnt').onclick=()=>location.hash='n='+((idx-1+n)%n); $('#bProx').onclick=()=>location.hash='n='+((idx+1)%n); }
+  document.title=(p.ti||'Poema')+' · Painel Poético';
+}
+
+/* ---------- EXPOSIÇÃO ---------- */
+let expoT=null;
+async function exposicao(){
+  const lista=LISTA.slice();
+  if(!lista.length){ toast('Não há poemas para mostrar.'); return; }
+  for(const p of lista) if(!p.cod) p.cod=await codificar(p);
+  let i=0, seg=+(lerLS('painelPoetico.seg')||20), pausado=false, inicio=0;
+  const el=document.createElement('div'); el.className='expo'; el.setAttribute('role','dialog'); el.setAttribute('aria-label','Modo exposição');
+  el.innerHTML=`<span class="prog" id="prog"></span><div class="palco"><div class="pt" id="pt"></div><div class="qr"><canvas id="eqr" width="240" height="240"></canvas><div style="margin-top:6px">Leia no celular</div></div></div>
+    <div class="barra"><button class="btn" id="eAnt" aria-label="Anterior">◀</button><span class="cont" id="eCont"></span><button class="btn" id="ePause">⏸ Pausar</button><button class="btn" id="eProx" aria-label="Próximo">▶</button>
+    <select id="eSeg" aria-label="Tempo por poema">${[10,15,20,30,45].map(s=>`<option value="${s}" ${s===seg?'selected':''}>${s} s por poema</option>`).join('')}</select><button class="btn" id="eSair">✕ Sair</button></div>`;
+  document.body.appendChild(el);
+  try{ if(el.requestFullscreen) await el.requestFullscreen(); }catch(e){}
+  const caber=()=>{ const tx=$('#etx',el); const pt=$('#pt',el); if(!tx) return; let s=Math.min(window.innerWidth/22,48); tx.style.fontSize=s+'px'; while(pt.scrollHeight>pt.clientHeight+2 && s>14){ s-=1; tx.style.fontSize=s+'px'; } };
+  const mostrar=()=>{
+    const p=lista[i];
+    $('#pt',el).innerHTML=`<h2>${esc(p.ti||'Sem título')}</h2><div class="tx" id="etx">${esc(p.t)}</div>${p.a||p.tu?`<div class="as">— ${esc([p.a,p.tu].filter(Boolean).join(', '))}</div>`:''}`;
+    $('#eCont',el).textContent=(i+1)+' / '+lista.length;
+    desenharQR($('#eqr',el), linkDoPoema(p.cod));
+    caber(); inicio=Date.now();
+  };
+  const tick=()=>{ if(pausado) return; const f=(Date.now()-inicio)/(seg*1000); $('#prog',el).style.width=Math.min(100,f*100)+'%'; if(f>=1){ i=(i+1)%lista.length; mostrar(); } };
+  const sair=()=>{ clearInterval(expoT); document.removeEventListener('keydown',tecla); window.removeEventListener('resize',caber); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} el.remove(); };
+  const tecla=e=>{ if(e.key==='Escape') sair(); else if(e.key==='ArrowRight'){ i=(i+1)%lista.length; mostrar(); } else if(e.key==='ArrowLeft'){ i=(i-1+lista.length)%lista.length; mostrar(); } else if(e.key===' '){ e.preventDefault(); $('#ePause',el).click(); } };
+  $('#eAnt',el).onclick=()=>{ i=(i-1+lista.length)%lista.length; mostrar(); };
+  $('#eProx',el).onclick=()=>{ i=(i+1)%lista.length; mostrar(); };
+  $('#ePause',el).onclick=e=>{ pausado=!pausado; e.currentTarget.textContent=pausado?'▶ Continuar':'⏸ Pausar'; if(!pausado) inicio=Date.now()-(parseFloat($('#prog',el).style.width)||0)/100*seg*1000; };
+  $('#eSeg',el).onchange=e=>{ seg=+e.target.value; gravarLS('painelPoetico.seg',String(seg)); };
+  $('#eSair',el).onclick=sair;
+  document.addEventListener('keydown',tecla); window.addEventListener('resize',caber);
+  mostrar(); clearInterval(expoT); expoT=setInterval(tick,200);
+}
+
+/* ---------- PROFESSOR ---------- */
+function painelProfessor(){
+  const csv=lerLS(CHAVE_CSV)||(csvValido(csvParam)?csvParam:'')||LINK_PLANILHA, form=fonteForm();
+  abrirModal(`
+    <h2>⚙️ Painel da turma</h2>
+    <p class="mini">Os poemas chegam por um Google Formulário seu e só aparecem depois que você aprova. O site não guarda nenhum dado dos estudantes.</p>
+    <h3>1. Prepare o formulário e a planilha</h3>
+    <ol>
+      <li>Crie um <b>Google Formulário</b> com uma pergunta de resposta curta: <i>“Cole aqui o link do seu poema”</i>. Em Configurações, deixe <b>sem coletar e-mails</b>.</li>
+      <li>Em <b>Respostas › Vincular ao Planilhas</b>, crie a planilha. Nela, acrescente uma coluna chamada <code>Aprovado</code>.</li>
+      <li>Leia cada poema e escreva <code>sim</code> na coluna <b>Aprovado</b> dos que podem ir para o painel.</li>
+      <li>Na planilha: <b>Arquivo › Compartilhar › Publicar na Web</b>, escolha a aba de respostas e o formato <b>CSV</b>. Copie o link.</li>
+    </ol>
+    <h3>2. Conecte aqui</h3>
+    <div class="linha"><label>Link CSV da planilha publicada<input id="iCsv" type="url" placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv" value="${esc(csv)}"></label><button class="btn pri" id="bTestar">Testar e usar</button></div>
+    <div id="stCsv"></div>
+    <label>Link curto do formulário (botão “Compartilhar” do formulário)<input id="iForm" type="url" placeholder="https://forms.gle/…" value="${esc(form)}"></label>
+    <h3>3. Links para a turma</h3>
+    <p class="mini">Mande estes links (ou projete os QR Codes). Eles já levam a planilha e o formulário juntos.</p>
+    <div id="gerados"></div>
+    <h3>Para o site oficial da escola</h3>
+    <p class="mini">Para o painel abrir sempre a mesma planilha, cole o link CSV na linha <code>LINK_PLANILHA</code> do código desta página e o link do formulário em <code>LINK_FORMULARIO</code> (aqui e na Oficina do Poeta), e publique de novo no GitHub.</p>
+    <div class="acoes"><button class="btn claro" id="bLimpar">Desconectar planilha</button><button class="btn pri" id="bFechar">Fechar</button></div>`);
+  const gerar=()=>{
+    const c=$('#iCsv').value.trim(), f=$('#iForm').value.trim();
+    const itens=[];
+    if(csvValido(c)) itens.push(['Painel da turma', BASE+'?csv='+encodeURIComponent(c)]);
+    if(formValido(f)) itens.push(['Oficina do Poeta com o formulário da turma', URL_OFICINA+'?form='+encodeURIComponent(f)]);
+    $('#gerados').innerHTML = itens.length? itens.map(([n,l],k)=>`<div class="gerado"><div><b>${n}</b><div style="display:flex;gap:6px;margin-top:6px"><input readonly value="${esc(l)}"><button class="btn peq claro" data-cl="${k}">Copiar</button></div></div><canvas width="240" height="240" id="gq${k}"></canvas></div>`).join('') : '<p class="mini">Preencha os links acima para gerar.</p>';
+    itens.forEach(([,l],k)=>{ desenharQR($('#gq'+k),l); $(`[data-cl="${k}"]`).onclick=()=>copiar(l); });
+  };
+  gerar();
+  $('#iForm').oninput=()=>{ const f=$('#iForm').value.trim(); if(!f||formValido(f)) gravarLS(CHAVE_FORM,f); gerar(); };
+  $('#iCsv').oninput=gerar;
+  $('#bTestar').onclick=async()=>{
+    const c=$('#iCsv').value.trim(), st=$('#stCsv');
+    if(!csvValido(c)){ st.innerHTML='<div class="status no">Cole o link publicado do Google Planilhas (começa com https://docs.google.com/spreadsheets/).</div>'; return; }
+    st.innerHTML='<div class="status">Abrindo a planilha…</div>';
+    try{
+      const r=await carregarPlanilha(c);
+      if(r.semColuna){ st.innerHTML=`<div class="status no">Encontrei ${r.total} resposta(s), mas falta a coluna <b>Aprovado</b>. Crie a coluna e escreva “sim” nos poemas liberados.</div>`; return; }
+      gravarLS(CHAVE_CSV,c);
+      st.innerHTML=`<div class="status ok">Tudo certo! ${r.total} resposta(s) · <b>${r.poemas.length}</b> poema(s) no painel${r.invalidos?` · ${r.invalidos} link(s) com problema`:''}.</div>`;
+      LISTA=r.poemas; ORIGEM='planilha'; AVISO=r.poemas.length?'':'Ainda não há poemas aprovados na planilha.'; carregado=true;
+    }catch(e){ st.innerHTML='<div class="status no">Não consegui abrir. Confira se a planilha foi publicada na Web no formato CSV e se o link está completo.</div>'; }
+  };
+  $('#bLimpar').onclick=()=>{ gravarLS(CHAVE_CSV,''); carregado=false; fecharModal(); if(csvParam) location.href=BASE; else telaVaral(); toast('Planilha desconectada deste computador.'); };
+  $('#bFechar').onclick=()=>{ fecharModal(); if(!location.hash) telaVaral(); };
+}
+
+rota();
+</script>
+</body>
+</html>

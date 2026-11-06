@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficina do Poeta</title>
+<meta name="description" content="Oficina do Poeta (6º ao 9º ano): aprenda verso, estrofe, rima, ritmo, figuras de linguagem e formas de poema, escreva com o Raio-X de rimas, revise, grave a declamação e publique no Painel Poético. Habilidades MS.EF69LP44, MS.EF69LP48, MS.EF69LP51, MS.EF69LP53 e EF09CO09.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M30 4C18 8 10 20 9 34l3 1c2-6 6-12 11-15-3 0-6 1-8 2 4-6 10-10 15-12z' fill='%23D2603A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Caveat:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#FBF6EC; --papel2:#F3EBDB; --branco:#FFFDF8; --linha:#E2D6BF; --linha2:#CDBD9D;
+  --tinta:#1F2340; --suave:#5E5A6E; --indigo:#2B2F66; --indigo-e:#1B1E48;
+  --terra:#D2603A; --terra-e:#A8452A; --ouro:#E8A93B; --teal:#2A8C80; --rosa:#D24E68; --vio:#7C5CC4;
+  --ok:#2E8B57; --ok-f:#E5F4EA; --erro:#C2413A; --erro-f:#FBE6E3;
+  --titulo:'Fraunces',Georgia,'Times New Roman',serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif; --mao:'Caveat','Segoe Print',cursive;
+  --raio:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{font-family:var(--texto);font-size:17px;line-height:1.5;color:var(--tinta);background:var(--papel);
+  background-image:radial-gradient(circle at 10% 0%,#E8A93B18,transparent 35%),radial-gradient(circle at 95% 20%,#2A8C8014,transparent 35%);min-height:100vh;-webkit-tap-highlight-color:transparent}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--terra-e)}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0;font-weight:800}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+
+.btn{border:2px solid var(--linha2);background:var(--branco);border-radius:12px;padding:10px 16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;transition:transform .12s,background .12s,border-color .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover{transform:translateY(-2px);border-color:var(--tinta)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.pri{background:var(--terra);border-color:var(--terra-e);color:#fff;box-shadow:0 4px 0 var(--terra-e)}
+.btn.pri:hover{background:#DD6F48}
+.btn.ind{background:var(--indigo);border-color:var(--indigo-e);color:#fff;box-shadow:0 4px 0 var(--indigo-e)}
+.btn.tea{background:var(--teal);border-color:#1E6B62;color:#fff;box-shadow:0 4px 0 #1E6B62}
+.btn.peq{min-height:38px;padding:6px 12px;font-size:15px}
+.btn.grande{font-size:19px;padding:14px 24px}
+.btn.fant{background:transparent;border-color:transparent}
+.btn.fant:hover{border-color:var(--linha2)}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:30;background:#FBF6ECee;backdrop-filter:blur(6px);border-bottom:2px solid var(--linha);display:flex;align-items:center;gap:10px;padding:8px 16px;min-height:60px}
+.topo .tit{flex:1;min-width:0;display:flex;flex-direction:column}
+.topo b{font-family:var(--titulo);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:700;background:var(--branco);border:2px solid var(--linha);border-radius:12px;padding:5px 11px;white-space:nowrap;font-size:15px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 40px}
+.voltar-site{font-size:14px;color:var(--suave);text-decoration:none;font-weight:700}
+.voltar-site:hover{color:var(--tinta)}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:34px;align-items:center;margin-top:10px}
+.kicker{font-weight:700;letter-spacing:3px;font-size:13px;color:var(--teal);text-transform:uppercase}
+.hero h1{font-size:clamp(50px,7.5vw,92px);letter-spacing:-1.5px;margin:10px 0 10px}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.lead{font-size:19px;color:var(--suave);max-width:540px;margin:0 0 18px}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--linha2);background:var(--branco);border-radius:12px;padding:10px 12px;width:200px;font-size:17px}
+.campos label:last-child input{width:120px}
+.mini{font-size:13px;color:var(--suave)}
+.folha{position:relative;background:var(--branco);border-radius:6px;padding:34px 30px 30px 58px;box-shadow:0 18px 40px #1F234022,0 2px 0 var(--linha);transform:rotate(1.6deg);
+  background-image:linear-gradient(transparent 39px,#C9D8EA 40px);background-size:100% 40px;background-position:0 22px}
+.folha:before{content:'';position:absolute;left:42px;top:0;bottom:0;width:2px;background:#E8A0A0}
+.folha .tt{font-family:var(--mao);font-size:34px;color:var(--indigo);line-height:40px;margin-bottom:0}
+.folha .v{font-family:var(--mao);font-size:29px;line-height:40px;color:#2B2F66;display:flex;justify-content:space-between;gap:12px}
+.folha .v i{font-style:normal;border-radius:6px;padding:0 3px}
+.folha .v small{font-family:var(--texto);font-size:13px;font-weight:700;align-self:center;border-radius:20px;padding:0 8px;line-height:22px;color:#fff}
+.folha .nota-raio{position:absolute;right:-12px;bottom:-18px;background:var(--indigo);color:#fff;font-weight:700;font-size:14px;border-radius:12px;padding:8px 12px;transform:rotate(-4deg);box-shadow:0 6px 16px #0003}
+.portas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:38px}
+.porta{position:relative;text-align:left;background:var(--branco);border:2px solid var(--linha);border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:8px;min-height:200px;transition:transform .12s,border-color .12s,box-shadow .12s;color:var(--tinta)}
+.porta:hover{transform:translateY(-4px);border-color:var(--tinta);box-shadow:0 10px 24px #1F234018}
+.porta .num{font-family:var(--titulo);font-size:15px;font-weight:800;color:#fff;width:34px;height:34px;border-radius:50%;display:grid;place-items:center}
+.porta h2{font-size:30px}
+.porta p{margin:0;color:var(--suave);font-size:16px;flex:1}
+.porta .rod{font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.painel-link{margin-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--indigo);color:#fff;border-radius:20px;padding:18px 22px}
+.painel-link p{margin:0;flex:1;min-width:220px;color:#D8DAF2}
+.painel-link b{font-family:var(--titulo);font-size:22px;color:#fff;display:block}
+.rodape{margin-top:26px;font-size:14px;color:var(--suave);line-height:1.6;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.rodape .acoes{display:flex;gap:8px;flex-wrap:wrap}
+
+/* SEÇÕES */
+.secao{max-width:1080px;margin:auto;padding:22px 16px 48px}
+.secao>header{margin-bottom:18px}
+.secao>header h1{font-size:clamp(32px,5vw,46px)}
+.secao>header p{color:var(--suave);margin:6px 0 0;max-width:720px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.licao-card{text-align:left;background:var(--branco);border:2px solid var(--linha);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px;min-height:170px;transition:transform .12s,border-color .12s;color:var(--tinta)}
+.licao-card:hover{transform:translateY(-3px);border-color:var(--tinta)}
+.licao-card .ic{font-size:30px;line-height:1}
+.licao-card h3{font-size:22px}
+.licao-card .hab{font-size:12px;font-weight:700;color:var(--suave)}
+.licao-card p{margin:0;font-size:15px;color:var(--suave);flex:1}
+.estrelas{font-size:20px;letter-spacing:2px;color:#D9CDB3}
+.estrelas .on{color:var(--ouro)}
+
+/* LIÇÃO */
+.licao{max-width:780px;margin:auto;padding:18px 16px 48px}
+.trilho{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:14px;color:var(--suave);font-weight:700}
+.trilho .barra{flex:1;height:10px;border-radius:10px;background:var(--papel2);overflow:hidden}
+.trilho .barra i{display:block;height:100%;background:var(--teal);transition:width .3s}
+.cartao{background:var(--branco);border:2px solid var(--linha);border-radius:20px;padding:24px;box-shadow:0 8px 20px #1F234010}
+.cartao h2{font-size:30px;margin-bottom:10px}
+.cartao p{margin:0 0 12px}
+.cartao ul{margin:0 0 12px;padding-left:1.2em}
+.cartao li{margin:4px 0}
+.poema-ex{font-family:var(--titulo);font-size:20px;line-height:1.55;background:var(--papel);border-left:5px solid var(--ouro);border-radius:0 12px 12px 0;padding:14px 18px;margin:10px 0 14px;white-space:pre-line}
+.poema-ex .fonte{display:block;font-family:var(--texto);font-size:13px;color:var(--suave);margin-top:6px;white-space:normal}
+.mini-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin:8px 0 12px}
+.mini-cards div{background:var(--papel);border:2px solid var(--linha);border-radius:14px;padding:12px}
+.mini-cards b{display:block;font-family:var(--titulo);font-size:18px;margin-bottom:2px}
+.mini-cards span{font-size:15px;color:var(--suave)}
+.mini-cards i{display:block;font-family:var(--titulo);font-size:16px;color:var(--indigo);margin-top:6px}
+.linha-tempo{position:relative;margin:8px 0 12px;padding-left:22px}
+.linha-tempo:before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:3px;background:var(--linha2);border-radius:3px}
+.linha-tempo div{position:relative;margin:0 0 12px}
+.linha-tempo div:before{content:'';position:absolute;left:-21px;top:6px;width:13px;height:13px;border-radius:50%;background:var(--terra);border:3px solid var(--branco);box-shadow:0 0 0 2px var(--terra)}
+.linha-tempo b{font-family:var(--titulo)}
+.linha-tempo small{display:block;color:var(--suave);font-size:15px}
+.pergunta{font-family:var(--titulo);font-size:24px;margin-bottom:12px}
+.trecho{font-family:var(--titulo);font-size:21px;line-height:1.6;background:var(--papel);border-radius:12px;padding:14px 18px;margin-bottom:14px;white-space:pre-line}
+.ops{display:grid;gap:10px}
+.op{text-align:left;border:2px solid var(--linha2);background:var(--branco);border-radius:14px;padding:13px 16px;font-weight:700;font-size:17px;transition:transform .1s,border-color .1s;color:var(--tinta)}
+.op:hover:not(:disabled){transform:translateX(4px);border-color:var(--tinta)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.op:disabled{cursor:default}
+.pal{border-radius:6px;padding:0 3px;cursor:pointer;transition:background .1s}
+.pal:hover{background:#E8A93B33}
+.pal.achou{background:#2A8C8033;box-shadow:inset 0 -3px 0 var(--teal)}
+.pal.errou{background:var(--erro-f);animation:treme .3s}
+.pal.faltou{box-shadow:inset 0 0 0 2px var(--teal)}
+.trecho.fim .pal{cursor:default}
+.retorno{margin-top:14px;border-radius:14px;padding:12px 16px;border:2px solid var(--linha);background:var(--papel)}
+.retorno.ok{border-color:var(--ok);background:var(--ok-f)}
+.retorno.no{border-color:var(--erro);background:var(--erro-f)}
+.retorno b{display:block;font-family:var(--titulo);font-size:19px}
+.seguir{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.fim-licao{text-align:center}
+.fim-licao .estrelas{font-size:54px;margin:8px 0}
+
+/* CRIAR */
+.passos{display:flex;gap:6px;margin:0 0 18px;flex-wrap:wrap}
+.passo{flex:1;min-width:120px;display:flex;align-items:center;gap:8px;border:2px solid var(--linha);background:var(--branco);border-radius:14px;padding:8px 12px;font-weight:700;color:var(--suave);text-align:left}
+.passo .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--papel2);font-family:var(--titulo);flex:none}
+.passo.atual{border-color:var(--terra);color:var(--tinta)}
+.passo.atual .n{background:var(--terra);color:#fff}
+.passo.feito .n{background:var(--teal);color:#fff}
+.bloco{background:var(--branco);border:2px solid var(--linha);border-radius:20px;padding:18px 20px;margin-bottom:16px}
+.bloco>h2{font-size:24px;margin-bottom:4px}
+.bloco>p.sub{margin:0 0 12px;color:var(--suave);font-size:15px}
+.escolhas{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.escolha{text-align:left;border:2px solid var(--linha);background:var(--papel);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;transition:border-color .1s,transform .1s;color:var(--tinta)}
+.escolha:hover{transform:translateY(-2px);border-color:var(--linha2)}
+.escolha b{font-family:var(--titulo);font-size:18px}
+.escolha span{font-size:14px;color:var(--suave)}
+.escolha[aria-pressed=true]{border-color:var(--terra);background:#D2603A14;box-shadow:0 0 0 3px #D2603A22}
+.tempestade{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.caixa-t{background:var(--papel);border:2px dashed var(--linha2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:150px}
+.caixa-t b{font-family:var(--titulo);font-size:17px}
+.caixa-t form{display:flex;gap:6px}
+.caixa-t input{flex:1;min-width:0;border:2px solid var(--linha);border-radius:10px;padding:6px 8px;background:var(--branco);font-size:15px}
+.caixa-t form button{border:0;background:var(--indigo);color:#fff;border-radius:10px;width:36px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{border:2px solid var(--linha);background:var(--branco);border-radius:20px;padding:3px 10px;font-size:15px;font-weight:700;display:inline-flex;gap:6px;align-items:center;color:var(--tinta)}
+.pchip x{color:var(--suave);font-weight:700;cursor:pointer}
+button.pchip:hover{border-color:var(--terra)}
+.perguntas-guia{margin:12px 0 0;padding:12px 14px;background:#2A8C8012;border-radius:12px;font-size:15px}
+.perguntas-guia b{color:var(--teal)}
+.perguntas-guia ul{margin:4px 0 0;padding-left:1.2em}
+
+.oficina{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+.editor{background:var(--branco);border:2px solid var(--linha);border-radius:20px;padding:16px}
+.editor input.titulo{width:100%;border:0;border-bottom:2px solid var(--linha);background:transparent;font-family:var(--titulo);font-size:28px;font-weight:800;padding:6px 2px 8px;margin-bottom:6px}
+.editor input.titulo:focus{outline:none;border-color:var(--terra)}
+.editor textarea{width:100%;min-height:420px;resize:vertical;border:0;background:transparent;font-family:var(--titulo);font-size:21px;line-height:34px;padding:4px 2px;
+  background-image:linear-gradient(transparent 33px,#C9D8EA 34px);background-size:100% 34px;background-attachment:local}
+.editor textarea:focus{outline:none}
+.ferr-barra{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;border-top:2px solid var(--linha)}
+.raio{position:sticky;top:76px;display:flex;flex-direction:column;gap:12px}
+.raio .bloco{margin:0;padding:14px 16px}
+.raio h3{font-size:19px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.reqs{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:15px}
+.reqs li{display:flex;gap:8px;align-items:flex-start}
+.reqs li:before{content:'○';font-weight:700;color:var(--suave);flex:none;width:18px}
+.reqs li.ok:before{content:'✔';color:var(--ok)}
+.reqs li.quase:before{content:'◐';color:var(--ouro)}
+.versos{display:grid;gap:3px;font-size:15px;max-height:360px;overflow:auto;padding-right:4px}
+.versos .lv{display:grid;grid-template-columns:24px 1fr auto auto;gap:8px;align-items:center;padding:3px 6px;border-radius:8px}
+.versos .lv:nth-child(odd){background:var(--papel)}
+.versos .lv .nn{color:var(--suave);font-size:12px;text-align:right}
+.versos .lv .tx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.versos .lv .sl{font-size:12px;color:var(--suave);font-weight:700;white-space:nowrap}
+.versos .lv .rl{font-family:var(--titulo);font-weight:800;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:15px;background:var(--papel2);color:var(--suave)}
+.versos .sep{height:8px}
+.esquema{font-family:var(--titulo);font-size:20px;font-weight:800;letter-spacing:3px}
+.vazio{color:var(--suave);font-size:15px;margin:0}
+
+/* REVISAR */
+.revisao{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.check{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.check li{display:flex;gap:10px;align-items:flex-start;background:var(--papel);border-radius:12px;padding:10px 12px}
+.check li .st{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--papel2)}
+.check li.ok .st{background:var(--ok);color:#fff}
+.check li.no .st{background:var(--ouro);color:#fff}
+.check li small{display:block;color:var(--suave);font-size:14px}
+.check label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;width:100%}
+.check input[type=checkbox]{width:22px;height:22px;accent-color:var(--teal);flex:none;margin-top:2px}
+.leitura{font-family:var(--titulo);font-size:20px;line-height:1.6;white-space:pre-wrap;background:var(--papel);border-radius:12px;padding:14px 16px;max-height:460px;overflow:auto}
+.leitura mark{background:#E8A93B55;border-radius:4px;padding:0 2px}
+.colega{display:grid;gap:8px}
+.colega input,.colega textarea{border:2px solid var(--linha);border-radius:10px;padding:8px 10px;background:var(--branco);width:100%;font-size:16px}
+.colega textarea{min-height:64px;resize:vertical}
+.versoes{display:grid;gap:6px;font-size:15px}
+.versoes div{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--papel);border-radius:10px;padding:6px 10px}
+
+/* PUBLICAR */
+.publicar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.previa{position:sticky;top:76px}
+.previa canvas{width:100%;height:auto;border-radius:12px;box-shadow:0 14px 30px #1F234033;display:block;background:#ddd}
+.temas-vis{display:flex;flex-wrap:wrap;gap:8px}
+.tv{width:54px;height:54px;border-radius:14px;border:3px solid transparent;box-shadow:0 0 0 2px var(--linha)}
+.tv[aria-pressed=true]{border-color:var(--branco);box-shadow:0 0 0 3px var(--terra)}
+.seg{display:inline-flex;border:2px solid var(--linha2);border-radius:12px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--branco);padding:8px 14px;font-weight:700}
+.seg button[aria-pressed=true]{background:var(--indigo);color:#fff}
+.linha-op{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.campo{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave);margin:8px 0}
+.campo input{border:2px solid var(--linha2);border-radius:10px;padding:9px 11px;background:var(--branco);font-size:16px;color:var(--tinta);width:100%}
+.gravador{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.gravador .tempo{font-family:var(--titulo);font-weight:800;font-size:22px;min-width:64px}
+.gravador audio{width:100%;margin-top:6px}
+.rec-on{animation:pulsa 1s infinite}
+@keyframes pulsa{50%{box-shadow:0 0 0 6px #D24E6844}}
+.link-box{display:flex;gap:8px}
+.link-box input{flex:1;min-width:0;border:2px solid var(--linha2);border-radius:10px;padding:8px 10px;background:var(--papel);font-size:14px}
+.qr-area{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.qr-area canvas{width:140px;height:140px;image-rendering:pixelated;border-radius:8px;border:2px solid var(--linha)}
+.declara{display:flex;gap:10px;align-items:flex-start;background:#E8A93B1E;border:2px solid #E8A93B66;border-radius:12px;padding:10px 12px;font-size:15px;cursor:pointer}
+.declara input{width:22px;height:22px;accent-color:var(--terra);flex:none;margin-top:1px}
+.aviso{font-size:14px;color:var(--suave);background:var(--papel);border-radius:10px;padding:8px 12px;margin:8px 0 0}
+
+/* MEUS POEMAS */
+.poema-card{background:var(--branco);border:2px solid var(--linha);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.poema-card h3{font-size:22px}
+.poema-card .meta{font-size:13px;color:var(--suave);font-weight:700}
+.poema-card pre{font-family:var(--titulo);font-size:16px;line-height:1.5;margin:0;white-space:pre-wrap;color:var(--suave);max-height:120px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 60%,transparent)}
+.poema-card .acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.novo-card{border:3px dashed var(--linha2);background:transparent;border-radius:18px;min-height:200px;display:grid;place-items:center;font-family:var(--titulo);font-size:22px;font-weight:800;color:var(--suave)}
+.novo-card:hover{border-color:var(--terra);color:var(--terra)}
+
+/* MODAL / TOAST */
+.overlay{position:fixed;inset:0;z-index:50;background:#1F234088;display:grid;place-items:center;padding:16px}
+.modal{background:var(--branco);border-radius:20px;max-width:620px;width:100%;max-height:88vh;overflow:auto;padding:22px;box-shadow:0 30px 60px #0005;animation:surge .18s ease-out}
+.modal h2{font-size:26px;margin-bottom:8px}
+.modal .acoes{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+@keyframes surge{from{opacity:0;transform:scale(.96)}}
+.modal textarea.rel{width:100%;min-height:220px;border:2px solid var(--linha);border-radius:12px;padding:10px;font-size:14px;font-family:ui-monospace,Consolas,monospace}
+.rimas-res{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:40px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 10px 30px #0004}
+#toast.on{opacity:1}
+.confete{position:fixed;top:-10px;width:10px;height:14px;z-index:70;pointer-events:none;animation:cai 1.6s ease-in forwards}
+@keyframes cai{to{transform:translateY(105vh) rotate(540deg);opacity:.6}}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .folha{transform:rotate(1deg);order:2}
+  .portas{grid-template-columns:1fr}
+  .porta{min-height:0}
+  .oficina,.revisao,.publicar{grid-template-columns:1fr}
+  .raio,.previa{position:static}
+  .tempestade{grid-template-columns:1fr 1fr}
+  .editor textarea{min-height:300px}
+  .topo small{display:none}
+}
+@media (max-width:480px){
+  body{font-size:16px}
+  .tempestade{grid-template-columns:1fr}
+  .passo{min-width:0;flex:1 1 40%;padding:6px 8px;font-size:14px}
+  .cartao{padding:18px}
+  .campos input,.campos label:last-child input{width:100%}
+  .campos label{flex:1}
+}
+@media print{
+  body *{visibility:hidden}
+  #impressao,#impressao *{visibility:visible}
+  #impressao{position:absolute;left:0;top:0;width:100%}
+  #impressao img{width:100%;max-width:18cm;display:block;margin:auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="impressao" class="hidden"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+'use strict';
+/* =========================================================
+   OFICINA DO POETA — JRM • Aventuras Educativas
+   Projeto "Tecendo Palavras: Painel Histórico-Poético"
+   Habilidades: MS.EF69LP44 (contexto e valores) · MS.EF69LP48 (recursos expressivos)
+                MS.EF69LP51 (planejar, escrever, revisar, reescrever)
+                MS.EF69LP53 (declamação) · EF09CO09 (criar conteúdo digital com ética)
+   Os poemas de exemplo são de autores em domínio público (Gonçalves Dias)
+   ou foram escritos especialmente para esta oficina.
+   ========================================================= */
+
+/* Professor: cole aqui o link curto do formulário da turma (ex.: https://forms.gle/xxxx)
+   para que o botão "Enviar ao professor" já abra o formulário. Também funciona pelo
+   endereço: oficina-do-poeta.html?form=https://forms.gle/xxxx */
+const LINK_FORMULARIO = '';
+
+const CHAVE = 'oficinaPoeta.v1';
+const CHAVE_FORM = 'oficinaPoeta.form';
+
+/* ---------------- CONTEÚDO: LIÇÕES ---------------- */
+const CANCAO = 'Minha terra tem palmeiras,\nOnde canta o Sabiá;\nAs aves, que aqui gorjeiam,\nNão gorjeiam como lá.\n\nNosso céu tem mais estrelas,\nNossas várzeas têm mais flores,\nNossos bosques têm mais vida,\nNossa vida mais amores.';
+const FONTE_CANCAO = 'Gonçalves Dias, “Canção do Exílio” (escrita em 1843, em Portugal). Domínio público.';
+
+const LICOES = [
+ { id:'verso', icone:'📏', titulo:'Verso e estrofe', hab:'MS.EF69LP48', resumo:'Cada linha é um verso; cada grupo de versos é uma estrofe.',
+   telas:[
+    `<h2>Verso e estrofe</h2>
+     <p>No poema, cada <b>linha</b> se chama <b>verso</b>. Um grupo de versos, separado dos outros por uma linha em branco, se chama <b>estrofe</b>.</p>
+     <div class="poema-ex">${CANCAO}<span class="fonte">${FONTE_CANCAO}</span></div>
+     <p>Este trecho tem <b>2 estrofes</b>, cada uma com <b>4 versos</b>.</p>`,
+    `<h2>Nomes das estrofes</h2>
+     <p>As estrofes ganham nome pelo número de versos:</p>
+     <div class="mini-cards">
+      <div><b>Dístico</b><span>2 versos</span></div><div><b>Terceto</b><span>3 versos</span></div>
+      <div><b>Quarteto ou quadra</b><span>4 versos</span></div><div><b>Quintilha</b><span>5 versos</span></div>
+      <div><b>Sextilha</b><span>6 versos (muito usada no cordel)</span></div><div><b>Décima</b><span>10 versos</span></div>
+     </div>
+     <p>Separar em estrofes organiza as ideias e cria <b>pausas</b> na leitura, como respirar entre uma parte e outra.</p>`],
+   desafios:[
+    {t:'mc', p:'Quantas estrofes tem o trecho da “Canção do Exílio”?', tx:CANCAO, ops:['1','2','4','8'], c:1, e:'São 2 estrofes: a linha em branco separa uma da outra.'},
+    {t:'mc', p:'Cada estrofe desse trecho tem 4 versos. Como se chama esse tipo de estrofe?', ops:['Terceto','Sextilha','Quarteto (ou quadra)','Dístico'], c:2, e:'Estrofe de 4 versos é o quarteto, também chamado de quadra.'},
+    {t:'mc', p:'Uma estrofe com 3 versos se chama:', ops:['Terceto','Trio','Quintilha','Décima'], c:0, e:'Três versos formam um terceto. O soneto termina com dois tercetos.'},
+    {t:'mc', p:'Por que o poeta divide o poema em estrofes?', ops:['Para gastar menos papel','Para organizar as ideias e criar pausas e ritmo na leitura','Porque é proibido escrever tudo junto','Para o poema ficar mais curto'], c:1, e:'As estrofes organizam as partes do poema e marcam pausas, o que ajuda no ritmo e na leitura em voz alta.'}
+   ]},
+ { id:'rima', icone:'🎵', titulo:'Rima', hab:'MS.EF69LP48', resumo:'Sons iguais no fim dos versos e os esquemas ABAB e AABB.',
+   telas:[
+    `<h2>O que é rima?</h2>
+     <p><b>Rima</b> é a repetição de sons iguais ou parecidos, quase sempre no <b>fim dos versos</b>. O som conta a partir da última vogal forte da palavra.</p>
+     <div class="poema-ex">O sol acorda a cidade,      <b style="color:var(--terra)">A</b>
+o vento canta no ipê,        <b style="color:var(--teal)">B</b>
+a rua cheira a saudade,      <b style="color:var(--terra)">A</b>
+e eu lembro de você.          <b style="color:var(--teal)">B</b><span class="fonte">Quadra escrita para a Oficina do Poeta.</span></div>
+     <p><b>cidade</b> rima com <b>saudade</b> (-ade) e <b>ipê</b> rima com <b>você</b> (-ê). Damos uma letra para cada som: este é o esquema <b>ABAB</b>.</p>`,
+    `<h2>Esquemas de rima</h2>
+     <div class="mini-cards">
+      <div><b>AABB</b><span>Emparelhadas: os versos rimam de dois em dois.</span></div>
+      <div><b>ABAB</b><span>Alternadas: o 1º rima com o 3º e o 2º com o 4º.</span></div>
+      <div><b>ABBA</b><span>Interpoladas: o 1º rima com o 4º e o 2º com o 3º.</span></div>
+      <div><b>Verso livre</b><span>Sem rima nem medida fixas. Muitos poetas modernos escrevem assim.</span></div>
+     </div>
+     <p>Na Oficina, o <b>Raio-X</b> pinta as rimas do seu poema com a mesma cor e mostra o esquema.</p>`],
+   desafios:[
+    {t:'pal', p:'Clique na palavra que rima com “Paraguai”.', tx:'Na beira do rio Paraguai\no tuiuiú abre a asa,\na tarde devagar se vai\ne a lua acende a casa.', certas:['vai'], e:'“Paraguai” e “vai” terminam com o som -ai.'},
+    {t:'mc', p:'Qual é o esquema de rimas desta quadra?', tx:'Na beira do rio Paraguai\no tuiuiú abre a asa,\na tarde devagar se vai\ne a lua acende a casa.', ops:['AABB','ABAB','ABBA','Não tem rimas'], c:1, e:'Paraguai/vai (A) e asa/casa (B) se alternam: ABAB.'},
+    {t:'mc', p:'E nesta, qual é o esquema?', tx:'Meu caderno é um quintal,\ncada letra, um animal;\nquando escrevo, ele floresce,\ne o meu verso se aquece.', ops:['ABAB','ABBA','AABB','ABCB'], c:2, e:'quintal/animal rimam entre si, e floresce/aquece também: rimas emparelhadas, AABB.'},
+    {t:'mc', p:'Qual palavra rima com “janela”?', ops:['jardim','aquarela','porta','luar'], c:1, e:'janela e aquarela terminam com o som -ela.'},
+    {t:'mc', p:'Um texto sem nenhuma rima pode ser um poema?', ops:['Não, todo poema precisa rimar','Sim: o verso livre não tem rima obrigatória','Só se tiver título','Só se for muito curto'], c:1, e:'A rima é um recurso, não uma obrigação. O ritmo, as imagens e a organização em versos também fazem a poesia.'}
+   ]},
+ { id:'ritmo', icone:'🥁', titulo:'Ritmo e sílabas poéticas', hab:'MS.EF69LP48', resumo:'A música do verso: sílabas fortes, fracas e a contagem poética.',
+   telas:[
+    `<h2>O ritmo do verso</h2>
+     <p><b>Ritmo</b> é a “música” do poema: a sequência de sílabas fortes e fracas que a gente sente ao ler em voz alta.</p>
+     <p>Nos poemas tradicionais, a medida do verso é dada pelas <b>sílabas poéticas</b>. Elas são contadas de um jeito diferente da gramática:</p>
+     <ul><li>Contamos só <b>até a última sílaba forte</b> (tônica) do verso.</li>
+     <li>Quando uma palavra termina em vogal e a próxima começa com vogal, elas podem se <b>juntar</b> numa sílaba só.</li></ul>
+     <div class="poema-ex">Mi · nha · ter · ra · tem · pal · <b>MEI</b> · (ras)
+= 7 sílabas poéticas</div>
+     <p><button class="btn peq" data-ouvir="Minha terra tem palmeiras, onde canta o Sabiá.">🔊 Ouvir o verso</button></p>`,
+    `<h2>Medidas famosas</h2>
+     <div class="mini-cards">
+      <div><b>Redondilha menor</b><span>5 sílabas poéticas. Comum em cantigas e no haicai.</span><i>A · lu · a · no · CÉU</i></div>
+      <div><b>Redondilha maior</b><span>7 sílabas poéticas. A medida do cordel e da “Canção do Exílio”.</span><i>On · de · can · ta‿o · Sa · bi · Á</i></div>
+      <div><b>Decassílabo</b><span>10 sílabas poéticas. Muito usado no soneto.</span></div>
+     </div>
+     <p>Em <i>can·ta‿o</i>, o “a” e o “o” se juntam numa sílaba só. Esse encontro se chama <b>elisão</b>.</p>`],
+   desafios:[
+    {t:'mc', p:'Quantas sílabas poéticas tem o verso “Nosso céu tem mais estrelas”?', ops:['6','7','8','9'], c:1, e:'Nos · so · céu · tem · mais · es · TRE · (las): paramos na sílaba forte TRE. São 7.'},
+    {t:'mc', p:'Um verso com 7 sílabas poéticas se chama:', ops:['Redondilha menor','Decassílabo','Redondilha maior','Verso branco'], c:2, e:'Sete sílabas poéticas formam a redondilha maior.'},
+    {t:'mc', p:'Até onde contamos as sílabas poéticas de um verso?', ops:['Até a última letra','Até a última sílaba forte (tônica)','Até a primeira vírgula','Até a metade do verso'], c:1, e:'As sílabas que vêm depois da última sílaba tônica não entram na contagem.'},
+    {t:'mc', p:'Quantas sílabas poéticas tem “A lua no céu”?', ops:['4','5','6','7'], c:1, e:'A · lu · a · no · CÉU: 5 sílabas poéticas, uma redondilha menor.'}
+   ]},
+ { id:'figuras', icone:'🎭', titulo:'Figuras de linguagem', hab:'MS.EF69LP48', resumo:'Comparação, metáfora, personificação, hipérbole e outras.',
+   telas:[
+    `<h2>Figuras de linguagem</h2>
+     <p>São jeitos criativos de usar as palavras para produzir <b>imagens</b>, <b>sons</b> e <b>emoções</b>. Elas fazem o leitor ver o mundo de um jeito novo.</p>
+     <div class="mini-cards">
+      <div><b>Comparação</b><span>Aproxima duas coisas usando “como”, “feito”, “parece”.</span><i>Seus olhos brilham como estrelas.</i></div>
+      <div><b>Metáfora</b><span>Comparação direta, sem o “como”.</span><i>Seus olhos são estrelas.</i></div>
+      <div><b>Personificação</b><span>Dá ações e sentimentos humanos a coisas e animais.</span><i>O vento sussurrou segredos.</i></div>
+      <div><b>Hipérbole</b><span>Exagero para dar força à ideia.</span><i>Chorei um rio inteiro.</i></div>
+     </div>`,
+    `<h2>Figuras de som e de contraste</h2>
+     <div class="mini-cards">
+      <div><b>Aliteração</b><span>Repetição de sons de consoantes.</span><i>O rato roeu a roupa do rei de Roma.</i></div>
+      <div><b>Onomatopeia</b><span>Palavras que imitam sons.</span><i>Tic-tac, tic-tac, o relógio não para.</i></div>
+      <div><b>Antítese</b><span>Junta ideias opostas.</span><i>É fogo e é gelo ao mesmo tempo.</i></div>
+     </div>
+     <p>Dica de poeta: uma figura bem escolhida vale mais do que muitas palavras “bonitas”.</p>`],
+   desafios:[
+    {t:'mc', p:'“A noite vestiu seu vestido de estrelas.” Qual é a figura?', ops:['Hipérbole','Personificação','Onomatopeia','Comparação'], c:1, e:'A noite “vestiu” um vestido, uma ação humana: personificação.'},
+    {t:'mc', p:'“Minha mochila pesa uma tonelada!”', ops:['Metáfora','Aliteração','Hipérbole','Antítese'], c:2, e:'Ninguém carrega uma tonelada: é um exagero, uma hipérbole.'},
+    {t:'mc', p:'“A cidade é um formigueiro.”', ops:['Comparação','Metáfora','Personificação','Onomatopeia'], c:1, e:'A cidade é comparada a um formigueiro sem usar “como”: metáfora.'},
+    {t:'mc', p:'“Ela corria como o vento.”', ops:['Comparação','Metáfora','Hipérbole','Antítese'], c:0, e:'O “como” liga as duas coisas: comparação.'},
+    {t:'mc', p:'“Plic, ploc, plic: a chuva no telhado.”', ops:['Aliteração','Personificação','Onomatopeia','Metáfora'], c:2, e:'“Plic, ploc” imita o som da chuva: onomatopeia.'},
+    {t:'mc', p:'“O sapo sapeca saltou sem sapato.”', ops:['Antítese','Aliteração','Comparação','Hipérbole'], c:1, e:'O som do “s” se repete várias vezes: aliteração.'}
+   ]},
+ { id:'formas', icone:'🧩', titulo:'Formas de poema', hab:'MS.EF69LP48', resumo:'Quadra, haicai, cordel, soneto, acróstico, slam e verso livre.',
+   telas:[
+    `<h2>Formas de poema</h2>
+     <div class="mini-cards">
+      <div><b>Quadra</b><span>Estrofes de 4 versos, com rimas. Bem popular nas cantigas e nos versos de recado.</span></div>
+      <div><b>Haicai</b><span>Forma de origem japonesa: 3 versos com 5, 7 e 5 sílabas, sobre um instante da natureza.</span></div>
+      <div><b>Cordel</b><span>Tradição nordestina: sextilhas de 7 sílabas com rimas nos versos 2, 4 e 6, em folhetos com xilogravura.</span></div>
+      <div><b>Soneto</b><span>14 versos: dois quartetos e dois tercetos.</span></div>
+     </div>
+     <div class="poema-ex">Garça na lagoa
+o sol balança com ela
+no fim do verão.<span class="fonte">Haicai escrito para a Oficina do Poeta (5 · 7 · 5).</span></div>`,
+    `<h2>Mais formas</h2>
+     <div class="mini-cards">
+      <div><b>Acróstico</b><span>As primeiras letras de cada verso, lidas de cima para baixo, formam uma palavra.</span></div>
+      <div><b>Poema visual</b><span>O desenho das palavras na página também faz parte do sentido.</span></div>
+      <div><b>Slam</b><span>Poesia falada em batalhas, com temas sociais. A voz e o corpo fazem parte do poema.</span></div>
+      <div><b>Verso livre</b><span>Sem medida nem rima fixas. Ganhou força com o Modernismo, a partir de 1922.</span></div>
+     </div>`],
+   desafios:[
+    {t:'mc', p:'Tem 3 versos, com 5, 7 e 5 sílabas, e fala de um instante da natureza.', ops:['Soneto','Haicai','Cordel','Acróstico'], c:1, e:'Essa é a receita do haicai.'},
+    {t:'mc', p:'Tem 14 versos: dois quartetos e dois tercetos.', ops:['Quadra','Slam','Soneto','Haicai'], c:2, e:'4 + 4 + 3 + 3 = 14 versos: o soneto.'},
+    {t:'mc', p:'As primeiras letras de cada verso formam uma palavra.', ops:['Acróstico','Poema visual','Verso livre','Cordel'], c:0, e:'É o acróstico. Experimente com o seu nome!'},
+    {t:'mc', p:'Poesia falada em batalhas, com temas sociais, voz e corpo.', ops:['Haicai','Soneto','Slam','Quadra'], c:2, e:'O slam junta poesia, performance e debate sobre a realidade.'},
+    {t:'mc', p:'Sextilhas de 7 sílabas, rimas nos versos 2, 4 e 6, em folhetos pendurados em cordões.', ops:['Cordel','Soneto','Acróstico','Haicai'], c:0, e:'O nome “cordel” vem dos cordões onde os folhetos ficavam pendurados nas feiras.'}
+   ]},
+ { id:'historia', icone:'⏳', titulo:'Poesia e história', hab:'MS.EF69LP44', resumo:'Cada poema conversa com o seu tempo: do Romantismo ao slam.',
+   telas:[
+    `<h2>Cada poema tem o seu tempo</h2>
+     <p>Um poema sempre conversa com a época em que foi escrito: os valores, os problemas e a cultura daquele tempo.</p>
+     <div class="linha-tempo">
+      <div><b>Trovadorismo (séculos XII a XV)</b><small>Cantigas de amor e de amigo: poesia cantada, em Portugal.</small></div>
+      <div><b>Romantismo (século XIX)</b><small>Sentimento, natureza e pátria. Gonçalves Dias escreve a “Canção do Exílio” em 1843, com saudade do Brasil. Castro Alves, o “poeta dos escravos”, denuncia o tráfico de pessoas escravizadas em “O Navio Negreiro” (1868).</small></div>
+      <div><b>Parnasianismo (fim do século XIX)</b><small>A busca da forma perfeita, com sonetos rigorosos. Olavo Bilac.</small></div>
+      <div><b>Simbolismo (1893)</b><small>Musicalidade e mistério. Cruz e Sousa, poeta negro catarinense, filho de pais que foram escravizados.</small></div>
+     </div>`,
+    `<h2>Do Modernismo até hoje</h2>
+     <div class="linha-tempo">
+      <div><b>Modernismo (a partir de 1922)</b><small>Semana de Arte Moderna: verso livre, linguagem do dia a dia e humor. Manuel Bandeira, Carlos Drummond de Andrade, Cecília Meireles.</small></div>
+      <div><b>Mato Grosso do Sul</b><small>Manoel de Barros (1916–2014) viveu em Campo Grande e transformou o Pantanal e as “coisas desimportantes” em poesia.</small></div>
+      <div><b>Hoje</b><small>Slam, poesia nas redes e nas periferias. Conceição Evaristo fala em “escrevivência”: escrever a partir da própria vida e da história do seu povo.</small></div>
+     </div>
+     <p>Procure os livros desses autores na biblioteca da escola!</p>`],
+   desafios:[
+    {t:'mc', p:'Escrito longe do Brasil, o poema fala de saudade da pátria e da natureza (palmeiras, sabiá). A que movimento ele pertence?', ops:['Trovadorismo','Romantismo','Modernismo','Slam'], c:1, e:'Saudade, natureza e amor à pátria são marcas do Romantismo, como na “Canção do Exílio”.'},
+    {t:'mc', p:'Qual poeta denunciou o tráfico de pessoas escravizadas em “O Navio Negreiro”?', ops:['Olavo Bilac','Castro Alves','Manuel Bandeira','Gonçalves Dias'], c:1, e:'Castro Alves usou a poesia para lutar pela abolição da escravatura.'},
+    {t:'mc', p:'Verso livre, linguagem do dia a dia e humor marcaram:', ops:['o Parnasianismo','o Trovadorismo','o Modernismo','o Simbolismo'], c:2, e:'A partir da Semana de Arte Moderna de 1922, os poetas quebraram as regras de medida e rima.'},
+    {t:'mc', p:'Poeta que viveu em Campo Grande e escreveu sobre o Pantanal e as “coisas desimportantes”:', ops:['Manoel de Barros','Cruz e Sousa','Castro Alves','Olavo Bilac'], c:0, e:'Manoel de Barros é o grande poeta de Mato Grosso do Sul.'},
+    {t:'mc', p:'Por que conhecer o contexto histórico ajuda a entender um poema?', ops:['Porque todo poema é antigo','Porque o poema dialoga com os valores, os problemas e a cultura da sua época','Porque a data é a parte mais importante','Não ajuda em nada'], c:1, e:'Saber quando e por que o poema foi escrito revela sentidos que, sozinhos, a gente não perceberia.'}
+   ]},
+ { id:'reescrita', icone:'✍️', titulo:'Do rascunho ao poema', hab:'MS.EF69LP51', resumo:'Planejar, escrever, revisar e reescrever: o caminho de todo poeta.',
+   telas:[
+    `<h2>Todo poeta reescreve</h2>
+     <p>Nenhum poema nasce pronto. O caminho tem quatro passos, e você vai fazer todos aqui na Oficina:</p>
+     <div class="mini-cards">
+      <div><b>1. Planejar</b><span>Escolher o tema, a forma e fazer uma tempestade de palavras.</span></div>
+      <div><b>2. Escrever</b><span>O primeiro rascunho, sem medo de errar.</span></div>
+      <div><b>3. Revisar</b><span>Ler em voz alta, trocar repetições, conferir rimas, ritmo, ortografia e pontuação. Pedir a opinião de um colega.</span></div>
+      <div><b>4. Reescrever</b><span>Fazer a versão final, com um título que chame atenção.</span></div>
+     </div>`],
+   desafios:[
+    {t:'mc', p:'Qual destas versões foi mais bem trabalhada?', ops:['A chuva caiu. A chuva molhou. A chuva parou.','A chuva caiu miúda,\nmolhou o quintal de lembranças\ne foi embora sem dizer tchau.'], c:1, e:'A segunda evita a repetição e cria imagens (“quintal de lembranças”) e uma personificação (a chuva que vai embora sem dizer tchau).'},
+    {t:'mc', p:'Ler o poema em voz alta durante a revisão serve para:', ops:['Cansar menos','Perceber o ritmo, as pausas e as palavras que “tropeçam”','Decorar mais rápido','Nada, basta ler em silêncio'], c:1, e:'O ouvido percebe o que o olho deixa passar.'},
+    {t:'mc', p:'Antes de escrever, a tempestade de palavras ajuda a:', ops:['Reunir ideias, sensações e palavras sobre o tema','Escolher a cor da folha','Copiar um poema pronto','Terminar mais rápido'], c:0, e:'Com as palavras anotadas, fica mais fácil começar o primeiro verso.'},
+    {t:'mc', p:'A palavra “bonito” aparece três vezes no seu poema. O que fazer?', ops:['Deixar assim','Apagar o poema','Trocar por palavras ou imagens mais precisas, como “dourado” ou “brilhante”','Escrever em letras maiúsculas'], c:2, e:'Repetir sem intenção enfraquece o poema. Procure a palavra exata.'}
+   ]},
+ { id:'declamar', icone:'🎤', titulo:'Declamar', hab:'MS.EF69LP53', resumo:'Pausas, tom e ritmo para dar voz ao poema.',
+   telas:[
+    `<h2>Dar voz ao poema</h2>
+     <p>Declamar é ler o poema em voz alta com expressão. Algumas dicas:</p>
+     <ul>
+      <li><b>Pausas:</b> respire na vírgula, no fim do verso e, mais longamente, entre as estrofes.</li>
+      <li><b>Tom:</b> a voz acompanha o sentido. Mais baixa e lenta na tristeza, mais forte na alegria ou na revolta.</li>
+      <li><b>Ritmo:</b> nem rápido demais, nem arrastado. Destaque as rimas.</li>
+      <li><b>Ensaio:</b> leia várias vezes antes de gravar, num lugar silencioso.</li>
+     </ul>
+     <div class="poema-ex">${CANCAO}<span class="fonte">${FONTE_CANCAO}</span></div>
+     <p><button class="btn peq" data-ouvir="${CANCAO.replace(/\n/g,' ')}">🔊 Ouvir a leitura do computador</button> e depois leia você, com mais emoção!</p>`],
+   desafios:[
+    {t:'mc', p:'Onde fazer a pausa mais longa ao declamar?', ops:['No meio de uma palavra','Entre uma estrofe e outra','Depois de cada sílaba','Em lugar nenhum'], c:1, e:'A linha em branco entre as estrofes pede uma respiração mais longa.'},
+    {t:'mc', p:'Um verso triste pede uma voz:', ops:['Mais lenta e baixa','Gritada','Bem rápida','Robótica'], c:0, e:'O tom da voz acompanha o sentido do verso.'},
+    {t:'mc', p:'Ao gravar a declamação, o mais importante é:', ops:['Falar o mais rápido possível','Falar com clareza, no ritmo do poema, num lugar silencioso','Colocar música alta de fundo','Ler sem ensaiar'], c:1, e:'Clareza, ritmo e silêncio ao redor fazem toda a diferença na gravação.'}
+   ]}
+];
+
+/* ---------------- CONTEÚDO: CRIAR ---------------- */
+const TEMAS = [
+ {id:'raizes', nome:'Minhas raízes', sub:'família, memórias, de onde eu vim', perg:['Que cheiro lembra a casa de alguém da sua família?','Que história a sua família sempre conta?','Que objeto antigo existe na sua casa? Quem o usava?','Que palavra ou ditado alguém mais velho sempre repete?']},
+ {id:'ms', nome:'MS em versos', sub:'Pantanal, Campo Grande, nossa terra', perg:['Que bicho do Pantanal ou do Cerrado você escolheria para o poema?','Que som você ouve na sua rua de manhã?','Que cor tem o céu de Campo Grande no fim da tarde?','Que comida, festa ou lugar de MS é a sua cara?']},
+ {id:'vozes', nome:'Vozes que fizeram história', sub:'resistência, cultura afro e indígena', perg:['Que pessoa (famosa ou da sua família) lutou por algo importante?','Que injustiça você gostaria que o poema denunciasse?','O que os povos indígenas e afro-brasileiros nos ensinaram?','Que voz ainda precisa ser ouvida hoje?']},
+ {id:'escola', nome:'Minha escola, meu tempo', sub:'o que vivo hoje vira história', perg:['Que momento da escola você nunca vai esquecer?','Como é o recreio, com sons, cheiros e cores?','O que você e seus amigos fazem que um dia vai virar lembrança?','Como será lembrar deste ano daqui a 20 anos?']},
+ {id:'natureza', nome:'Natureza', sub:'água, árvores, bichos, céu', perg:['Que árvore, rio ou bicho você vê perto de casa?','Como é a chuva chegando?','O que a natureza diria se pudesse falar?','O que precisamos proteger?']},
+ {id:'livre', nome:'Tema livre', sub:'o que o seu coração mandar', perg:['O que você sente agora?','O que você gostaria de dizer para alguém?','Que imagem não sai da sua cabeça?','Do que você tem saudade?']}
+];
+const FORMAS = {
+ livre:{nome:'Verso livre', sub:'Sem número fixo de versos nem rimas obrigatórias.'},
+ quadra:{nome:'Quadra', sub:'Estrofes de 4 versos, com rimas (ABAB ou AABB).'},
+ haicai:{nome:'Haicai', sub:'3 versos com 5, 7 e 5 sílabas poéticas.'},
+ cordel:{nome:'Cordel (sextilha)', sub:'Estrofes de 6 versos de 7 sílabas, rimas nos versos 2, 4 e 6.'},
+ soneto:{nome:'Soneto', sub:'14 versos: dois quartetos e dois tercetos.'},
+ acrostico:{nome:'Acróstico', sub:'A 1ª letra de cada verso forma uma palavra.'}
+};
+const CAIXAS_T = [['vejo','👀 Vejo'],['ouco','👂 Ouço'],['sinto','💛 Sinto'],['lembro','🕰️ Lembro']];
+const FIGURAS_DICAS = [
+ ['Comparação','… como …','Escreva: “___ é/parece como ___”. Ex.: “A lua parece uma moeda esquecida.”'],
+ ['Metáfora','… é …','Diga que uma coisa É outra. Ex.: “Minha rua é um rio de bicicletas.”'],
+ ['Personificação','a coisa faz algo humano','Dê uma ação humana a um objeto ou bicho. Ex.: “O ipê acenou para mim.”'],
+ ['Hipérbole','exagero','Exagere de propósito. Ex.: “Esperei mil anos pelo recreio.”'],
+ ['Onomatopeia','som','Imite um som. Ex.: “Tic-tac, a saudade bate.”'],
+ ['Aliteração','repetir consoantes','Repita um som. Ex.: “O vento varre a varanda vazia.”']
+];
+const ONOMATOPEIAS = /\b(tic|tac|toc|plic|ploc|blim|blem|dlim|dlom|bum|cabum|pof|zum|zzz|miau|au|cocoricó|piu|fiu|chuá|splash|tchau|tum|crec|nhac|vrum|ploft|plim)\b/i;
+const VAZIAS = new Set('a o e é as os um uma uns umas de da do das dos em na no nas nos que se por para pra com sem me te lhe meu minha seu sua nosso nossa eu tu ele ela nós vós eles elas mais muito mas como quando onde ao aos à às já não sim isso esse essa este esta aquele aquela tem ter foi ser ou nem vai vou só lá cá aqui'.split(' '));
+
+/* Banco de palavras para o “banco de rimas” */
+const PALAVRAS = ('amor flor cor dor calor sabor valor sol farol girassol anzol caracol lençol futebol mar luar lugar sonhar olhar cantar voar amar lembrar chegar brincar estrelar par altar jantar pomar colar ' +
+'coração canção mão chão irmão emoção paixão estação razão violão sertão feijão balão verão avião limão sabão pão leão trovão algodão multidão solidão gratidão imensidão ' +
+'vida partida saída ferida comida querida avenida bebida subida corrida medida ' +
+'saudade cidade amizade verdade liberdade felicidade vontade metade idade bondade claridade tempestade ' +
+'janela aquarela panela estrela canela vela bela tela amarela favela ela dela ' +
+'casa asa brasa rasa ' +
+'rio frio arrepio desafio pavio navio assovio vazio ' +
+'chuva luva uva curva ' +
+'lua rua sua tua nua crua ' +
+'céu véu chapéu mel papel anel pincel quartel ' +
+'noite açoite ' +
+'dia alegria magia poesia fantasia melodia sinfonia companhia harmonia agonia euforia folia ' +
+'mundo fundo profundo segundo vagabundo ' +
+'terra serra guerra ' +
+'flores amores cores dores sabores ' +
+'escola sacola bola cola viola gaiola ' +
+'gente semente contente presente diferente quente ardente valente corrente sorridente urgente ' +
+'tempo vento momento pensamento sentimento lamento firmamento alimento ' +
+'história memória vitória glória trajetória ' +
+'raiz feliz nariz giz aprendiz matriz cicatriz ' +
+'voz nós avós laços passos abraços espaços pedaços braços ' +
+'ipê você porquê bebê buquê crochê ' +
+'tatu caju bambu angu sururu urubu tuiuiú jacaré café pé fé maré chulé ' +
+'pantanal quintal animal natal sinal igual final jornal varal cristal capital ' +
+'onça doença ' +
+'água mágoa ' +
+'arara capivara cara clara vara seara ' +
+'garça graça praça massa taça ' +
+'caminho carinho sozinho ninho passarinho vizinho moinho espinho ' +
+'beleza tristeza certeza natureza riqueza grandeza leveza ' +
+'luz cruz capuz arcabuz ' +
+'paz rapaz capaz atrás voraz ' +
+'sorriso paraíso aviso juízo improviso ' +
+'olhos ' +
+'manhã irmã maçã lã hortelã amanhã ' +
+'sonho medonho risonho tristonho ' +
+'cheiro canteiro companheiro primeiro inteiro terreiro ' +
+'avó vovó dó pó nó só sol ' +
+'fogo jogo logo ' +
+'pássaro ' +
+'cantiga amiga briga barriga formiga ' +
+'livro ' +
+'saber viver crescer amanhecer anoitecer escrever correr nascer esquecer ' +
+'sentir partir sorrir dormir ouvir abrir existir resistir ' +
+'herança lembrança criança esperança dança balança ' +
+'raça ameaça fumaça ' +
+'chão grão mão ' +
+'resistência ciência paciência ' +
+'canto pranto encanto manto santo tanto espanto ' +
+'quilombo tombo ' +
+'tambor ').split(/\s+/).filter(Boolean);
+
+/* ---------------- ESTADO ---------------- */
+function padrao(){ return {nome:'',turma:'',licoes:{},poemas:[],atual:null}; }
+let S = padrao();
+try{ const g = JSON.parse(localStorage.getItem(CHAVE)); if(g && typeof g==='object') S = Object.assign(padrao(), g); }catch(e){}
+if(!Array.isArray(S.poemas)) S.poemas = [];
+function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(S)); }catch(e){ toast('Não consegui salvar neste navegador.'); } }
+function lerLS(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+function gravarLS(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+/* link do formulário vindo do endereço (?form=) */
+(function(){
+  const q = new URLSearchParams(location.search).get('form');
+  if(q && linkFormValido(q)) gravarLS(CHAVE_FORM, q);
+})();
+function linkFormValido(u){ return /^https:\/\/(forms\.gle\/|docs\.google\.com\/forms\/)/.test(u||''); }
+function linkForm(){ const f = LINK_FORMULARIO || lerLS(CHAVE_FORM); return linkFormValido(f) ? f : ''; }
+
+/* ---------------- UTIL ---------------- */
+const $ = (q,el=document)=>el.querySelector(q);
+const $$ = (q,el=document)=>Array.from(el.querySelectorAll(q));
+const app = $('#app');
+const esc = t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = ()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function fmtData(t){ try{ return new Date(t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+let toastT;
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function abrirModal(html){ $('#modal').innerHTML=html; $('#overlay').classList.remove('hidden'); const f=$('#modal [autofocus]')||$('#modal button'); if(f) f.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#overlay').classList.contains('hidden')) fecharModal(); });
+async function copiar(txt){
+  try{ await navigator.clipboard.writeText(txt); toast('Copiado!'); return true; }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(_){} ta.remove(); toast(ok?'Copiado!':'Selecione e copie manualmente.'); return ok; }
+}
+function confete(){
+  const cores=['#D2603A','#E8A93B','#2A8C80','#D24E68','#7C5CC4'];
+  for(let i=0;i<40;i++){ const c=document.createElement('i'); c.className='confete'; c.style.left=Math.random()*100+'vw'; c.style.background=cores[i%cores.length]; c.style.animationDelay=(Math.random()*.5)+'s'; c.style.borderRadius=Math.random()>.5?'50%':'2px'; document.body.appendChild(c); setTimeout(()=>c.remove(),2400); }
+}
+
+/* voz do computador */
+function falar(txt){
+  if(!('speechSynthesis' in window)){ toast('Este navegador não tem leitura em voz alta.'); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang='pt-BR'; u.rate=.88;
+  const v = speechSynthesis.getVoices().find(v=>/pt[-_]BR/i.test(v.lang)) || speechSynthesis.getVoices().find(v=>/^pt/i.test(v.lang));
+  if(v) u.voice=v;
+  speechSynthesis.speak(u);
+}
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-ouvir]'); if(b) falar(b.dataset.ouvir); });
+
+/* ---------------- ANÁLISE DO POEMA ----------------
+   Contagem aproximada de sílabas poéticas e detecção de rimas.
+   É uma ajuda para o estudante, não uma correção oficial. */
+const VOG='aeiouáéíóúâêôãõàü', ACENTO='áéíóúâêô';
+function nucleos(w){
+  const r=[]; const n=w.length; let i=0;
+  while(i<n){
+    const c=w[i];
+    if(!VOG.includes(c)){ i++; continue; }
+    if((c==='u'||c==='ü') && i>0 && (w[i-1]==='q'||w[i-1]==='g') && i+1<n && VOG.includes(w[i+1])){ i++; continue; }
+    let fim=i; const nx=w[i+1]||'', d1=w[i+2]||'', d2=w[i+3]||'';
+    const par=c+nx;
+    if(/^(ã[oe]|õe)$/.test(par)) fim=i+1;
+    else if(/^([aeoáéóâêô][iu]|ui|iu)$/.test(par)){
+      const hiato = (nx==='i' && d1==='n' && d2==='h') || (d1!=='' && 'lmnrz'.includes(d1) && !VOG.includes(d2) && d2!=='h');
+      if(!hiato) fim=i+1;
+    }
+    r.push({ini:i, fim});
+    i=fim+1;
+  }
+  return r;
+}
+function tonica(w,nuc){
+  if(!nuc.length) return -1;
+  for(let k=nuc.length-1;k>=0;k--) if(/[áéíóúâêô]/.test(w.slice(nuc[k].ini,nuc[k].fim+1))) return k;
+  for(let k=nuc.length-1;k>=0;k--) if(/[ãõ]/.test(w.slice(nuc[k].ini,nuc[k].fim+1))) return k;
+  if(nuc.length===1) return 0;
+  if(/([aeo]s?|[ae]m|ens)$/.test(w)) return nuc.length-2;
+  return nuc.length-1;
+}
+function somRima(k){
+  return k.replace(/sc(?=[eiéêí])/g,'s').replace(/c(?=[eiéêí])/g,'s').replace(/ç/g,'s').replace(/ss/g,'s').replace(/z$/,'s')
+    .replace(/qu(?=[eiéêí])/g,'k').replace(/gu(?=[eiéêí])/g,'g').replace(/ch/g,'x').replace(/c/g,'k').replace(/g(?=[eiéêí])/g,'j')
+    .replace(/(^|[^lnc])h/g,'$1').normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+function infoPalavra(p){ const n=nucleos(p); return {p, n, t:tonica(p,n)}; }
+function chaveRima(x){ if(!x || !x.n.length) return ''; return somRima(x.p.slice(x.n[x.t].ini)); }
+function palavrasDe(linha){ return (linha.toLowerCase().normalize('NFC').match(/[a-záéíóúâêôãõàüç]+/g)||[]); }
+function analisarVerso(linha){
+  const ps = palavrasDe(linha);
+  if(!ps.length) return null;
+  const info = ps.map(infoPalavra).filter(x=>x.n.length);
+  if(!info.length) return null;
+  let total=0; info.forEach(x=>total+=x.n.length);
+  let elis=0;
+  for(let k=0;k<info.length-1;k++){
+    const a=info[k], b=info[k+1];
+    const ultimo=a.n[a.n.length-1];
+    const terminaVogal = ultimo.fim===a.p.length-1 && /[aeo]$/.test(a.p);
+    const atona = a.t!==a.n.length-1 || (a.n.length===1 && /^(a|e|o|de|que|se|me|te|lhe|da|do|na|no|um|uma)$/.test(a.p));
+    const comeca = b.n[0].ini===0 || (b.p[0]==='h' && b.n[0].ini===1);
+    if(terminaVogal && atona && comeca) elis++;
+  }
+  const ult = info[info.length-1];
+  return { silabas: Math.max(1, total-elis-(ult.n.length-1-ult.t)), rima: chaveRima(ult), ultima: ult.p };
+}
+const CORES_RIMA = ['#D2603A','#2A8C80','#7C5CC4','#D24E68','#C98A10','#2F6FB5','#5E8C2A','#B5487F'];
+function analisarPoema(texto){
+  const linhas = (texto||'').replace(/\r/g,'').split('\n');
+  const estrofes=[]; let atual=[];
+  const versos=[];
+  linhas.forEach(l=>{
+    if(l.trim()===''){ if(atual.length){ estrofes.push(atual); atual=[]; } return; }
+    const a = analisarVerso(l) || {silabas:0,rima:'',ultima:''};
+    const v = {texto:l.trim(), ...a, estrofe:estrofes.length};
+    atual.push(v); versos.push(v);
+  });
+  if(atual.length) estrofes.push(atual);
+  // rimas: chaves que aparecem 2+ vezes no poema
+  const cont={}; versos.forEach(v=>{ if(v.rima) cont[v.rima]=(cont[v.rima]||0)+1; });
+  const corDe={}; let ci=0;
+  versos.forEach(v=>{ if(v.rima && cont[v.rima]>1 && !(v.rima in corDe)) corDe[v.rima]=CORES_RIMA[ci++ % CORES_RIMA.length]; v.cor = corDe[v.rima]||null; });
+  // esquema por estrofe
+  const esquemas = estrofes.map(es=>{ const m={}; let L=0; return es.map(v=>{ const k=v.rima||('#'+Math.random()); if(!(k in m)) m[k]=String.fromCharCode(65+(L++)%26); v.letra=m[k]; return m[k]; }).join(''); });
+  const pares = Object.values(cont).filter(n=>n>1).reduce((s,n)=>s+n,0);
+  // palavras repetidas
+  const freq={}; palavrasDe(texto).forEach(p=>{ if(p.length>2 && !VAZIAS.has(p)) freq[p]=(freq[p]||0)+1; });
+  const repetidas = Object.entries(freq).filter(([,n])=>n>=3).sort((a,b)=>b[1]-a[1]).map(([p,n])=>({p,n}));
+  return {versos, estrofes, esquemas, versosRimando:pares, repetidas};
+}
+function verificarForma(p, an){
+  const r=[]; const nv=an.versos.length, ne=an.estrofes.length; const tam=an.estrofes.map(e=>e.length);
+  const perto=(s,alvo)=>Math.abs(s-alvo)<=1;
+  r.push({ok:!!(p.titulo||'').trim(), t:'Tem um título'});
+  if(p.forma==='livre'){
+    r.push({ok:nv>=4, t:'Pelo menos 4 versos ('+nv+' até agora)'});
+    r.push({ok:ne>=2, t:'Organizado em estrofes (use uma linha em branco entre elas)'});
+  }
+  if(p.forma==='quadra'){
+    r.push({ok:ne>=1 && tam.every(n=>n===4), t:'Todas as estrofes com 4 versos'+(ne?' ('+tam.join(', ')+')':'')});
+    r.push({ok:ne>=1 && an.estrofes.every(e=>{const c={}; e.forEach(v=>{ if(v.rima) c[v.rima]=(c[v.rima]||0)+1; }); return Object.values(c).some(n=>n>1);}), t:'Cada estrofe tem pelo menos um par de rimas'});
+  }
+  if(p.forma==='haicai'){
+    r.push({ok:nv===3 && ne===1, t:'3 versos numa estrofe só ('+nv+' versos)'});
+    const alvo=[5,7,5];
+    const s = an.versos.slice(0,3).map(v=>v.silabas);
+    const okS = nv===3 && s.every((x,i)=>x===alvo[i]);
+    const quaseS = nv===3 && s.every((x,i)=>perto(x,alvo[i]));
+    r.push({ok:okS, quase:!okS&&quaseS, t:'Sílabas 5 · 7 · 5 (contagem aproximada: '+(s.length?s.join(' · '):'—')+')'});
+  }
+  if(p.forma==='cordel'){
+    r.push({ok:ne>=1 && tam.every(n=>n===6), t:'Estrofes de 6 versos'+(ne?' ('+tam.join(', ')+')':'')});
+    r.push({ok:ne>=1 && an.estrofes.every(e=>e.length===6 && e[1].rima && e[1].rima===e[3].rima && e[3].rima===e[5].rima), t:'Rimas nos versos 2, 4 e 6 de cada estrofe'});
+    const media = nv? an.versos.reduce((s,v)=>s+v.silabas,0)/nv : 0;
+    r.push({ok:nv>0 && an.versos.every(v=>v.silabas===7), quase:nv>0 && an.versos.every(v=>perto(v.silabas,7)), t:'Versos de 7 sílabas (média aproximada: '+(nv?media.toFixed(1):'—')+')'});
+  }
+  if(p.forma==='soneto'){
+    r.push({ok:nv===14, t:'14 versos ('+nv+' até agora)'});
+    r.push({ok:tam.join(',')==='4,4,3,3', t:'Dois quartetos e dois tercetos (4 · 4 · 3 · 3)'});
+    r.push({ok:an.versosRimando>=8, t:'Versos que rimam entre si ('+an.versosRimando+')'});
+  }
+  if(p.forma==='acrostico'){
+    const pal=(p.acrostico||'').toUpperCase().replace(/[^A-ZÁÉÍÓÚÂÊÔÃÕÇ]/g,'');
+    const ini=an.versos.map(v=>(v.texto.match(/[A-Za-zÁÉÍÓÚÂÊÔÃÕÇáéíóúâêôãõç]/)||[''])[0].toUpperCase()).join('');
+    const tira=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');
+    r.push({ok:!!pal, t:'Palavra escolhida: '+(pal||'(escolha no Planejar)')});
+    r.push({ok:!!pal && tira(ini)===tira(pal), quase:!!pal && tira(pal).startsWith(tira(ini)) && ini.length>0, t:'As primeiras letras formam a palavra ('+(ini||'—')+')'});
+  }
+  return r;
+}
+function figurasEncontradas(texto){
+  const f=[];
+  if(/\b(como|feito|parece|parecia|tal qual|igual a)\b/i.test(texto)) f.push('comparação');
+  if(ONOMATOPEIAS.test(texto)) f.push('onomatopeia');
+  return f;
+}
+function contarVersos(t){ return (t||'').split('\n').filter(l=>l.trim()).length; }
+
+/* ---------------- LINK DO POEMA (codificação) ---------------- */
+function b64url(bytes){ let s=''; bytes.forEach(b=>s+=String.fromCharCode(b)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+async function codificarPoema(obj){
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  if(typeof CompressionStream==='function'){
+    try{
+      const cs = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+      const buf = new Uint8Array(await new Response(cs).arrayBuffer());
+      return 'z'+b64url(buf);
+    }catch(e){}
+  }
+  return 'j'+b64url(bytes);
+}
+
+/* ---------------- QR ---------------- */
+function qrPronto(){ return typeof qrcode==='function'; }
+(function garantirQR(){
+  if(qrPronto()) return;
+  const s=document.createElement('script'); s.src='https://unpkg.com/qrcode-generator@1.4.4/qrcode.js'; document.head.appendChild(s);
+})();
+function matrizQR(txt){
+  if(!qrPronto()) return null;
+  for(const nivel of ['M','L']){
+    try{ const q=qrcode(0,nivel); q.addData(txt); q.make(); return q; }catch(e){}
+  }
+  return null;
+}
+function desenharQR(ctx, q, x, y, tam, cor='#111', fundo='#fff'){
+  const n=q.getModuleCount(), m=4, cel=tam/(n+m*2);
+  ctx.fillStyle=fundo; ctx.fillRect(x,y,tam,tam); ctx.fillStyle=cor;
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(q.isDark(r,c)) ctx.fillRect(Math.floor(x+(c+m)*cel), Math.floor(y+(r+m)*cel), Math.ceil(cel), Math.ceil(cel));
+}
+
+/* ---------------- POEMAS ---------------- */
+function novoPoema(){
+  const p={id:uid(), titulo:'', texto:'', tema:'', forma:'livre', acrostico:'', tempestade:{vejo:[],ouco:[],sinto:[],lembro:[]}, versoes:[], revisao:{}, colega:{nome:'',gostei:'',sugestao:''}, visual:{tema:'noite',fonte:'serifa',qr:true}, audio:'', declarou:false, criado:Date.now(), editado:Date.now()};
+  S.poemas.unshift(p); S.atual=p.id; salvar(); return p;
+}
+function poemaAtual(){ return S.poemas.find(p=>p.id===S.atual) || null; }
+function nomeTema(id){ const t=TEMAS.find(t=>t.id===id); return t?t.nome:''; }
+function salvarVersao(p, motivo){
+  const ult = p.versoes[p.versoes.length-1];
+  if(ult && ult.texto===p.texto && ult.titulo===p.titulo){ return false; }
+  if(!p.texto.trim()) return false;
+  p.versoes.push({data:Date.now(), titulo:p.titulo, texto:p.texto, motivo:motivo||''});
+  if(p.versoes.length>30) p.versoes.shift();
+  p.editado=Date.now(); salvar(); return true;
+}
+
+/* ---------------- ROTAS ---------------- */
+function ir(rota){ if(location.hash==='#'+rota) render(); else location.hash=rota; }
+window.addEventListener('hashchange', render);
+function render(){
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  pararGravacao(true);
+  const h = decodeURIComponent(location.hash.replace(/^#/,''));
+  const [a,b] = h.split('/');
+  if(a==='aprender') telaAprender();
+  else if(a==='licao') telaLicao(b);
+  else if(a==='criar'){
+    let p = poemaAtual();
+    if(!p) p = novoPoema();
+    const passo = ['planejar','escrever','revisar','publicar'].includes(b)?b:'planejar';
+    telaCriar(p, passo);
+  }
+  else if(a==='poemas') telaPoemas();
+  else telaHome();
+  window.scrollTo(0,0);
+}
+function topo(titulo, sub, voltar){
+  return `<header class="topo">
+    <a class="btn peq fant" href="#${voltar||''}" aria-label="Voltar">←</a>
+    <div class="tit"><b>${titulo}</b><small>${sub||'Oficina do Poeta'}</small></div>
+    ${S.nome?`<span class="chip">✍️ ${esc(S.nome)}${S.turma?' · '+esc(S.turma):''}</span>`:''}
+  </header>`;
+}
+function estrelasHTML(n,max=3){ let s=''; for(let i=1;i<=max;i++) s+=`<span class="${i<=n?'on':''}">★</span>`; return `<span class="estrelas" aria-label="${n} de ${max} estrelas">${s}</span>`; }
+function totalEstrelas(){ return LICOES.reduce((s,l)=>s+((S.licoes[l.id]||{}).estrelas||0),0); }
+
+/* ---------------- HOME ---------------- */
+function telaHome(){
+  const p = poemaAtual();
+  const est = totalEstrelas();
+  app.innerHTML = `
+  <main class="home">
+    <a class="voltar-site" href="../">← JRM Aventuras Educativas</a>
+    <section class="hero">
+      <div>
+        <div class="kicker">Língua Portuguesa · 6º ao 9º ano</div>
+        <h1>Oficina do <em>Poeta</em></h1>
+        <p class="lead">Aprenda os segredos da poesia, escreva o seu poema com a ajuda do <b>Raio-X de rimas</b>, revise com um colega, grave a declamação e publique no <b>Painel Poético</b>.</p>
+        <div class="campos">
+          <label>Primeiro nome<input id="iNome" maxlength="24" autocomplete="off" value="${esc(S.nome)}" placeholder="Ex.: Ana"></label>
+          <label>Turma<input id="iTurma" maxlength="10" autocomplete="off" value="${esc(S.turma)}" placeholder="Ex.: 7º A"></label>
+        </div>
+        <p class="mini">Use só o primeiro nome. Tudo fica salvo apenas neste aparelho.</p>
+      </div>
+      <div class="folha" aria-hidden="true">
+        <div class="tt">Recreio</div>
+        <div class="v"><span>O sinal canta no pátio,</span><small style="background:#9b95a8">A</small></div>
+        <div class="v"><span>a bola rola no <i style="background:#2A8C8033">chão</i>,</span><small style="background:#2A8C80">B</small></div>
+        <div class="v"><span>e o lanche, dividido,</span><small style="background:#9b95a8">C</small></div>
+        <div class="v"><span>cabe inteiro numa <i style="background:#2A8C8033">mão</i>.</span><small style="background:#2A8C80">B</small></div>
+        <span class="nota-raio">🔍 Raio-X: esquema ABCB</span>
+      </div>
+    </section>
+    <section class="portas">
+      <button class="porta" data-ir="aprender">
+        <span class="num" style="background:var(--teal)">1</span>
+        <h2>Aprender</h2>
+        <p>${LICOES.length} lições rápidas: verso, rima, ritmo, figuras de linguagem, formas de poema, poesia e história, reescrita e declamação.</p>
+        <span class="rod"><span>${estrelasHTML(Math.round(est/LICOES.length),3)}</span><span>${est}/${LICOES.length*3} ★</span></span>
+      </button>
+      <button class="porta" data-acao="${p?'continuar':'novo'}">
+        <span class="num" style="background:var(--terra)">2</span>
+        <h2>Criar</h2>
+        <p>${p?`Continue “<b>${esc(p.titulo||'Poema sem título')}</b>” ou comece outro em <i>Meus poemas</i>.`:'Planeje, escreva com o Raio-X, revise e publique o seu poema, passo a passo.'}</p>
+        <span class="rod"><span>${p?'Continuar escrevendo':'Escrever um poema'}</span><span>→</span></span>
+      </button>
+      <button class="porta" data-ir="poemas">
+        <span class="num" style="background:var(--indigo)">3</span>
+        <h2>Meus poemas</h2>
+        <p>Todos os seus poemas, com as versões de cada um. Abra, edite, publique ou comece um novo.</p>
+        <span class="rod"><span>${S.poemas.length} ${S.poemas.length===1?'poema':'poemas'}</span><span>→</span></span>
+      </button>
+    </section>
+    <section class="painel-link">
+      <span style="font-size:40px">🧵</span>
+      <p><b>Painel Poético</b>O varal on-line com os poemas da turma, com QR Code e declamação.</p>
+      <a class="btn" href="painel-poetico.html">Abrir o painel →</a>
+    </section>
+    <footer class="rodape">
+      <span>Habilidades: MS.EF69LP44 · MS.EF69LP48 · MS.EF69LP51 · MS.EF69LP53 · EF09CO09<br>Projeto “Tecendo Palavras” · JRM Aventuras Educativas</span>
+      <span class="acoes"><button class="btn peq" id="bRel">📋 Relatório para o professor</button><button class="btn peq fant" id="bApagar">Apagar meu progresso</button></span>
+    </footer>
+  </main>`;
+  const salvaNome=()=>{ S.nome=$('#iNome').value.trim().split(/\s+/)[0]||''; S.turma=$('#iTurma').value.trim(); salvar(); };
+  $('#iNome').addEventListener('change',salvaNome); $('#iTurma').addEventListener('change',salvaNome);
+  $$('[data-ir]').forEach(b=>b.onclick=()=>{ salvaNome(); ir(b.dataset.ir); });
+  $('[data-acao]').onclick=e=>{ salvaNome(); if(e.currentTarget.dataset.acao==='novo') novoPoema(); ir('criar/'+(poemaAtual().texto?'escrever':'planejar')); };
+  $('#bRel').onclick=()=>{ salvaNome(); relatorio(); };
+  $('#bApagar').onclick=()=>{
+    abrirModal(`<h2>Apagar tudo?</h2><p>Isso apaga o seu nome, as estrelas e <b>todos os poemas</b> deste aparelho. Não dá para desfazer.</p><div class="acoes"><button class="btn" onclick="fecharModal()">Cancelar</button><button class="btn pri" id="bConf">Apagar</button></div>`);
+    $('#bConf').onclick=()=>{ S=padrao(); salvar(); fecharModal(); render(); toast('Progresso apagado.'); };
+  };
+}
+
+function relatorio(){
+  const linhas=[];
+  linhas.push('OFICINA DO POETA — relatório do estudante');
+  linhas.push('Nome: '+(S.nome||'(sem nome)')+'   Turma: '+(S.turma||'—'));
+  linhas.push('Gerado em: '+new Date().toLocaleString('pt-BR'));
+  linhas.push('');
+  linhas.push('LIÇÕES ('+totalEstrelas()+'/'+LICOES.length*3+' estrelas)');
+  LICOES.forEach(l=>{ const r=S.licoes[l.id]; linhas.push('- '+l.titulo+' ['+l.hab+']: '+(r?r.estrelas+' estrela(s), '+r.acertos+'/'+r.total+' acertos':'não feita')); });
+  linhas.push('');
+  linhas.push('POEMAS ('+S.poemas.length+')');
+  S.poemas.forEach(p=>{
+    const an=analisarPoema(p.texto);
+    linhas.push('- “'+(p.titulo||'sem título')+'” · '+FORMAS[p.forma].nome+(p.tema?' · '+nomeTema(p.tema):'')+' · '+an.versos.length+' versos, '+an.estrofes.length+' estrofes · '+p.versoes.length+' versão(ões) salvas · criado '+fmtData(p.criado)+', editado '+fmtData(p.editado));
+    const rv=p.revisao||{}; const feitos=Object.values(rv).filter(Boolean).length;
+    linhas.push('    revisão: '+feitos+' item(ns) marcados'+(p.colega&&p.colega.nome?' · opinião do colega: '+p.colega.nome:'')+(p.declarou?' · declarou autoria':''));
+  });
+  const txt=linhas.join('\n');
+  abrirModal(`<h2>📋 Relatório para o professor</h2><p class="mini">Copie e envie para o professor (Classroom, WhatsApp ou formulário).</p><textarea class="rel" readonly>${esc(txt)}</textarea><div class="acoes"><button class="btn" onclick="fecharModal()">Fechar</button><button class="btn pri" id="bCop">Copiar</button></div>`);
+  $('#bCop').onclick=()=>copiar(txt);
+}
+
+/* ---------------- APRENDER ---------------- */
+function telaAprender(){
+  app.innerHTML = topo('Aprender','Lições da Oficina do Poeta','') + `
+  <main class="secao">
+    <header><h1>Os segredos da poesia</h1><p>Cada lição tem uma explicação curta e um desafio. Acerte de primeira para ganhar 3 estrelas.</p></header>
+    <div class="grade">${LICOES.map((l,i)=>{ const r=S.licoes[l.id]; return `
+      <button class="licao-card" data-l="${l.id}">
+        <span class="ic">${l.icone}</span>
+        <span class="hab">LIÇÃO ${i+1} · ${l.hab}</span>
+        <h3>${l.titulo}</h3>
+        <p>${l.resumo}</p>
+        ${estrelasHTML(r?r.estrelas:0)}
+      </button>`; }).join('')}</div>
+    <p class="mini" style="margin-top:18px">Terminou as lições? <a href="#criar/planejar">Vá para a Oficina e escreva o seu poema →</a></p>
+  </main>`;
+  $$('[data-l]').forEach(b=>b.onclick=()=>ir('licao/'+b.dataset.l));
+}
+
+function telaLicao(id){
+  const L = LICOES.find(l=>l.id===id); if(!L){ ir('aprender'); return; }
+  const totalPassos = L.telas.length + L.desafios.length;
+  let passo=0, erros=0, acertos=0;
+  const base = ()=>topo(L.titulo, 'Lição · '+L.hab, 'aprender');
+  function barra(){ return `<div class="trilho"><span>${Math.min(passo+1,totalPassos)}/${totalPassos}</span><span class="barra"><i style="width:${(passo/totalPassos)*100}%"></i></span><span>${L.icone}</span></div>`; }
+  function mostrar(){
+    if(passo < L.telas.length){
+      app.innerHTML = base()+`<main class="licao">${barra()}<div class="cartao">${L.telas[passo]}</div>
+        <div class="seguir"><button class="btn" id="bAnt" ${passo===0?'disabled':''}>← Voltar</button><button class="btn pri" id="bProx">${passo===L.telas.length-1?'Ir para o desafio →':'Continuar →'}</button></div></main>`;
+      $('#bAnt').onclick=()=>{ passo--; mostrar(); };
+      $('#bProx').onclick=()=>{ passo++; mostrar(); };
+      return;
+    }
+    const di = passo - L.telas.length;
+    if(di >= L.desafios.length){ fim(); return; }
+    const d = L.desafios[di];
+    let html = base()+`<main class="licao">${barra()}<div class="cartao"><div class="pergunta">${esc(d.p)}</div>`;
+    if(d.t==='mc'){
+      if(d.tx) html += `<div class="trecho">${esc(d.tx)}</div>`;
+      html += `<div class="ops">${d.ops.map((o,i)=>`<button class="op" data-i="${i}" style="white-space:pre-line">${esc(o)}</button>`).join('')}</div>`;
+    } else if(d.t==='pal'){
+      let k=0;
+      html += `<div class="trecho" id="trecho">${esc(d.tx).replace(/[A-Za-zÀ-ÿ]+/g,w=>`<span class="pal" data-w="${w.toLowerCase()}" data-k="${k++}">${w}</span>`)}</div>`;
+    }
+    html += `<div id="ret"></div></div><div class="seguir"><span></span><button class="btn pri hidden" id="bProx">${di===L.desafios.length-1?'Ver resultado →':'Próxima →'}</button></div></main>`;
+    app.innerHTML = html;
+    let errou=false;
+    const responder=(certo)=>{
+      if(certo){ if(!errou) acertos++; $('#ret').innerHTML=`<div class="retorno ok"><b>${errou?'Agora sim!':'Isso mesmo!'}</b>${esc(d.e)}</div>`; $('#bProx').classList.remove('hidden'); $('#bProx').focus(); }
+      else { if(!errou){ errou=true; erros++; } }
+    };
+    if(d.t==='mc'){
+      $$('.op').forEach(b=>b.onclick=()=>{
+        const i=+b.dataset.i;
+        if(i===d.c){ b.classList.add('certa'); $$('.op').forEach(x=>x.disabled=true); responder(true); }
+        else { b.classList.add('errada'); b.disabled=true; responder(false); $('#ret').innerHTML=`<div class="retorno no"><b>Ainda não.</b>Leia de novo e tente outra opção.</div>`; }
+      });
+    } else {
+      const achadas=new Set();
+      $$('.pal').forEach(s=>s.onclick=()=>{
+        if($('#trecho').classList.contains('fim')) return;
+        if(d.certas.includes(s.dataset.w)){ s.classList.add('achou'); achadas.add(s.dataset.w);
+          if(d.certas.every(c=>achadas.has(c))){ $('#trecho').classList.add('fim'); responder(true); } }
+        else { s.classList.remove('errou'); void s.offsetWidth; s.classList.add('errou'); responder(false); $('#ret').innerHTML=`<div class="retorno no"><b>Essa não rima.</b>Leia em voz alta e preste atenção no som final.</div>`; }
+      });
+    }
+    $('#bProx').onclick=()=>{ passo++; mostrar(); };
+  }
+  function fim(){
+    const total=L.desafios.length;
+    const est = erros===0?3:(erros<=Math.ceil(total/3)?2:1);
+    const ant=S.licoes[L.id];
+    if(!ant || est>=ant.estrelas) S.licoes[L.id]={estrelas:est, acertos, total, data:Date.now()};
+    salvar();
+    if(est===3) confete();
+    const idx=LICOES.indexOf(L), prox=LICOES[idx+1];
+    app.innerHTML = base()+`<main class="licao"><div class="cartao fim-licao">
+      <h2>${est===3?'Mandou muito bem!':est===2?'Muito bom!':'Lição concluída!'}</h2>
+      ${estrelasHTML(est)}
+      <p>Você acertou <b>${acertos} de ${total}</b> de primeira.</p>
+      <div class="seguir" style="justify-content:center">
+        <button class="btn" id="bRep">↻ Refazer</button>
+        ${prox?`<button class="btn pri" id="bProx">Próxima: ${prox.titulo} →</button>`:`<button class="btn pri" id="bCriar">Escrever meu poema →</button>`}
+      </div></div></main>`;
+    $('#bRep').onclick=()=>telaLicao(L.id);
+    if(prox) $('#bProx').onclick=()=>ir('licao/'+prox.id); else $('#bCriar').onclick=()=>ir('criar/planejar');
+  }
+  mostrar();
+}
+
+/* ---------------- CRIAR ---------------- */
+const PASSOS=[['planejar','Planejar'],['escrever','Escrever'],['revisar','Revisar'],['publicar','Publicar']];
+function passosHTML(atual){
+  const ia=PASSOS.findIndex(p=>p[0]===atual);
+  return `<nav class="passos" aria-label="Etapas">${PASSOS.map(([id,n],i)=>`<button class="passo ${i===ia?'atual':''} ${i<ia?'feito':''}" data-passo="${id}" ${i===ia?'aria-current="step"':''}><span class="n">${i<ia?'✓':i+1}</span>${n}</button>`).join('')}</nav>`;
+}
+function telaCriar(p, passo){
+  const titulo = p.titulo||'Poema sem título';
+  app.innerHTML = topo(esc(titulo), 'Oficina · '+PASSOS.find(x=>x[0]===passo)[1], '') + `<main class="secao">${passosHTML(passo)}<div id="area"></div></main>`;
+  $$('[data-passo]').forEach(b=>b.onclick=()=>{ if(passo==='escrever') salvarVersao(p,'troca de etapa'); ir('criar/'+b.dataset.passo); });
+  ({planejar:passoPlanejar, escrever:passoEscrever, revisar:passoRevisar, publicar:passoPublicar})[passo](p, $('#area'));
+}
+
+function passoPlanejar(p, area){
+  const tema = TEMAS.find(t=>t.id===p.tema);
+  area.innerHTML = `
+  <section class="bloco"><h2>1. Escolha o tema</h2><p class="sub">Os quatro primeiros são os eixos do concurso “A história que mora em mim”.</p>
+    <div class="escolhas">${TEMAS.map(t=>`<button class="escolha" data-tema="${t.id}" aria-pressed="${p.tema===t.id}"><b>${t.nome}</b><span>${t.sub}</span></button>`).join('')}</div>
+  </section>
+  <section class="bloco"><h2>2. Escolha a forma</h2><p class="sub">Na dúvida, comece pelo verso livre ou pela quadra. Dá para mudar depois.</p>
+    <div class="escolhas">${Object.entries(FORMAS).map(([id,f])=>`<button class="escolha" data-forma="${id}" aria-pressed="${p.forma===id}"><b>${f.nome}</b><span>${f.sub}</span></button>`).join('')}</div>
+    <label class="campo ${p.forma==='acrostico'?'':'hidden'}" id="cAcro" style="max-width:320px">Palavra do acróstico<input id="iAcro" maxlength="16" value="${esc(p.acrostico)}" placeholder="Ex.: RAIZ, PANTANAL, o seu nome"></label>
+  </section>
+  <section class="bloco"><h2>3. Tempestade de palavras</h2><p class="sub">Anote tudo o que vier à cabeça sobre o tema. Depois, ao escrever, é só clicar para usar.</p>
+    <div class="tempestade">${CAIXAS_T.map(([k,n])=>`<div class="caixa-t"><b>${n}</b>
+      <form data-cx="${k}"><input aria-label="${n}" maxlength="40" placeholder="palavra ou ideia"><button aria-label="Adicionar">+</button></form>
+      <div class="chips">${(p.tempestade[k]||[]).map((w,i)=>`<span class="pchip">${esc(w)}<x role="button" tabindex="0" aria-label="Remover" data-rm="${k}:${i}">×</x></span>`).join('')}</div></div>`).join('')}</div>
+    ${tema?`<div class="perguntas-guia"><b>Perguntas para puxar ideias (${tema.nome}):</b><ul>${tema.perg.map(q=>`<li>${q}</li>`).join('')}</ul></div>`:''}
+  </section>
+  <div class="seguir"><button class="btn" onclick="ir('')">← Início</button><button class="btn pri grande" id="bEsc">Começar a escrever →</button></div>`;
+  $$('[data-tema]').forEach(b=>b.onclick=()=>{ p.tema=b.dataset.tema; p.editado=Date.now(); salvar(); passoPlanejar(p,area); });
+  $$('[data-forma]').forEach(b=>b.onclick=()=>{ p.forma=b.dataset.forma; salvar(); passoPlanejar(p,area); if(p.forma==='acrostico') $('#iAcro').focus(); });
+  const ia=$('#iAcro'); if(ia) ia.oninput=()=>{ p.acrostico=ia.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÂÊÔÃÕÇ]/g,''); salvar(); };
+  $$('form[data-cx]').forEach(f=>f.onsubmit=e=>{ e.preventDefault(); const inp=f.querySelector('input'); const v=inp.value.trim(); if(!v) return;
+    const k=f.dataset.cx; p.tempestade[k]=p.tempestade[k]||[]; if(p.tempestade[k].length<20) p.tempestade[k].push(v); salvar(); passoPlanejar(p,area); const n=$(`form[data-cx="${k}"] input`); if(n) n.focus(); });
+  $$('[data-rm]').forEach(x=>{ const rm=()=>{ const [k,i]=x.dataset.rm.split(':'); p.tempestade[k].splice(+i,1); salvar(); passoPlanejar(p,area); }; x.onclick=rm; x.onkeydown=e=>{ if(e.key==='Enter') rm(); }; });
+  $('#bEsc').onclick=()=>ir('criar/escrever');
+}
+
+function passoEscrever(p, area){
+  const palavrasT = CAIXAS_T.flatMap(([k])=>p.tempestade[k]||[]);
+  const modelo = p.forma==='acrostico' && p.acrostico && !p.texto ? p.acrostico.split('').join('\n') : null;
+  area.innerHTML = `
+  <div class="oficina">
+    <section class="editor">
+      <input class="titulo" id="iTit" maxlength="70" placeholder="Título do poema" value="${esc(p.titulo)}" aria-label="Título">
+      <textarea id="iTxt" spellcheck="true" aria-label="Poema" placeholder="Escreva aqui o seu poema.&#10;Cada linha é um verso.&#10;&#10;Deixe uma linha em branco&#10;para começar outra estrofe.">${esc(p.texto || modelo || '')}</textarea>
+      <div class="ferr-barra">
+        <button class="btn peq" id="bOuvir">🔊 Ouvir</button>
+        <button class="btn peq" id="bRimas">🎵 Banco de rimas</button>
+        <button class="btn peq" id="bFig">🎭 Ideias de figuras</button>
+        <button class="btn peq" id="bVer">💾 Salvar versão</button>
+        <span class="mini" id="salvo" style="align-self:center;margin-left:auto">Salvo automaticamente</span>
+      </div>
+    </section>
+    <aside class="raio">
+      <section class="bloco"><h3>🔍 Raio-X do poema</h3><div id="raioX"></div></section>
+      <section class="bloco"><h3>📐 ${FORMAS[p.forma].nome}${p.tema?' · '+nomeTema(p.tema):''}</h3><ul class="reqs" id="reqs"></ul>
+        <p class="mini" style="margin:8px 0 0">As sílabas são uma contagem <b>aproximada</b>: confira contando nos dedos.</p></section>
+      ${palavrasT.length?`<section class="bloco"><h3>🌩️ Suas palavras</h3><div class="chips">${palavrasT.map(w=>`<button class="pchip" data-ins="${esc(w)}">${esc(w)}</button>`).join('')}</div><p class="mini" style="margin:8px 0 0">Clique para colocar no poema.</p></section>`:''}
+    </aside>
+  </div>
+  <div class="seguir"><button class="btn" id="bPlan">← Planejar</button><button class="btn pri grande" id="bRev">Revisar →</button></div>`;
+  const ta=$('#iTxt'), it=$('#iTit');
+  if(modelo){ p.texto=modelo; salvar(); }
+  let tSalvar;
+  const atualizar=()=>{
+    p.texto=ta.value; p.titulo=it.value; p.editado=Date.now();
+    clearTimeout(tSalvar); const sv=$('#salvo'); if(sv) sv.textContent='Salvando…'; tSalvar=setTimeout(()=>{ salvar(); const s2=$('#salvo'); if(s2) s2.textContent='Salvo automaticamente'; },400);
+    const an=analisarPoema(p.texto);
+    $('#raioX').innerHTML = raioXHTML(an);
+    $('#reqs').innerHTML = verificarForma(p,an).map(r=>`<li class="${r.ok?'ok':r.quase?'quase':''}">${esc(r.t)}</li>`).join('');
+    const tb=$('.topo b'); if(tb) tb.textContent = p.titulo||'Poema sem título';
+  };
+  ta.addEventListener('input',atualizar); it.addEventListener('input',atualizar);
+  atualizar();
+  $$('[data-ins]').forEach(b=>b.onclick=()=>inserir(ta,b.dataset.ins,atualizar));
+  $('#bOuvir').onclick=()=>{ if(!ta.value.trim()) return toast('Escreva algo primeiro.'); falar((it.value?it.value+'. ':'')+ta.value.replace(/\n\n/g,'. ').replace(/\n/g,', ')); };
+  $('#bRimas').onclick=()=>bancoRimas(ta,atualizar);
+  $('#bFig').onclick=()=>abrirModal(`<h2>🎭 Ideias de figuras de linguagem</h2><p class="mini">Escolha uma e tente criar um verso com ela.</p><div class="mini-cards">${FIGURAS_DICAS.map(([n,r,d])=>`<div><b>${n}</b><span>${r}</span><i>${d}</i></div>`).join('')}</div><div class="acoes"><button class="btn pri" onclick="fecharModal()">Voltar ao poema</button></div>`);
+  $('#bVer').onclick=()=>{ atualizar(); salvar(); toast(salvarVersao(p,'manual')?'Versão '+p.versoes.length+' salva!':'Nada mudou desde a última versão.'); };
+  $('#bPlan').onclick=()=>{ salvarVersao(p,'troca de etapa'); ir('criar/planejar'); };
+  $('#bRev').onclick=()=>{ atualizar(); salvar(); if(contarVersos(p.texto)<2) return toast('Escreva pelo menos alguns versos antes de revisar.'); salvarVersao(p,'rascunho'); ir('criar/revisar'); };
+  if(!ta.value) ta.focus();
+}
+function raioXHTML(an){
+  if(!an.versos.length) return '<p class="vazio">Comece a escrever: aqui aparecem os versos, as sílabas e as rimas.</p>';
+  let h='<div class="versos">'; let est=-1, n=0;
+  an.versos.forEach(v=>{
+    if(v.estrofe!==est){ if(est>=0) h+='<div class="sep"></div>'; est=v.estrofe; }
+    n++;
+    h+=`<div class="lv"><span class="nn">${n}</span><span class="tx" title="${esc(v.texto)}">${esc(v.texto)}</span><span class="sl">${v.silabas} síl.</span><span class="rl" ${v.cor?`style="background:${v.cor};color:#fff"`:''}>${v.letra||''}</span></div>`;
+  });
+  h+='</div>';
+  h+=`<p style="margin:10px 0 0;font-size:15px"><b>${an.versos.length}</b> versos · <b>${an.estrofes.length}</b> estrofe${an.estrofes.length>1?'s':''} · esquema: <span class="esquema">${an.esquemas.join(' / ')}</span></p>`;
+  h+=`<p class="mini" style="margin:4px 0 0">Mesma cor = versos que rimam.</p>`;
+  return h;
+}
+function inserir(ta, txt, depois){
+  const s=ta.selectionStart??ta.value.length, e=ta.selectionEnd??ta.value.length;
+  const antes=ta.value.slice(0,s), apos=ta.value.slice(e);
+  const pre = antes && !/[\s\n]$/.test(antes) ? ' ' : '';
+  ta.value = antes+pre+txt+apos; const pos=(antes+pre+txt).length;
+  ta.focus(); ta.setSelectionRange(pos,pos); depois&&depois();
+}
+function bancoRimas(ta, depois){
+  abrirModal(`<h2>🎵 Banco de rimas</h2><p class="mini">Digite uma palavra e veja outras que rimam com ela.</p>
+    <div class="link-box"><input id="iRima" autofocus placeholder="Ex.: saudade" maxlength="30"><button class="btn ind" id="bBusca">Buscar</button></div>
+    <div class="rimas-res" id="resR"></div>
+    <div class="acoes"><button class="btn" onclick="fecharModal()">Fechar</button></div>`);
+  const buscar=()=>{
+    const w=($('#iRima').value.toLowerCase().match(/[a-záéíóúâêôãõàüç]+/)||[''])[0];
+    if(!w){ $('#resR').innerHTML=''; return; }
+    const k=chaveRima(infoPalavra(w));
+    const lista=[...new Set(PALAVRAS)].filter(p=>p!==w && chaveRima(infoPalavra(p))===k);
+    let quase=[];
+    if(lista.length<4 && k.length>=2){ const fimK=k.slice(-2); quase=[...new Set(PALAVRAS)].filter(p=>p!==w && !lista.includes(p) && chaveRima(infoPalavra(p)).endsWith(fimK)).slice(0,10); }
+    $('#resR').innerHTML = (lista.length?lista.map(p=>`<button class="pchip" data-rp="${p}">${p}</button>`).join(''):'<span class="mini">Não achei rimas perfeitas no banco. Pense em palavras que terminem com “-'+esc(k)+'”.</span>')
+      + (quase.length?`<div style="width:100%" class="mini">Sons parecidos:</div>`+quase.map(p=>`<button class="pchip" data-rp="${p}">${p}</button>`).join(''):'');
+    $$('[data-rp]').forEach(b=>b.onclick=()=>{ fecharModal(); inserir(ta,b.dataset.rp,depois); });
+  };
+  $('#bBusca').onclick=buscar; $('#iRima').onkeydown=e=>{ if(e.key==='Enter') buscar(); };
+  const sel=ta.value.slice(ta.selectionStart,ta.selectionEnd).trim();
+  const ultimaLinha=ta.value.slice(0,ta.selectionStart).split('\n').filter(l=>l.trim()).pop()||'';
+  const sug = sel || (palavrasDe(ultimaLinha).pop()||'');
+  if(sug){ $('#iRima').value=sug; buscar(); }
+}
+
+const ITENS_REV=[
+ ['voz','Li o poema em voz alta e o ritmo está bom','Use o botão 🔊 e leia você também.'],
+ ['ortografia','Conferi a ortografia e os acentos',''],
+ ['pontuacao','Conferi a pontuação (vírgulas e pontos ajudam nas pausas)',''],
+ ['tema','O poema combina com o tema que escolhi',''],
+ ['enxugar','Cada verso diz algo importante (tirei o que sobrava)',''],
+ ['imagem','Usei pelo menos uma imagem ou figura de linguagem','Comparação, metáfora, personificação…']
+];
+function passoRevisar(p, area){
+  const an=analisarPoema(p.texto);
+  const forma=verificarForma(p,an);
+  const figs=figurasEncontradas(p.texto);
+  const rep=an.repetidas;
+  const auto=[
+    {ok:forma.every(r=>r.ok), t:'Forma: '+FORMAS[p.forma].nome, s:forma.filter(r=>!r.ok).map(r=>r.t).join(' · ')||'Tudo certo com a forma.'},
+    {ok:an.versosRimando>=2 || p.forma==='livre' || p.forma==='haicai', t:'Rimas', s:an.versosRimando? an.versosRimando+' versos rimando · esquema '+an.esquemas.join(' / ') : (p.forma==='livre'||p.forma==='haicai'?'Nesta forma a rima é opcional.':'Ainda não encontrei rimas.')},
+    {ok:rep.length===0, t:'Palavras repetidas', s:rep.length? rep.map(r=>`“${r.p}” (${r.n}x)`).join(', ')+'. Será que dá para trocar alguma?':'Nenhuma palavra repetida demais.'},
+    {ok:figs.length>0, t:'Figuras de linguagem', s:figs.length?'Encontrei: '+figs.join(', ')+'.':'Não encontrei comparações nem onomatopeias. Que tal criar uma imagem nova?'}
+  ];
+  const marcar = rep.length? new RegExp('\\b('+rep.map(r=>r.p).join('|')+')\\b','gi') : null;
+  const leitura = esc(p.texto).replace(marcar||/$^/, m=>`<mark>${m}</mark>`);
+  area.innerHTML = `
+  <div class="revisao">
+    <div>
+      <section class="bloco"><h2>Raio-X da revisão</h2><p class="sub">O que a Oficina conseguiu conferir sozinha.</p>
+        <ul class="check">${auto.map(a=>`<li class="${a.ok?'ok':'no'}"><span class="st">${a.ok?'✓':'!'}</span><span><b>${a.t}</b><small>${esc(a.s)}</small></span></li>`).join('')}</ul>
+      </section>
+      <section class="bloco"><h2>Agora é com você</h2><p class="sub">Marque o que já conferiu. Se precisar mudar algo, volte para Escrever.</p>
+        <ul class="check">${ITENS_REV.map(([k,t,s])=>`<li><label><input type="checkbox" data-rv="${k}" ${p.revisao[k]?'checked':''}><span>${t}${s?`<small>${s}</small>`:''}</span></label></li>`).join('')}</ul>
+      </section>
+    </div>
+    <div>
+      <section class="bloco"><h2>${esc(p.titulo||'Poema sem título')}</h2>
+        <div class="leitura">${leitura}</div>
+        <div class="linha-op"><button class="btn peq" id="bOuvir">🔊 Ouvir</button><button class="btn peq" id="bVolta">✏️ Voltar a escrever</button></div>
+      </section>
+      <section class="bloco"><h2>👥 Opinião de um colega</h2><p class="sub">Mostre o poema para um colega e anote o que ele disse.</p>
+        <div class="colega">
+          <input id="cNome" maxlength="24" placeholder="Primeiro nome do colega" value="${esc(p.colega.nome)}">
+          <textarea id="cGostei" maxlength="300" placeholder="Do que mais gostou?">${esc(p.colega.gostei)}</textarea>
+          <textarea id="cSug" maxlength="300" placeholder="Uma sugestão para melhorar">${esc(p.colega.sugestao)}</textarea>
+        </div>
+      </section>
+      <section class="bloco"><h2>🗂️ Versões (${p.versoes.length})</h2><p class="sub">Todo poeta reescreve. Aqui fica o caminho do seu poema.</p>
+        <div class="versoes">${p.versoes.length? p.versoes.map((v,i)=>({v,i})).reverse().map(({v,i})=>`<div><span><b>Versão ${i+1}</b> · ${fmtData(v.data)} · ${contarVersos(v.texto)} versos</span><button class="btn peq fant" data-vv="${i}">Ver</button></div>`).join('') : '<p class="vazio">Nenhuma versão salva ainda.</p>'}</div>
+      </section>
+    </div>
+  </div>
+  <div class="seguir"><button class="btn" id="bEsc">← Escrever</button><button class="btn pri grande" id="bPub">Salvar versão final e publicar →</button></div>`;
+  $$('[data-rv]').forEach(c=>c.onchange=()=>{ p.revisao[c.dataset.rv]=c.checked; salvar(); });
+  const col=()=>{ p.colega={nome:$('#cNome').value.trim(), gostei:$('#cGostei').value.trim(), sugestao:$('#cSug').value.trim()}; salvar(); };
+  ['#cNome','#cGostei','#cSug'].forEach(s=>$(s).addEventListener('input',col));
+  $('#bOuvir').onclick=()=>falar((p.titulo?p.titulo+'. ':'')+p.texto.replace(/\n\n/g,'. ').replace(/\n/g,', '));
+  $('#bVolta').onclick=$('#bEsc').onclick=()=>ir('criar/escrever');
+  $$('[data-vv]').forEach(b=>b.onclick=()=>{ const v=p.versoes[+b.dataset.vv]; abrirModal(`<h2>Versão ${+b.dataset.vv+1}</h2><p class="mini">${fmtData(v.data)}</p><div class="leitura"><b>${esc(v.titulo||'')}</b>\n\n${esc(v.texto)}</div><div class="acoes"><button class="btn" onclick="fecharModal()">Fechar</button><button class="btn ind" id="bRest">Voltar para esta versão</button></div>`); $('#bRest').onclick=()=>{ salvarVersao(p,'antes de restaurar'); p.texto=v.texto; p.titulo=v.titulo; salvar(); fecharModal(); toast('Versão restaurada.'); ir('criar/escrever'); }; });
+  $('#bPub').onclick=()=>{ salvarVersao(p,'versão final'); ir('criar/publicar'); };
+}
+
+/* ---------- PUBLICAR ---------- */
+const VISUAIS = {
+  noite:{nome:'Noite', fundo:['#2B2F66','#1B1E48'], tinta:'#FBF4E6', titulo:'#F2B43C', suave:'#C9CBEA', amostra:'linear-gradient(135deg,#2B2F66,#1B1E48)'},
+  papel:{nome:'Papel', fundo:['#FBF6EC','#F1E6CF'], tinta:'#1F2340', titulo:'#A8452A', suave:'#6B6478', amostra:'linear-gradient(135deg,#FBF6EC,#EADCC0)'},
+  pantanal:{nome:'Pantanal', fundo:['#1F5B4D','#123C33'], tinta:'#F4F1E4', titulo:'#F2C14E', suave:'#BFD8CF', amostra:'linear-gradient(135deg,#1F5B4D,#123C33)'},
+  sol:{nome:'Pôr do sol', fundo:['#F2A65A','#C8553D'], tinta:'#2A1410', titulo:'#FFF6E5', suave:'#4A2318', amostra:'linear-gradient(135deg,#F2A65A,#C8553D)'},
+  ipe:{nome:'Ipê', fundo:['#FBE3EA','#F3B9CB'], tinta:'#3B1630', titulo:'#B0306A', suave:'#7A4A66', amostra:'linear-gradient(135deg,#FBE3EA,#F3B9CB)'},
+  lousa:{nome:'Lousa', fundo:['#2F4A3A','#22362A'], tinta:'#F2F2EA', titulo:'#F7E08A', suave:'#C9D6CC', amostra:'linear-gradient(135deg,#2F4A3A,#22362A)'}
+};
+const FONTES_CARTAO = { serifa:{nome:'Clássica', css:"'Fraunces', Georgia, serif", peso:'600'}, mao:{nome:'Manuscrita', css:"'Caveat', 'Segoe Print', cursive", peso:'700'}, simples:{nome:'Simples', css:"'Atkinson Hyperlegible', 'Segoe UI', sans-serif", peso:'400'} };
+let gravador=null, gravStream=null, gravChunks=[], gravTimer=null, gravInicio=0, audioURL=null;
+function pararGravacao(silencioso){
+  try{ if(gravador && gravador.state!=='inactive'){ if(silencioso) gravador.onstop=null; gravador.stop(); } }catch(e){}
+  if(gravStream){ gravStream.getTracks().forEach(t=>t.stop()); gravStream=null; }
+  clearInterval(gravTimer);
+}
+
+function passoPublicar(p, area){
+  const v=p.visual||(p.visual={tema:'noite',fonte:'serifa',qr:true});
+  const form=linkForm();
+  area.innerHTML = `
+  <div class="publicar">
+    <div class="previa"><canvas id="cv" width="1080" height="1350" aria-label="Prévia do cartão do poema"></canvas>
+      <div class="linha-op"><button class="btn pri" id="bPng">⬇ Baixar imagem</button><button class="btn" id="bImp">🖨️ Imprimir</button></div></div>
+    <div>
+      <section class="bloco"><h2>🎨 Cartão do poema</h2><p class="sub">O seu poema vira uma imagem para o painel da escola e para as redes.</p>
+        <div class="temas-vis">${Object.entries(VISUAIS).map(([k,t])=>`<button class="tv" style="background:${t.amostra}" data-vis="${k}" aria-pressed="${v.tema===k}" title="${t.nome}" aria-label="Fundo ${t.nome}"></button>`).join('')}</div>
+        <div class="linha-op"><span class="seg">${Object.entries(FONTES_CARTAO).map(([k,f])=>`<button data-fonte="${k}" aria-pressed="${v.fonte===k}">${f.nome}</button>`).join('')}</span></div>
+        <div class="campo" style="flex-direction:row;gap:12px;flex-wrap:wrap">
+          <label class="campo" style="flex:1;min-width:140px;margin:0">Autor (primeiro nome)<input id="pNome" maxlength="24" value="${esc(S.nome)}"></label>
+          <label class="campo" style="width:120px;margin:0">Turma<input id="pTurma" maxlength="10" value="${esc(S.turma)}"></label>
+        </div>
+        <label class="declara" style="margin-top:6px;background:var(--papel);border-color:var(--linha)"><input type="checkbox" id="pQr" ${v.qr?'checked':''}><span>Colocar QR Code no cartão (leva à declamação, se tiver o link, ou ao poema on-line)</span></label>
+      </section>
+      <section class="bloco"><h2>🎤 Declamação</h2><p class="sub">Ensaie com a voz do computador, depois grave a sua.</p>
+        <div class="gravador"><button class="btn peq" id="bTts">🔊 Ouvir o computador</button><button class="btn peq tea" id="bRec">⏺ Gravar minha voz</button><span class="tempo" id="tRec"></span></div>
+        <div id="audioArea"></div>
+        <label class="campo">Link do áudio (Google Drive, com acesso “qualquer pessoa com o link”)<input id="pAudio" type="url" placeholder="https://drive.google.com/…" value="${esc(p.audio)}"></label>
+        <p class="aviso">A gravação não é enviada para nenhum lugar: baixe o arquivo e envie para o Drive da turma, como o professor orientar.</p>
+      </section>
+      <section class="bloco"><h2>🌐 Publicar no Painel Poético</h2>
+        <label class="declara"><input type="checkbox" id="pDecl" ${p.declarou?'checked':''}><span>Declaro que este poema é de minha autoria: não copiei de ninguém nem usei inteligência artificial para escrevê-lo.</span></label>
+        <div id="pubArea" style="margin-top:12px"></div>
+      </section>
+    </div>
+  </div>
+  <div class="seguir"><button class="btn" id="bRev">← Revisar</button><button class="btn" id="bMeus">Meus poemas →</button></div>`;
+
+  const cv=$('#cv');
+  let linkAtual='';
+  const redesenhar=async()=>{ await desenharCartao(cv,p,linkAtual); };
+  const gerarLink=async()=>{
+    const obj={v:1, ti:(p.titulo||'').slice(0,80), t:p.texto.slice(0,3000), a:(S.nome||'').slice(0,24), tu:(S.turma||'').slice(0,10), te:nomeTema(p.tema), f:FORMAS[p.forma].nome, vi:v.tema};
+    if(/^https:\/\//.test(p.audio||'')) obj.au=p.audio.slice(0,300);
+    const cod=await codificarPoema(obj);
+    linkAtual = new URL('painel-poetico.html', location.href).href.split('#')[0]+'#p='+cod;
+    return linkAtual;
+  };
+  const montarPub=async()=>{
+    const pa=$('#pubArea');
+    if(!p.declarou){ pa.innerHTML='<p class="aviso">Marque a declaração de autoria para gerar o link do seu poema.</p>'; linkAtual=''; redesenhar(); return; }
+    if(!p.texto.trim()){ pa.innerHTML='<p class="aviso">O poema está vazio.</p>'; return; }
+    const link=await gerarLink();
+    pa.innerHTML = `
+      <p class="sub" style="margin:0 0 6px">Este é o link do seu poema. O poema vai <b>dentro</b> do link: nada fica guardado em servidor.</p>
+      <div class="link-box"><input readonly id="pLink" value="${esc(link)}" aria-label="Link do poema"><button class="btn peq ind" id="bCopL">Copiar</button></div>
+      <div class="qr-area"><canvas id="qrP" width="280" height="280" aria-label="QR Code do poema"></canvas>
+        <div style="flex:1;min-width:180px"><a class="btn peq" href="${esc(link)}" target="_blank" rel="noopener">Ver no Painel ↗</a>
+        <p class="mini" style="margin:8px 0 0">${link.length>1400?'Seu poema é longo: o QR Code fica bem detalhado. Para imprimir, use o QR da declamação.':'Aponte a câmera do celular para testar.'}</p></div></div>
+      <div style="margin-top:12px">${form
+        ? `<button class="btn pri" id="bEnv">📨 Copiar link e abrir o formulário da turma</button><p class="mini" style="margin:6px 0 0">No formulário, cole o link (Ctrl+V ou segure o dedo e “Colar”). O professor confere antes de colocar no painel.</p>`
+        : `<p class="aviso" style="margin:0">Para o seu poema entrar no Painel da turma, copie o link e envie do jeito que o professor pedir (formulário, Classroom ou WhatsApp). O professor confere antes de publicar.</p>`}</div>`;
+    $('#bCopL').onclick=()=>copiar(link);
+    const q=matrizQR(link), qc=$('#qrP');
+    if(q){ desenharQR(qc.getContext('2d'),q,0,0,280); } else { const c=qc.getContext('2d'); c.fillStyle='#F3EBDB'; c.fillRect(0,0,280,280); c.fillStyle='#5E5A6E'; c.font='20px sans-serif'; c.textAlign='center'; c.fillText('QR indisponível',140,145); }
+    if(form) $('#bEnv').onclick=async()=>{ await copiar(link); window.open(form,'_blank','noopener'); };
+    redesenhar();
+  };
+
+  $$('[data-vis]').forEach(b=>b.onclick=()=>{ v.tema=b.dataset.vis; salvar(); $$('[data-vis]').forEach(x=>x.setAttribute('aria-pressed',x===b)); montarPub(); });
+  $$('[data-fonte]').forEach(b=>b.onclick=()=>{ v.fonte=b.dataset.fonte; salvar(); $$('[data-fonte]').forEach(x=>x.setAttribute('aria-pressed',x===b)); redesenhar(); });
+  $('#pQr').onchange=e=>{ v.qr=e.target.checked; salvar(); redesenhar(); };
+  const nomeT=()=>{ S.nome=$('#pNome').value.trim().split(/\s+/)[0]||''; S.turma=$('#pTurma').value.trim(); salvar(); };
+  let tN; ['#pNome','#pTurma'].forEach(s=>$(s).addEventListener('input',()=>{ clearTimeout(tN); tN=setTimeout(()=>{ nomeT(); montarPub(); },400); }));
+  let tA; $('#pAudio').addEventListener('input',e=>{ clearTimeout(tA); tA=setTimeout(()=>{ const u=e.target.value.trim(); p.audio = /^https:\/\//.test(u)?u:''; if(u && !p.audio) toast('O link precisa começar com https://'); salvar(); montarPub(); },500); });
+  $('#pDecl').onchange=e=>{ p.declarou=e.target.checked; salvar(); montarPub(); };
+  $('#bPng').onclick=async()=>{ await redesenhar(); cv.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=nomeArquivo(p)+'.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); },'image/png'); };
+  $('#bImp').onclick=async()=>{ await redesenhar(); const im=$('#impressao'); im.innerHTML=`<img src="${cv.toDataURL('image/png')}" alt="">`; im.classList.remove('hidden'); setTimeout(()=>{ window.print(); im.classList.add('hidden'); },150); };
+  $('#bTts').onclick=()=>falar((p.titulo?p.titulo+'. ':'')+p.texto.replace(/\n\n/g,'. ').replace(/\n/g,', '));
+  $('#bRec').onclick=()=>alternarGravacao(p);
+  $('#bRev').onclick=()=>ir('criar/revisar');
+  $('#bMeus').onclick=()=>ir('poemas');
+  if(audioURL) mostrarAudio(p);
+  montarPub();
+}
+function nomeArquivo(p){ return ('poema-'+(p.titulo||'sem-titulo')).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50); }
+async function alternarGravacao(p){
+  const b=$('#bRec');
+  if(gravador && gravador.state==='recording'){ gravador.stop(); return; }
+  if(!navigator.mediaDevices || !window.MediaRecorder){ toast('Este navegador não grava áudio. Use o gravador do celular.'); return; }
+  try{ gravStream=await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){ toast('Não consegui usar o microfone. Verifique a permissão.'); return; }
+  gravChunks=[];
+  gravador=new MediaRecorder(gravStream);
+  gravador.ondataavailable=e=>{ if(e.data.size) gravChunks.push(e.data); };
+  gravador.onstop=()=>{
+    const tipo=gravador.mimeType||'audio/webm';
+    if(audioURL) URL.revokeObjectURL(audioURL);
+    audioURL=URL.createObjectURL(new Blob(gravChunks,{type:tipo}));
+    pararGravacao(); b.classList.remove('rec-on'); b.textContent='⏺ Gravar de novo'; $('#tRec').textContent='';
+    mostrarAudio(p);
+  };
+  gravador.start(); gravInicio=Date.now();
+  b.classList.add('rec-on'); b.textContent='⏹ Parar';
+  gravTimer=setInterval(()=>{ const s=Math.floor((Date.now()-gravInicio)/1000); const t=$('#tRec'); if(t) t.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); if(s>=300 && gravador.state==='recording') gravador.stop(); },250);
+}
+function mostrarAudio(p){
+  const a=$('#audioArea'); if(!a||!audioURL) return;
+  const ext = /mp4|aac|m4a/.test(String(gravador&&gravador.mimeType||''))?'m4a':/ogg/.test(String(gravador&&gravador.mimeType||''))?'ogg':'webm';
+  a.innerHTML=`<audio controls src="${audioURL}"></audio><div class="linha-op"><a class="btn peq ind" href="${audioURL}" download="declamacao-${nomeArquivo(p).replace(/^poema-/,'')}.${ext}">⬇ Baixar a gravação</a></div>`;
+}
+
+/* desenha o cartão (1080 × 1350) */
+function quebrarLinhas(ctx, linha, largura){
+  if(ctx.measureText(linha).width<=largura) return [linha];
+  const palavras=linha.split(' '); const out=[]; let atual='';
+  palavras.forEach(w=>{ const t=atual?atual+' '+w:w; if(ctx.measureText(t).width<=largura || !atual) atual=t; else { out.push(atual); atual='   '+w; } });
+  if(atual) out.push(atual);
+  return out;
+}
+async function desenharCartao(cv, p, link){
+  const W=1080, H=1350, ctx=cv.getContext('2d');
+  const vis=VISUAIS[(p.visual||{}).tema]||VISUAIS.noite;
+  const fo=FONTES_CARTAO[(p.visual||{}).fonte]||FONTES_CARTAO.serifa;
+  try{ await Promise.all([document.fonts.load(`${fo.peso} 40px ${fo.css}`), document.fonts.load(`800 60px 'Fraunces'`), document.fonts.load(`italic 600 40px 'Fraunces'`), document.fonts.load(`700 30px 'Atkinson Hyperlegible'`)]); }catch(e){}
+  const g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,vis.fundo[0]); g.addColorStop(1,vis.fundo[1]);
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  decorar(ctx,(p.visual||{}).tema,W,H,vis);
+  // título
+  const titulo=(p.titulo||'Sem título').trim();
+  ctx.fillStyle=vis.titulo; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  let ts=78; const tFont=(s)=>((p.visual||{}).fonte==='mao'?`700 ${s*1.15}px ${fo.css}`:`800 ${s}px 'Fraunces', Georgia, serif`);
+  ctx.font=tFont(ts); while(ctx.measureText(titulo).width>W-180 && ts>36){ ts-=2; ctx.font=tFont(ts); }
+  ctx.fillText(titulo, W/2, 190);
+  ctx.fillStyle=vis.titulo; ctx.globalAlpha=.7; ctx.fillRect(W/2-50, 222, 100, 4); ctx.globalAlpha=1;
+  // corpo
+  const usarQR = (p.visual||{}).qr && (link || p.audio);
+  const topoTxt=280, baseTxt=H-(usarQR?300:230), larg=W-200;
+  const linhas=(p.texto||'').replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim().split('\n');
+  let size=linhas.length<=6?64:50, montado=[];
+  const fator=(p.visual||{}).fonte==='mao'?1.25:1;
+  for(; size>=20; size-=2){
+    ctx.font=`${fo.peso} ${size*fator}px ${fo.css}`;
+    montado=[]; linhas.forEach(l=>{ if(!l.trim()) montado.push(null); else quebrarLinhas(ctx,l.trim(),larg).forEach(x=>montado.push(x)); });
+    const lh=size*1.5; const alt=montado.reduce((s,x)=>s+(x===null?lh*.55:lh),0);
+    if(alt<=baseTxt-topoTxt) break;
+  }
+  const lh=size*1.5; const alt=montado.reduce((s,x)=>s+(x===null?lh*.55:lh),0);
+  ctx.font=`${fo.peso} ${size*fator}px ${fo.css}`; ctx.fillStyle=vis.tinta; ctx.textAlign='left';
+  const maxW=Math.max(1,...montado.filter(Boolean).map(x=>ctx.measureText(x).width));
+  const x0=Math.max(100,(W-maxW)/2);
+  let y=topoTxt+Math.max(0,(baseTxt-topoTxt-alt)/2)+size;
+  montado.forEach(x=>{ if(x===null){ y+=lh*.55; return; } ctx.fillText(x,x0,y); y+=lh; });
+  // autor
+  const autor=[S.nome,S.turma].filter(Boolean).join(' · ');
+  ctx.textAlign=usarQR?'left':'center';
+  const ax=usarQR?100:W/2;
+  if(autor){ ctx.fillStyle=vis.tinta; ctx.font=`italic 600 40px 'Fraunces', Georgia, serif`; ctx.fillText('— '+autor, ax, H-(usarQR?190:140)); }
+  ctx.fillStyle=vis.suave; ctx.font=`700 24px 'Atkinson Hyperlegible', sans-serif`;
+  ctx.fillText('Oficina do Poeta · Projeto Tecendo Palavras', ax, H-(usarQR?140:90));
+  if(usarQR){
+    const alvo = p.audio || link; const q=matrizQR(alvo);
+    if(q){ const tam=200; const qx=W-100-tam, qy=H-100-tam-10; ctx.fillStyle='#fff'; roundRect(ctx,qx-10,qy-10,tam+20,tam+20,18); ctx.fill(); desenharQR(ctx,q,qx,qy,tam);
+      ctx.fillStyle=vis.suave; ctx.textAlign='center'; ctx.font=`700 22px 'Atkinson Hyperlegible', sans-serif`; ctx.fillText(p.audio?'Ouça a declamação':'Leia on-line', qx+tam/2, qy+tam+48); }
+  }
+}
+function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function decorar(ctx, tema, W, H, vis){
+  ctx.save();
+  if(tema==='noite'){
+    const fios=[['#E0703F',.55,5,62],['#F2B43C',.4,3,80],['#3FB5A3',.4,4,H-50],['#E85D75',.3,3,H-34]];
+    fios.forEach(([c,a,w,y])=>{ ctx.strokeStyle=c; ctx.globalAlpha=a; ctx.lineWidth=w; ctx.beginPath(); ctx.moveTo(-20,y); ctx.bezierCurveTo(W*.3,y-50,W*.6,y+60,W+20,y-10); ctx.stroke(); });
+    ctx.globalAlpha=.8; ctx.fillStyle='#F2B43C'; [[120,260,3],[960,300,4],[980,640,3],[90,700,3],[1010,230,2.5]].forEach(([x,y,r])=>{ ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); });
+  } else if(tema==='papel'){
+    ctx.strokeStyle='#C9D8EA'; ctx.lineWidth=2; for(let y=300;y<H-60;y+=56){ ctx.beginPath(); ctx.moveTo(60,y); ctx.lineTo(W-60,y); ctx.stroke(); }
+    ctx.strokeStyle='#E8A0A0'; ctx.beginPath(); ctx.moveTo(84,0); ctx.lineTo(84,H); ctx.stroke();
+  } else if(tema==='pantanal'){
+    ctx.globalAlpha=.18; ctx.fillStyle='#BFE3C0';
+    const folha=(x,y,r,a)=>{ ctx.save(); ctx.translate(x,y); ctx.rotate(a); ctx.beginPath(); ctx.moveTo(0,-r); ctx.bezierCurveTo(r*.6,-r*.4,r*.6,r*.5,0,r); ctx.bezierCurveTo(-r*.6,r*.5,-r*.6,-r*.4,0,-r); ctx.fill(); ctx.restore(); };
+    [[60,120,110,-.5],[1010,180,130,.6],[40,H-160,140,.3],[1040,H-120,120,-.4],[960,620,70,.9]].forEach(a=>folha(...a));
+  } else if(tema==='sol'){
+    ctx.globalAlpha=.25; ctx.fillStyle='#FFF1C9'; ctx.beginPath(); ctx.arc(W-160,160,220,0,7); ctx.fill();
+    ctx.globalAlpha=.15; ctx.fillStyle='#7A2E1F'; ctx.beginPath(); ctx.moveTo(0,H); ctx.bezierCurveTo(W*.3,H-160,W*.6,H-60,W,H-180); ctx.lineTo(W,H); ctx.fill();
+  } else if(tema==='ipe'){
+    ctx.fillStyle='#E0709A';
+    for(let i=0;i<26;i++){ const x=(i*397)%W, y=(i*233)%H; ctx.globalAlpha=.12+((i*7)%10)/60; ctx.beginPath(); ctx.ellipse(x,y,26,14,i,0,7); ctx.fill(); }
+  } else if(tema==='lousa'){
+    ctx.strokeStyle='#8A6B3D'; ctx.lineWidth=28; ctx.globalAlpha=1; ctx.strokeRect(14,14,W-28,H-28);
+    ctx.globalAlpha=.06; ctx.fillStyle='#fff'; for(let i=0;i<60;i++){ ctx.fillRect((i*131)%W,(i*577)%H,120,3); }
+  }
+  ctx.restore();
+}
+
+/* ---------------- MEUS POEMAS ---------------- */
+function telaPoemas(){
+  app.innerHTML = topo('Meus poemas', S.poemas.length+' '+(S.poemas.length===1?'poema':'poemas')+' neste aparelho', '') + `
+  <main class="secao">
+    <header><h1>Meus poemas</h1><p>Os poemas ficam salvos só neste aparelho. Para não perder, publique o link ou baixe uma cópia.</p></header>
+    <div class="grade">
+      <button class="novo-card" id="bNovo">＋ Novo poema</button>
+      ${S.poemas.map(p=>{ const an=analisarPoema(p.texto); return `
+      <article class="poema-card">
+        <span class="meta">${FORMAS[p.forma].nome}${p.tema?' · '+nomeTema(p.tema):''}</span>
+        <h3>${esc(p.titulo||'Poema sem título')}</h3>
+        <pre>${esc(p.texto||'(vazio)')}</pre>
+        <span class="meta">${an.versos.length} versos · ${p.versoes.length} versões · editado ${fmtData(p.editado)}</span>
+        <div class="acoes"><button class="btn peq pri" data-ab="${p.id}">Abrir</button><button class="btn peq" data-pub="${p.id}">Publicar</button><button class="btn peq fant" data-del="${p.id}" aria-label="Apagar">🗑</button></div>
+      </article>`; }).join('')}
+    </div>
+    ${S.poemas.length?'<div class="seguir"><span></span><button class="btn peq" id="bTxt">⬇ Baixar todos (.txt)</button></div>':''}
+  </main>`;
+  $('#bNovo').onclick=()=>{ novoPoema(); ir('criar/planejar'); };
+  $$('[data-ab]').forEach(b=>b.onclick=()=>{ S.atual=b.dataset.ab; salvar(); ir('criar/escrever'); });
+  $$('[data-pub]').forEach(b=>b.onclick=()=>{ S.atual=b.dataset.pub; salvar(); ir('criar/publicar'); });
+  $$('[data-del]').forEach(b=>b.onclick=()=>{
+    const p=S.poemas.find(x=>x.id===b.dataset.del);
+    abrirModal(`<h2>Apagar “${esc(p.titulo||'Poema sem título')}”?</h2><p>O poema e todas as versões serão apagados deste aparelho.</p><div class="acoes"><button class="btn" onclick="fecharModal()">Cancelar</button><button class="btn pri" id="bConf">Apagar</button></div>`);
+    $('#bConf').onclick=()=>{ S.poemas=S.poemas.filter(x=>x.id!==p.id); if(S.atual===p.id) S.atual=S.poemas[0]?S.poemas[0].id:null; salvar(); fecharModal(); telaPoemas(); toast('Poema apagado.'); };
+  });
+  const bt=$('#bTxt'); if(bt) bt.onclick=()=>{
+    const txt=S.poemas.map(p=>(p.titulo||'Sem título').toUpperCase()+'\n'+FORMAS[p.forma].nome+(p.tema?' · '+nomeTema(p.tema):'')+'\n\n'+p.texto+'\n\n— '+[S.nome,S.turma].filter(Boolean).join(', ')).join('\n\n* * *\n\n');
+    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'})); a.download='meus-poemas.txt'; document.body.appendChild(a); a.click(); a.remove();
+  };
+}
+
+render();
+</script>
+</body>
+</html>
