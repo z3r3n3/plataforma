@@ -23,6 +23,13 @@ Plataforma de jogos educativos gratuitos, alinhados ao Currículo de Referência
 
 O site é publicado pelo GitHub Pages: **Settings → Pages → Branch `main` / pasta `/ (root)`**.
 
+## Oficina do Poeta e Painel Poético (projeto Tecendo Palavras)
+
+- `jogos/oficina-do-poeta.html`: lições (verso, rima, ritmo, figuras, formas, poesia e história, reescrita, declamação), editor com Raio-X de rimas e sílabas, revisão com colega e histórico de versões, cartão em PNG, gravação da declamação e link do poema.
+- `jogos/painel-poetico.html`: varal on-line, página de cada poema com QR Code e modo exposição.
+- O poema vai codificado no próprio link (`painel-poetico.html#p=…`), sem servidor.
+- Para o painel da turma: Google Formulário (pergunta “Cole aqui o link do seu poema”) → planilha com a coluna `Aprovado` (escrever `sim`) → Publicar na Web em CSV. Cole o link no botão ⚙️ Professor do painel ou na constante `LINK_PLANILHA`. O link curto do formulário vai em `LINK_FORMULARIO` (nas duas páginas) ou no endereço `oficina-do-poeta.html?form=https://forms.gle/…`.
+
 ## Quiz STE ao vivo (`quiz/`)
 
 Versão on-line do Quiz STE do Prof. José Rene: o professor abre `quiz/` e projeta, os estudantes entram em `quiz/jogar.html` com o PIN.
