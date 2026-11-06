@@ -97,6 +97,11 @@ const JOGOS = [
     descricao: 'Continentes, oceanos e 44 países no mapa-múndi, blocos econômicos e a globalização vista de MS: soja, gás da Bolívia e Rota Bioceânica.',
     habilidades: ['MS.EF09GE14', 'MS.EF08GE18', 'MS.EF09GE16', 'MS.EF08GE12', 'MS.EF09GE05'] },
 
+  { arquivo: 'english-quest.html', titulo: 'English Quest', componente: 'ing', anos: [6,7],
+    tipo: 'Missões com áudio', icone: '🎧',
+    descricao: 'Ouça e escolha: bichos do Pantanal, escola, comida, cores e clima; verb to be, comandos da sala de aula e o inglês no mundo e no Brasil.',
+    habilidades: ['MS.EF06LI17.s.20', 'MS.EF06LI19.s.23', 'MS.EF06LI21.s.25', 'MS.EF06LI24.s.28', 'MS.EF06LI25.s.29'] },
+
   { arquivo: 'fabrica-de-problemas.html', titulo: 'Fábrica de Problemas', componente: 'mat', anos: [6,7,8,9],
     tipo: 'Resolução de problemas', icone: '⚙️',
     descricao: 'Monte a situação-problema peça por peça, confira se tem todos os dados, planeje e resolva.',
