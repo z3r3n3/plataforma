@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratório de Potências e Pitágoras</title>
+<meta name="description" content="Jogo de Matemática para o 8º e o 9º ano: potências, raízes, notação científica, teorema de Pitágoras, funções afins e probabilidade.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+
+:root{--agua:#0F172A;--agua2:#4338CA;--agua-claro:#E0E7FF;--mata2:#DB2777;--borda:#D9D6F0}
+body{background:linear-gradient(180deg,#E0E7FF 0%,#FDF2F8 100%)}
+.topo{background:#EEF2FFee;border-bottom-color:#C7D2FE}
+.trilho{background:#C7D2FE}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #DB277733}
+.hero h1{color:#312E81}
+.conta{font-family:var(--titulo);font-weight:800;font-size:clamp(32px,7vw,48px)}
+.conta sup{font-size:.55em}
+.op sup{font-size:.7em}
+.tri{width:min(340px,82vw);height:auto}
+.graf{width:min(360px,84vw);height:auto}
+.tabela{border-collapse:collapse;font-family:var(--titulo);font-weight:800;font-size:20px;margin:auto}
+.tabela td,.tabela th{border:2px solid #C7D2FE;padding:6px 12px;text-align:center;min-width:52px}
+.tabela th{background:#EEF2FF;font-size:16px}
+.tabela td.q{background:var(--ipe)}
+.dado{font-size:46px;line-height:1}
+.urna{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:260px;font-size:30px;padding:10px 14px;border:4px solid #94A3B8;border-top:none;border-radius:0 0 40px 40px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · MATEMÁTICA</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>JOGO.TIPOS&&JOGO.TIPOS[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||it.dica||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   LABORATÓRIO DE POTÊNCIAS E PITÁGORAS — Matemática · 8º e 9º ano
+   MS.EF08MA01.s.01 potências · MS.EF08MA02.s.02 potenciação e radiciação
+   MS.EF09MA04.s.04 notação científica · MS.EF09MA13.s.15 e MS.EF09MA14.s.16 teorema de Pitágoras
+   MS.EF09MA06.s.06 funções · MS.EF08MA22.s.26 e MS.EF09MA20.s.22 probabilidade
+   ========================================================= */
+const pot=(b,e)=>`${b}<sup>${e}</sup>`;
+const fr=(a,b)=>`<span class="fr"><i>${a}</i><i>${b}</i></span>`;
+const par=n=>n<0?`(${nf(n)})`:String(n);
+const simp=(a,b)=>{ const g=mdc(a,b); return [a/g,b/g]; };
+const frS=(a,b)=>{ const [x,y]=simp(a,b); return y===1?String(x):fr(x,y); };
+
+/* ---- 1. potências ---- */
+function gerarPotencias(){
+  const g=[
+    ()=>{ const b=pick([2,3,5]), e=b===2?rnd(4,7):b===3?rnd(2,4):3; return {tipo:'num', enun:`Calcule a potência:`, corpo:`<div class="vis"><span class="conta">${pot(b,e)}</span></div>`, resp:b**e, mostrar:String(b**e), x:`${pot(b,e)} = ${Array(e).fill(b).join(' × ')} = <b>${b**e}</b>. O expoente diz quantas vezes a base se repete.`, dica:'Não é base × expoente! Multiplique a base por ela mesma.'}; },
+    ()=>{ const e=rnd(4,9); return {tipo:'num', enun:`Quantos zeros tem o número ${pot(10,e)} escrito por extenso?`, resp:e, un:'zeros', mostrar:e+' zeros', x:`${pot(10,e)} = 1${'0'.repeat(e)}: <b>${e}</b> zeros, o mesmo número do expoente.`, dica:'10² = 100, 10³ = 1000…'}; },
+    ()=>{ const b=-rnd(2,3), e=rnd(2,3); return {tipo:'num', sinal:true, enun:`Calcule:`, corpo:`<div class="vis"><span class="conta">(${nf(b)})<sup>${e}</sup></span></div>`, resp:b**e, mostrar:nf(b**e), x:`(${nf(b)})<sup>${e}</sup> = ${Array(e).fill(par(b)).join(' · ')} = <b>${nf(b**e)}</b>. Base negativa com expoente ${e%2?'ímpar dá resultado negativo':'par dá resultado positivo'}.`, dica:'Multiplique com os sinais. Expoente par → positivo; ímpar → negativo.'}; },
+    ()=>{ const b=rnd(2,99); return {tipo:'num', enun:`Quanto vale ${pot(b,0)}?`, resp:1, mostrar:'1', x:`Todo número diferente de zero elevado a 0 é igual a <b>1</b>. Veja: ${pot(b,3)} ÷ ${pot(b,3)} = ${pot(b,0)} = 1.`, dica:'Pense em uma divisão de duas potências iguais.'}; },
+    ()=>{ const b=pick([2,3,5,7]), m=rnd(2,6), n=rnd(2,6); return {tipo:'num', enun:`Complete com o expoente: ${pot(b,m)} · ${pot(b,n)} = ${pot(b,'?')}`, antes:`${b} elevado a`, resp:m+n, mostrar:String(m+n), x:`Na multiplicação de potências de mesma base, conserva-se a base e <b>somam-se</b> os expoentes: ${m} + ${n} = <b>${m+n}</b>.`, dica:'Mesma base multiplicando: some os expoentes.'}; },
+    ()=>{ const b=pick([2,3,5,10]), m=rnd(6,10), n=rnd(2,5); return {tipo:'num', enun:`Complete com o expoente: ${pot(b,m)} ÷ ${pot(b,n)} = ${pot(b,'?')}`, antes:`${b} elevado a`, resp:m-n, mostrar:String(m-n), x:`Na divisão de mesma base, <b>subtraem-se</b> os expoentes: ${m} − ${n} = <b>${m-n}</b>.`, dica:'Mesma base dividindo: subtraia os expoentes.'}; },
+    ()=>{ const b=pick([2,3,5]), m=rnd(2,4), n=rnd(2,4); return {tipo:'num', enun:`Complete com o expoente: (${pot(b,m)})<sup>${n}</sup> = ${pot(b,'?')}`, antes:`${b} elevado a`, resp:m*n, mostrar:String(m*n), x:`Potência de potência: <b>multiplicam-se</b> os expoentes: ${m} × ${n} = <b>${m*n}</b>.`, dica:'Potência de potência: multiplique os expoentes.'}; },
+    ()=>{ const e=rnd(1,3); const v=['0,1','0,01','0,001'][e-1]; return mc({html:true, grade:true, enun:`Quanto vale ${pot(10,'−'+e)}?`, x:`${pot(10,'−'+e)} = 1/${pot(10,e)} = 1/${10**e} = <b>${v}</b>. Expoente negativo é o inverso.`, dica:'Expoente negativo não deixa o número negativo: ele vira o inverso (1 dividido).'}, v, [nf(-(10**e)), String(-10*e).replace('-','−'), ['0,01','0,001','0,0001'][e-1], '0,'+'0'.repeat(e)+'1']); },
+    ()=>{ const b=pick([2,4,5]); return mc({html:true, grade:true, enun:`Quanto vale ${pot(b,'−1')}?`, x:`${pot(b,'−1')} = ${fr(1,b)} = <b>${nf(1/b)}</b>.`, dica:'Expoente −1 é o inverso do número.'}, `${fr(1,b)}`, [nf(-b), fr(-1,b).replace('-','−'), String(b-1)]); }
+  ];
+  return [0,1,2,3,4,5,6,7,8].map(k=>Object.assign({cat:'potencias'},g[k]())).slice(0,9);
+}
+/* ---- 2. raízes ---- */
+function gerarRaizes(){
+  const it=[];
+  [rnd(4,15), rnd(11,20)].forEach(r=>it.push({tipo:'num', cat:'raizes', enun:'Calcule a raiz quadrada:', corpo:`<div class="vis"><span class="conta">√${r*r}</span></div>`, resp:r, mostrar:String(r), x:`√${r*r} = <b>${r}</b>, porque ${r}² = ${r*r}. Raiz e potência são operações inversas.`, dica:'Procure o número que, multiplicado por ele mesmo, dá esse valor.'}));
+  { const r=pick([2,3,4,5,10]); it.push({tipo:'num', cat:'raizes', enun:'Calcule a raiz cúbica:', corpo:`<div class="vis"><span class="conta">∛${r**3}</span></div>`, resp:r, mostrar:String(r), x:`∛${r**3} = <b>${r}</b>, porque ${r}³ = ${r} · ${r} · ${r} = ${r**3}.`, dica:'Qual número multiplicado três vezes por ele mesmo dá esse valor?'}); }
+  { const r=rnd(5,13); it.push({tipo:'num', cat:'raizes', enun:`Um terreno quadrado tem área de <b>${r*r} m²</b>. Quanto mede cada lado?`, resp:r, un:'m', mostrar:r+' m', x:`Área do quadrado = lado². Então lado = √${r*r} = <b>${r} m</b>.`, dica:'A área do quadrado é lado × lado.'}); }
+  for(let k=0;k<2;k++){ let n; do{ n=rnd(5,140); }while(Number.isInteger(Math.sqrt(n))); const a=Math.floor(Math.sqrt(n));
+    it.push(mc({cat:'raizes', grandes:true, enun:`√${n} está entre quais números inteiros consecutivos?`, x:`${a}² = ${a*a} e ${a+1}² = ${(a+1)**2}. Como ${a*a} < ${n} < ${(a+1)**2}, então <b>${a} < √${n} < ${a+1}</b>.`, dica:'Procure os quadrados perfeitos mais próximos.'}, `${a} e ${a+1}`, [`${a-1} e ${a}`,`${a+1} e ${a+2}`,`${Math.floor(n/2)} e ${Math.floor(n/2)+1}`])); }
+  { const b=pick([3,5,7,11]); it.push(mc({cat:'raizes', grandes:true, html:true, enun:`Qual destas é outra forma de escrever √${b}?`, x:`Uma raiz quadrada é uma potência de expoente ${fr(1,2)}: √${b} = <b>${b}<sup>1/2</sup></b>. Veja: (${b}<sup>1/2</sup>)² = ${b}<sup>1</sup> = ${b}.`, dica:'Pense na potência de potência: que expoente, vezes 2, dá 1?'}, `${b}<sup>1/2</sup>`, [`${b}<sup>2</sup>`,`${b} ÷ 2`,`2<sup>${b}</sup>`])); }
+  { const r=pick([2,3,4]); it.push({tipo:'num', cat:'raizes', enun:`Um cubo tem volume de <b>${r**3} cm³</b>. Quanto mede sua aresta?`, resp:r, un:'cm', mostrar:r+' cm', x:`Volume do cubo = aresta³. Aresta = ∛${r**3} = <b>${r} cm</b>.`, dica:'O volume do cubo é aresta × aresta × aresta.'}); }
+  return it;
+}
+/* ---- 3. notação científica ---- */
+const DADOS=[
+  ['A distância média da Terra ao Sol é de cerca de <b>150&nbsp;000&nbsp;000&nbsp;km</b>.','☀️',1.5,8,'km'],
+  ['A luz percorre cerca de <b>300&nbsp;000&nbsp;km</b> por segundo.','💡',3,5,'km/s'],
+  ['O Censo 2022 contou cerca de <b>203&nbsp;000&nbsp;000</b> habitantes no Brasil.','🇧🇷',2.03,8,'habitantes'],
+  ['Mato Grosso do Sul tem cerca de <b>357&nbsp;000&nbsp;km²</b> de área.','🗺️',3.57,5,'km²'],
+  ['Um glóbulo vermelho do sangue mede cerca de <b>0,000007&nbsp;m</b> de diâmetro.','🩸',7,-6,'m'],
+  ['Um fio de cabelo tem cerca de <b>0,00007&nbsp;m</b> de espessura.','💇',7,-5,'m'],
+  ['Uma bactéria pode medir cerca de <b>0,000002&nbsp;m</b>.','🦠',2,-6,'m'],
+  ['A Lua está a cerca de <b>384&nbsp;000&nbsp;km</b> da Terra.','🌙',3.84,5,'km']
+];
+const nc=(m,e)=>`${nf(m)} × ${pot(10,nf(e))}`;
+function gerarNotacao(){
+  const it=embaralhar(DADOS).slice(0,5).map(([t,e,m,ex,u])=>mc({cat:'notacao', grandes:true, html:true, enun:`${e} ${t} Como fica esse número em notação científica?`,
+    x:`<b>${nc(m,ex)}</b> ${u}. ${ex>0?`A vírgula andou ${ex} casas para a esquerda, então o expoente é +${ex}.`:`A vírgula andou ${-ex} casas para a direita, então o expoente é ${nf(ex)}.`} Na notação científica, o primeiro número fica entre 1 e 10.`,
+    dica:'Coloque a vírgula logo depois do primeiro algarismo diferente de zero e conte quantas casas ela andou.'},
+    nc(m,ex), [nc(m,-ex), nc(m,ex+1), nc(m*10,ex-1), nc(m,ex-1)]));
+  for(let k=0;k<3;k++){ const m=rnd(11,99)/10, ex=k===1?-rnd(2,5):rnd(3,7); const v=m*10**ex;
+    const extenso=ex>0?Math.round(v).toLocaleString('pt-BR'):v.toFixed(-ex+1).replace('.',',');
+    it.push(mc({cat:'notacao', grandes:true, html:true, enun:`Qual é o número ${nc(m,ex)} escrito por extenso?`, x:`${nc(m,ex)} = <b>${extenso}</b>. ${ex>0?`Multiplicar por ${pot(10,ex)} anda a vírgula ${ex} casas para a direita.`:`Multiplicar por ${pot(10,nf(ex))} anda a vírgula ${-ex} casas para a esquerda.`}`, dica:'Expoente positivo: número grande. Expoente negativo: número pequeno (menor que 1).'},
+      extenso, [ex>0?Math.round(v*10).toLocaleString('pt-BR'):(v*10).toFixed(-ex).replace('.',','), ex>0?Math.round(v/10).toLocaleString('pt-BR'):(v/10).toFixed(-ex+2).replace('.',','), ex>0?(m/10**ex).toFixed(ex+1).replace('.',','):Math.round(m*10**(-ex)).toLocaleString('pt-BR')]));
+  }
+  return embaralhar(it);
+}
+/* ---- 4. Pitágoras ---- */
+const TRIPLAS=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[12,16,20],[7,24,25],[20,21,29]];
+function triangulo(a,b,la,lb,lc){ const M=Math.max(a,b), sx=230*a/M, sy=150*b/M; const x0=40, y0=180;
+  return `<svg class="tri" viewBox="0 0 330 220" role="img" aria-label="Triângulo retângulo"><path d="M${x0} ${y0}H${x0+sx}L${x0} ${y0-sy}Z" fill="#E0E7FF" stroke="#312E81" stroke-width="4" stroke-linejoin="round"/><path d="M${x0} ${y0-18}h18v18" fill="none" stroke="#312E81" stroke-width="2.5"/>
+    <text x="${x0+sx/2}" y="${y0+28}" text-anchor="middle" font-size="22" font-weight="800" font-family="Baloo 2,sans-serif" fill="${la==='?'?'#DB2777':'#1E293B'}">${la}</text>
+    <text x="${x0-10}" y="${y0-sy/2+7}" text-anchor="end" font-size="22" font-weight="800" font-family="Baloo 2,sans-serif" fill="${lb==='?'?'#DB2777':'#1E293B'}">${lb}</text>
+    <text x="${x0+sx/2+14}" y="${y0-sy/2-8}" text-anchor="start" font-size="22" font-weight="800" font-family="Baloo 2,sans-serif" fill="${lc==='?'?'#DB2777':'#1E293B'}">${lc}</text></svg>`; }
+function gerarPitagoras(){
+  const it=[]; const ctx=[
+    (a,b,c)=>({e:'🪜',t:`Uma escada de <b>${c} m</b> está encostada num muro. O pé da escada está a <b>${a} m</b> do muro. A que altura a escada toca o muro?`, la:a+' m', lb:'?', lc:c+' m', r:b, u:'m'}),
+    (a,b,c)=>({e:'🛹',t:`Uma rampa de skate sobe <b>${a*10} cm</b> e avança <b>${b*10} cm</b> na horizontal. Qual é o comprimento da rampa?`, la:b*10+' cm', lb:a*10+' cm', lc:'?', r:c*10, u:'cm', sw:true}),
+    (a,b,c)=>({e:'📺',t:`Uma tela tem <b>${b*10} cm</b> de largura e <b>${a*10} cm</b> de altura. Quanto mede a diagonal?`, la:b*10+' cm', lb:a*10+' cm', lc:'?', r:c*10, u:'cm', sw:true}),
+    (a,b,c)=>({e:'🪁',t:`A linha de uma pipa, bem esticada, mede <b>${c*2} m</b>. A pipa está exatamente acima de um ponto a <b>${b*2} m</b> de quem a segura. A que altura ela está (desconsidere a altura da pessoa)?`, la:b*2+' m', lb:'?', lc:c*2+' m', r:a*2, u:'m', sw:true}),
+    (a,b,c)=>({e:'📐',t:`Calcule a medida da <b>hipotenusa</b> do triângulo retângulo.`, la:String(a), lb:String(b), lc:'?', r:c}),
+    (a,b,c)=>({e:'📐',t:`Calcule a medida do <b>cateto</b> que falta.`, la:'?', lb:String(b), lc:String(c), r:a})
+  ];
+  embaralhar([0,1,2,3,4,5,4,5]).slice(0,6).forEach(k=>{ const [a,b,c]=pick(TRIPLAS); const p=ctx[k](a,b,c); const A=p.sw?b:a, Bv=p.sw?a:b;
+    const conta=p.lc==='?'?`${p.la.split(' ')[0]}² + ${p.lb.split(' ')[0]}² = ${parseFloat(p.la)**2} + ${parseFloat(p.lb)**2} = ${p.r**2}, então hipotenusa = √${p.r**2} = <b>${p.r}</b>`:`${parseFloat(p.lc)}² − ${parseFloat(p.la==='?'?p.lb:p.la)}² = ${parseFloat(p.lc)**2} − ${parseFloat(p.la==='?'?p.lb:p.la)**2} = ${p.r**2}, então o cateto = √${p.r**2} = <b>${p.r}</b>`;
+    it.push({tipo:'num', cat:'pitagoras', enun:`${p.e} ${p.t}`, corpo:`<div class="vis">${triangulo(A,Bv,p.la,p.lb,p.lc)}</div>`, resp:p.r, un:p.u, mostrar:p.r+(p.u?' '+p.u:''),
+      x:`Pelo teorema de Pitágoras, hipotenusa² = cateto² + cateto². ${conta}${p.u?' '+p.u:''}.`, dica:p.lc==='?'?'Some os quadrados dos catetos e tire a raiz quadrada.':'Hipotenusa² − cateto² = o outro cateto². Depois tire a raiz.'});
+  });
+  for(let k=0;k<2;k++){ const ret=k===0; const [a,b,c]=pick(TRIPLAS); const lados=ret?[a,b,c]:[a,b,c+1];
+    it.push(mc({cat:'pitagoras', grandes:true, enun:`Um triângulo tem lados <b>${lados.join(', ')}</b>. Ele é retângulo?`, x:`${lados[0]}² + ${lados[1]}² = ${lados[0]**2+lados[1]**2} e ${lados[2]}² = ${lados[2]**2}. ${ret?'Os valores são iguais: <b>é retângulo</b>.':'Os valores são diferentes: <b>não é retângulo</b>.'}`, dica:'Teste: a soma dos quadrados dos dois menores é igual ao quadrado do maior?'},
+      ret?'Sim, porque a² + b² = c²':'Não, porque a² + b² ≠ c²', [ret?'Não, porque a² + b² ≠ c²':'Sim, porque a² + b² = c²', 'Só dá para saber medindo os ângulos com transferidor']));
+  }
+  return it;
+}
+/* ---- 5. funções ---- */
+function grafico(a,b,xmax){ const ymax=b+a*xmax, W=320,H=220, X=v=>40+v/xmax*(W-60), Y=v=>H-30-v/ymax*(H-50); let s='';
+  for(let v=0;v<=xmax;v++) s+=`<line x1="${X(v)}" y1="${Y(0)}" x2="${X(v)}" y2="${Y(0)+5}" stroke="#334155"/><text x="${X(v)}" y="${Y(0)+20}" font-size="12" text-anchor="middle" fill="#334155">${v}</text>`;
+  const pas=ymax>40?10:5; for(let v=0;v<=ymax;v+=pas) s+=`<line x1="${X(0)}" y1="${Y(v)}" x2="${X(xmax)}" y2="${Y(v)}" stroke="#E2E8F0"/><text x="${X(0)-6}" y="${Y(v)+4}" font-size="12" text-anchor="end" fill="#334155">${v}</text>`;
+  for(let v=0;v<=xmax;v++) s+=`<circle cx="${X(v)}" cy="${Y(b+a*v)}" r="4.5" fill="#DB2777"/>`;
+  return `<svg class="graf" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de função afim">${s}<line x1="${X(0)}" y1="${Y(0)}" x2="${X(xmax)+8}" y2="${Y(0)}" stroke="#334155" stroke-width="2"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="12" stroke="#334155" stroke-width="2"/><line x1="${X(0)}" y1="${Y(b)}" x2="${X(xmax)}" y2="${Y(b+a*xmax)}" stroke="#DB2777" stroke-width="3" opacity=".5"/><text x="${W-8}" y="${Y(0)-6}" font-size="13" text-anchor="end" font-weight="700">km</text><text x="${X(0)+6}" y="20" font-size="13" font-weight="700">R$</text></svg>`; }
+function gerarFuncoes(){
+  const it=[];
+  { const a=pick([2,3,4]), b=pick([4,5,6]), x=rnd(4,9); it.push({tipo:'num', cat:'funcoes', antes:'R$', enun:`Em uma cidade de MS, a corrida de mototáxi custa <b>f(x) = ${b} + ${a}x</b> reais, em que x é o número de quilômetros. Quanto custa uma corrida de ${x} km?`, resp:b+a*x, mostrar:real(b+a*x), x:`f(${x}) = ${b} + ${a} · ${x} = <b>${real(b+a*x)}</b>.`, dica:'Troque x pelo número de quilômetros.'}); }
+  { const a=pick([2,3,5]), b=pick([0,1,4,10]); const xs=[0,1,2,3,4]; const qi=rnd(2,4);
+    it.push({tipo:'num', cat:'funcoes', enun:`A tabela mostra uma função afim. Qual valor de y está faltando?`, corpo:`<div class="vis"><table class="tabela"><tr><th>x</th>${xs.map(v=>`<td>${v}</td>`).join('')}</tr><tr><th>y</th>${xs.map(v=>v===qi?'<td class="q">?</td>':`<td>${b+a*v}</td>`).join('')}</tr></table></div>`, resp:b+a*qi, mostrar:String(b+a*qi), x:`A cada x a mais, y aumenta ${a}. A lei é y = ${a}x${b?' + '+b:''}, e para x = ${qi}, y = <b>${b+a*qi}</b>.`, dica:'Veja de quanto em quanto o y cresce.'}); }
+  { const a=pick([2,3,4]), b=pick([4,6,8,10]); const x=rnd(2,5);
+    it.push(mc({cat:'funcoes', grade:true, enun:`O gráfico mostra o preço de uma corrida (R$) conforme os quilômetros rodados. Quanto custa uma corrida de <b>${x} km</b>?`, corpo:`<div class="vis">${grafico(a,b,6)}</div>`, x:`Para x = ${x}, o ponto do gráfico está na altura <b>${b+a*x}</b>: R$ ${b+a*x},00. Repare que em x = 0 o preço já é ${b}: é a taxa fixa.`, dica:`Ache o ${x} no eixo de baixo e suba até o ponto.`}, String(b+a*x), [String(b+a*(x+1)), String(a*x), String(b+a*(x-1)), String(b+x)])); }
+  { const a=pick([2,3,5]), b=pick([3,4,7]);
+    it.push(mc({cat:'funcoes', grandes:true, enun:`Qual é a lei da função que relaciona x e y na tabela? <br>x: 0, 1, 2, 3 &nbsp;→&nbsp; y: ${[0,1,2,3].map(v=>b+a*v).join(', ')}`, x:`Quando x = 0, y = ${b} (termo fixo). A cada 1 em x, y aumenta ${a} (taxa). Lei: <b>y = ${a}x + ${b}</b>.`, dica:'Comece por x = 0: ele mostra o termo fixo.'}, `y = ${a}x + ${b}`, [`y = ${b}x + ${a}`, `y = x + ${b}`, `y = ${a+b}x`])); }
+  { const v=pick([500,600,800]), q=pick([20,25,40]); const t=rnd(4,9);
+    it.push({tipo:'num', cat:'funcoes', enun:`Uma caixa-d'água tem <b>${v} litros</b> e perde <b>${q} litros por hora</b>. A quantidade de água é V(t) = ${v} − ${q}t. Quantos litros restam depois de ${t} horas?`, resp:v-q*t, un:'L', mostrar:(v-q*t)+' L', x:`V(${t}) = ${v} − ${q} · ${t} = <b>${v-q*t}</b> litros. Essa função é <b>decrescente</b>: quanto mais tempo, menos água.`, dica:'Substitua t pelo número de horas.'}); }
+  it.push(mc({cat:'funcoes', grandes:true, enun:`Qual destas situações é uma relação de dependência em que y é <b>função</b> de x?`, x:'O preço a pagar depende da quantidade comprada: para cada quantidade existe um único preço. Isso é uma função!', dica:'Numa função, cada valor de x leva a um único valor de y.'},
+    'O preço pago (y) por x quilos de arroz a R$ 6,00 o quilo', ['A cor favorita (y) de quem tem x anos','O nome (y) de quem nasceu no mês x','O time (y) de quem mora na rua x']));
+  return it;
+}
+/* ---- 6. probabilidade ---- */
+function gerarProb(){
+  const it=[]; const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  { const ev=pick([['um número par',3],['um número maior que 4',2],['o número 6',1],['um número menor que 3',2],['um múltiplo de 3',2]]);
+    it.push(mc({cat:'prob', grade:true, html:true, enun:`Ao lançar um dado comum, qual é a probabilidade de sair <b>${ev[0]}</b>?`, corpo:`<div class="vis"><span class="dado">${faces.join(' ')}</span></div>`, x:`Casos favoráveis: ${ev[1]}. Casos possíveis: 6. Probabilidade = ${frS(ev[1],6)!==fr(ev[1],6)?fr(ev[1],6)+' = ':''}<b>${frS(ev[1],6)}</b>.`, dica:'Probabilidade = casos favoráveis ÷ casos possíveis.'}, frS(ev[1],6), [fr(ev[1],10), ev[1]>1?fr(1,ev[1]):fr(6,1), frS(6-ev[1],6)===frS(ev[1],6)?fr(ev[1],5):frS(6-ev[1],6), fr(6,ev[1])])); }
+  { const v=rnd(2,6), a=rnd(2,6), am=rnd(1,4), t=v+a+am;
+    it.push(mc({cat:'prob', grade:true, html:true, enun:`Numa urna há ${v} bolas vermelhas, ${a} azuis e ${am} amarelas. Sorteando uma bola, qual é a probabilidade de ela ser <b>azul</b>?`, corpo:`<div class="vis"><div class="urna">${'🔴'.repeat(v)}${'🔵'.repeat(a)}${'🟡'.repeat(am)}</div></div>`, x:`São ${a} azuis em ${t} bolas: ${fr(a,t)}${frS(a,t)!==fr(a,t)?' = '+frS(a,t):''}.`, dica:'Conte todas as bolas da urna.'}, frS(a,t), [fr(a,v+am), fr(1,3), fr(1,a), frS(v,t)])); }
+  it.push(mc({cat:'prob', grade:true, html:true, enun:`Lançando uma moeda <b>duas vezes</b>, qual é a probabilidade de sair <b>cara nas duas</b>?`, corpo:`<div class="vis"><span class="mini">Espaço amostral: (cara, cara), (cara, coroa), (coroa, cara), (coroa, coroa)</span></div>`, x:`Há 4 resultados possíveis e só 1 é favorável: <b>${fr(1,4)}</b>. Também dá para multiplicar: ${fr(1,2)} × ${fr(1,2)} = ${fr(1,4)}.`, dica:'Liste todos os resultados possíveis.'}, fr(1,4), [fr(1,2), fr(2,4).replace('2','2'), fr(1,3)]));
+  { const p=rnd(2,4), r=rnd(3,5); it.push({tipo:'num', cat:'prob', enun:`Uma lanchonete de Campo Grande oferece ${p} tipos de pão e ${r} tipos de recheio. Quantos sanduíches diferentes (1 pão + 1 recheio) dá para montar?`, resp:p*r, mostrar:String(p*r), x:`Pelo <b>princípio multiplicativo</b>: ${p} × ${r} = <b>${p*r}</b> combinações.`, dica:'Para cada pão, há todas as opções de recheio.'}); }
+  { const c=rnd(2,4), b=rnd(2,4), t=rnd(2,3); it.push({tipo:'num', cat:'prob', enun:`Para a festa da escola, Ana vai escolher 1 de ${c} camisetas, 1 de ${b} bermudas e 1 de ${t} pares de tênis. Quantas combinações diferentes ela pode montar?`, resp:c*b*t, mostrar:String(c*b*t), x:`${c} × ${b} × ${t} = <b>${c*b*t}</b> combinações.`, dica:'Multiplique o número de opções de cada escolha.'}); }
+  it.push(mc({cat:'prob', grade:true, html:true, enun:`Lançando um dado e uma moeda juntos, qual é a probabilidade de sair <b>6 no dado</b> e <b>cara na moeda</b>?`, x:`São 6 × 2 = 12 resultados possíveis e 1 favorável: ${fr(1,6)} × ${fr(1,2)} = <b>${fr(1,12)}</b>. Os eventos são <b>independentes</b>.`, dica:'Os eventos são independentes: multiplique as probabilidades.'}, fr(1,12), [fr(1,8), fr(2,3), fr(1,6)]));
+  { const n=rnd(3,5), r=rnd(1,n-1); it.push(mc({cat:'prob', grandes:true, html:true, enun:`Uma caixa tem ${n} bombons de chocolate e ${r} de coco. Ana tira 1 bombom de chocolate e o come. Agora, qual é a probabilidade de o próximo ser de <b>coco</b>?`, x:`Depois da primeira retirada, sobram ${n-1+r} bombons, e ${r} são de coco: <b>${frS(r,n-1+r)}</b>. Esse é um evento <b>dependente</b>: o primeiro sorteio mudou o segundo.`, dica:'Quantos bombons sobraram na caixa?'}, frS(r,n-1+r), [frS(r,n+r), frS(n-1,n-1+r), fr(1,r+1)])); }
+  return it;
+}
+
+const JOGO={
+  NOME:'Laboratório de Potências e Pitágoras', CHAVE:'labPotencias.v1',
+  TXT:{missao:'Experimento',missoes:'Experimentos',mapa:'Bancadas do laboratório',entrar:'Entrar no laboratório 🔬',icMapa:'🔬',valendo:'Começar experimento 🧪',fim:'Experimento concluído! 🧪'},
+  PATENTES:[[0,'🧪 Estagiário'],[6,'🔬 Pesquisador'],[12,'🚀 Cientista'],[16,'🏆 Gênio do laboratório']],
+  CATS:{potencias:'Potências e propriedades (MS.EF08MA01)',raizes:'Raízes (MS.EF08MA02, MS.EF09MA03)',notacao:'Notação científica (MS.EF09MA04)',pitagoras:'Teorema de Pitágoras (MS.EF09MA13, MS.EF09MA14)',funcoes:'Funções (MS.EF09MA06)',prob:'Probabilidade e contagem (MS.EF08MA22, MS.EF09MA20)'},
+  HOME:{h1:'Laboratório de <span>Potências e Pitágoras</span>', turma:'ex.: 9º A',
+    lead:'Do glóbulo vermelho à distância até o Sol: calcule potências e raízes, escreva números gigantes e minúsculos em notação científica, use Pitágoras em escadas e rampas, leia funções e calcule probabilidades.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:14px">${triangulo(4,3,'4','3','5')}<p style="font-family:var(--titulo);font-weight:800;font-size:24px;margin:4px 0 0">3² + 4² = 5²</p></div>`,
+    info:[['6','experimentos'],['8º e 9º','anos'],['∞','questões sorteadas']],
+    rodape:'Matemática · 8º e 9º ano · Habilidades <b>MS.EF08MA01</b>, <b>MS.EF08MA02</b>, <b>MS.EF08MA22</b>, <b>MS.EF09MA03</b>, <b>MS.EF09MA04</b>, <b>MS.EF09MA06</b>, <b>MS.EF09MA13</b>, <b>MS.EF09MA14</b> e <b>MS.EF09MA20</b>'},
+  AJUDA:['🔢 Responda digitando o número ou escolhendo uma alternativa. Para decimais, use vírgula.','📱 No celular, use o botão <b>±</b> para números negativos.','📐 Pitágoras: hipotenusa² = cateto² + cateto². A hipotenusa é o lado oposto ao ângulo reto.','💡 Professor(a): os experimentos 1, 2 e 6 servem bem ao 8º ano; 3, 4 e 5, ao 9º.'],
+  MISSOES:[
+    {id:'m1', titulo:'Potências', ic:'⚡', hab:'MS.EF08MA01.s.01', desc:'Calcule potências, use as propriedades e entenda o expoente zero e o negativo.', gerar:gerarPotencias,
+      intro:`<p>${pot(2,5)} = 2 × 2 × 2 × 2 × 2 = 32. A <b>base</b> se repete tantas vezes quanto diz o <b>expoente</b>.</p><div class="lista"><div>${pot('a','m')} · ${pot('a','n')} = ${pot('a','m+n')}</div><div>${pot('a','m')} ÷ ${pot('a','n')} = ${pot('a','m−n')}</div><div>${pot('a',0)} = 1 &nbsp;·&nbsp; ${pot('a','−n')} = 1/${pot('a','n')}</div></div>`},
+    {id:'m2', titulo:'Raízes', ic:'🌱', hab:'MS.EF08MA02.s.02', desc:'Raízes quadradas e cúbicas, estimativas e raiz como potência.', gerar:gerarRaizes,
+      intro:'<p>A raiz é a operação <b>inversa</b> da potência: √49 = 7 porque 7² = 49, e ∛8 = 2 porque 2³ = 8.</p>'},
+    {id:'m3', titulo:'Notação científica', ic:'🔭', hab:'MS.EF09MA04.s.04', desc:'Números gigantes e minúsculos escritos com potências de 10.', gerar:gerarNotacao,
+      intro:`<p>Em notação científica, escrevemos um número entre 1 e 10 multiplicado por uma potência de 10: 150 000 000 = 1,5 × ${pot(10,8)} e 0,000007 = 7 × ${pot(10,'−6')}.</p>`},
+    {id:'m4', titulo:'Teorema de Pitágoras', ic:'📐', hab:'MS.EF09MA13.s.15 · MS.EF09MA14.s.16', desc:'Escadas, rampas, telas e pipas: calcule lados de triângulos retângulos.', gerar:gerarPitagoras,
+      intro:'<p>Em todo triângulo retângulo: <b>a² = b² + c²</b>, em que <b>a</b> é a hipotenusa (o maior lado, oposto ao ângulo reto) e <b>b</b> e <b>c</b> são os catetos.</p>'},
+    {id:'m5', titulo:'Funções', ic:'📈', hab:'MS.EF09MA06.s.06', desc:'Tabelas, gráficos e leis de funções afins do dia a dia.', gerar:gerarFuncoes,
+      intro:'<p>Uma <b>função</b> relaciona duas grandezas: para cada valor de x, existe um único valor de y. Na função afim <b>y = ax + b</b>, b é o valor fixo e a é a taxa de variação.</p>'},
+    {id:'m6', titulo:'Probabilidade', ic:'🎲', hab:'MS.EF08MA22.s.26 · MS.EF09MA20.s.22', desc:'Dados, moedas, urnas e o princípio multiplicativo.', gerar:gerarProb,
+      intro:'<p><b>Probabilidade</b> = casos favoráveis ÷ casos possíveis. Para contar combinações, use o <b>princípio multiplicativo</b>: multiplique as opções de cada etapa.</p>'}
+  ]
+};
+iniciarJogo();
+</script>
+</body>
+</html>

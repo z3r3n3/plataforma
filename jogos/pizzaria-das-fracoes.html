@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizzaria das Frações</title>
+<meta name="description" content="Jogo de Matemática do 3º ao 5º ano: metade, terça e quarta parte, leitura e representação de frações, frações equivalentes e porcentagens na pizzaria.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+
+:root{--agua:#991B1B;--agua2:#DC2626;--agua-claro:#FEE2E2;--mata2:#15803D}
+body{background:linear-gradient(180deg,#FEE2E2 0%,#FFFBEB 100%)}
+.topo{background:#FEF2F2ee;border-bottom-color:#FECACA}
+.trilho{background:#FECACA}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #15803D33}
+.pizza{width:min(240px,62vw);height:auto}
+.pizza.peq{width:min(150px,33vw)}
+.pizza path.fatia{cursor:pointer;transition:filter .1s}
+.pizza path.fatia:hover{filter:brightness(1.06)}
+.barra-fr{width:min(420px,80vw);height:auto}
+.par{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap}
+.par>div{display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--titulo);font-weight:800;font-size:22px}
+.cont-fatias{font-family:var(--titulo);font-weight:800;font-size:20px;text-align:center;margin:4px 0 0}
+.opcoes.grade .op .fr{font-size:clamp(24px,4.4vw,30px)}
+.enunciado .fr{font-size:.95em}
+.etiqueta{display:inline-block;background:#FEF3C7;border:2px dashed #D97706;border-radius:12px;padding:4px 12px;font-family:var(--titulo);font-weight:800;font-size:24px;color:#9A3412}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · MATEMÁTICA</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>JOGO.TIPOS&&JOGO.TIPOS[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||it.dica||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   PIZZARIA DAS FRAÇÕES — Matemática · 3º ao 5º ano
+   MS.EF03MA09.s.09 metade, terça, quarta, quinta e décima parte
+   MS.EF04MA09.s.09 frações unitárias · MS.EF04MA10.s.10 decimais no dinheiro
+   MS.EF05MA03.s.03 representar frações · MS.EF05MA04.s.04 frações equivalentes
+   MS.EF05MA06.s.06 10%, 25%, 50%, 75% e 100%
+   ========================================================= */
+const B=()=>S.nivel==='b';
+const fr=(a,b)=>`<span class="fr"><i>${a}</i><i>${b}</i></span>`;
+const frT=(a,b)=>`${a}/${b}`;
+const NOMEPARTE={2:'metade',3:'terça parte',4:'quarta parte',5:'quinta parte',10:'décima parte'};
+const ORD={2:'meio',3:'terço',4:'quarto',5:'quinto',6:'sexto',7:'sétimo',8:'oitavo',9:'nono',10:'décimo',12:'doze avos'};
+const EXT=['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze'];
+const leitura=(a,b)=>b===12?`${EXT[a]} doze avos`:a===1?`um ${ORD[b]}`:`${EXT[a]} ${ORD[b]}s`;
+const SABORES=[['calabresa','#B91C1C'],['mussarela','#FACC15'],['pantaneira (com pacu!)','#EA580C'],['milho','#EAB308'],['palmito','#84CC16'],['chocolate','#7C2D12']];
+/* pizza SVG: n fatias, as k primeiras recheadas (ou as marcadas em sel) */
+function pizza(n,k,{sel=null,clic=false,cor='#DC2626',cls='pizza'}={}){
+  const cx=100,cy=100,r=86; let s=`<circle cx="${cx}" cy="${cy}" r="95" fill="#D97706"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="#FDE68A"/>`;
+  for(let i=0;i<n;i++){ const on=sel?sel[i]:i<k; const a0=i/n*2*Math.PI-Math.PI/2, a1=(i+1)/n*2*Math.PI-Math.PI/2;
+    const d=n===1?`M${cx-r} ${cy}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0`:`M${cx} ${cy}L${cx+r*Math.cos(a0)} ${cy+r*Math.sin(a0)}A${r} ${r} 0 ${a1-a0>Math.PI?1:0} 1 ${cx+r*Math.cos(a1)} ${cy+r*Math.sin(a1)}Z`;
+    s+=`<path class="${clic?'fatia':''}" ${clic?`data-x="${i}" role="button" aria-label="Fatia ${i+1}${on?', pintada':''}"`:''} d="${d}" fill="${on?cor:'#FEF3C7'}" stroke="#92400E" stroke-width="2.5"/>`;
+    if(on){ const am=(a0+a1)/2; [[.55,0],[.75,.18],[.75,-.18],[.35,.1]].forEach(([f,da])=>{ if(n>8&&f<.5) return; const t=am+da*(2*Math.PI/n); s+=`<circle cx="${cx+r*f*Math.cos(t)}" cy="${cy+r*f*Math.sin(t)}" r="${n>8?4:6}" fill="#fff" opacity=".55" pointer-events="none"/>`; }); }
+  }
+  return `<svg class="${cls}" viewBox="0 0 200 200" role="img" aria-label="Pizza em ${n} fatias">${s}</svg>`;
+}
+function barra(n,k,cor='#DC2626'){ const w=400/n; let s='';
+  for(let i=0;i<n;i++) s+=`<rect x="${4+i*w}" y="4" width="${w}" height="52" fill="${i<k?cor:'#FEF3C7'}" stroke="#92400E" stroke-width="2.5"/>`;
+  return `<svg class="barra-fr" viewBox="0 0 408 60" role="img" aria-label="Barra em ${n} partes">${s}</svg>`; }
+
+/* ---- 1. repartir ---- */
+const NOMES_=['Pedro','Ana','Kauã','Luana','Davi','Yara'];
+const COISAS=[['🧀','pães de queijo'],['🍪','biscoitos'],['🥟','pastéis'],['🍫','bombons'],['🥤','sucos']];
+function gerarPartes(){
+  const it=[];
+  for(let i=0;i<8;i++){ const c=pick(COISAS);
+    if(!B()||i<4){ const d=pick([2,2,3,4,5,10]), q=d===10?rnd(1,3):rnd(2,6), n=d*q;
+      const emj=n<=30?`<div class="vis"><div class="emojis">${Array.from({length:d},()=>`<span class="grupo">${c[0].repeat(q)}</span>`).join('')}</div></div>`:'';
+      if(i%2===0) it.push(mc({cat:'partes', grade:true, enun:`A pizzaria vai dividir <b>${n} ${c[1]}</b> igualmente entre <b>${d}</b> mesas. Quantos ficam em cada mesa?`, corpo:'',
+        x:`${n} ÷ ${d} = <b>${q}</b>. Cada mesa recebe a ${NOMEPARTE[d]} de ${n}.`, dica:`Divida ${n} em ${d} grupos iguais.`}, String(q), vizinhos(q,[1,-1,2,d,-2],1).map(String)));
+      else it.push(mc({cat:'partes', grade:true, enun:`Quanto é a <b>${NOMEPARTE[d]}</b> de ${n} ${c[1]}?`, corpo:emj,
+        x:`A ${NOMEPARTE[d]} é dividir por ${d}: ${n} ÷ ${d} = <b>${q}</b>.`, dica:`${NOMEPARTE[d][0].toUpperCase()+NOMEPARTE[d].slice(1)} quer dizer dividir em ${d} partes iguais.`}, String(q), vizinhos(q,[1,-1,2,q,-2],1).map(String)));
+    } else { const b=pick([3,4,5,6,8,10]), a=rnd(2,b-1), q=rnd(2,6), n=b*q;
+      it.push({tipo:'num', cat:'partes', enun:`Uma pizzaria fez <b>${n}</b> ${c[1]}. Já vendeu ${fr(a,b)} deles. Quantos ${c[1]} foram vendidos?`, fala:`Uma pizzaria fez ${n} ${c[1]}. Já vendeu ${leitura(a,b)} deles. Quantos foram vendidos?`,
+        resp:a*q, mostrar:String(a*q), x:`${fr(1,b)} de ${n} é ${n} ÷ ${b} = ${q}. Então ${fr(a,b)} é ${a} × ${q} = <b>${a*q}</b>.`, dica:`Primeiro ache ${fr(1,b)} (divida por ${b}); depois multiplique por ${a}.`});
+    }
+  }
+  return it;
+}
+/* ---- 2. ler frações ---- */
+function gerarLer(){
+  const it=[];
+  for(let i=0;i<8;i++){ const [sab,cor]=pick(SABORES);
+    const n=B()?pick([3,4,5,6,8,10,12]):pick([2,3,4,4,5,6,8]); const k=(!B()&&i<5)?1:rnd(1,n-1);
+    const usaBarra=i%3===2;
+    const certo=fr(k,n), errs=[fr(n,k),fr(k,n-k),fr(n-k,n),fr(k+1,n),fr(1,k+n)];
+    it.push(mc({cat:'ler', grade:true, html:true, enun:usaBarra?`Que fração da barra de chocolate foi comida?`:`Que fração da pizza é de <b>${sab}</b>?`, fala:usaBarra?'Que fração da barra de chocolate foi comida?':`Que fração da pizza é de ${sab}?`,
+      corpo:`<div class="vis">${usaBarra?barra(n,k,'#7C2D12'):pizza(n,k,{cor})}</div>`,
+      x:`Cortamos em <b>${n}</b> partes iguais (o de baixo, o <b>denominador</b>) e ${usaBarra?'foram comidas':'são de '+sab} <b>${k}</b> (o de cima, o <b>numerador</b>): ${certo}, lê-se “${leitura(k,n)}”.`,
+      dica:'Embaixo vai o total de partes iguais; em cima, quantas partes estamos contando.'}, certo, errs));
+  }
+  return it;
+}
+/* ---- 3. montar o pedido (pintar) ---- */
+function gerarPintar(){
+  const it=[];
+  const casos=B()?[[1,2,8],[3,4,8],[2,3,6],[1,4,8],[3,5,10],[5,6,12],[2,5,10],[3,8,8]]:[[1,2,2],[1,4,4],[1,3,3],[2,4,4],[3,4,4],[1,2,4],[1,5,5],[2,6,6]];
+  embaralhar(casos).forEach(([a,b,n])=>{ const [sab,cor]=pick(SABORES); const alvo=a*n/b;
+    it.push({tipo:'pintar', cat:'representar', enun:`Monte o pedido: ${fr(a,b)} da pizza de <b>${sab}</b>. Toque nas fatias para colocar o recheio.`, fala:`Monte o pedido: ${leitura(a,b)} da pizza de ${sab}.`,
+      n, a, b, alvo, cor, sel:Array(n).fill(false), mostrar:`${alvo} fatia${alvo>1?'s':''}`,
+      x:n===b?`A pizza tem ${b} fatias e pintamos ${a}: ${fr(a,b)}.`:`A pizza tem ${n} fatias. ${fr(1,b)} = ${n/b} fatia${n/b>1?'s':''}, então ${fr(a,b)} = <b>${alvo} fatias</b>. Repare: ${fr(a,b)} = ${fr(alvo,n)}!`});
+  });
+  return it;
+}
+const PINTAR={
+  desenhar(it){ const c=it.sel.filter(Boolean).length;
+    return `<div class="vis" style="flex-direction:column">${pizza(it.n,0,{sel:it.sel,clic:!it.feito,cor:it.cor})}<p class="cont-fatias">${c} de ${it.n} fatias com recheio</p></div>
+      ${it.feito?'':'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Entregar o pedido 🛵</button></div>'}`; },
+  acao(it,x){ if(x==='limpar') it.sel=it.sel.map(()=>false); else it.sel[+x]=!it.sel[+x]; som('bip'); desenhar(); },
+  conferir(it){ const c=it.sel.filter(Boolean).length;
+    responder(c===it.alvo, it.n===it.b?`O pedido é ${fr(it.a,it.b)}: ${it.a} de ${it.b} fatias. Você pintou ${c}.`:`Esta pizza tem ${it.n} fatias, não ${it.b}. Descubra quantas fatias valem ${fr(1,it.b)} (${it.n} ÷ ${it.b}) e multiplique por ${it.a}. Você pintou ${c}.`); },
+  revelar(it){ it.sel=it.sel.map((_,i)=>i<it.alvo); },
+  auto(it){ PINTAR.revelar(it); PINTAR.conferir(it); }
+};
+/* ---- 4. comparar e equivalentes ---- */
+function gerarComparar(){
+  const it=[];
+  for(let i=0;i<8;i++){ const t=B()?i%4:i%2;
+    if(t===0){ let [b1,b2]=embaralhar([2,3,4,5,6,8,10]).slice(0,2); const maior=b1<b2?1:2;
+      it.push(mc({cat:'comparar', grandes:true, html:true, enun:`Duas pizzas do mesmo tamanho. Qual pedaço é <b>maior</b>: ${fr(1,b1)} ou ${fr(1,b2)}?`, fala:`Qual pedaço é maior: ${leitura(1,b1)} ou ${leitura(1,b2)}?`,
+        corpo:`<div class="vis"><div class="par"><div>${pizza(b1,1,{cls:'pizza peq'})}${fr(1,b1)}</div><div>${pizza(b2,1,{cls:'pizza peq'})}${fr(1,b2)}</div></div></div>`,
+        x:`${fr(1,Math.min(b1,b2))} é maior. Quanto <b>mais</b> partes a pizza é cortada, <b>menor</b> fica cada pedaço.`, dica:'Olhe as pizzas: em quantas partes cada uma foi cortada?'},
+        `${fr(1,Math.min(b1,b2))}`, [`${fr(1,Math.max(b1,b2))}`,'Os dois são iguais']));
+    } else if(t===1){ const [a,b,m]=pick([[1,2,2],[1,2,3],[1,3,2],[1,4,2],[2,3,2],[3,4,2],[1,2,4],[2,5,2]]); const iguais=Math.random()<.6;
+      const c=a*m+(iguais?0:1), d=b*m;
+      it.push(mc({cat:'comparar', grandes:true, html:true, enun:`${fr(a,b)} e ${fr(c,d)} representam a <b>mesma quantidade</b> de pizza?`, fala:`${leitura(a,b)} e ${leitura(c,d)} representam a mesma quantidade de pizza?`,
+        corpo:`<div class="vis"><div class="par"><div>${pizza(b,a,{cls:'pizza peq'})}${fr(a,b)}</div><div>${pizza(d,c,{cls:'pizza peq',cor:'#EA580C'})}${fr(c,d)}</div></div></div>`,
+        x:iguais?`Sim! São <b>frações equivalentes</b>: multiplicando em cima e embaixo por ${m}, ${fr(a,b)} vira ${fr(c,d)}.`:`Não. ${fr(a,b)} = ${fr(a*m,d)}, e ${fr(c,d)} tem uma fatia a mais.`, dica:'Compare a parte pintada das duas pizzas.'},
+        iguais?'Sim, é a mesma quantidade':'Não, são quantidades diferentes', [iguais?'Não, são quantidades diferentes':'Sim, é a mesma quantidade']));
+    } else if(t===2){ const [a,b]=pick([[1,2],[1,3],[2,3],[1,4],[3,4],[2,5],[1,5],[3,5]]), m=pick([2,3,4,5]);
+      it.push({tipo:'num', cat:'comparar', enun:`Complete para as frações ficarem <b>equivalentes</b>: ${fr(a,b)} = ${fr('?',b*m)}`, fala:`Complete: ${leitura(a,b)} é igual a quantos ${b*m===12?'doze avos':ORD[b*m]?ORD[b*m]+'s':'partes de '+b*m}?`,
+        resp:a*m, mostrar:String(a*m), x:`O denominador foi multiplicado por ${m} (${b} × ${m} = ${b*m}). Fazemos o mesmo em cima: ${a} × ${m} = <b>${a*m}</b>.`, dica:`Por quanto o ${b} foi multiplicado para virar ${b*m}? Faça o mesmo com o numerador.`});
+    } else { const b=pick([5,6,8,10]); const [x,y]=embaralhar([1,2,3,4,5,6,7].filter(v=>v<b)).slice(0,2);
+      it.push(mc({cat:'comparar', grandes:true, html:true, enun:`Qual fração é <b>maior</b>: ${fr(x,b)} ou ${fr(y,b)}?`, fala:`Qual fração é maior: ${leitura(x,b)} ou ${leitura(y,b)}?`,
+        corpo:`<div class="vis" style="flex-direction:column">${barra(b,x,'#DC2626')}${barra(b,y,'#EA580C')}</div>`,
+        x:`${fr(Math.max(x,y),b)} é maior. Com o mesmo denominador, ganha quem tem o <b>maior numerador</b>.`, dica:'As duas barras têm partes do mesmo tamanho. Qual tem mais partes pintadas?'}, fr(Math.max(x,y),b), [fr(Math.min(x,y),b),'As duas são iguais']));
+    }
+  }
+  return it;
+}
+/* ---- 5. porcentagem e dinheiro ---- */
+const PCT={10:[1,10,'a décima parte'],25:[1,4,'a quarta parte'],50:[1,2,'a metade'],75:[3,4,'três quartos'],100:[1,1,'o inteiro']};
+function gerarPorcentagem(){
+  const it=[]; const lista=B()?[10,25,50,75,100]:[50,100,25];
+  for(let i=0;i<8;i++){ const p=pick(lista), [a,b,nome]=PCT[p]; const t=i%3;
+    if(t===0){ it.push(mc({cat:'porcentagem', grade:true, html:true, enun:`<b>${p}%</b> da pizza é a mesma coisa que…`, fala:`${p} por cento da pizza é a mesma coisa que…`,
+      x:`${p}% = ${p} de cada 100 = ${b===1?'a pizza inteira':fr(a,b)}: ${nome}.`, dica:'100% é a pizza inteira. 50% é a metade.'},
+      b===1?'a pizza inteira':fr(a,b), Object.keys(PCT).filter(q=>+q!==p).map(q=>PCT[q][1]===1?'a pizza inteira':fr(PCT[q][0],PCT[q][1]))));
+    } else if(t===1){ const preco=pick(p===10?[30,40,50,60,70]:p===75?[40,60,80]:[20,24,36,40,48,60]);
+      const desc=preco*p/100;
+      if(p===100){ i--; continue; }
+      it.push({tipo:'num', cat:'porcentagem', enun:`A pizza custa <b>${real(preco)}</b>. Na promoção de hoje, ela tem <b>${p}% de desconto</b>. De quanto é o desconto?`, fala:`A pizza custa ${preco} reais. Na promoção, tem ${p} por cento de desconto. De quanto é o desconto?`,
+        corpo:`<div class="vis"><span class="etiqueta">🍕 ${real(preco)} · −${p}%</span></div>`, antes:'R$', resp:desc, mostrar:real(desc),
+        x:`${p}% é ${nome}: ${p===75?`${preco} ÷ 4 × 3`:`${preco} ÷ ${b}`} = <b>${real(desc)}</b>. A pizza sai por ${real(preco-desc)}.`, dica:`${p}% é ${nome}. Divida o preço ${p===75?'por 4 e multiplique por 3':'por '+b}.`});
+    } else {
+      if(B()){ const v=pick([[0.5,'50 centavos','metade de 1 real'],[0.25,'25 centavos','a quarta parte de 1 real'],[0.1,'10 centavos','a décima parte de 1 real'],[0.75,'75 centavos','três quartos de 1 real']]);
+        it.push(mc({cat:'porcentagem', grandes:true, enun:`O troco foi de <b>${v[1]}</b>. Como se escreve esse valor em reais?`, x:`${v[1]} = <b>${real(v[0])}</b>, que é ${v[2]}. A vírgula separa os reais dos centavos: 1 real = 100 centavos.`, dica:'1 real tem 100 centavos. Os centavos ficam depois da vírgula.'},
+          real(v[0]), [real(v[0]*10), 'R$ '+String(v[0]*100)+',00', real(v[0]/10), real(1-v[0]+0.05)]));
+      } else { const n=pick([4,6,8,10,12]), pp=n%4===0?pick([25,50,100]):pick([50,100]), q=n*pp/100, nome=pick(NOMES_);
+        it.push(mc({cat:'porcentagem', grade:true, enun:`Uma pizza tem ${n} fatias. ${nome} comeu <b>${pp}%</b> da pizza. Quantas fatias comeu?`, fala:`Uma pizza tem ${n} fatias. ${nome} comeu ${pp} por cento da pizza. Quantas fatias comeu?`,
+          corpo:`<div class="vis">${pizza(n,0)}</div>`, x:`${pp}% é ${PCT[pp][2]}. ${pp===100?`A pizza toda: ${n} fatias`:`${n} ÷ ${PCT[pp][1]} = <b>${q}</b> fatia${q>1?'s':''}`}.`, dica:'50% é a metade, 25% é a quarta parte e 100% é a pizza inteira.'}, String(q), [String(n/2+1),String(pp),String(n),String(n/2),String(n/4+1)]));
+      }
+    }
+  }
+  return it;
+}
+
+const JOGO={
+  NOME:'Pizzaria das Frações', CHAVE:'pizzariaFracoes.v1', FALA:true,
+  NIVEIS:[{k:'a',n:'3º e 4º ano',d:'metade, terço, quarto e frações unitárias'},{k:'b',n:'5º ano',d:'equivalentes, fração de quantidade e %'}],
+  TXT:{missao:'Pedido',missoes:'Pedidos',mapa:'Pedidos da pizzaria',entrar:'Abrir a pizzaria 🍕',icMapa:'🍕',valendo:'Mãos à massa! 🍕',fim:'Pedido entregue! 🛵'},
+  PATENTES:[[0,'🧑‍🍳 Ajudante de cozinha'],[5,'🍕 Pizzaiolo'],[10,'⭐ Pizzaiolo chefe'],[14,'🏆 Mestre das frações']],
+  CATS:{partes:'Metade, terça e quarta parte (MS.EF03MA09)',ler:'Ler frações (MS.EF04MA09, MS.EF05MA03)',representar:'Representar frações (MS.EF05MA03)',comparar:'Comparar e equivalentes (MS.EF05MA04)',porcentagem:'Porcentagem e centavos (MS.EF05MA06, MS.EF04MA10)'},
+  HOME:{h1:'Pizzaria das <span>Frações</span>', turma:'ex.: 4º A',
+    lead:'Na pizzaria, tudo é dividido em partes iguais! Reparta os pedidos, leia e monte frações, descubra frações equivalentes e calcule os descontos da promoção.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:14px">${pizza(8,3,{})}<p style="font-family:var(--titulo);font-weight:800;font-size:22px;margin:6px 0 0">${fr(3,8)} de calabresa</p></div>`,
+    info:[['5','tipos de pedido'],['2','níveis'],['🔊','leitura em voz alta']],
+    rodape:'Matemática · 3º ao 5º ano · Habilidades <b>MS.EF03MA09</b>, <b>MS.EF04MA09</b>, <b>MS.EF04MA10</b>, <b>MS.EF05MA03</b>, <b>MS.EF05MA04</b> e <b>MS.EF05MA06</b>'},
+  AJUDA:['🎚️ Escolha o nível na tela inicial: <b>3º e 4º ano</b> ou <b>5º ano</b>.','🍕 Em uma fração, o número de baixo (denominador) diz em quantas partes iguais o inteiro foi dividido. O de cima (numerador) diz quantas partes estamos contando.','👆 No pedido “Monte o pedido”, toque nas fatias para colocar ou tirar o recheio.','🔊 Toque no alto-falante para ouvir a pergunta.','💡 Professor(a): as perguntas mudam a cada partida.'],
+  MISSOES:[
+    {id:'m1', titulo:'Reparta igualmente', ic:'🧀', hab:'MS.EF03MA09.s.09', desc:'Metade, terça, quarta, quinta e décima parte de uma quantidade.', gerar:gerarPartes,
+      intro:'<p>Repartir <b>igualmente</b> é dividir: a <b>metade</b> é dividir por 2, a <b>terça parte</b> por 3, a <b>quarta parte</b> por 4, a <b>quinta parte</b> por 5 e a <b>décima parte</b> por 10.</p>'},
+    {id:'m2', titulo:'Que fração é essa?', ic:'🔍', hab:'MS.EF04MA09.s.09 · MS.EF05MA03.s.03', desc:'Leia a fração das pizzas e das barras de chocolate.', gerar:gerarLer,
+      intro:`<p>Em ${fr(3,8)}, o <b>8</b> diz que a pizza foi cortada em 8 partes iguais (denominador) e o <b>3</b> diz quantas partes estamos contando (numerador).</p>`},
+    {id:'m3', titulo:'Monte o pedido', ic:'👆', hab:'MS.EF05MA03.s.03', desc:'Toque nas fatias para montar a fração pedida.', gerar:gerarPintar,
+      intro:'<p>Toque nas fatias para colocar o recheio. Atenção: às vezes a pizza tem <b>mais fatias</b> do que o denominador. Aí é preciso pensar um pouquinho!</p>'},
+    {id:'m4', titulo:'Qual é maior?', ic:'⚖️', hab:'MS.EF05MA04.s.04', desc:'Compare frações e descubra frações equivalentes.', gerar:gerarComparar,
+      intro:`<p>Frações <b>equivalentes</b> representam a mesma quantidade: ${fr(1,2)} = ${fr(2,4)} = ${fr(4,8)}. E quanto mais partes, menor é cada pedaço!</p>`},
+    {id:'m5', titulo:'Promoção da pizzaria', ic:'🏷️', hab:'MS.EF05MA06.s.06 · MS.EF04MA10.s.10', desc:'50% é a metade! Porcentagens, descontos e centavos.', gerar:gerarPorcentagem,
+      intro:`<p><b>100%</b> é o inteiro, <b>50%</b> é a metade (${fr(1,2)}), <b>25%</b> é a quarta parte (${fr(1,4)}), <b>75%</b> são três quartos (${fr(3,4)}) e <b>10%</b> é a décima parte (${fr(1,10)}).</p>`}
+  ],
+  TIPOS:{pintar:PINTAR}
+};
+iniciarJogo();
+</script>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sobe e Desce dos Inteiros</title>
+<meta name="description" content="Jogo de Matemática para o 7º ano: números inteiros na reta numérica, comparação e opostos, termômetro, saldo e elevador, e regras de sinais.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+
+:root{--agua:#155E75;--agua2:#0891B2;--agua-claro:#CFFAFE;--mata2:#7C3AED}
+body{background:linear-gradient(180deg,#CFFAFE 0%,#FEF3C7 100%)}
+.topo{background:#ECFEFFee;border-bottom-color:#A5F3FC}
+.trilho{background:#A5F3FC}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #7C3AED33}
+.reta{width:100%;max-width:640px;height:auto;touch-action:manipulation}
+.reta .alvo{cursor:pointer}
+.reta-scroll{overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.reta-scroll .reta{min-width:620px;max-width:none}
+.dica-rolar{font-size:13px;color:var(--suave);text-align:center;width:100%}
+@media (min-width:700px){.dica-rolar{display:none}}
+.reta .alvo:hover rect{fill:#CFFAFE}
+.termo{width:min(150px,36vw);height:auto}
+.conta{font-family:var(--titulo);font-weight:800;font-size:clamp(30px,7vw,46px)}
+.cena-ctx{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+.cena-ctx .em{font-size:56px;line-height:1}
+.pos{color:#B91C1C}.neg{color:#1D4ED8}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · MATEMÁTICA</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>JOGO.TIPOS&&JOGO.TIPOS[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||it.dica||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   SOBE E DESCE DOS INTEIROS — Matemática · 7º ano
+   MS.EF07MA03.s.03 comparar, ordenar, opostos e reta numérica
+   MS.EF07MA04.s.04 problemas com adição, subtração, multiplicação e divisão de inteiros
+   MS.EF07MA10.s.10 racionais na reta numérica
+   ========================================================= */
+const sn=n=>n>0?'+'+n:nf(n);                // com sinal: +3, −5
+const par=n=>n<0?`(${nf(n)})`:String(n);     // entre parênteses se negativo
+const cor=n=>`<span class="${n<0?'neg':n>0?'pos':''}">${nf(n)}</span>`;
+function reta(min,max,{sel=null,clic=false,marcas={},passo=1,W=640}={}){
+  const x0=24, x1=W-24, X=v=>x0+(v-min)/(max-min)*(x1-x0); let s=`<line x1="${x0-14}" y1="60" x2="${x1+14}" y2="60" stroke="#1E293B" stroke-width="3"/><path d="M${x1+18} 60l-12 -7v14z" fill="#1E293B"/><path d="M${x0-18} 60l12 -7v14z" fill="#1E293B"/>`;
+  for(let v=min; v<=max+1e-9; v+=passo/2){ const int=Math.abs(v-Math.round(v/passo)*passo)<1e-9; s+=`<line x1="${X(v)}" y1="${int?48:53}" x2="${X(v)}" y2="${int?72:67}" stroke="#1E293B" stroke-width="${int?2.5:1.5}"/>`;
+    if(int) s+=`<text x="${X(v)}" y="96" text-anchor="middle" font-size="${max-min>16?15:18}" font-weight="700" font-family="Baloo 2,sans-serif" fill="${v<0?'#1D4ED8':v>0?'#B91C1C':'#1E293B'}">${nf(v)}</text>`; }
+  if(clic) for(let v=min; v<=max; v++) s+=`<g class="alvo" data-x="${v}" role="button" aria-label="${nf(v)}"><rect x="${X(v)-14}" y="28" width="28" height="78" rx="8" fill="${sel===v?'#FDE68A':'transparent'}"/>${sel===v?`<circle cx="${X(v)}" cy="60" r="9" fill="#F59E0B" stroke="#78350F" stroke-width="2"/>`:''}</g>`;
+  Object.entries(marcas).forEach(([l,v])=>{ s+=`<circle cx="${X(v)}" cy="60" r="8" fill="#7C3AED"/><text x="${X(v)}" y="34" text-anchor="middle" font-size="20" font-weight="800" font-family="Baloo 2,sans-serif" fill="#7C3AED">${l}</text>`; });
+  return `<svg class="reta" viewBox="0 0 ${W} 110" role="img" aria-label="Reta numérica de ${min} a ${max}">${s}</svg>`;
+}
+function termometro(t){ const Y=v=>250-(v+20)*3.5; let s='';
+  for(let v=-20; v<=40; v+=10){ s+=`<line x1="62" y1="${Y(v)}" x2="76" y2="${Y(v)}" stroke="#334155" stroke-width="2"/><text x="82" y="${Y(v)+5}" font-size="14" font-weight="700" font-family="Baloo 2,sans-serif" fill="${v<0?'#1D4ED8':v>0?'#B91C1C':'#1E293B'}">${nf(v)}</text>`; }
+  for(let v=-20; v<=40; v+=2) if(v%10) s+=`<line x1="62" y1="${Y(v)}" x2="70" y2="${Y(v)}" stroke="#94A3B8" stroke-width="1.5"/>`;
+  return `<svg class="termo" viewBox="0 0 130 300" role="img" aria-label="Termômetro marcando ${nf(t)} graus"><rect x="40" y="20" width="22" height="240" rx="11" fill="#fff" stroke="#334155" stroke-width="3"/><circle cx="51" cy="270" r="20" fill="#DC2626" stroke="#334155" stroke-width="3"/><rect x="45" y="${Y(t)}" width="12" height="${270-Y(t)}" fill="#DC2626"/>${s}<text x="86" y="290" text-anchor="start" font-size="15" font-weight="800" font-family="Baloo 2,sans-serif">°C</text></svg>`; }
+
+/* ---- 1. reta ---- */
+function gerarReta(){
+  const it=[]; const vistos=new Set();
+  for(let i=0;i<6;i++){ let v; do{ v=rnd(-9,9); }while(v===0||vistos.has(v)||(i<3&&v>0)); vistos.add(v);
+    it.push({tipo:'reta', cat:'reta', enun:`Toque na reta para marcar o número <b>${nf(v)}</b>.`, v, sel:null, mostrar:nf(v),
+      x:`${nf(v)} fica ${Math.abs(v)} ${Math.abs(v)===1?'unidade':'unidades'} ${v<0?'à <b>esquerda</b>':'à <b>direita</b>'} do zero.${v<0?' Os negativos ficam à esquerda do zero.':''}`});
+  }
+  // racionais
+  const casos=embaralhar([[-1.5,'−1,5'],[-2.5,'−2,5'],[0.5,'0,5'],[-0.5,'−0,5'],[1.5,'1,5'],[-3.5,'−3,5']]).slice(0,2);
+  casos.forEach(([v,t])=>{ const letras=embaralhar(['A','B','C','D']); const vals=embaralhar([v,-v,v+1,v-1].filter((x,k,a)=>a.indexOf(x)===k&&Math.abs(x)<=4)).slice(0,4);
+    const marcas={}; vals.forEach((x,k)=>marcas[letras[k]]=x); const certo=letras[vals.indexOf(v)];
+    it.push(mc({cat:'reta', grade:true, enun:`Qual ponto representa o número <b>${t}</b>?`, corpo:`<div class="vis">${reta(-4,4,{marcas,W:380})}</div>`,
+      x:`${t} fica exatamente na metade entre ${nf(Math.floor(v))} e ${nf(Math.ceil(v))}: é o ponto <b>${certo}</b>.`, dica:'Cada risquinho pequeno marca a metade entre dois inteiros. Cuidado com o sinal!'}, certo, letras.filter(l=>l!==certo&&marcas[l]!=null)));
+  });
+  return it;
+}
+const RETA={
+  desenhar(it){ return `<div class="vis"><div class="reta-scroll">${reta(-10,10,{sel:it.feito?it.v:it.sel,clic:!it.feito})}</div><span class="dica-rolar">↔ arraste a reta para os lados</span></div>${it.feito?'':`<div class="seguir"><span class="mini" style="margin-right:auto;align-self:center">${it.sel==null?'Nenhum ponto marcado':'Marcado: '+nf(it.sel)}</span><button class="btn agua" data-acao="conferir">Conferir</button></div>`}`; },
+  depois(it){ const r=$('.reta-scroll'); if(r) r.scrollLeft=it.scroll!=null?it.scroll:(r.scrollWidth-r.clientWidth)/2; },
+  acao(it,x){ const r=$('.reta-scroll'); if(r) it.scroll=r.scrollLeft; it.sel=+x; som('bip'); desenhar(); },
+  conferir(it){ if(it.sel==null) return toast('Toque em um ponto da reta.');
+    responder(it.sel===it.v, it.sel===-it.v?`Você marcou ${nf(it.sel)}, o <b>oposto</b> de ${nf(it.v)}. Confira o lado do zero.`:'Conte a partir do zero: negativos para a esquerda, positivos para a direita.'); },
+  revelar(it){ it.sel=it.v; }, auto(it){ it.sel=it.v; RETA.conferir(it); }
+};
+/* ---- 2. comparar ---- */
+function gerarComparar(){
+  const it=[];
+  for(let i=0;i<8;i++){ const t=i%4;
+    if(t===0){ let a=rnd(-15,-1), b=rnd(-15,8); if(a===b) b=a+3; const m=Math.max(a,b);
+      it.push(mc({cat:'comparar', grade:true, enun:`Qual número é <b>maior</b>?`, corpo:`<div class="vis"><span class="conta">${cor(a)} &nbsp;ou&nbsp; ${cor(b)}</span></div>`,
+        x:`${nf(m)} > ${nf(Math.min(a,b))}. Na reta, o maior fica mais à <b>direita</b>.${a<0&&b<0?' Entre negativos, o maior é o que está mais perto do zero.':''}`, dica:'Imagine os dois na reta: quem está mais à direita é o maior.'}, nf(m), [nf(Math.min(a,b))]));
+    } else if(t===1){ const v=rnd(2,25)*(Math.random()<.5?-1:1);
+      it.push(mc({cat:'comparar', grade:true, enun:`Qual é o <b>oposto</b> (simétrico) de ${nf(v)}?`, x:`O oposto de ${nf(v)} é <b>${nf(-v)}</b>: os dois ficam à mesma distância do zero, um de cada lado. ${nf(v)} + ${par(-v)} = 0.`, dica:'O oposto tem a mesma distância até o zero, do outro lado.'}, nf(-v), [nf(v), '0', nf(-v+1), nf(-v-1)]));
+    } else if(t===2){ const l=embaralhar([rnd(-12,-7),rnd(-6,-2),0,rnd(1,5),rnd(-1,-1)]).slice(0,4); const cres=l.slice().sort((a,b)=>a-b);
+      const fmt=a=>a.map(nf).join(' ; ');
+      it.push(mc({cat:'comparar', grandes:true, enun:`Qual lista está em <b>ordem crescente</b> (do menor para o maior)?`, x:`${fmt(cres)}. O menor é o negativo mais distante do zero.`, dica:'Comece pelo negativo mais distante do zero.'},
+        fmt(cres), [fmt(cres.slice().reverse()), fmt(cres.slice().sort((a,b)=>Math.abs(a)-Math.abs(b))), fmt([cres[1],cres[0],cres[2],cres[3]])]));
+    } else { const v=-rnd(3,30);
+      it.push(mc({cat:'comparar', grade:true, enun:`Qual é a <b>distância até o zero</b> (o módulo) de ${nf(v)}? Ou seja, |${nf(v)}| = ?`, x:`|${nf(v)}| = <b>${-v}</b>. O módulo é a distância até o zero, e distância nunca é negativa.`, dica:'Distância não tem sinal negativo.'}, String(-v), [nf(v), '0', String(-v+1)]));
+    }
+  }
+  return it;
+}
+/* ---- 3. termômetro ---- */
+const LUGARES=[['uma madrugada de inverno no sul de MS, com geada','❄️'],['uma cidade da Argentina no inverno','🧣'],['o alto de uma montanha','🏔️'],['um freezer de sorvete','🍨'],['uma câmara fria de um frigorífico','🥩'],['Campo Grande numa manhã fria','🌬️']];
+function gerarTermo(){
+  const it=[];
+  for(let i=0;i<8;i++){ const [lug,e]=pick(LUGARES);
+    if(i%3===2){ const a=rnd(-12,-1), b=rnd(1,30), d=b-a;
+      it.push({tipo:'num', cat:'somar', sinal:true, enun:`${e} Às 6 h, a temperatura em ${lug} era <b>${nf(a)} °C</b>. Às 14 h, chegou a <b>${nf(b)} °C</b>. Quantos graus a temperatura <b>subiu</b>?`, resp:d, un:'°C', mostrar:d+' °C',
+        corpo:`<div class="vis"><div class="cena-ctx">${termometro(a)}<span class="conta">➜</span>${termometro(b)}</div></div>`,
+        x:`De ${nf(a)} até 0 são ${-a} graus; de 0 até ${b} são mais ${b}. Total: ${b} − ${par(a)} = ${b} + ${-a} = <b>${d} °C</b>.`, dica:'Conte em duas partes: até o zero e depois do zero.'});
+    } else { const a=rnd(-10,15), d=rnd(3,15)*(Math.random()<.65?-1:1), r=a+d; if(r<-20||r>40){ i--; continue; }
+      it.push({tipo:'num', cat:'somar', sinal:true, enun:`${e} Em ${lug}, o termômetro marcava <b>${nf(a)} °C</b>. Depois, a temperatura ${d<0?'<b>caiu</b>':'<b>subiu</b>'} <b>${Math.abs(d)} °C</b>. Qual é a nova temperatura?`, resp:r, un:'°C', mostrar:nf(r)+' °C',
+        corpo:`<div class="vis">${termometro(a)}</div>`,
+        x:`${nf(a)} ${d<0?'−':'+'} ${Math.abs(d)} = <b>${nf(r)} °C</b>.${a>0&&r<0?` Até o zero caem ${a} graus; faltam mais ${-r}.`:''}`, dica:`${d<0?'Caiu: desça':'Subiu: suba'} ${Math.abs(d)} graus no termômetro. Use o botão ± se o resultado for negativo.`});
+    }
+  }
+  return it;
+}
+/* ---- 4. saldo, elevador, altitude ---- */
+function gerarProblemas(){
+  const gens=[
+    ()=>{ const s=rnd(-80,120)*1, g=rnd(50,200); const r=s-g; return {e:'💳',t:`O saldo da conta de Júlia era <b>${real(s).replace('R$ -','−R$ ')}</b>. Ela pagou uma conta de <b>${real(g)}</b>. Qual é o novo saldo?`, r, antes:'R$', x:`${nf(s)} − ${g} = <b>${nf(r)}</b>. Saldo negativo quer dizer que a conta ficou devendo.`}; },
+    ()=>{ const a=rnd(-3,8), sub=rnd(4,10); const r=a-sub; return {e:'🛗',t:`O elevador estava no andar <b>${nf(a)}</b> e desceu <b>${sub}</b> andares. Em que andar parou? (O térreo é o 0 e os subsolos são negativos.)`, r, x:`${nf(a)} − ${sub} = <b>${nf(r)}</b>${r<0?' (subsolo '+(-r)+')':''}.`}; },
+    ()=>{ const p=-rnd(5,30), s=rnd(2,15); const r=p+s; return {e:'🤿',t:`Um mergulhador estava a <b>${-p} m abaixo</b> do nível do mar (${nf(p)} m) e subiu <b>${s} m</b>. Em que altitude ele está agora?`, r, un:'m', x:`${nf(p)} + ${s} = <b>${nf(r)}</b> m.`}; },
+    ()=>{ const gp=rnd(3,12), gc=rnd(5,18); const r=gp-gc; return {e:'⚽',t:`No campeonato estadual, um time fez <b>${gp} gols</b> e sofreu <b>${gc} gols</b>. Qual é o saldo de gols?`, r, x:`Saldo = gols feitos − gols sofridos = ${gp} − ${gc} = <b>${nf(r)}</b>.`}; },
+    ()=>{ const q=rnd(2,5); const ini=rnd(1,4)*10, r=ini-q*15; return {e:'🛶',t:`A régua de Ladário mede o nível do Rio Paraguai. Numa seca (exemplo), o nível estava em <b>${ini} cm</b> e baixou <b>15 cm</b> por semana durante <b>${q} semanas</b>. Qual foi o nível final?`, r, un:'cm', x:`${ini} − ${q} × 15 = ${ini} − ${q*15} = <b>${nf(r)}</b> cm.${r<0?' Abaixo do zero da régua, o que já aconteceu em secas fortes do Pantanal.':''}`}; }
+  ];
+  return embaralhar([0,1,2,3,4,0,1,3]).map(k=>{ const g=gens[k](); return {tipo:'num', cat:'problemas', sinal:true, enun:`${g.e} ${g.t}`, resp:g.r, antes:g.antes, un:g.un, mostrar:(g.antes?'R$ ':'')+nf(g.r)+(g.un?' '+g.un:''), x:g.x, dica:'Escreva a conta com os sinais e pense na reta numérica. Use ± para resultado negativo.'}; });
+}
+/* ---- 5. sinais ---- */
+function gerarSinais(){
+  const it=[];
+  for(let i=0;i<8;i++){ const a=rnd(2,9)*(Math.random()<.6?-1:1), b=rnd(2,9)*(Math.random()<.6?-1:1); const t=i%4;
+    if(t===0||t===2){ const r=a*b; it.push({tipo:'num', cat:'sinais', sinal:true, enun:'Calcule:', corpo:`<div class="vis"><span class="conta">${par(a)} × ${par(b)}</span></div>`, resp:r, mostrar:nf(r),
+      x:`${Math.abs(a)} × ${Math.abs(b)} = ${Math.abs(r)}. Sinais ${a<0===b<0?'<b>iguais</b> dão resultado <b>positivo</b>':'<b>diferentes</b> dão resultado <b>negativo</b>'}: <b>${nf(r)}</b>.`, dica:'Multiplique os números e depois decida o sinal: sinais iguais → +; diferentes → −.'}); }
+    else if(t===1){ const r=a, d=b*a; it.push({tipo:'num', cat:'sinais', sinal:true, enun:'Calcule:', corpo:`<div class="vis"><span class="conta">${par(d)} ÷ ${par(b)}</span></div>`, resp:r, mostrar:nf(r),
+      x:`${Math.abs(d)} ÷ ${Math.abs(b)} = ${Math.abs(r)}. Na divisão vale a mesma regra: sinais ${d<0===b<0?'iguais → +':'diferentes → −'}. Resultado: <b>${nf(r)}</b>.`, dica:'Na divisão, a regra dos sinais é a mesma da multiplicação.'}); }
+    else { const n=rnd(2,5), v=-rnd(2,8);
+      it.push({tipo:'num', cat:'sinais', sinal:true, enun:`Joana gastou <b>R$ ${-v},00</b> por dia durante <b>${n} dias</b>. Que número inteiro representa a variação do dinheiro dela?`, resp:n*v, mostrar:nf(n*v),
+        x:`${n} × ${par(v)} = <b>${nf(n*v)}</b>. Gastar é uma variação negativa.`, dica:'Cada gasto é negativo. Multiplique pelo número de dias.'}); }
+  }
+  return it;
+}
+
+const JOGO={
+  NOME:'Sobe e Desce dos Inteiros', CHAVE:'sobeDesceInteiros.v1',
+  PATENTES:[[0,'🌡️ Aprendiz'],[5,'🧭 Explorador dos negativos'],[10,'🤿 Mergulhador'],[14,'🏆 Mestre dos inteiros']],
+  CATS:{reta:'Reta numérica (MS.EF07MA03, MS.EF07MA10)',comparar:'Comparar, opostos e módulo (MS.EF07MA03)',somar:'Temperaturas: somar e subtrair (MS.EF07MA04)',problemas:'Problemas com inteiros (MS.EF07MA04)',sinais:'Multiplicação e divisão (MS.EF07MA04)'},
+  HOME:{h1:'Sobe e Desce dos <span>Inteiros</span>', turma:'ex.: 7º A',
+    lead:'Abaixo de zero também tem número! Marque pontos na reta, compare negativos, acompanhe o termômetro na geada, controle o saldo, desça ao subsolo e domine a regra dos sinais.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:14px;gap:6px">${reta(-5,5,{marcas:{'A':-3,'B':2},W:420})}<div class="cena-ctx"><span class="em">🌡️</span><span class="conta"><span class="neg">−3</span> &lt; <span class="pos">2</span></span><span class="em">🛗</span></div></div>`,
+    info:[['5','missões'],['∞','questões sorteadas'],['±','botão de sinal no celular']],
+    rodape:'Matemática · 7º ano · Habilidades <b>MS.EF07MA03</b>, <b>MS.EF07MA04</b> e <b>MS.EF07MA10</b>'},
+  AJUDA:['📏 Na reta numérica, os <b>negativos</b> ficam à esquerda do zero e os <b>positivos</b>, à direita.','➖ No celular, use o botão <b>±</b> para escrever um número negativo.','✖️ Multiplicação e divisão: sinais iguais dão +; sinais diferentes dão −.','💡 Professor(a): as perguntas mudam a cada partida. O relatório mostra os acertos de primeira por habilidade.'],
+  MISSOES:[
+    {id:'m1', titulo:'Na reta numérica', ic:'📏', hab:'MS.EF07MA03.s.03 · MS.EF07MA10.s.10', desc:'Marque inteiros na reta e localize números como −1,5.', gerar:gerarReta,
+      intro:'<p>O <b>zero</b> fica no meio. Os <b>positivos</b> vão para a direita e os <b>negativos</b>, para a esquerda. Toque no lugar certo da reta!</p>'},
+    {id:'m2', titulo:'Maior, menor e oposto', ic:'⚖️', hab:'MS.EF07MA03.s.03', desc:'Compare inteiros, ordene listas e encontre opostos e módulos.', gerar:gerarComparar,
+      intro:'<p>Quanto mais à <b>direita</b> na reta, maior o número. Por isso, <b>−2 é maior que −9</b>! O <b>oposto</b> de 5 é −5, e o <b>módulo</b> é a distância até o zero.</p>'},
+    {id:'m3', titulo:'Termômetro', ic:'🌡️', hab:'MS.EF07MA04.s.04', desc:'A temperatura sobe e desce: calcule as variações.', gerar:gerarTermo,
+      intro:'<p>Em dias de geada no sul de Mato Grosso do Sul, os termômetros podem marcar temperaturas <b>abaixo de zero</b>. Subir é somar; cair é subtrair.</p>'},
+    {id:'m4', titulo:'Saldo, elevador e mar', ic:'🛗', hab:'MS.EF07MA04.s.04', desc:'Problemas com saldo bancário, andares, altitude, gols e o nível do rio.', gerar:gerarProblemas,
+      intro:'<p>Os inteiros aparecem em muitos lugares: <b>saldo</b> negativo, <b>subsolo</b> de prédio, <b>abaixo do nível do mar</b>, <b>saldo de gols</b> e até o nível do Rio Paraguai na régua de Ladário.</p>'},
+    {id:'m5', titulo:'Regra dos sinais', ic:'✖️', hab:'MS.EF07MA04.s.04', desc:'Multiplique e divida inteiros sem errar o sinal.', gerar:gerarSinais,
+      intro:'<div class="lista"><div>(+) × (+) = <b>+</b> &nbsp; (−) × (−) = <b>+</b></div><div>(+) × (−) = <b>−</b> &nbsp; (−) × (+) = <b>−</b></div></div><p class="mini">Na divisão, vale a mesma regra.</p>'}
+  ],
+  TIPOS:{reta:RETA}
+};
+iniciarJogo();
+</script>
+</body>
+</html>
