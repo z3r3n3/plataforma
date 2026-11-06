@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arena do Movimento</title>
+<meta name="description" content="Jogo de Educação Física para o 6º ao 9º ano: classificação dos esportes, capacidades físicas, teste de tempo de reação e jogo limpo, inclusão e cultura corporal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--agua:#7C2D12;--agua2:#C2410C;--mata2:#15803D;--terra:#C2410C}
+body{background:linear-gradient(180deg,#FFEDD5 0%,#F7F3EA 100%)}
+.topo{background:#FFF7EDee;border-bottom-color:#FBD9B5}
+.trilho{background:#FBE0C3}
+.trilho i,.bar i{background:var(--mata2)}
+.selo{background:#C2410C14}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #15803D33}
+
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cats button{border:2px solid var(--borda);background:#fff;border-radius:16px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:700;font-size:15px;line-height:1.15;text-align:center;transition:transform .1s}
+.cats button .em{font-size:30px}
+.cats button small{font-weight:400;color:var(--suave);font-size:11px}
+.cats button:hover:not(:disabled){transform:translateY(-3px);border-color:var(--agua2)}
+.cats button.certa{border-color:var(--ok);background:var(--ok-f)}
+.cats button.errada{border-color:var(--erro);background:var(--erro-f);opacity:.6}
+.cats button:disabled{cursor:default}
+.cats.c4{grid-template-columns:repeat(4,1fr)}
+.esporte{display:flex;align-items:center;gap:16px;background:#fff;border:2px solid var(--borda);border-radius:20px;padding:16px 18px;margin-bottom:14px}
+.esporte .em{font-size:64px;line-height:1}
+.esporte b{font-family:var(--titulo);font-size:clamp(26px,4vw,38px);display:block;line-height:1.1}
+.esporte span{color:var(--suave);font-size:16px}
+/* reação */
+.reacao{border:0;width:100%;min-height:300px;border-radius:24px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:clamp(26px,5vw,40px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation;transition:background .08s}
+.reacao small{font-family:var(--texto);font-size:16px;font-weight:700;opacity:.95}
+.reacao.pronto{background:#C2410C}
+.reacao.espera{background:#B91C1C}
+.reacao.ja{background:#16A34A}
+.reacao.res{background:#1E3A8A}
+.tentativas{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.tentativas span{min-width:74px;text-align:center;background:#fff;border:2px solid var(--borda);border-radius:14px;padding:6px 10px;font-weight:800;font-family:var(--titulo);font-size:18px}
+.tentativas span.vazia{color:#D6D3D1}
+.tentativas span.queimou{color:#B91C1C}
+@media (max-width:820px){
+  .cats,.cats.c4{grid-template-columns:repeat(2,1fr)}
+  .esporte .em{font-size:48px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   ARENA DO MOVIMENTO — JRM • Aventuras Educativas
+   Educação Física · 6º ao 9º ano
+   MS.EF67EF03.s.03 e MS.EF89EF01.s.01 esportes e suas classificações
+   MS.EF67EF08.s.07 capacidades físicas (força, velocidade, resistência, flexibilidade)
+   MS.EF67EF10.s.12 acesso às práticas corporais como direito · MS.EF67EF16.s.15 saúde
+   ========================================================= */
+
+/* ---------- MISSÃO 1: classificação dos esportes ---------- */
+const CATEG = {
+  marca:{n:'Marca', e:'⏱️', d:'superar um tempo, distância ou peso'},
+  precisao:{n:'Precisão', e:'🎯', d:'acertar ou chegar perto de um alvo'},
+  invasao:{n:'Invasão', e:'⚽', d:'invadir o campo do adversário para marcar'},
+  tecnico:{n:'Técnico-combinatório', e:'🤸', d:'beleza e perfeição dos movimentos'},
+  rede:{n:'Rede/parede', e:'🏐', d:'mandar a bola onde o adversário não alcança'},
+  taco:{n:'Campo e taco', e:'🏏', d:'rebater e correr entre as bases'},
+  combate:{n:'Combate', e:'🥋', d:'tocar, desequilibrar ou imobilizar o oponente'}
+};
+const ESPORTES = [
+  ['Atletismo (100 metros rasos)','🏃','marca','Vence quem faz o menor tempo.'],['Natação','🏊','marca','O tempo decide quem ganha.'],['Levantamento de peso','🏋️','marca','Vence quem levanta mais peso.'],['Salto em distância','🦘','marca','Vence quem salta mais longe.'],
+  ['Bocha','🟤','precisao','O objetivo é deixar as bolas o mais perto possível da bola-alvo.'],['Tiro com arco','🏹','precisao','Ganha quem acerta mais perto do centro do alvo.'],['Golfe','⛳','precisao','O objetivo é colocar a bola no buraco com o menor número de tacadas.'],['Boliche','🎳','precisao','O alvo são os pinos.'],
+  ['Futebol','⚽','invasao','Os times invadem o campo do adversário para fazer gol.'],['Basquete','🏀','invasao','Invade-se a quadra adversária para fazer a cesta.'],['Handebol','🤾','invasao','É preciso entrar no campo do adversário para marcar.'],['Futsal','🥅','invasao','É o futebol de quadra, também de invasão.'],
+  ['Ginástica artística','🤸','tecnico','Os juízes avaliam a dificuldade e a perfeição dos movimentos.'],['Saltos ornamentais','🤿','tecnico','A nota vem da execução e da plasticidade dos saltos.'],['Ginástica rítmica','🎀','tecnico','Combina movimentos do corpo com aparelhos como fita e arco.'],
+  ['Voleibol','🏐','rede','A bola é mandada por cima da rede para a quadra do adversário.'],['Tênis','🎾','rede','Ganha o ponto quem faz o adversário não conseguir devolver a bola.'],['Peteca','🪶','rede','Esporte brasileiro, de origem indígena, jogado por cima de uma rede.'],['Badminton','🏸','rede','Joga-se com raquete e peteca, por cima da rede.'],
+  ['Beisebol','⚾','taco','O rebatedor bate na bola e corre entre as bases.'],['Bets (taco)','🏏','taco','A brincadeira de rua brasileira também é um jogo de campo e taco.'],
+  ['Judô','🥋','combate','O objetivo é desequilibrar e imobilizar o oponente.'],['Karatê','🥋','combate','Luta com golpes controlados de mãos e pés.'],['Esgrima','🤺','combate','O objetivo é tocar o oponente com a espada.'],['Capoeira','🪘','combate','Luta e arte afro-brasileira. A roda de capoeira é Patrimônio Cultural Imaterial da Humanidade.']
+];
+
+/* ---------- MISSÃO 2: capacidades físicas ---------- */
+const CAP = {
+  forca:{n:'Força', e:'💪', d:'vencer uma resistência, como um peso'},
+  velocidade:{n:'Velocidade', e:'⚡', d:'fazer o movimento no menor tempo'},
+  resistencia:{n:'Resistência', e:'🔋', d:'aguentar o esforço por muito tempo'},
+  flexibilidade:{n:'Flexibilidade', e:'🧘', d:'grande amplitude de movimento'}
+};
+const EXERCICIOS = [
+  ['Fazer flexões de braço no chão.','🙇','forca'],['Arremessar uma bola pesada (medicine ball).','🏐','forca'],['Agachamento com peso nas costas.','🏋️','forca'],
+  ['Correr 50 metros o mais rápido possível.','💨','velocidade'],['Sair rápido no tiro de largada.','🚦','velocidade'],['Pegar um objeto que caiu antes que ele bata no chão.','🫳','velocidade'],
+  ['Correr 12 minutos sem parar.','🏃','resistencia'],['Pedalar de bicicleta por meia hora.','🚴','resistencia'],['Pular corda por 5 minutos.','➰','resistencia'],
+  ['Sentar e tentar alcançar a ponta dos pés com as pernas esticadas.','🙆','flexibilidade'],['Fazer a ponte na ginástica.','🌉','flexibilidade'],['Abrir as pernas no espacate.','🤸','flexibilidade']
+];
+const SAUDE_Q = [
+  {t:'Depois de uma corrida, o coração bate mais rápido. Por quê?', e:'❤️', o:['Os músculos precisam de mais oxigênio, e o coração bombeia mais sangue','O coração ficou doente','É porque a pessoa ficou com frio','Não existe relação entre exercício e coração'], x:'Com o exercício, os músculos gastam mais energia e oxigênio. O coração acelera para levar mais sangue até eles.'},
+  {t:'O que é importante fazer durante a atividade física num dia quente em MS?', e:'💧', o:['Beber água antes, durante e depois','Não beber água para não pesar','Usar muita roupa para suar mais','Fazer o máximo de esforço ao meio-dia'], x:'A hidratação repõe a água perdida no suor. Também vale evitar o sol forte do meio do dia.'}
+];
+
+/* ---------- MISSÃO 4: jogo limpo, inclusão e cultura corporal ---------- */
+const CULTURA_Q = [
+  {t:'Seu time está ganhando e um adversário se machuca. O que é jogo limpo (fair play)?', e:'🤝', o:['Parar o jogo ou chutar a bola para fora para ele ser atendido','Continuar o ataque para aproveitar','Reclamar com o juiz que ele está fingindo','Rir da situação'], x:'Fair play é respeitar regras, colegas e adversários. Vencer não vale mais do que a saúde de alguém.'},
+  {t:'Algumas pessoas dizem que futebol "é coisa de menino". O que você acha dessa ideia?', e:'⚽', o:['É um preconceito: todas as pessoas têm direito de praticar qualquer esporte','É verdade, meninas não podem jogar','Só vale para jogos na escola','Depende do time'], x:'A seleção feminina do Brasil mostra a força das mulheres no futebol. Esporte é direito de todos.'},
+  {t:'O goalball é um esporte paralímpico para pessoas com deficiência visual. Como os atletas sabem onde está a bola?', e:'🔔', o:['A bola tem guizos que fazem barulho','A bola brilha no escuro','O juiz grita onde ela está','Eles não precisam saber'], x:'Todos os jogadores usam vendas nos olhos, para ficarem em igualdade, e o público fica em silêncio.'},
+  {t:'Como o vôlei sentado inclui pessoas com deficiência física?', e:'🏐', o:['Os atletas jogam sentados no chão, com a rede mais baixa','Os atletas jogam deitados','A bola é chutada','Só pessoas sem deficiência podem jogar'], x:'Adaptar regras, espaços e materiais é uma forma de garantir o direito de todos às práticas corporais.'},
+  {t:'O skate e o breaking (dança de rua) mostram que…', e:'🛹', o:['Práticas que nasceram nas ruas podem virar modalidades olímpicas','Só esportes antigos são reconhecidos','Dança não pode ser esporte','Skate é proibido em competições'], x:'O skate estreou nos Jogos de Tóquio e o breaking, nos Jogos de Paris, em 2024.'},
+  {t:'Qual é o jeito mais saudável de usar os jogos eletrônicos?', e:'🎮', o:['Com tempo limitado, pausas e equilíbrio com atividades físicas e sono','Jogar a noite toda','Trocar todas as refeições pelo jogo','Nunca se mexer durante o dia'], x:'Jogos eletrônicos também são práticas da cultura corporal, mas o excesso de tela prejudica o sono, a visão e a postura.'},
+  {t:'A peteca, muito jogada no Brasil, tem origem…', e:'🪶', o:['Indígena','Japonesa','Inglesa','Egípcia'], x:'Os povos indígenas já jogavam peteca muito antes da chegada dos portugueses. Hoje ela é até esporte com regras oficiais.'},
+  {t:'Por que é importante conhecer as regras antes de jogar?', e:'📋', o:['Para jogar com segurança, de forma justa e todos entenderem o jogo','Para poder trapacear melhor','Porque o professor manda, só isso','Não é importante'], x:'As regras organizam a prática e garantem que todos tenham as mesmas chances. A turma também pode criar e combinar novas regras!'}
+];
+
+const MISSOES = [
+  {id:'m1', tipo:'esp', titulo:'Que esporte é esse?', ic:'🏅', hab:'MS.EF67EF03.s.03 · MS.EF89EF01.s.01', desc:'Classifique os esportes: marca, precisão, invasão, técnico-combinatório, rede/parede, campo e taco ou combate.'},
+  {id:'m2', tipo:'cap', titulo:'Capacidades físicas', ic:'💪', hab:'MS.EF67EF08.s.07', desc:'Força, velocidade, resistência ou flexibilidade? Descubra o que cada exercício treina.'},
+  {id:'m3', tipo:'reac', titulo:'Teste de reação', ic:'🚦', hab:'MS.EF67EF08.s.07', desc:'Toque na tela assim que ela ficar verde e meça o seu tempo de reação em milissegundos.'},
+  {id:'m4', tipo:'cult', titulo:'Jogo limpo e inclusão', ic:'🤝', hab:'MS.EF67EF10.s.12 · MS.EF67EF16.s.15', desc:'Fair play, esporte para todos, paralímpicos, práticas de rua e saúde.'}
+];
+MISSOES.forEach((m,i)=>m.idx=i);
+const CATS = {esp:'Classificação dos esportes (MS.EF67EF03, MS.EF89EF01)', cap:'Capacidades físicas (MS.EF67EF08)', saude:'Exercício e saúde (MS.EF67EF16)', cult:'Jogo limpo, inclusão e cultura corporal (MS.EF67EF10)'};
+
+/* ---------- ESTADO ---------- */
+const CHAVE='arenaMovimento.v1';
+function padrao(){ return {nome:'',turma:'',missoes:{},stats:{},reacao:{melhor:null,media:null},cfg:{som:true,livre:false}}; }
+let S=padrao();
+try{ const g=JSON.parse(localStorage.getItem(CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){}
+function salvar(){ try{ localStorage.setItem(CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+const $=(q,el=document)=>el.querySelector(q);
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const MAXEST=MISSOES.length*3;
+function patente(){ const e=totalEst(); return e>=11?'🏅 Atleta de ouro':e>=8?'🥈 Atleta de prata':e>=4?'🥉 Atleta de bronze':'👟 Iniciante'; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.08]],apito:[[1800,.12],[1600,.12],[1800,.3]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); limparReacao();
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+
+function telaHome(){
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · EDUCAÇÃO FÍSICA</span>
+    <h1>Arena do <span>Movimento</span></h1>
+    <p class="lead">Aquecimento feito? Classifique os esportes, descubra o que cada exercício treina, teste o seu tempo de reação e entre em campo pelo jogo limpo e pelo esporte para todos.</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="ex.: 8º A" value="${esc(S.turma)}"></label></div>
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">Entrar na arena 🏟️</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena" style="background:#fff;display:grid;place-items:center;padding:16px;text-align:center">
+    <div style="font-size:64px;letter-spacing:6px">⚽🏐🤸🥋</div>
+    <p style="font-family:var(--titulo);font-weight:800;font-size:22px;margin:8px 0 0">Seu melhor tempo de reação</p>
+    <p style="font-family:var(--titulo);font-weight:800;font-size:44px;margin:0;color:#C2410C">${S.reacao.melhor?S.reacao.melhor+' ms':'— ms'}</p></div></div>
+  <div class="info"><div><b>4</b>missões</div><div><b>25</b>esportes</div><div><b>7</b>categorias</div><div><b>${patente()}</b>★ ${totalEst()}/${MAXEST}</div></div>
+  <p class="rodape">Educação Física · 6º ao 9º ano · Habilidades <b>MS.EF67EF03.s.03</b> e <b>MS.EF89EF01.s.01</b> (esportes e classificações) · <b>MS.EF67EF08.s.07</b> (capacidades físicas) · <b>MS.EF67EF10.s.12</b> (práticas corporais como direito) · <b>MS.EF67EF16.s.15</b> (práticas corporais e saúde) · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Provas da arena</h2><small>${patente()}</small></div><span class="chip-topo">★ ${totalEst()}/${MAXEST}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">PROVA ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${[0,1,2].map(i=>`<span class="${i<(r.estrelas||0)?'on':''}">★</span>`).join('')}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma prova para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=MISSOES[idx]; let itens;
+  if(m.tipo==='esp'){ const por={}; ESPORTES.forEach(e=>(por[e[2]]=por[e[2]]||[]).push(e));
+    const sel=[]; Object.values(por).forEach(l=>sel.push(...embaralhar(l).slice(0,1)));
+    const resto=embaralhar(ESPORTES.filter(e=>!sel.includes(e))).slice(0,12-sel.length);
+    itens=embaralhar([...sel,...resto]).map(e=>({e,certo:e[2]})); }
+  else if(m.tipo==='cap') itens=[...embaralhar(EXERCICIOS).slice(0,8).map(e=>({tipo:'cap',e,certo:e[2]})), ...SAUDE_Q.map(q=>({tipo:'q',...q,certo:0,ordem:embaralhar([0,1,2,3])}))];
+  else if(m.tipo==='reac') itens=[{tipo:'reac'}];
+  else itens=CULTURA_Q.map(q=>({...q,certo:0,ordem:embaralhar([0,1,2,3])}));
+  M={m, itens, i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  const intro={
+    esp:`<p>Os esportes são agrupados pela <b>lógica do jogo</b>, ou seja, pelo que é preciso fazer para vencer:</p><div class="lista">${Object.values(CATEG).map(c=>`<div>${c.e} <b>${c.n}</b>: ${c.d}</div>`).join('')}</div>`,
+    cap:`<p>Cada exercício treina mais uma <b>capacidade física</b>:</p><div class="lista">${Object.values(CAP).map(c=>`<div>${c.e} <b>${c.n}</b>: ${c.d}</div>`).join('')}</div>`,
+    reac:`<p>O <b>tempo de reação</b> é o tempo entre perceber um sinal e responder com o corpo. Ele é importante na largada da corrida, na defesa do goleiro e na hora de frear a bicicleta.</p>
+      <div class="lista"><div>1️⃣ Toque no quadro para começar.</div><div>2️⃣ Espere ele ficar <b style="color:#16A34A">verde</b>, sem tocar antes!</div><div>3️⃣ Quando ficar verde, toque o mais rápido que puder.</div></div><p class="mini">São 5 tentativas. Tocar antes do verde é "queimar a largada".</p>`,
+    cult:`<p>Esporte também é <b>respeito</b>, <b>inclusão</b> e <b>saúde</b>. Todas as pessoas têm direito às práticas corporais.</p>`
+  }[m.tipo];
+  abrirModal(`<span class="selo">PROVA ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${intro}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Valendo! 🏁</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>Prova ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+function desenhar(){
+  $('#cont').textContent=M.m.tipo==='reac'?'':`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  ({esp:desenharEsp, cap:desenharCap, reac:desenharReac, cult:desenharCult})[M.m.tipo]();
+  const b=$('[data-acao="seguir"]'); if(b) b.focus();
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir prova ✔'}</button></div>`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const item=()=>M.itens[M.i];
+function tentar(it,k,cat,chave,dica){
+  if(k===it.certo){ registrar(chave,cat,true); som('ok'); it.feito=true; it.msg=''; }
+  else { registrar(chave,cat,false); som('erro'); it.err=(it.err||[]).concat(k); it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica}</div>`; }
+}
+const okBox=(t,x)=>`<div class="retorno ok"><span class="t">✅ ${t}</span>${x}</div>${botaoSeguir()}`;
+function botoesCat(it,dic,attr,cls=''){
+  return `<div class="cats ${cls}">${Object.entries(dic).map(([k,c])=>{ const er=(it.err||[]).includes(k);
+    return `<button class="${er?'errada':''} ${it.feito&&k===it.certo?'certa':''}" ${attr}="${k}" ${er||it.feito?'disabled':''}><span class="em">${c.e}</span>${c.n}<small>${c.d}</small></button>`; }).join('')}</div>`;
+}
+
+/* --- 1. esportes --- */
+function desenharEsp(){
+  const it=item(), e=it.e;
+  $('#area').innerHTML=`<p class="enunciado">Em que categoria está este esporte?</p>
+    <div class="esporte"><span class="em">${e[1]}</span><div><b>${esc(e[0])}</b><span>Pense: o que é preciso fazer para vencer?</span></div></div>
+    ${botoesCat(it,CATEG,'data-cat')}
+    <div id="ret">${it.feito?okBox(`${CATEG[e[2]].e} ${CATEG[e[2]].n}!`,esc(e[3])):(it.msg||'')}</div>`;
+}
+function responderEsp(k){ const it=item(); tentar(it,k,'esp','e'+M.i,'Releia o que cada categoria significa e pense no objetivo do jogo.'); desenharEsp(); }
+
+/* --- 2. capacidades --- */
+function desenharCap(){
+  const it=item();
+  if(it.tipo==='cap'){ const e=it.e;
+    $('#area').innerHTML=`<p class="enunciado">Que capacidade física este exercício mais treina?</p>
+      <div class="esporte"><span class="em">${e[1]}</span><div><b style="font-size:clamp(22px,3.4vw,30px)">${esc(e[0])}</b></div></div>
+      ${botoesCat(it,CAP,'data-cap','c4')}
+      <div id="ret">${it.feito?okBox(`${CAP[e[2]].e} ${CAP[e[2]].n}!`,`${CAP[e[2]].n}: ${esc(CAP[e[2]].d)}.`):(it.msg||'')}</div>`;
+  } else {
+    $('#area').innerHTML=`<p class="enunciado">Corpo e saúde</p><div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt">${esc(it.t)}</span></div>
+      <div class="opcoes">${it.ordem.map((j,pos)=>{ const er=(it.err||[]).includes(j);
+        return `<button class="op ${er?'errada':''} ${it.feito&&j===0?'certa':''}" data-sq="${j}" ${er||it.feito?'disabled':''}><b>${'ABCD'[pos]}</b><span>${esc(it.o[j])}</span></button>`; }).join('')}</div>
+      <div id="ret">${it.feito?okBox('Isso mesmo!',esc(it.x)):(it.msg||'')}</div>`;
+  }
+}
+function responderCap(k){ const it=item(); tentar(it,k,'cap','c'+M.i,'É um esforço curto e explosivo, longo, de peso ou de alongamento?'); desenharCap(); }
+function responderSQ(j){ const it=item(); tentar(it,j,'saude','s'+M.i,'Pense no que acontece com o corpo durante o exercício.'); desenharCap(); }
+
+/* --- 3. reação --- */
+let R={estado:'pronto', tempos:[], t0:0, timer:null};
+function limparReacao(){ clearTimeout(R.timer); R={estado:'pronto', tempos:[], t0:0, timer:null}; }
+function desenharReac(){
+  const n=R.tempos.length, validos=R.tempos.filter(t=>t>0);
+  const txt={pronto:n?'Toque para a próxima<small>Tentativa '+(n+1)+' de 5</small>':'Toque para começar<small>Tentativa 1 de 5</small>', espera:'Espere o verde…<small>não toque ainda!</small>', ja:'TOQUE AGORA!', res:''}[R.estado];
+  const media=validos.length?Math.round(validos.reduce((a,b)=>a+b,0)/validos.length):null;
+  $('#area').innerHTML=`<button class="reacao ${R.estado}" id="placa" aria-live="assertive">${R.estado==='res'?`${n>=5?'Resultado final':'Último tempo'}<span style="font-size:clamp(48px,9vw,72px)">${R.tempos[n-1]>0?R.tempos[n-1]+' ms':'Queimou! 🚫'}</span><small>${n>=5?'Veja abaixo':'Toque para a próxima tentativa'}</small>`:txt}</button>
+    <div class="tentativas">${[0,1,2,3,4].map(k=>{ const t=R.tempos[k]; return `<span class="${t==null?'vazia':t<0?'queimou':''}">${t==null?'—':t<0?'🚫':t+' ms'}</span>`; }).join('')}</div>
+    ${n>=5?`<div class="retorno ok"><span class="t">⏱️ Sua média: ${media?media+' ms':'—'} · melhor: ${validos.length?Math.min(...validos)+' ms':'—'}</span>${media?(media<300?'Reação de goleiro! 🧤 ':media<400?'Ótima reação! ':'Bom começo! ')+'A maioria das pessoas reage entre 200 e 350 ms tocando numa tela. Sono, atenção e treino melhoram esse tempo.':'Você queimou todas as largadas. Tente esperar o verde!'}</div>
+      <div class="seguir"><button class="btn" data-acao="reac-de-novo">↻ Tentar de novo</button><button class="btn agua" data-acao="reac-fim">Concluir prova ✔</button></div>`:''}`;
+}
+function toqueReacao(){
+  if(R.estado==='pronto'||(R.estado==='res'&&R.tempos.length<5)){
+    R.estado='espera'; desenharReac(); som('bip');
+    R.timer=setTimeout(()=>{ R.estado='ja'; R.t0=performance.now(); desenharReac(); },1200+Math.random()*2600);
+  } else if(R.estado==='espera'){
+    clearTimeout(R.timer); R.tempos.push(-1); R.estado='res'; som('erro'); desenharReac();
+  } else if(R.estado==='ja'){
+    const t=Math.round(performance.now()-R.t0); R.tempos.push(t); R.estado='res'; som('ok'); desenharReac();
+  }
+}
+document.addEventListener('pointerdown',e=>{ if(e.target.closest('#placa')){ e.preventDefault(); toqueReacao(); } });
+document.addEventListener('keydown',e=>{ if(TELA==='missao'&&M&&M.m.tipo==='reac'&&(e.code==='Space'||e.key==='Enter')&&!modalAberto()){ e.preventDefault(); toqueReacao(); } });
+function fimReacao(){
+  const v=R.tempos.filter(t=>t>0), media=v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):null;
+  if(v.length){ const melhor=Math.min(...v); if(!S.reacao.melhor||melhor<S.reacao.melhor) S.reacao.melhor=melhor; S.reacao.media=media; }
+  M.ok=v.length; M.total=5; salvar();
+  const est=!media?1:media<350?3:media<500?2:1;
+  concluir(est, `<div class="resumo"><div><b>${media?media+' ms':'—'}</b>sua média</div><div><b>${S.reacao.melhor?S.reacao.melhor+' ms':'—'}</b>seu recorde</div></div><p class="mini" style="text-align:center">3 estrelas: média abaixo de 350 ms · 2 estrelas: abaixo de 500 ms.</p>`);
+}
+
+/* --- 4. cultura --- */
+function desenharCult(){
+  const it=item();
+  $('#area').innerHTML=`<p class="enunciado">Jogo limpo e inclusão</p><div class="ficha"><span class="em" aria-hidden="true">${it.e}</span><span class="txt" style="font-size:clamp(18px,2.6vw,22px)">${esc(it.t)}</span></div>
+    <div class="opcoes">${it.ordem.map((j,pos)=>{ const er=(it.err||[]).includes(j);
+      return `<button class="op ${er?'errada':''} ${it.feito&&j===0?'certa':''}" data-cq="${j}" ${er||it.feito?'disabled':''}><b>${'ABCD'[pos]}</b><span>${esc(it.o[j])}</span></button>`; }).join('')}</div>
+    <div id="ret">${it.feito?okBox('Isso mesmo!',esc(it.x)):(it.msg||'')}</div>`;
+}
+function responderCQ(j){ const it=item(); tentar(it,j,'cult','q'+M.i,'Pense no respeito, na segurança e no direito de todos participarem.'); desenharCult(); }
+
+function concluir(estForcada, resumoExtra){
+  const acc=M.total? M.ok/M.total : 1; const est=estForcada||(acc>=.9?3:acc>=.7?2:1);
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('apito');
+  const prox=m.idx<MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">Prova concluída! 🏁</h2><div class="big-est">${estrelasHtml(est)}</div>
+    ${resumoExtra||`<div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais.</p>`}
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?'<button class="btn ipe" data-acao="prox" data-foco>Próxima prova ➔</button>':'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  return ['ARENA DO MOVIMENTO — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${MAXEST} · Provas: ${f}/${MISSOES.length}`,
+    `Tempo de reação: média ${S.reacao.media?S.reacao.media+' ms':'-'} · recorde ${S.reacao.melhor?S.reacao.melhor+' ms':'-'}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const f=MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">🏟️ Provas</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${MAXEST}</b>estrelas</div><div><b>${S.reacao.melhor?S.reacao.melhor+' ms':'—'}</b>recorde de reação</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Faça algumas provas para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as provas','Para o professor escolher a prova da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){
+  abrirModal(`<h2>Como jogar</h2><div class="lista">
+    <div>🏅 <b>Que esporte é esse?</b> Classifique cada esporte pela lógica do jogo.</div>
+    <div>💪 <b>Capacidades físicas:</b> descubra o que cada exercício treina.</div>
+    <div>🚦 <b>Teste de reação:</b> toque quando a tela ficar verde. No computador, use a barra de espaço.</div>
+    <div>🤝 <b>Jogo limpo e inclusão:</b> respeito, esporte para todos e saúde.</div>
+    <div>💡 Dica para o professor: use o teste de reação antes e depois de uma atividade e compare os resultados da turma.</div></div>
+    <div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`);
+}
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-cat]')){ responderEsp(el.dataset.cat); return; }
+  if(el=q('[data-cap]')){ responderCap(el.dataset.cap); return; }
+  if(el=q('[data-sq]')){ responderSQ(+el.dataset.sq); return; }
+  if(el=q('[data-cq]')){ responderCQ(+el.dataset.cq); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='reac-de-novo'){ limparReacao(); desenharReac(); }
+  else if(a==='reac-fim') fimReacao();
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&modalAberto()) fecharModal(); });
+
+telaHome();
+</script>
+</body>
+</html>

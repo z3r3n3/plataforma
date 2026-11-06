@@ -102,6 +102,11 @@ const JOGOS = [
     descricao: 'Mistura de cores e elementos visuais, artistas e tradições de MS, linguagens da arte e ouvido musical com sons de verdade.',
     habilidades: ['MS.EF69AR04.s.04', 'MS.EF69AR01.s.01', 'MS.EF69AR33.s.36', 'MS.EF69AR31.s.34', 'MS.EF69AR20.s.23'] },
 
+  { arquivo: 'arena-do-movimento.html', titulo: 'Arena do Movimento', componente: 'ef', anos: [6,7,8,9],
+    tipo: 'Provas e teste de reação', icone: '🏟️',
+    descricao: 'Classifique 25 esportes, descubra as capacidades físicas, meça seu tempo de reação e entre em campo pelo jogo limpo e pela inclusão.',
+    habilidades: ['MS.EF67EF03.s.03', 'MS.EF89EF01.s.01', 'MS.EF67EF08.s.07', 'MS.EF67EF10.s.12'] },
+
   { arquivo: 'english-quest.html', titulo: 'English Quest', componente: 'ing', anos: [6,7],
     tipo: 'Missões com áudio', icone: '🎧',
     descricao: 'Ouça e escolha: bichos do Pantanal, escola, comida, cores e clima; verb to be, comandos da sala de aula e o inglês no mundo e no Brasil.',
