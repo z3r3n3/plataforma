@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tribuna Jovem — Língua Portuguesa do 8º e 9º ano</title>
+<meta name="description" content="Jogo de Língua Portuguesa do 8º e 9º ano sobre leitura crítica e participação: jornalismo e cultura digital, notícias falsas, tese e opinião, vozes e modalização, persuasão e operadores argumentativos, direitos e textos reivindicatórios, debate, pesquisa e hipertexto, coesão e pronomes relativos, colocação pronominal e intertextualidade.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#3730A3;--agua2:#4F46E5;--agua-claro:#E0E7FF}
+body{background:linear-gradient(180deg,#E0E7FF 0%,#F5F3FF 55%,#FEF3C7 100%)}
+.topo{background:#EEF2FFee}
+.txt{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:12px 14px;text-align:left;font-size:16.5px;line-height:1.55;max-width:600px;width:100%}
+.txt h4{font-family:var(--titulo);font-size:19px;margin:0 0 6px}
+.txt small{color:var(--suave)}
+.txt p{margin:0 0 6px}
+.verso{font-style:italic;text-align:center;line-height:1.6}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   TRIBUNA JOVEM — Língua Portuguesa · 8º e 9º ano
+   MS.EF89LP01, MS.EF89LP02 e MS.EF09LP01 jornalismo, cultura digital e notícias falsas
+   MS.EF89LP03 e MS.EF89LP04 textos de opinião e tese · MS.EF89LP05, MS.EF89LP16 e MS.EF89LP31 discurso citado e modalização
+   MS.EF89LP06, MS.EF89LP07 e MS.EF89LP15 persuasão, publicidade e operadores argumentativos
+   MS.EF89LP17, MS.EF89LP18, MS.EF89LP19 e MS.EF89LP20 direitos, participação e textos reivindicatórios
+   MS.EF89LP22 e MS.EF89LP23 debate e movimentos argumentativos · MS.EF89LP24, MS.EF89LP28 e MS.EF89LP30 pesquisa e hipertexto
+   MS.EF89LP29, MS.EF08LP15, MS.EF09LP09 e MS.EF09LP10 coesão, pronomes relativos, orações adjetivas e colocação pronominal
+   MS.EF89LP32, MS.EF89LP33, MS.EF89LP34 e MS.EF89LP36 intertextualidade, gêneros literários e texto dramático
+   ========================================================= */
+const P=(cat,enun,f,x,extra={})=>Object.assign({tipo:'palavras',cat,enun,x,dica:'Releia a frase e pense na função de cada palavra.'},extra,frase(f));
+const T=(h,b,nota='')=>`<div class="vis"><div class="txt">${nota?`<small>${nota}</small>`:''}${h?`<h4>${h}</h4>`:''}${b}</div></div>`;
+
+/* ---------- 1. Por trás da notícia ---------- */
+const MIDIA=[
+  ()=>q('jornalismo','Por que muitos sites usam títulos como “Você não vai acreditar no que aconteceu…”?','Para atrair cliques, que geram dinheiro com anúncios',['Para resumir a notícia com precisão','Porque é uma regra da gramática','Para proteger o leitor'],'É o <b>caça-clique</b>: quanto mais acessos, mais o site lucra com publicidade. A informação também é <b>mercadoria</b>.'),
+  ()=>q('jornalismo','Jornais e sites exibem anúncios ao lado das notícias principalmente porque:','A publicidade ajuda a pagar o trabalho jornalístico',['Os anúncios são notícias também','A lei obriga','Os leitores pedem mais anúncios'],'O jornalismo precisa de recursos. Saber <b>quem financia</b> um veículo ajuda a ler com olhar crítico.'),
+  ()=>q('digital','Ao <b>compartilhar</b> uma notícia sem ler, você:','Pode espalhar uma informação falsa e é responsável por isso',['Não tem nenhuma responsabilidade','Ajuda sempre a informar melhor','Confirma que a notícia é verdadeira'],'Curtir, comentar e compartilhar são <b>práticas</b> com efeito: ajudam a decidir o que circula nas redes.'),
+  ()=>q('digital','Memes e charges digitais podem:','Expressar opinião e crítica usando humor e ironia',['Só fazer rir, sem opinião nenhuma','Substituir uma notícia completa','Provar que algo é verdade'],'Muitos memes e charges <b>opinam</b> sobre fatos. Ler criticamente é perceber a posição que eles defendem.'),
+  ()=>q('digital','Qual comentário contribui para um debate on-line?','“Discordo, porque os dados da reportagem mostram outra coisa. Veja o link da pesquisa.”',['“Quem pensa isso é burro.”','“Kkkkk”','“Nem li, mas discordo.”'],'Comentário ético traz <b>argumentos e fontes</b> e respeita quem pensa diferente.'),
+  ()=>q('fake','Qual destes é um <b>sinal de alerta</b> de possível notícia falsa?','Texto sem autor e sem data que pede “compartilhe urgente!”',['Reportagem assinada, com data e fontes citadas','Notícia publicada também por outros veículos conhecidos','Texto com link para o documento oficial'],'Falta de autoria, de data e de fontes e apelo para compartilhar rápido são <b>sinais de alerta</b>.'),
+  ()=>q('fake','Uma notícia de 2019 voltou a circular hoje como se fosse nova. O que ajuda a perceber isso?','Verificar a data de publicação e procurar a notícia original',['Contar quantas curtidas ela tem','Olhar se a foto é bonita','Confiar em quem enviou'],'Notícias antigas fora de contexto também enganam. <b>Data, veículo e fonte</b> sempre devem ser conferidos.'),
+  ()=>q('fake','Para checar se uma informação viral é verdadeira, uma boa estratégia é:','Consultar agências de checagem e veículos confiáveis',['Perguntar no grupo da família','Acreditar se tiver muitos compartilhamentos','Ver se combina com o que você já pensa'],'<b>Agências de checagem</b> e a comparação entre fontes ajudam a separar fato de boato.')
+];
+
+/* ---------- 2. Tese e opinião ---------- */
+const OPI=[
+  {tit:'Celular na sala: aliado ou vilão?',txt:'<p>Muitas escolas proíbem o celular na sala de aula. No entanto, quando usado com objetivos claros, ele permite pesquisar, registrar experimentos e acessar livros digitais. Por isso, em vez de simplesmente proibir, as escolas deveriam ensinar os estudantes a usá-lo com responsabilidade.</p>',tese:'As escolas deveriam ensinar o uso responsável do celular em vez de só proibi-lo.',err:['O celular deve ser proibido em todas as escolas.','Livros digitais são melhores que os impressos.','Os estudantes não sabem pesquisar.'],exp:true,gen:'Artigo de opinião'},
+  {tit:'Pedalar é qualidade de vida',txt:'<p>Na nossa cidade, muita gente vai ao trabalho e à escola de bicicleta, dividindo as ruas com carros e caminhões. Mais ciclovias tornariam essas viagens seguras, diminuiriam o trânsito e a poluição. Investir em ciclovias é, portanto, investir em qualidade de vida.</p>',tese:'Investir em ciclovias melhora a qualidade de vida na cidade.',err:['Ninguém deveria usar carro.','Bicicletas causam acidentes.','O trânsito da cidade é o pior do país.'],exp:true,gen:'Artigo de opinião'},
+  {tit:'A praça às escuras',txt:'<p>Na praça do bairro, as lâmpadas estão queimadas há meses. À noite, as crianças deixaram de brincar ali e os idosos não fazem mais suas caminhadas. Enquanto isso, o pedido de conserto continua “em análise”.</p>',tese:'A iluminação da praça precisa ser consertada logo.',err:['As crianças não gostam mais da praça.','Os idosos deveriam caminhar de dia.','A praça deve ser fechada.'],exp:false,gen:'Carta do leitor'}
+];
+function gTese(){
+  const it=[]; const ord=embaralhar(OPI);
+  ord.slice(0,2).forEach(o=>{ const C=T(o.tit,o.txt,'TEXTO DE OPINIÃO (EXEMPLO)');
+    it.push(q('tese','Qual é a <b>tese</b> (a opinião principal) defendida no texto?',o.tese,o.err,`A <b>tese</b> é a ideia que o autor quer que o leitor aceite. Os outros trechos são <b>argumentos</b> que a sustentam.`,{corpo:C}));
+    it.push(q('tese','Nesse texto, a tese aparece de forma:',o.exp?'Explícita: está escrita diretamente no texto':'Implícita: o leitor deduz pelos fatos apresentados',[o.exp?'Implícita: o leitor deduz pelos fatos apresentados':'Explícita: está escrita diretamente no texto','Não há opinião no texto'],o.exp?'A frase final declara a posição do autor: tese <b>explícita</b>.':'O autor não escreve “consertem a luz”, mas os fatos e a ironia das aspas levam o leitor a essa conclusão: tese <b>implícita</b>.',{corpo:C})); });
+  it.push(q('tese','O <b>editorial</b> de um jornal expressa:','A opinião do próprio jornal sobre um tema',['A opinião de um leitor qualquer','Apenas fatos, sem opinião','A propaganda de uma loja'],'O <b>editorial</b> é a opinião do veículo; o <b>artigo de opinião</b> é assinado por um autor; a <b>carta do leitor</b> traz a voz do público.'));
+  it.push(q('tese','Diante de um texto de opinião do qual você discorda, a atitude mais adequada é:','Responder com argumentos e respeito, apontando onde discorda',['Atacar a pessoa que escreveu','Ignorar todos os textos de opinião','Concordar para evitar conflito'],'Posicionar-se de forma <b>crítica, fundamentada, ética e respeitosa</b> é parte da vida democrática.'));
+  return it;
+}
+
+/* ---------- 3. Vozes e modalização ---------- */
+const VOZES=[
+  ()=>q('vozes','“O diretor <b>admitiu</b> que a quadra está sem manutenção.” O verbo <b>admitiu</b> sugere que:','Ele reconheceu um problema que talvez preferisse não confirmar',['Ele fez um elogio à quadra','Ele fez uma pergunta','Ele não disse nada'],'Verbos que introduzem falas (<b>afirmou, admitiu, alegou, garantiu</b>) não são neutros: mostram como o jornalista apresenta a voz da fonte.'),
+  ()=>q('vozes','“A empresa <b>alegou</b> que o vazamento foi pequeno.” Ao usar <b>alegou</b>, o jornal:','Mostra certa distância, sem garantir que a afirmação é verdadeira',['Confirma que o vazamento foi pequeno','Elogia a empresa','Mostra que a empresa mentiu, com certeza'],'<b>Alegar</b> marca que aquilo é a versão da empresa. Compare com “a empresa <b>comprovou</b>”.'),
+  ()=>q('vozes','Por que a reportagem usa aspas em: Segundo a bióloga, “o rio está mais raso do que o normal para esta época”?','Para reproduzir exatamente as palavras da fonte',['Para indicar ironia','Para destacar um erro','Porque a frase é um título'],'As aspas marcam o <b>discurso direto</b>: a fala da fonte, como foi dita. Isso dá credibilidade e mostra de quem é a afirmação.'),
+  ()=>q('modalizacao','Qual frase expressa <b>certeza</b>?','Certamente a ponte ficará pronta em março.',['Talvez a ponte fique pronta em março.','É possível que a ponte fique pronta em março.','A ponte pode ficar pronta em março.'],'<b>Certamente, sem dúvida, com certeza</b> indicam certeza. <b>Talvez, é possível, pode</b> indicam possibilidade.'),
+  ()=>q('modalizacao','Qual frase expressa <b>obrigação</b>?','A prefeitura deve publicar as contas da obra.',['A prefeitura talvez publique as contas.','A prefeitura publicou as contas.','A prefeitura quer publicar as contas?'],'<b>Deve, é preciso, é necessário</b> indicam obrigação ou necessidade.'),
+  ()=>P('modalizacao','Toque na palavra que indica <b>possibilidade</b> (dúvida).',pick(['[Provavelmente] a chuva volta na sexta-feira.','O preço do feijão [talvez] caia no próximo mês.','O time [possivelmente] jogará sem o capitão.']),'Palavras como <b>provavelmente, talvez, possivelmente</b> são modalizadores: mostram o grau de certeza de quem escreve.'),
+  ()=>q('modalizacao','Em “Os dados <b>indicam</b> que o desmatamento <b>pode</b> ter aumentado”, o autor:','Apresenta a informação com cautela, como possibilidade',['Afirma com certeza absoluta','Faz uma ordem','Conta uma piada'],'Isso é <b>modalização epistêmica</b>: o autor mostra o quanto tem certeza do que diz. Em textos científicos, a cautela é sinal de rigor.')
+];
+
+/* ---------- 4. Persuasão, publicidade e operadores ---------- */
+const PERS=[
+  ()=>q('persuasao','Compare: “Estudantes <b>pedem</b> melhorias na merenda” e “Estudantes <b>exigem</b> melhorias na merenda”. A diferença mostra que:','A escolha das palavras muda a imagem que o leitor forma dos fatos',['As duas frases significam exatamente o mesmo','Só a segunda está correta','Só a primeira é notícia'],'<b>Escolhas lexicais</b> são recursos persuasivos: “exigem” passa ideia de firmeza e pressão.'),
+  ()=>q('persuasao','“<b>Especialistas</b> afirmam que o produto é o melhor do mercado”, sem dizer quem são. Isso:','Enfraquece a credibilidade, porque a fonte fica escondida',['Prova que o produto é o melhor','Deixa o texto mais confiável','É obrigatório em propagandas'],'A <b>ocultação de fontes</b> é um recurso persuasivo que o leitor crítico deve perceber.'),
+  ()=>q('persuasao','Qual título é mais <b>sensacionalista</b>?','CAOS TOTAL! Chuva destrói a cidade inteira!',['Chuva forte alaga três bairros da cidade','Defesa Civil registra 80 mm de chuva em 2 horas','Moradores relatam alagamentos após temporal'],'Exagero, pontos de exclamação e palavras como “caos” e “inteira” buscam <b>emoção</b>, não precisão.'),
+  ()=>q('publicidade','Num anúncio de protetor solar, aparece uma família sorrindo na praia. A imagem serve para:','Associar o produto à felicidade e ao cuidado com a família',['Mostrar a fórmula química do produto','Informar o preço','Ensinar a nadar'],'Na publicidade, <b>imagem e texto se combinam</b> para despertar desejos e emoções.'),
+  ()=>q('operadores','Complete: “_____ o celular ajude nas pesquisas, ele também pode distrair.”','Embora',['Portanto','Além disso','Porque'],'<b>Embora</b> introduz uma ideia contrária que não impede a outra (concessão).',{grade:true}),
+  ()=>q('operadores','Complete: “O rio está muito baixo; _____, os barcos maiores não conseguem navegar.”','portanto',['embora','além disso','mas também'],'<b>Portanto</b> introduz uma <b>conclusão</b>.',{grade:true}),
+  ()=>q('operadores','Complete: “A horta melhora a merenda. _____, ensina Ciências na prática.”','Além disso',['No entanto','Portanto','Embora'],'<b>Além disso</b> acrescenta um novo argumento na mesma direção.',{grade:true}),
+  ()=>P('operadores','Toque no operador argumentativo que indica <b>oposição</b>.',pick(['O projeto é bom, [mas] custa caro demais.','A proposta é boa; [porém], falta dinheiro.','Queríamos a quadra coberta, [contudo] o orçamento não permitiu.']),'<b>Mas, porém, contudo, no entanto</b> marcam oposição entre ideias.')
+];
+
+/* ---------- 5. Direitos e participação ---------- */
+const PROP=`<div class="txt"><small>PROPOSTA DO GRÊMIO (EXEMPLO)</small><h4>Horta na escola</h4><p><b>O que:</b> criar uma horta comunitária no pátio.<br><b>Por quê:</b> muitos estudantes comem poucas verduras.<br><b>Para quê:</b> melhorar a merenda e aprender Ciências na prática.<br><b>Como:</b> canteiros feitos com pneus reutilizados e mutirões com as famílias aos sábados.</p></div>`;
+const DIR=[
+  ()=>q('direitos','O <b>ECA</b> (Estatuto da Criança e do Adolescente, Lei nº 8.069/1990) é:','Uma lei que garante direitos a crianças e adolescentes, como educação, saúde, esporte e lazer',['Um regulamento de clube esportivo','Um livro de histórias','Uma regra só para professores'],'O <b>ECA</b> é a lei brasileira que reúne os direitos de crianças e adolescentes e os deveres de família, sociedade e poder público.'),
+  ()=>q('direitos','Os textos de leis são organizados em:','Artigos, parágrafos e incisos',['Capítulos de aventura e diálogos','Estrofes e versos','Manchetes e lides'],'Leis se dividem em <b>artigos</b> (Art. 1º), <b>parágrafos</b> (§) e <b>incisos</b> (I, II, III…).'),
+  ()=>q('direitos','Num texto de lei, o símbolo <b>§</b> indica:','Um parágrafo',['Um artigo','Uma assinatura','Uma pergunta'],'O símbolo <b>§</b> significa <b>parágrafo</b>: complementa ou explica o artigo.',{grade:true}),
+  ()=>q('participacao','Na escola, a organização formada e dirigida pelos <b>estudantes</b> para representar seus interesses é o:','Grêmio estudantil',['Conselho tutelar','Tribunal','Diretório de vendas'],'O <b>grêmio estudantil</b> é um canal de participação dos estudantes. O <b>conselho escolar</b> reúne estudantes, famílias, professores e funcionários.'),
+  ()=>q('generosrei','Qual gênero reúne <b>assinaturas</b> de muitas pessoas para reforçar um pedido?','Abaixo-assinado',['Crônica','Verbete','Haicai'],'O <b>abaixo-assinado</b> (ou a petição on-line) apresenta um pedido e mostra, pelas assinaturas, quantas pessoas o apoiam.'),
+  ()=>q('generosrei','A <b>carta aberta</b> se diferencia de uma carta pessoal porque:','É dirigida a alguém, mas publicada para que todos leiam',['É secreta','Não tem destinatário','Só pode ser escrita à mão'],'A <b>carta aberta</b> torna público um problema e uma reivindicação, pressionando quem pode resolvê-lo.'),
+  ()=>q('proposta','Na proposta do grêmio, qual trecho explica <b>como</b> a ideia será realizada?','Canteiros com pneus reutilizados e mutirões com as famílias',['Muitos estudantes comem poucas verduras','Melhorar a merenda e aprender Ciências','Criar uma horta comunitária no pátio'],'Uma proposta completa diz <b>o que</b> fazer, <b>por que</b>, <b>para que</b> e <b>como</b>.',{corpo:`<div class="vis">${PROP}</div>`}),
+  ()=>q('proposta','Na proposta do grêmio, qual é a <b>justificativa</b> (o motivo)?','Muitos estudantes comem poucas verduras',['Criar uma horta comunitária no pátio','Mutirões aos sábados','Canteiros feitos com pneus'],'A <b>justificativa</b> responde “por quê?”: é o problema que motiva a proposta.',{corpo:`<div class="vis">${PROP}</div>`})
+];
+
+/* ---------- 6. Debate ---------- */
+const MOV=[
+  ['É verdade que o uniforme novo custa caro, mas a escola pode organizar um bazar de trocas.','Negociação: concorda em parte e propõe uma solução'],
+  ['Dizem que a horta dá trabalho demais; porém, os próprios estudantes podem se revezar nos cuidados.','Refutação: rebate um argumento contrário'],
+  ['A horta melhora a alimentação, pois oferece verduras frescas para a merenda.','Sustentação: apresenta um argumento a favor da tese'],
+  ['Alguns afirmam que a faixa de pedestres atrapalha o trânsito, mas a segurança dos estudantes vem em primeiro lugar.','Refutação: rebate um argumento contrário'],
+  ['Concordo que o recreio é curto; podemos, então, aumentá-lo em cinco minutos e reduzir a fila da merenda.','Negociação: concorda em parte e propõe uma solução']
+];
+const MOVS=['Sustentação: apresenta um argumento a favor da tese','Refutação: rebate um argumento contrário','Negociação: concorda em parte e propõe uma solução'];
+function gDebate(){
+  const it=[];
+  sortear(MOV,3).forEach(([f,m])=>it.push(q('debate',`Que movimento argumentativo aparece em:<br><i>“${f}”</i>`,m,MOVS.filter(x=>x!==m),'Num debate: <b>sustentar</b> é defender com argumentos; <b>refutar</b> é rebater o outro lado; <b>negociar</b> é ceder em parte e buscar acordo.')));
+  it.push(q('debate','Qual argumento é <b>mais forte</b> para pedir uma faixa de pedestres na frente da escola?','Cerca de 400 estudantes atravessam a rua no horário de entrada, e houve dois atropelamentos neste ano.',['Todo mundo quer a faixa.','Seria legal ter uma faixa.','A escola do outro bairro tem uma.'],'Argumentos com <b>dados</b> e <b>fatos verificáveis</b> são mais fortes que opiniões vagas.'));
+  it.push(q('debate','Antes de apoiar a proposta “proibir bola no recreio”, é importante avaliar:','As consequências, como menos atividade física e brincadeiras',['Só quem fez a proposta','A cor da bola','Se a proposta tem título bonito'],'Avaliar uma proposta é pensar nas <b>consequências</b> e nos interesses em jogo, e não só em quem a defende.'));
+  it.push(q('debate','Num debate regrado, o mediador serve para:','Organizar a ordem e o tempo das falas e garantir o respeito',['Decidir quem tem razão antes de começar','Falar mais que todos','Defender um dos lados'],'O <b>mediador</b> controla tempo e turnos de fala e mantém o debate respeitoso.'));
+  return it;
+}
+
+/* ---------- 7. Pesquisa e hipertexto ---------- */
+const PESQ=[
+  ()=>q('pesquisa','O tema “água” é amplo demais para um trabalho. Qual é um bom <b>recorte</b>?','O desperdício de água nas escolas da nossa cidade',['Tudo sobre a água no planeta','A água','Rios, mares, chuva, gelo e nuvens de todo o mundo'],'<b>Recortar</b> o tema é escolher um foco que dá para pesquisar a fundo.'),
+  ()=>q('pesquisa','Qual fonte é mais confiável para uma pesquisa escolar sobre o Pantanal?','O site de uma universidade ou de um órgão ambiental oficial',['Um vídeo sem autor nas redes','Um comentário anônimo num fórum','Uma corrente de mensagens'],'Prefira fontes <b>abertas e confiáveis</b>: instituições de pesquisa, órgãos oficiais, veículos reconhecidos, sempre com autor e data.'),
+  ()=>q('pesquisa','Ao assistir a uma videoaula para estudar, a melhor forma de tomar nota é:','Anotar palavras-chave e ideias principais, organizando em tópicos',['Copiar tudo, palavra por palavra','Não anotar nada','Anotar só o nome do professor'],'<b>Tomar notas</b> é selecionar o essencial, conforme o objetivo do estudo.'),
+  ()=>q('hipertexto','Num texto de divulgação científica na internet, os <b>hiperlinks</b> servem para:','Levar a outras páginas com explicações, dados ou fontes',['Enfeitar o texto com cores','Esconder informações','Deixar o texto mais curto'],'O <b>hipertexto</b> se conecta a outros textos por links, permitindo aprofundar a leitura.'),
+  ()=>q('hipertexto','Num verbete de enciclopédia on-line, o que ajuda a avaliar se as informações são confiáveis?','A lista de referências e as fontes citadas',['A quantidade de imagens','O tamanho da letra','O número de visitas'],'Verifique as <b>referências</b>: elas mostram de onde vieram as informações.'),
+  ()=>q('pesquisa','Depois de pesquisar, uma boa forma de divulgar os resultados para a comunidade escolar é:','Uma apresentação oral com slides ou um mural com gráficos e fontes',['Guardar o trabalho na gaveta','Copiar um texto da internet e assinar','Contar só para um colega'],'Os resultados podem virar <b>apresentação, mural, vídeo ou verbete</b>, sempre citando as fontes.')
+];
+
+/* ---------- 8. Coesão, relativos e colocação pronominal ---------- */
+const FIOS=[
+  ()=>q('coesao','Em “O Pantanal recebe turistas do mundo todo. <b>A região</b> é uma das maiores áreas úmidas do planeta.”, a expressão <b>a região</b> retoma:','O Pantanal',['Os turistas','O mundo todo','O planeta'],'Trocar uma palavra por outra que se refere à mesma coisa (<b>retomada anafórica</b>) faz o texto avançar sem repetir.'),
+  ()=>q('coesao','Em “Só quero <b>isto</b>: que você seja feliz.”, o pronome <b>isto</b>:','Antecipa uma informação que vem depois (catáfora)',['Retoma algo que veio antes','Não se refere a nada','Indica um lugar'],'Quando o termo <b>anuncia</b> o que vem depois, temos uma <b>catáfora</b>.'),
+  ()=>q('relativos','Complete: “O menino _____ pai é pescador venceu o concurso de redação.”','cujo',['que','onde','quem'],'<b>Cujo</b> indica posse (o pai <b>do menino</b>) e concorda com o que vem depois: cujo pai, cuja mãe.',{grade:true}),
+  ()=>q('relativos','Complete: “Corumbá é a cidade _____ nasci.”','onde',['cujo','cuja','quem'],'<b>Onde</b> retoma um <b>lugar</b>: a cidade em que nasci.',{grade:true}),
+  ()=>q('relativos','Em “A escola <b>que</b> reformaram fica no centro.”, o pronome <b>que</b> retoma:','A escola',['O centro','Reformaram','Quem reformou'],'O pronome relativo <b>que</b> retoma o termo anterior, seu <b>antecedente</b>: “a escola”.'),
+  ()=>q('adjetivas','Em qual frase <b>todos</b> os alunos estudaram?','Os alunos, que estudaram, passaram na prova.',['Os alunos que estudaram passaram na prova.','Só os alunos que estudaram passaram.','Alguns alunos que estudaram passaram.'],'Com vírgulas, a oração é <b>explicativa</b>: vale para todos. Sem vírgulas, é <b>restritiva</b>: só para os que estudaram.'),
+  ()=>q('adjetivas','Em “Os ônibus que chegaram atrasados foram multados.”, a oração <b>que chegaram atrasados</b>:','Restringe: só os ônibus atrasados foram multados',['Explica que todos os ônibus atrasaram','Indica lugar','Indica tempo'],'Sem vírgulas, a oração adjetiva é <b>restritiva</b>: separa uma parte do grupo.'),
+  ()=>q('colocacao','Na fala do dia a dia, dizemos “<b>Me</b> empresta a caneta?”. Na norma-padrão escrita, recomenda-se:','Empreste-me a caneta?',['Empresta a caneta me?','Me emprestas a caneta-me?','Caneta me empresta a?'],'Pela norma-padrão, não se começa a frase com pronome oblíquo átono. Na fala do português brasileiro, a próclise (“Me empresta”) é comum e aceita na informalidade.'),
+  ()=>q('colocacao','Qual frase segue a norma-padrão?','Não me diga isso agora.',['Não diga-me isso agora.','Não diga isso-me agora.','Não isso me diga agora.'],'Palavras de sentido negativo (<b>não, nunca, ninguém</b>) atraem o pronome para antes do verbo: <b>Não me diga</b>.')
+];
+
+/* ---------- 9. Literatura em diálogo ---------- */
+const LIT=[
+  ()=>q('intertexto','<span class="verso">Minha terra tem palmeiras<br>onde canta o tuiuiú…</span><br>Esses versos retomam um poema famoso. Qual?','“Canção do Exílio”, de Gonçalves Dias',['“Meus oito anos”, de Casimiro de Abreu','O Hino Nacional','Uma cantiga de roda'],'O poema de Gonçalves Dias (1843) começa “Minha terra tem palmeiras, / Onde canta o Sabiá”. Retomar um texto conhecido é <b>intertextualidade</b>.'),
+  ()=>q('intertexto','Quando um texto imita outro conhecido, mudando seu sentido de forma crítica ou bem-humorada, temos uma:','Paródia',['Notícia','Receita','Biografia'],'A <b>paródia</b> retoma um texto conhecido para criar outro sentido, muitas vezes com humor ou crítica.',{grade:true}),
+  ()=>q('poesia','<span class="verso">Chuva no Pantanal —<br>a garça abre as asas,<br>o rio acorda.</span><br>Esse poema curto, de três versos, sobre a natureza e o instante, é um:','Haicai',['Soneto','Cordel','Editorial'],'O <b>haicai</b>, de origem japonesa, tem três versos curtos e capta um momento da natureza.'),
+  ()=>q('poesia','No <b>poema concreto</b>, o principal recurso é:','A disposição visual das palavras na página',['A rima no final de cada estrofe','A narração de uma longa história','O uso de muitos diálogos'],'No <b>poema concreto</b>, a forma visual também produz sentido: as palavras viram desenho.'),
+  ()=>q('generos','Um texto curto, publicado em jornal ou blog, que comenta com leveza um fato do cotidiano é uma:','Crônica',['Romance','Lei','Bula'],'A <b>crônica</b> parte do cotidiano e mistura observação, humor ou lirismo.',{grade:true}),
+  ()=>q('generos','Uma narrativa longa, com muitas personagens e vários conflitos, dividida em capítulos, é um:','Romance',['Haicai','Miniconto','Anúncio'],'O <b>romance</b> é a narrativa longa; o <b>conto</b> é mais curto; o <b>miniconto</b>, curtíssimo.',{grade:true}),
+  ()=>q('generos','Uma história com robôs, viagens no tempo e tecnologias do futuro é uma narrativa de:','Ficção científica',['Notícia','Fábula','Biografia'],'A <b>ficção científica</b> imagina mundos a partir da ciência e da tecnologia.'),
+  ()=>q('dramatico','Num texto teatral, o trecho “<b>(Ana entra correndo, assustada.)</b>” é uma:','Rubrica: indicação de cena e de atuação',['Fala da personagem','Nota de rodapé','Manchete'],'As <b>rubricas</b> orientam atores e diretores sobre gestos, entradas, cenário e emoções.'),
+  ()=>q('dramatico','Ao adaptar uma peça de teatro para o cinema, aparecem recursos que não existem no palco, como:','Cortes de cena, close e ângulos de câmera',['Rubricas','Personagens','Diálogos'],'Teatro, TV e cinema contam histórias de jeitos diferentes: no cinema, a <b>câmera</b> escolhe o que o público vê.')
+];
+
+const JOGO={
+  NOME:'Tribuna Jovem', CHAVE:'tribunaJovem89.v1', AREA:'LÍNGUA PORTUGUESA', FALA:true,
+  TXT:{missao:'Sessão',missoes:'Sessões',mapa:'Pauta da tribuna',entrar:'Abrir a sessão 🎤',fim:'Sessão encerrada! 🎉'},
+  PATENTES:[[0,'📣 Ouvinte'],[7,'🗣️ Debatedor'],[14,'📰 Colunista'],[21,'⚖️ Mediador'],[26,'🏆 Voz da Tribuna']],
+  CATS:{jornalismo:'Jornalismo e interesses (MS.EF89LP01)',digital:'Práticas da cultura digital (MS.EF89LP02)',fake:'Notícias falsas (MS.EF09LP01)',tese:'Textos de opinião e tese (MS.EF89LP03, MS.EF89LP04)',vozes:'Discurso citado (MS.EF89LP05)',modalizacao:'Modalização (MS.EF89LP16, MS.EF89LP31)',persuasao:'Recursos persuasivos (MS.EF89LP06)',publicidade:'Publicidade (MS.EF89LP07)',operadores:'Operadores argumentativos (MS.EF89LP15)',direitos:'Textos legais e direitos (MS.EF89LP17)',participacao:'Canais de participação (MS.EF89LP18)',generosrei:'Carta aberta e abaixo-assinado (MS.EF89LP19)',proposta:'Propostas (MS.EF89LP20)',debate:'Debate e argumentos (MS.EF89LP22, MS.EF89LP23)',pesquisa:'Pesquisa e notas (MS.EF89LP24, MS.EF89LP28)',hipertexto:'Hipertexto (MS.EF89LP30)',coesao:'Progressão temática (MS.EF89LP29)',relativos:'Pronomes relativos (MS.EF08LP15)',adjetivas:'Orações adjetivas (MS.EF09LP09)',colocacao:'Colocação pronominal (MS.EF09LP10)',intertexto:'Intertextualidade (MS.EF89LP32)',poesia:'Poesia (MS.EF89LP36)',generos:'Gêneros narrativos (MS.EF89LP33)',dramatico:'Texto dramático (MS.EF89LP34)'},
+  HOME:{h1:'Tribuna <span>Jovem</span>', turma:'ex.: 9º A',
+    lead:'Leia o mundo com olhar crítico: descubra os interesses por trás das notícias, ache a tese, perceba a persuasão, argumente num debate, conheça seus direitos e veja como os textos conversam entre si.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:20px;gap:10px"><div class="emoji-g">🎤📰⚖️</div><div class="txt" style="max-width:320px;text-align:center"><b>Embora</b> · <b>portanto</b> · <b>além disso</b> · <b>no entanto</b></div></div>`,
+    info:[['9','sessões'],['8º e 9º','anos'],['🔊','leitura em voz alta']],
+    rodape:'Língua Portuguesa · 8º e 9º ano · Habilidades <b>MS.EF89LP01</b> a <b>MS.EF89LP07</b>, <b>MS.EF89LP15</b> a <b>MS.EF89LP20</b>, <b>MS.EF89LP22</b> a <b>MS.EF89LP24</b>, <b>MS.EF89LP28</b> a <b>MS.EF89LP34</b>, <b>MS.EF89LP36</b>, <b>MS.EF08LP15</b>, <b>MS.EF09LP01</b>, <b>MS.EF09LP09</b> e <b>MS.EF09LP10</b>'},
+  AJUDA:['🎤 Cada sessão da tribuna traz um tipo de desafio. Complete uma para liberar a próxima.','👆 Em algumas perguntas você toca direto na palavra da frase.','📊 Em “Desempenho”, veja em que habilidades você foi melhor e copie o relatório para o professor.','👩‍🏫 Professor(a): as perguntas mudam a cada partida. Em ⚙️ dá para liberar todas as sessões.'],
+  MISSOES:[
+    {id:'m1',titulo:'Por trás da notícia',ic:'📡',hab:'MS.EF89LP01 · MS.EF89LP02 · MS.EF09LP01',desc:'Interesses do jornalismo, curtir e compartilhar, memes e notícias falsas.',gerar:()=>sortear(MIDIA,7),intro:'<p>Toda informação tem quem a produz, quem a financia e quem a compartilha. Antes de passar adiante, confira <b>fonte, autor e data</b>.</p>'},
+    {id:'m2',titulo:'Tese à vista',ic:'🎯',hab:'MS.EF89LP03 · MS.EF89LP04',desc:'Encontrar a tese, explícita ou implícita, em textos de opinião.',gerar:gTese,intro:'<p>A <b>tese</b> é a opinião central; os <b>argumentos</b> a sustentam. Às vezes a tese não está escrita: o leitor a deduz.</p>'},
+    {id:'m3',titulo:'Vozes e certezas',ic:'🗨️',hab:'MS.EF89LP05 · MS.EF89LP16 · MS.EF89LP31',desc:'Verbos que introduzem falas, aspas e modalizadores.',gerar:()=>sortear(VOZES,6),intro:'<p>“Afirmou”, “admitiu” ou “alegou”? “Certamente” ou “talvez”? Pequenas palavras mostram a posição de quem escreve.</p>'},
+    {id:'m4',titulo:'Arsenal da persuasão',ic:'🧲',hab:'MS.EF89LP06 · MS.EF89LP07 · MS.EF89LP15',desc:'Escolhas de palavras, títulos, publicidade e operadores argumentativos.',gerar:()=>sortear(PERS,7),intro:'<p>Textos persuasivos escolhem palavras, imagens e conectores para convencer. Perceber esses recursos é ler com autonomia.</p>'},
+    {id:'m5',titulo:'Direitos e participação',ic:'🏛️',hab:'MS.EF89LP17 · MS.EF89LP18 · MS.EF89LP19 · MS.EF89LP20',desc:'ECA, estrutura de leis, grêmio, carta aberta, abaixo-assinado e propostas.',gerar:()=>sortear(DIR,7),intro:'<p>Conhecer os direitos e os <b>canais de participação</b> (grêmio, conselho escolar, abaixo-assinados) é o primeiro passo para transformar a comunidade.</p>'},
+    {id:'m6',titulo:'Hora do debate',ic:'⚖️',hab:'MS.EF89LP22 · MS.EF89LP23',desc:'Sustentação, refutação, negociação e a força dos argumentos.',gerar:gDebate,intro:'<p>Num debate, sustentamos nossa tese, <b>refutamos</b> o outro lado e, às vezes, <b>negociamos</b> uma solução comum.</p>'},
+    {id:'m7',titulo:'Laboratório de pesquisa',ic:'🔎',hab:'MS.EF89LP24 · MS.EF89LP28 · MS.EF89LP30',desc:'Recorte do tema, fontes confiáveis, anotações e hipertexto.',gerar:()=>sortear(PESQ,5),intro:'<p>Boa pesquisa começa com um <b>recorte</b> claro e fontes confiáveis — e termina com a divulgação dos resultados.</p>'},
+    {id:'m8',titulo:'Fios do texto',ic:'🧵',hab:'MS.EF89LP29 · MS.EF08LP15 · MS.EF09LP09 · MS.EF09LP10',desc:'Retomadas, catáforas, pronomes relativos, orações adjetivas e colocação pronominal.',gerar:()=>sortear(FIOS,7),intro:'<p>Pronomes e expressões retomam e anunciam ideias, costurando o texto. Uma vírgula pode mudar tudo numa oração adjetiva!</p>'},
+    {id:'m9',titulo:'Literatura em diálogo',ic:'📚',hab:'MS.EF89LP32 · MS.EF89LP33 · MS.EF89LP34 · MS.EF89LP36',desc:'Paródia, haicai, poema concreto, crônica, romance e texto dramático.',gerar:()=>sortear(LIT,7),intro:'<p>Textos conversam com outros textos: uma paródia retoma um poema famoso, um filme adapta uma peça. Isso é <b>intertextualidade</b>.</p>'}
+  ]
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>
