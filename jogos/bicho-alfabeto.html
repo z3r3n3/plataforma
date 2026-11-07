@@ -512,9 +512,9 @@ function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHo
 
 /* =========================================================
    BICHO ALFABETO — Língua Portuguesa · 1º e 2º ano
-   MS.EF01LP05 e MS.EF01LP10 letras e alfabeto · MS.EF01LP11 formas das letras · MS.EF12LP07 sistema alfabético
+   MS.EF01LP05 e MS.EF01LP10 letras e alfabeto · MS.EF01LP11 formas das letras · MS.EF12LP01 leitura de palavras
    MS.EF01LP08 e MS.EF01LP13 sons e sílabas · MS.EF02LP02 segmentar e trocar sílabas
-   MS.EF12LP19 rimas · MS.EF02LP04 e MS.EF02LP05 sílabas complexas e nasalidade
+   MS.EF12LP07 e MS.EF12LP19 rimas · MS.EF02LP04 e MS.EF02LP05 sílabas complexas e nasalidade
    ========================================================= */
 const A=()=>S.nivel!=='b';
 /* [emoji, palavra, sílabas] */
@@ -569,19 +569,19 @@ const JOGO={
   NIVEIS:[{k:'a',n:'1º ano',d:'letras, sons e figuras'},{k:'b',n:'2º ano',d:'sílabas, palavras e M/N/til'}],
   TXT:{missao:'Trilha',missoes:'Trilhas',mapa:'Trilhas do alfabeto',entrar:'Começar a trilha 🐾',icMapa:'🐾',valendo:'Vamos lá! 🐾',fim:'Trilha completa! 🎉'},
   PATENTES:[[0,'🐣 Filhote'],[5,'🐸 Saltador de letras'],[10,'🦜 Leitor tagarela'],[14,'🏆 Rei do alfabeto']],
-  CATS:{letras:'Letras e alfabeto (MS.EF01LP05, MS.EF01LP10, MS.EF01LP11)',silabas:'Sons e sílabas (MS.EF01LP08, MS.EF01LP13, MS.EF02LP02)',rimas:'Rimas (MS.EF12LP19)',leitura:'Leitura e escrita (MS.EF12LP07, MS.EF02LP04, MS.EF02LP05)'},
+  CATS:{letras:'Letras e alfabeto (MS.EF01LP05, MS.EF01LP10, MS.EF01LP11)',silabas:'Sons e sílabas (MS.EF01LP08, MS.EF01LP13, MS.EF02LP02)',rimas:'Rimas (MS.EF12LP07, MS.EF12LP19)',leitura:'Leitura e escrita (MS.EF12LP01, MS.EF02LP04, MS.EF02LP05)'},
   HOME:{h1:'Bicho <span>Alfabeto</span>', turma:'ex.: 1º B',
     lead:'Jacaré, arara, capivara e muitos outros bichos ajudam você a descobrir as letras, contar sílabas, achar rimas e ler palavras. Toque em 🔊 para ouvir cada pergunta!',
     cena:'<div style="background:#fff;display:grid;place-items:center;padding:20px;gap:6px"><div class="emoji-g">🐊🦜🦫</div><span class="palavra-l">A B C</span></div>',
     info:[['5','trilhas'],['1º e 2º','anos, com níveis'],['🔊','leitura em voz alta']],
-    rodape:'Língua Portuguesa · 1º e 2º ano · Habilidades <b>MS.EF01LP05</b>, <b>MS.EF01LP08</b>, <b>MS.EF01LP10</b>, <b>MS.EF01LP11</b>, <b>MS.EF01LP13</b>, <b>MS.EF12LP07</b>, <b>MS.EF12LP19</b>, <b>MS.EF02LP02</b>, <b>MS.EF02LP04</b> e <b>MS.EF02LP05</b>'},
+    rodape:'Língua Portuguesa · 1º e 2º ano · Habilidades <b>MS.EF01LP05</b>, <b>MS.EF01LP08</b>, <b>MS.EF01LP10</b>, <b>MS.EF01LP11</b>, <b>MS.EF01LP13</b>, <b>MS.EF12LP01</b>, <b>MS.EF12LP07</b>, <b>MS.EF12LP19</b>, <b>MS.EF02LP02</b>, <b>MS.EF02LP04</b> e <b>MS.EF02LP05</b>'},
   AJUDA:['🎚️ Escolha <b>1º ano</b> ou <b>2º ano</b> na tela inicial.','🔊 Toque no alto-falante para ouvir a pergunta quantas vezes quiser.','👏 Para contar sílabas, fale a palavra batendo palmas.','👩‍🏫 Professor(a): no 1º ano, as figuras aparecem sem o nome escrito nas trilhas de letra inicial e sílabas, para trabalhar a consciência fonológica.'],
   MISSOES:[
     {id:'m1',titulo:'Letra do começo',ic:'🔤',hab:'MS.EF01LP05 · MS.EF01LP13',desc:'Descubra com que letra começa o nome de cada bicho.',gerar:gerarInicial,intro:'<p>Fale o nome da figura bem devagar e escute o <b>primeiro som</b>. Com que letra ele começa?</p>'},
     {id:'m2',titulo:'Trem do alfabeto',ic:'🚂',hab:'MS.EF01LP10 · MS.EF01LP11',desc:'Ordem das letras, maiúsculas e minúsculas e ordem alfabética.',gerar:gerarAlfabeto,intro:'<p>O alfabeto tem <b>26 letras</b>, sempre na mesma ordem: A, B, C, D… Vamos treinar?</p>'},
     {id:'m3',titulo:'Palmas das sílabas',ic:'👏',hab:'MS.EF01LP08 · MS.EF02LP02',desc:'Conte sílabas e descubra a sílaba que falta.',gerar:gerarSilabas,intro:'<p>Cada pedacinho da palavra é uma <b>sílaba</b>. CA-PI-VA-RA tem 4 sílabas: 4 palmas!</p>'},
-    {id:'m4',titulo:'Caça-rimas',ic:'🎵',hab:'MS.EF12LP19',desc:'Encontre as palavras que terminam com o mesmo som.',gerar:gerarRimas,intro:'<p>Palavras que <b>rimam</b> terminam com o mesmo som: GATO e PATO, PÃO e MÃO.</p>'},
-    {id:'m5',titulo:'Leitor esperto',ic:'📖',hab:'MS.EF12LP07 · MS.EF02LP04 · MS.EF02LP05',desc:'Leia o nome das figuras e escreva certinho com M, N e til.',gerar:gerarLeitura,intro:'<p>No 1º ano, leia as palavras e encontre o nome da figura. No 2º ano, descubra quando usar <b>M</b>, <b>N</b> ou <b>til (~)</b>.</p>'}
+    {id:'m4',titulo:'Caça-rimas',ic:'🎵',hab:'MS.EF12LP07 · MS.EF12LP19',desc:'Encontre as palavras que terminam com o mesmo som.',gerar:gerarRimas,intro:'<p>Palavras que <b>rimam</b> terminam com o mesmo som: GATO e PATO, PÃO e MÃO.</p>'},
+    {id:'m5',titulo:'Leitor esperto',ic:'📖',hab:'MS.EF12LP01 · MS.EF02LP04 · MS.EF02LP05',desc:'Leia o nome das figuras e escreva certinho com M, N e til.',gerar:gerarLeitura,intro:'<p>No 1º ano, leia as palavras e encontre o nome da figura. No 2º ano, descubra quando usar <b>M</b>, <b>N</b> ou <b>til (~)</b>.</p>'}
   ]
 };
 iniciarJogo();

@@ -509,7 +509,7 @@ function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHo
 /* =========================================================
    MUNDO CONECTADO — Geografia · 8º e 9º ano
    MS.EF08GE05 e MS.EF08GE11 Estado, nação, território e conflitos · MS.EF08GE01 e MS.EF08GE04 população e migrações
-   MS.EF08GE12 organizações e blocos · MS.EF08GE20 América · MS.EF09GE02, MS.EF09GE03 e MS.EF09GE05 globalização
+   MS.EF08GE12 organizações e blocos · MS.EF08GE20 América · MS.EF09GE02 e MS.EF09GE05 globalização
    MS.EF09GE08 Europa e Ásia · MS.EF09GE13 cadeias do agronegócio
    ========================================================= */
 const E=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
@@ -551,18 +551,18 @@ const AGRO=[
 const JOGO={
   NOME:'Mundo Conectado', CHAVE:'mundoConectado.v1', AREA:'GEOGRAFIA',
   PATENTES:[[0,'🌐 Aprendiz'],[5,'✈️ Viajante global'],[10,'🌍 Analista internacional'],[14,'🏆 Cidadão do mundo']],
-  CATS:{estado:'Estado, nação e fronteiras (MS.EF08GE05, MS.EF08GE11)',migracoes:'População e migrações (MS.EF08GE01, MS.EF08GE04)',blocos:'Organizações e blocos (MS.EF08GE12, MS.EF08GE20)',globalizacao:'Globalização (MS.EF09GE02, MS.EF09GE03, MS.EF09GE05, MS.EF09GE08)',agro:'Agronegócio e cadeias produtivas (MS.EF09GE13)'},
+  CATS:{estado:'Estado, nação e fronteiras (MS.EF08GE05, MS.EF08GE11)',migracoes:'População e migrações (MS.EF08GE01, MS.EF08GE04)',blocos:'Organizações e blocos (MS.EF08GE12, MS.EF08GE20)',globalizacao:'Globalização (MS.EF09GE02, MS.EF09GE05, MS.EF09GE08)',agro:'Agronegócio e cadeias produtivas (MS.EF09GE13)'},
   HOME:{h1:'Mundo <span>Conectado</span>', turma:'ex.: 9º B',
     lead:'Da fronteira seca de Ponta Porã aos portos da China: entenda Estados e nações, migrações e refugiados, ONU e Mercosul, globalização e o caminho da soja de MS até o outro lado do mundo.',
     cena:'<div style="background:#fff;display:grid;place-items:center;padding:20px"><div class="emoji-g">🌐🚢✈️<br>🇧🇷🤝🌎</div></div>',
     info:[['5','missões'],['8º e 9º','anos'],['🌱','agronegócio de MS']],
-    rodape:'Geografia · 8º e 9º ano · Habilidades <b>MS.EF08GE01</b>, <b>MS.EF08GE04</b>, <b>MS.EF08GE05</b>, <b>MS.EF08GE11</b>, <b>MS.EF08GE12</b>, <b>MS.EF08GE20</b>, <b>MS.EF09GE02</b>, <b>MS.EF09GE03</b>, <b>MS.EF09GE05</b>, <b>MS.EF09GE08</b> e <b>MS.EF09GE13</b>'},
+    rodape:'Geografia · 8º e 9º ano · Habilidades <b>MS.EF08GE01</b>, <b>MS.EF08GE04</b>, <b>MS.EF08GE05</b>, <b>MS.EF08GE11</b>, <b>MS.EF08GE12</b>, <b>MS.EF08GE20</b>, <b>MS.EF09GE02</b>, <b>MS.EF09GE05</b>, <b>MS.EF09GE08</b> e <b>MS.EF09GE13</b>'},
   AJUDA:['🌐 Leia com atenção e escolha a resposta. A explicação aparece depois do acerto.','📚 Sugestão: missões 1 a 3 para o 8º ano; 4 e 5 para o 9º.','👩‍🏫 Professor(a): as questões são sorteadas a cada partida.'],
   MISSOES:[
     {id:'m1',titulo:'Estados e fronteiras',ic:'🧭',hab:'MS.EF08GE05 · MS.EF08GE11',desc:'Estado, nação, soberania, fronteira seca e conflitos.',gerar:()=>sortear(ESTADO,5),intro:'<p><b>Estado</b> é a organização política de um território; <b>nação</b> é um povo com identidade comum. Nem sempre os dois coincidem.</p>'},
     {id:'m2',titulo:'Gente em movimento',ic:'🧳',hab:'MS.EF08GE01 · MS.EF08GE04',desc:'Origem da humanidade, refugiados, migrantes em MS e população mundial.',gerar:()=>sortear(MIGRA,5),intro:'<p>A humanidade sempre migrou. Hoje, guerras, crises e busca por trabalho movem milhões de pessoas, inclusive para MS.</p>'},
     {id:'m3',titulo:'ONU e blocos',ic:'🤝',hab:'MS.EF08GE12 · MS.EF08GE20',desc:'Mercosul, União Europeia, ONU e o poder dos EUA.',gerar:()=>sortear(BLOCOS,5),intro:'<p>Países se unem em <b>organizações</b> e <b>blocos econômicos</b> para cooperar, negociar e comerciar.</p>'},
-    {id:'m4',titulo:'Globalização',ic:'🌐',hab:'MS.EF09GE02 · MS.EF09GE03 · MS.EF09GE05 · MS.EF09GE08',desc:'Transnacionais, cultura global, cadeias produtivas e China.',gerar:()=>sortear(GLOBAL,5),intro:'<p>A <b>globalização</b> conecta economias e culturas. Ela traz oportunidades, mas também desigualdades.</p>'},
+    {id:'m4',titulo:'Globalização',ic:'🌐',hab:'MS.EF09GE02 · MS.EF09GE05 · MS.EF09GE08',desc:'Transnacionais, cultura global, cadeias produtivas e China.',gerar:()=>sortear(GLOBAL,5),intro:'<p>A <b>globalização</b> conecta economias e culturas. Ela traz oportunidades, mas também desigualdades.</p>'},
     {id:'m5',titulo:'Do campo ao mundo',ic:'🌱',hab:'MS.EF09GE13',desc:'Soja para a China, frigoríficos, agricultura familiar e sustentabilidade.',gerar:()=>sortear(AGRO,5),intro:'<p>O agronegócio de MS faz parte de <b>cadeias produtivas</b> que vão das sementes ao prato de pessoas do mundo todo.</p>'}
   ]
 };

@@ -509,7 +509,7 @@ function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHo
 /* =========================================================
    CIVILIZAÇÕES ANTIGAS — História · 6º ano
    MS.EF06HI01 e MS.EF06HI02 tempo e fontes · MS.EF06HI03 e MS.EF06HI05 origens e Neolítico
-   MS.EF06HI00.n.07 e MS.EF06HI00.n.10 povos milenares de MS · MS.EF06HI07 e MS.EF06HI08 África e Oriente antigos
+   MS.EF06HI08, MS.EF06HI00.n.07 e MS.EF06HI00.n.10 povos milenares de MS · MS.EF06HI07 África e Oriente antigos
    MS.EF06HI10, MS.EF06HI11 e MS.EF06HI12 Grécia e Roma · MS.EF06HI14, MS.EF06HI16 e MS.EF06HI18 Idade Média
    ========================================================= */
 const E=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
@@ -558,7 +558,7 @@ const MEDIA=[
 const JOGO={
   NOME:'Civilizações Antigas', CHAVE:'civilizacoesAntigas.v1', AREA:'HISTÓRIA',
   PATENTES:[[0,'🏺 Aprendiz'],[5,'📜 Escriba'],[10,'🏛️ Historiador'],[14,'🏆 Sábio da Antiguidade']],
-  CATS:{tempo:'Tempo histórico e origens (MS.EF06HI01, MS.EF06HI02, MS.EF06HI03, MS.EF06HI05)',ms:'Povos milenares de MS (MS.EF06HI00.n.07, MS.EF06HI00.n.10)',oriente:'Egito, Mesopotâmia e Kush (MS.EF06HI07, MS.EF06HI08)',grecia:'Grécia e Roma (MS.EF06HI10, MS.EF06HI11, MS.EF06HI12)',media:'Idade Média (MS.EF06HI14, MS.EF06HI16, MS.EF06HI18)'},
+  CATS:{tempo:'Tempo histórico e origens (MS.EF06HI01, MS.EF06HI02, MS.EF06HI03, MS.EF06HI05)',ms:'Povos milenares de MS (MS.EF06HI08, MS.EF06HI00.n.07, MS.EF06HI00.n.10)',oriente:'Egito, Mesopotâmia e Kush (MS.EF06HI07)',grecia:'Grécia e Roma (MS.EF06HI10, MS.EF06HI11, MS.EF06HI12)',media:'Idade Média (MS.EF06HI14, MS.EF06HI16, MS.EF06HI18)'},
   HOME:{h1:'Civilizações <span>Antigas</span>', turma:'ex.: 6º A',
     lead:'Viaje dos primeiros humanos na África aos aterros do Pantanal, das pirâmides do Nilo à democracia de Atenas e dos castelos medievais aos números que vieram dos árabes.',
     cena:'<div style="background:#fff;display:grid;place-items:center;padding:20px"><div class="emoji-g">🏺🔺🏛️<br>🏰📜⚔️</div></div>',
@@ -567,8 +567,8 @@ const JOGO={
   AJUDA:['📜 Leia com atenção e escolha a resposta. Se errar, leia a dica.','🔢 Século: para anos que não terminam em 00, pegue as centenas e some 1 (1500 é século XV; 1501, século XVI).','👩‍🏫 Professor(a): as questões são sorteadas a cada partida.'],
   MISSOES:[
     {id:'m1',titulo:'Tempo e origens',ic:'⏳',hab:'MS.EF06HI01 · MS.EF06HI02 · MS.EF06HI03 · MS.EF06HI05',desc:'Séculos, fontes, origem da humanidade e Neolítico.',gerar:()=>sortear(TEMPO.concat([TEMPO[0]]),6),intro:'<p>A História estuda as ações humanas no tempo, a partir de <b>fontes</b>. A humanidade surgiu na <b>África</b> e, com a agricultura, formou as primeiras aldeias.</p>'},
-    {id:'m2',titulo:'Povos milenares de MS',ic:'🏹',hab:'MS.EF06HI00.n.07 · MS.EF06HI00.n.10',desc:'Aterros do Pantanal, arte rupestre, cerâmica e povos originários.',gerar:()=>sortear(MS,5),intro:'<p>Muito antes de 1500, o território de MS já era habitado. A <b>arqueologia</b> encontra aterros, cerâmicas e pinturas em rochas desses povos.</p>'},
-    {id:'m3',titulo:'Egito, Mesopotâmia e Kush',ic:'🔺',hab:'MS.EF06HI07 · MS.EF06HI08',desc:'Rios, escrita, leis e reinos da África e do Oriente.',gerar:()=>sortear(ORIENTE,6),intro:'<p>As primeiras grandes civilizações surgiram perto de <b>rios</b>: o Nilo, no Egito, e o Tigre e o Eufrates, na Mesopotâmia. Ali nasceram a escrita e as primeiras leis.</p>'},
+    {id:'m2',titulo:'Povos milenares de MS',ic:'🏹',hab:'MS.EF06HI08 · MS.EF06HI00.n.07 · MS.EF06HI00.n.10',desc:'Aterros do Pantanal, arte rupestre, cerâmica e povos originários.',gerar:()=>sortear(MS,5),intro:'<p>Muito antes de 1500, o território de MS já era habitado. A <b>arqueologia</b> encontra aterros, cerâmicas e pinturas em rochas desses povos.</p>'},
+    {id:'m3',titulo:'Egito, Mesopotâmia e Kush',ic:'🔺',hab:'MS.EF06HI07',desc:'Rios, escrita, leis e reinos da África e do Oriente.',gerar:()=>sortear(ORIENTE,6),intro:'<p>As primeiras grandes civilizações surgiram perto de <b>rios</b>: o Nilo, no Egito, e o Tigre e o Eufrates, na Mesopotâmia. Ali nasceram a escrita e as primeiras leis.</p>'},
     {id:'m4',titulo:'Grécia e Roma',ic:'🏛️',hab:'MS.EF06HI10 · MS.EF06HI11 · MS.EF06HI12',desc:'Democracia, cidadania, República, Império e o latim.',gerar:()=>sortear(GR,6),intro:'<p>Os gregos criaram a <b>democracia</b> e os romanos, a <b>República</b>. Mas a cidadania antiga era para poucos!</p>'},
     {id:'m5',titulo:'Idade Média',ic:'🏰',hab:'MS.EF06HI14 · MS.EF06HI16 · MS.EF06HI18',desc:'Feudalismo, Igreja, Bizâncio e o mundo islâmico.',gerar:()=>sortear(MEDIA,6),intro:'<p>Na Europa medieval havia <b>senhores e servos</b>, castelos e mosteiros. Enquanto isso, árabes e bizantinos preservavam e criavam conhecimentos.</p>'}
   ]
