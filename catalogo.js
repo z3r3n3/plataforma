@@ -17,6 +17,18 @@ const COMPONENTES = {
 };
 
 const JOGOS = [
+  { arquivo: 'acento-certo.html', titulo: 'Acento Certo', componente: 'lp', anos: [3,4,5,6,7,8,9],
+    tipo: 'Ortografia com voz', icone: '✍️',
+    descricao: 'Toque na sílaba tônica, classifique oxítonas e paroxítonas, aplique as regras de acentuação e vença mas/mais, mal/mau e os porquês.',
+    habilidades: ['MS.EF03LP04', 'MS.EF04LP01', 'MS.EF04LP04', 'MS.EF05LP01', 'MS.EF06LP11', 'MS.EF09LP04'] },
+  { arquivo: 'oficina-da-gramatica.html', titulo: 'Oficina da Gramática', componente: 'lp', anos: [6,7,8,9],
+    tipo: 'Toque nas palavras', icone: '🛠️',
+    descricao: 'Classes de palavras, modos verbais, concordância, sujeito, complementos, voz passiva, conjunções e regência com frases de MS.',
+    habilidades: ['MS.EF06LP04', 'MS.EF06LP05', 'MS.EF06LP06', 'MS.EF07LP06', 'MS.EF07LP07', 'MS.EF07LP09', 'MS.EF08LP07', 'MS.EF08LP08', 'MS.EF08LP13', 'MS.EF09LP07', 'MS.EF09LP08'] },
+  { arquivo: 'lingua-viva.html', titulo: 'Língua Viva', componente: 'lp', anos: [6,7,8,9],
+    tipo: 'Desafios de sentido', icone: '🧉',
+    descricao: 'Sinônimos e homônimos, formação de palavras, figuras de linguagem, variação linguística sem preconceito e palavras de outras línguas.',
+    habilidades: ['MS.EF06LP12', 'MS.EF08LP05', 'MS.EF69LP54', 'MS.EF69LP55', 'MS.EF69LP56', 'MS.EF09LP12'] },
   { arquivo: 'pontuacao-turbo.html', titulo: 'Pontuação Turbo', componente: 'lp', anos: [3,4,5],
     tipo: 'Jogo de escrita com voz', icone: '🏎️',
     descricao: 'Coloque ponto, vírgula, interrogação, travessão e dois-pontos no texto e ouça a diferença na leitura.',
