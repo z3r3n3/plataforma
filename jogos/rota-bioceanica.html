@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rota Bioceânica — Matemática do 5º ano</title>
+<meta name="description" content="Jogo de Matemática do 5º ano numa viagem pela Rota Bioceânica, de MS até o Pacífico: números até 999.999, decimais, operações com decimais, igualdades, proporção, partilha, contagem, probabilidade, plano cartesiano, polígonos, ampliação, perímetro, área, volume e gráficos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#1E3A8A;--agua2:#2563EB;--agua-claro:#DBEAFE}
+body{background:linear-gradient(180deg,#DBEAFE 0%,#F0F9FF 55%,#FEF3C7 100%)}
+.topo{background:#EFF6FFee}
+.planilha{border-collapse:collapse;font-size:15px;margin:auto}
+.planilha td,.planilha th{border:1.5px solid #94A3B8;width:44px;height:30px;text-align:center}
+.planilha th{background:#E2E8F0;font-weight:700}
+.planilha td.on{background:#FDE68A}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   ROTA BIOCEÂNICA — Matemática · 5º ano
+   MS.EF05MA01 números até 999.999 · MS.EF05MA02 e MS.EF05MA05 decimais e comparação de racionais
+   MS.EF05MA07 e MS.EF05MA08 operações com decimais · MS.EF05MA10 e MS.EF05MA11 igualdades e termo desconhecido
+   MS.EF05MA12 e MS.EF05MA13 proporcionalidade e partilha · MS.EF05MA09, MS.EF05MA22 e MS.EF05MA23 contagem e probabilidade
+   MS.EF05MA14 e MS.EF05MA15 plano cartesiano · MS.EF05MA16, MS.EF05MA17 e MS.EF05MA18 sólidos, polígonos e ampliação
+   MS.EF05MA19, MS.EF05MA20 e MS.EF05MA21 medidas, perímetro, área e volume · MS.EF05MA24 e MS.EF05MA25 gráficos e pesquisa
+   ========================================================= */
+/* =========================================================
+   BIBLIOTECA VISUAL — Matemática dos anos iniciais
+   reta numérica, gráficos, tabelas, malha, sólidos, planificações,
+   polígonos, ângulos, régua, cubinhos, plano cartesiano, roleta, dinheiro
+   ========================================================= */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.din2{display:inline-flex;align-items:center;justify-content:center;font-family:var(--titulo);font-weight:800;border-radius:8px;border:2px solid #0003;padding:2px 10px;min-width:76px;height:40px;font-size:18px;color:#1B2A26;white-space:nowrap}
+.din2.moe{border-radius:50%;min-width:54px;width:54px;height:54px;padding:0;font-size:14px;line-height:1}
+.dins{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}
+.arr{display:inline-grid;gap:2px 6px;font-size:clamp(24px,5.6vw,34px);line-height:1.1}
+.picto{display:grid;gap:6px;text-align:left;font-size:17px}
+.picto>div{display:flex;align-items:center;gap:10px}
+.picto b{min-width:92px;display:inline-block}
+.picto span{font-size:21px;letter-spacing:1px}
+.picto b{min-width:84px;font-size:15px}
+.picto p{margin:4px 0 0;font-weight:700}
+.vis .gtit{width:100%;font-family:var(--titulo);font-weight:800;font-size:19px;margin:0}
+.opcoes.grade .op svg{width:100%;max-width:130px;height:auto}
+.opcoes .op .din2{font-size:16px}
+.vis .tabela-s{font-size:14px}.vis .tabela-s td,.vis .tabela-s th{padding:4px 6px}
+.tabwrap{max-width:100%;overflow-x:auto}
+.bolas{font-size:28px;line-height:1.2;max-width:100%;word-break:break-all}
+.conta{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,6vw,40px)}
+</style>`);
+const V=h=>`<div class="vis">${h}</div>`;
+const EM=e=>V(`<div class="emoji-g">${e}</div>`);
+const CORES=['#2563EB','#F97316','#16A34A','#9333EA','#DB2777','#0891B2'];
+const CLARAS=['#BFDBFE','#FED7AA','#BBF7D0','#E9D5FF','#FBCFE8','#A5F3FC'];
+const TX=(x,y,t,tam=20,o='')=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="Baloo 2,Trebuchet MS,sans-serif" font-weight="800" font-size="${tam}" fill="#1B2A26" ${o}>${t}</text>`;
+const mil=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const fmtN=v=>Number.isInteger(v)?mil(v):nf(v);
+const fr=(a,b)=>`<span class="fr"><i>${a}</i><i>${b}</i></span>`;
+const svg=(w,h,c,larg)=>`<svg viewBox="0 0 ${w} ${h}" width="${larg||w}" role="img">${c}</svg>`;
+const pts=a=>a.map(p=>p.join(',')).join(' ');
+
+/* ---------- números por extenso (até 999 999) ---------- */
+const U_=['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
+const D_=['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+const C_=['','cento','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+function ate999(n){ if(n===100) return 'cem'; const c=Math.floor(n/100), r=n%100, p=[]; if(c) p.push(C_[c]);
+  if(r>0&&r<20) p.push(U_[r]); else if(r>=20){ const d=Math.floor(r/10),u=r%10; p.push(u?D_[d]+' e '+U_[u]:D_[d]); } return p.join(' e '); }
+function extenso(n){ if(n===0) return 'zero'; if(n<1000) return ate999(n); const m=Math.floor(n/1000), r=n%1000; const mp=m===1?'mil':ate999(m)+' mil';
+  if(!r) return mp; return mp+((r<100||r%100===0)?' e ':' ')+ate999(r); }
+
+/* ---------- reta numérica ---------- */
+function reta({ini,fim,passo,rot='todos',pts:P=[],sub=0,fmt=nf}){
+  const W=380,m=26,y=50,X=v=>m+(v-ini)/(fim-ini)*(W-2*m), n=Math.round((fim-ini)/passo);
+  let s=`<line x1="${m-16}" y1="${y}" x2="${W-m+16}" y2="${y}" stroke="#1B2A26" stroke-width="3"/><path d="M${W-m+22} ${y} l-10 -7 v14z" fill="#1B2A26"/>`;
+  if(sub) for(let k=0;k<=n*sub;k++){ const x=X(ini+k*passo/sub); s+=`<line x1="${x}" y1="${y-6}" x2="${x}" y2="${y+6}" stroke="#1B2A26" stroke-width="1.5"/>`; }
+  for(let k=0;k<=n;k++){ const v=ini+k*passo, x=X(v); s+=`<line x1="${x}" y1="${y-12}" x2="${x}" y2="${y+12}" stroke="#1B2A26" stroke-width="3"/>`;
+    const mostra=rot==='todos'||(rot==='pontas'&&(k===0||k===n))||(Array.isArray(rot)&&rot.some(r=>Math.abs(r-v)<1e-9)); if(mostra) s+=TX(x,y+36,fmt(Math.round(v*1e6)/1e6),18); }
+  P.forEach((p,i)=>{ const x=X(p.v); s+=`<circle cx="${x}" cy="${y}" r="8" fill="${p.cor||CORES[i%6]}" stroke="#fff" stroke-width="2"/>`+TX(x,y-18,p.r,24,`fill="${p.cor||CORES[i%6]}"`); });
+  return svg(W,96,s);
+}
+
+/* ---------- gráfico de colunas ---------- */
+function barras({cats,vals,max,passo,titulo='',eixo='',cores}){
+  const W=400,H=290,ml=46,mb=48,mt=14,mr=8,ch=H-mt-mb,cw=W-ml-mr,Y=v=>mt+ch-(v/max)*ch,n=cats.length,slot=cw/n,bw=Math.min(60,slot*.58);
+  let s='';
+  for(let v=0;v<=max+1e-9;v+=passo){ const y=Y(v); s+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#E5E7EB" stroke-width="1.5"/>`+TX(ml-20,y+6,nf(v),17); }
+  cats.forEach((c,i)=>{ const x=ml+i*slot+(slot-bw)/2, y=Y(vals[i]); s+=`<rect x="${x}" y="${y}" width="${bw}" height="${mt+ch-y}" rx="4" fill="${(cores||CORES)[i%6]}"/>`;
+    const L=String(c).split('|'); L.forEach((l,k)=>s+=TX(ml+i*slot+slot/2,H-mb+24+k*19,l,L.length>1&&k?15:17)); });
+  s+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ch}" stroke="#1B2A26" stroke-width="2.5"/><line x1="${ml}" y1="${mt+ch}" x2="${W-mr}" y2="${mt+ch}" stroke="#1B2A26" stroke-width="2.5"/>`;
+  if(eixo) s+=`<text x="14" y="${mt+ch/2}" transform="rotate(-90 14 ${mt+ch/2})" text-anchor="middle" font-size="13" fill="#56645E">${eixo}</text>`;
+  return `<p class="gtit">${titulo}</p>`+svg(W,H,s);
+}
+/* ---------- gráfico de linhas (1 ou 2 séries) ---------- */
+function linhas({cats,series,min=0,max,passo,titulo=''}){
+  const W=400,H=280,ml=44,mb=40,mt=14,mr=16,ch=H-mt-mb,cw=W-ml-mr,Y=v=>mt+ch-((v-min)/(max-min))*ch,n=cats.length,X=i=>ml+cw*(i+.5)/n;
+  let s='';
+  for(let v=min;v<=max+1e-9;v+=passo){ const y=Y(v); s+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#E5E7EB" stroke-width="1.5"/>`+TX(ml-20,y+6,nf(v),15); }
+  cats.forEach((c,i)=>s+=TX(X(i),H-mb+24,c,15));
+  series.forEach((se,k)=>{ const cor=se.cor||CORES[k]; s+=`<polyline points="${se.vals.map((v,i)=>X(i)+','+Y(v)).join(' ')}" fill="none" stroke="${cor}" stroke-width="4" stroke-linejoin="round"/>`;
+    se.vals.forEach((v,i)=>s+=`<circle cx="${X(i)}" cy="${Y(v)}" r="6" fill="${cor}" stroke="#fff" stroke-width="2"/>`); });
+  s+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ch}" stroke="#1B2A26" stroke-width="2.5"/><line x1="${ml}" y1="${mt+ch}" x2="${W-mr}" y2="${mt+ch}" stroke="#1B2A26" stroke-width="2.5"/>`;
+  const leg=series.length>1?`<p class="mini" style="width:100%;margin:0">${series.map((se,k)=>`<b style="color:${se.cor||CORES[k]}">● ${se.nome}</b>`).join(' &nbsp; ')}</p>`:'';
+  return `<p class="gtit">${titulo}</p>`+svg(W,H,s)+leg;
+}
+/* ---------- pictograma e tabela ---------- */
+function picto(linhas,ic,vale,titulo=''){ return `<div class="picto">${titulo?`<p class="gtit" style="text-align:center">${titulo}</p>`:''}${linhas.map(([n,q])=>`<div><b>${n}</b><span>${ic.repeat(q/vale)}</span></div>`).join('')}<p>Legenda: cada ${ic} = ${vale}</p></div>`; }
+function tab(cab,lin,titulo=''){ return `${titulo?`<p class="gtit">${titulo}</p>`:''}<div class="tabwrap"><table class="tabela-s"><thead><tr>${cab.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${lin.map(l=>`<tr>${l.map((c,i)=>i?`<td>${c}</td>`:`<th>${c}</th>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+
+/* ---------- malha quadriculada ---------- */
+/* cel: [[x,y,cor]]; tri: [[x,y,cor,canto]] metade de quadradinho (canto: 'a' = metade de baixo à esquerda, 'b' = de cima à direita) */
+function malha({c,l,cel=[],tri=[],t=28,eixoX=null,borda=true}){
+  let s='';
+  cel.forEach(([x,y,cor])=>s+=`<rect x="${x*t}" y="${y*t}" width="${t}" height="${t}" fill="${cor||CORES[0]}"/>`);
+  tri.forEach(([x,y,cor,k])=>{ const a=[x*t,y*t],b=[(x+1)*t,y*t],d=[x*t,(y+1)*t],e=[(x+1)*t,(y+1)*t]; s+=`<polygon points="${pts(k==='b'?[a,b,e]:k==='c'?[a,b,d]:k==='d'?[b,e,d]:[a,d,e])}" fill="${cor||CORES[0]}"/>`; });
+  for(let i=0;i<=c;i++) s+=`<line x1="${i*t}" y1="0" x2="${i*t}" y2="${l*t}" stroke="#94A3B8" stroke-width="1"/>`;
+  for(let j=0;j<=l;j++) s+=`<line x1="0" y1="${j*t}" x2="${c*t}" y2="${j*t}" stroke="#94A3B8" stroke-width="1"/>`;
+  if(eixoX!=null) s+=`<line x1="${eixoX*t}" y1="-6" x2="${eixoX*t}" y2="${l*t+6}" stroke="#DC2626" stroke-width="3" stroke-dasharray="7 5"/>`;
+  return `<svg viewBox="-4 -8 ${c*t+8} ${l*t+16}" width="${c*t+8}" role="img">${s}</svg>`;
+}
+/* figuras de quadradinhos: utilidades */
+const normal=F=>{ const mx=Math.min(...F.map(p=>p[0])),my=Math.min(...F.map(p=>p[1])); return F.map(([x,y])=>[x-mx,y-my]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]); };
+const girar=F=>normal(F.map(([x,y])=>[-y,x]));
+const chave=F=>normal(F).map(p=>p.join(':')).join('|');
+function figMalha(F,cor,margem=1){ const N=normal(F), c=Math.max(...N.map(p=>p[0]))+1+2*margem, l=Math.max(...N.map(p=>p[1]))+1+2*margem; return malha({c,l,cel:N.map(([x,y])=>[x+margem,y+margem,cor]),t:22}); }
+
+/* ---------- mapa em malha com marcos (trajetos) ---------- */
+function mapaG({c,l,marcos,cam=null}){
+  const t=46; let s=`<rect width="${c*t}" height="${l*t}" fill="#F0FDF4"/>`;
+  for(let i=0;i<=c;i++) s+=`<line x1="${i*t}" y1="0" x2="${i*t}" y2="${l*t}" stroke="#A7C4B5"/>`;
+  for(let j=0;j<=l;j++) s+=`<line x1="0" y1="${j*t}" x2="${c*t}" y2="${j*t}" stroke="#A7C4B5"/>`;
+  if(cam) s+=`<polyline points="${cam.map(([x,y])=>(x*t+t/2)+','+(y*t+t/2)).join(' ')}" fill="none" stroke="#F97316" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>`;
+  marcos.forEach(m=>s+=`<text x="${m.x*t+t/2}" y="${m.y*t+t/2+11}" text-anchor="middle" font-size="30">${m.e}</text>`);
+  return `<svg viewBox="-2 -2 ${c*t+4} ${l*t+4}" width="${c*t+4}" role="img">${s}</svg>`;
+}
+
+/* ---------- sólidos geométricos ---------- */
+const LN='stroke="#1B2A26" stroke-width="2.5" stroke-linejoin="round"', TR='stroke="#1B2A26" stroke-width="1.8" stroke-dasharray="5 4" fill="none"';
+const SOLIDOS={
+  cubo:()=>`<polygon points="20,45 75,45 75,100 20,100" fill="#93C5FD" ${LN}/><polygon points="20,45 45,20 100,20 75,45" fill="#BFDBFE" ${LN}/><polygon points="75,45 100,20 100,75 75,100" fill="#60A5FA" ${LN}/>`,
+  bloco:()=>`<polygon points="8,58 82,58 82,102 8,102" fill="#FDBA74" ${LN}/><polygon points="8,58 34,32 108,32 82,58" fill="#FED7AA" ${LN}/><polygon points="82,58 108,32 108,76 82,102" fill="#FB923C" ${LN}/>`,
+  piramide:()=>`<path d="M15 95 L38 76 L105 76 M38 76 L60 12" ${TR}/><polygon points="15,95 83,95 60,12" fill="#FDE68A" ${LN}/><polygon points="83,95 105,76 60,12" fill="#FCD34D" ${LN}/>`,
+  cone:()=>`<path d="M20 95 A40 12 0 0 1 100 95" ${TR}/><path d="M20 95 L60 12 L100 95 A40 12 0 0 1 20 95 Z" fill="#C4B5FD" ${LN}/>`,
+  cilindro:()=>`<path d="M20 25 L20 95 A40 12 0 0 0 100 95 L100 25" fill="#86EFAC" ${LN}/><path d="M20 95 A40 12 0 0 1 100 95" ${TR}/><ellipse cx="60" cy="25" rx="40" ry="12" fill="#BBF7D0" ${LN}/>`,
+  esfera:()=>`<circle cx="60" cy="60" r="46" fill="#F9A8D4" ${LN}/><path d="M14 60 A46 13 0 0 0 106 60" fill="none" stroke="#1B2A26" stroke-width="1.8"/><path d="M14 60 A46 13 0 0 1 106 60" ${TR}/><circle cx="44" cy="40" r="9" fill="#fff" opacity=".6"/>`,
+  prisma:()=>`<path d="M15 102 L60 76 L108 76 M60 76 L84 32" ${TR}/><polygon points="15,102 63,102 39,58" fill="#A5F3FC" ${LN}/><polygon points="63,102 108,76 84,32 39,58" fill="#67E8F9" ${LN}/>`
+};
+const solido=n=>svg(120,112,SOLIDOS[n](),120);
+const NOME_SOLIDO={cubo:'Cubo',bloco:'Bloco retangular',piramide:'Pirâmide',cone:'Cone',cilindro:'Cilindro',esfera:'Esfera',prisma:'Prisma de base triangular'};
+/* ---------- planificações ---------- */
+const PF='stroke="#1B2A26" stroke-width="2" stroke-linejoin="round"';
+const PLANIF={
+  cubo:()=>{ const s=30,o=[8,6]; let r=''; [[1,0],[0,1],[1,1],[2,1],[3,1],[1,2]].forEach(([x,y])=>r+=`<rect x="${o[0]+x*s}" y="${o[1]+y*s}" width="${s}" height="${s}" fill="#BFDBFE" ${PF}/>`); return [140,104,r]; },
+  bloco:()=>{ const a=40,b=18,h=26,o=[6,6]; const xs=[0,b,b+a,2*b+a]; let r=''; [b,a,b,a].forEach((w,i)=>r+=`<rect x="${o[0]+xs[i]}" y="${o[1]+b}" width="${w}" height="${h}" fill="#FED7AA" ${PF}/>`);
+    r+=`<rect x="${o[0]+b}" y="${o[1]}" width="${a}" height="${b}" fill="#FED7AA" ${PF}/><rect x="${o[0]+b}" y="${o[1]+b+h}" width="${a}" height="${b}" fill="#FED7AA" ${PF}/>`; return [128,80,r]; },
+  piramide:()=>[140,140,`<rect x="50" y="50" width="40" height="40" fill="#FDE68A" ${PF}/>${[[[50,50],[90,50],[70,14]],[[50,90],[90,90],[70,126]],[[50,50],[50,90],[14,70]],[[90,50],[90,90],[126,70]]].map(p=>`<polygon points="${pts(p)}" fill="#FEF3C7" ${PF}/>`).join('')}`],
+  piramide3:()=>[140,124,`<polygon points="10,116 130,116 70,12" fill="#FEF3C7" ${PF}/><polygon points="40,64 100,64 70,116" fill="#FDE68A" ${PF}/>`],
+  prisma:()=>{ let r=''; [0,1,2].forEach(i=>r+=`<rect x="${14+i*36}" y="40" width="36" height="50" fill="#A5F3FC" ${PF}/>`); r+=`<polygon points="50,40 86,40 68,9" fill="#CFFAFE" ${PF}/><polygon points="50,90 86,90 68,121" fill="#CFFAFE" ${PF}/>`; return [136,128,r]; },
+  cilindro:()=>[150,124,`<rect x="18" y="40" width="114" height="44" fill="#BBF7D0" ${PF}/><circle cx="75" cy="21" r="18" fill="#86EFAC" ${PF}/><circle cx="75" cy="103" r="18" fill="#86EFAC" ${PF}/>`],
+  cone:()=>{ const c=[64,8],R=78,a1=58*Math.PI/180,a2=122*Math.PI/180; const p1=[c[0]+R*Math.cos(a1),c[1]+R*Math.sin(a1)],p2=[c[0]+R*Math.cos(a2),c[1]+R*Math.sin(a2)];
+    return [128,128,`<path d="M${c} L${p1} A${R} ${R} 0 0 1 ${p2} Z" fill="#DDD6FE" ${PF}/><circle cx="64" cy="${8+R+20}" r="20" fill="#C4B5FD" ${PF}/>`]; }
+};
+const planif=n=>{ const [w,h,c]=PLANIF[n](); return svg(w,h,c,w); };
+
+/* ---------- polígonos ---------- */
+function regular(n,r=44,cx=60,cy=52,rot=-90){ return Array.from({length:n},(_,i)=>{ const a=(rot+360*i/n)*Math.PI/180; return [Math.round(cx+r*Math.cos(a)),Math.round(cy+r*Math.sin(a))]; }); }
+const POLI={
+  triangulo:[[60,8],[112,94],[8,94]], quadrado:[[24,10],[96,10],[96,82],[24,82]], retangulo:[[6,22],[114,22],[114,80],[6,80]],
+  trapezio:[[36,18],[84,18],[112,86],[8,86]], paralelogramo:[[36,20],[116,20],[84,84],[4,84]], losango:[[60,8],[112,50],[60,92],[8,50]],
+  pentagono:regular(5,46,60,54), hexagono:regular(6,46,60,52,0), triretangulo:[[14,10],[14,90],[108,90]], traprect:[[14,16],[70,16],[110,86],[14,86]]
+};
+const NOME_POLI={triangulo:'Triângulo',quadrado:'Quadrado',retangulo:'Retângulo',trapezio:'Trapézio',paralelogramo:'Paralelogramo',losango:'Losango',pentagono:'Pentágono',hexagono:'Hexágono'};
+const poli=(n,cor='#FDE68A')=>svg(120,100,`<polygon points="${pts(POLI[n])}" fill="${cor}" stroke="#1B2A26" stroke-width="3" stroke-linejoin="round"/>`,120);
+
+/* ---------- ângulos ---------- */
+function angulo(g,rot=0,cor='#2563EB'){ const c=[60,58],L=50,r=18,R=a=>[c[0]+L*Math.cos(a*Math.PI/180),c[1]-L*Math.sin(a*Math.PI/180)],A=a=>[c[0]+r*Math.cos(a*Math.PI/180),c[1]-r*Math.sin(a*Math.PI/180)];
+  const p1=R(rot),p2=R(rot+g),a1=A(rot),a2=A(rot+g);
+  return svg(120,116,`<path d="M${a1} A${r} ${r} 0 ${g>180?1:0} 0 ${a2}" fill="none" stroke="#F97316" stroke-width="3"/><line x1="${c[0]}" y1="${c[1]}" x2="${p1[0]}" y2="${p1[1]}" stroke="${cor}" stroke-width="5" stroke-linecap="round"/><line x1="${c[0]}" y1="${c[1]}" x2="${p2[0]}" y2="${p2[1]}" stroke="${cor}" stroke-width="5" stroke-linecap="round"/><circle cx="${c[0]}" cy="${c[1]}" r="4" fill="#1B2A26"/>`,120); }
+
+/* ---------- régua ---------- */
+function regua(cm,ini=0,cor='#F97316',max=10){ const k=34,o=20; let s=`<rect x="${o-12}" y="58" width="${max*k+24}" height="54" rx="6" fill="#FEF9C3" stroke="#CA8A04" stroke-width="2"/>`;
+  for(let mm=0;mm<=max*10;mm++){ const x=o+mm*k/10, h=mm%10===0?20:mm%5===0?13:8; s+=`<line x1="${x}" y1="58" x2="${x}" y2="${58+h}" stroke="#1B2A26" stroke-width="${mm%10?1:2}"/>`; if(mm%10===0) s+=TX(x,100,mm/10,15); }
+  s+=`<rect x="${o+ini*k}" y="18" width="${cm*k}" height="26" rx="5" fill="${cor}"/>`;
+  s+=`<line x1="${o+ini*k}" y1="14" x2="${o+ini*k}" y2="60" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4 3"/><line x1="${o+(ini+cm)*k}" y1="14" x2="${o+(ini+cm)*k}" y2="60" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  return svg(max*k+40,118,s); }
+
+/* ---------- empilhamento de cubinhos (volume) ---------- */
+function cubos(L,C,A,cor=['#BFDBFE','#93C5FD','#60A5FA']){
+  const s=24,co=.866,iso=(x,y,z)=>[(x-y)*s*co,(x+y)*s*.5-z*s]; const lista=[];
+  for(let z=0;z<A;z++) for(let x=0;x<L;x++) for(let y=0;y<C;y++) lista.push([x,y,z]);
+  lista.sort((a,b)=>(a[0]+a[1]+a[2])-(b[0]+b[1]+b[2])||a[2]-b[2]);
+  let r='',X=[],Y=[]; const P=(...p)=>p.map(q=>{ const v=iso(...q); X.push(v[0]); Y.push(v[1]); return v.map(n=>n.toFixed(1)).join(','); }).join(' ');
+  lista.forEach(([x,y,z])=>{ r+=`<polygon points="${P([x,y,z+1],[x+1,y,z+1],[x+1,y+1,z+1],[x,y+1,z+1])}" fill="${cor[0]}" stroke="#1E3A8A" stroke-width="1.5"/>`+
+    `<polygon points="${P([x+1,y,z],[x+1,y+1,z],[x+1,y+1,z+1],[x+1,y,z+1])}" fill="${cor[2]}" stroke="#1E3A8A" stroke-width="1.5"/>`+
+    `<polygon points="${P([x,y+1,z],[x+1,y+1,z],[x+1,y+1,z+1],[x,y+1,z+1])}" fill="${cor[1]}" stroke="#1E3A8A" stroke-width="1.5"/>`; });
+  const mx=Math.min(...X)-4,my=Math.min(...Y)-4,w=Math.max(...X)-mx+4,h=Math.max(...Y)-my+4;
+  return `<svg viewBox="${mx} ${my} ${w} ${h}" width="${Math.min(300,w*1.3)}" role="img">${r}</svg>`; }
+
+/* ---------- plano cartesiano (1º quadrante) ---------- */
+function plano(P,n=8,cam=null){ const t=40,ml=34,mb=30,H=n*t+mb+14,W=n*t+ml+18,X=x=>ml+x*t,Y=y=>H-mb-y*t; let s='';
+  for(let i=0;i<=n;i++){ s+=`<line x1="${X(i)}" y1="${Y(0)}" x2="${X(i)}" y2="${Y(n)}" stroke="#CBD5E1"/><line x1="${X(0)}" y1="${Y(i)}" x2="${X(n)}" y2="${Y(i)}" stroke="#CBD5E1"/>`+TX(X(i),Y(0)+22,i,15)+TX(X(0)-16,Y(i)+5,i,15); }
+  s+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(n)+8}" y2="${Y(0)}" stroke="#1B2A26" stroke-width="2.5"/><line x1="${X(0)}" y1="${Y(0)}" x2="${X(0)}" y2="${Y(n)-8}" stroke="#1B2A26" stroke-width="2.5"/>`;
+  if(cam) s+=`<polyline points="${cam.map(([x,y])=>X(x)+','+Y(y)).join(' ')}" fill="none" stroke="#F97316" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  P.forEach((p,i)=>{ s+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="7" fill="${p.cor||CORES[i%6]}"/>`; if(p.e) s+=`<text x="${X(p.x)+14}" y="${Y(p.y)-8}" font-size="22">${p.e}</text>`; else s+=TX(X(p.x)+14,Y(p.y)-10,p.r,18,`fill="${p.cor||CORES[i%6]}"`); });
+  return svg(W,H,s); }
+
+/* ---------- roleta ---------- */
+const CORROL={vermelho:'#EF4444',azul:'#3B82F6',verde:'#22C55E',amarelo:'#FACC15'};
+function roleta(L){ const c=[80,80],r=72,n=L.length; let s='';
+  L.forEach((k,i)=>{ const a1=(-90+360*i/n)*Math.PI/180,a2=(-90+360*(i+1)/n)*Math.PI/180; s+=`<path d="M80 80 L${c[0]+r*Math.cos(a1)} ${c[1]+r*Math.sin(a1)} A${r} ${r} 0 ${360/n>180?1:0} 1 ${c[0]+r*Math.cos(a2)} ${c[1]+r*Math.sin(a2)} Z" fill="${CORROL[k]}" stroke="#fff" stroke-width="3"/>`; });
+  s+=`<circle cx="80" cy="80" r="8" fill="#1B2A26"/><polygon points="80,2 72,-12 88,-12" fill="#1B2A26" transform="translate(0,14)"/>`;
+  return svg(160,160,s,170); }
+
+/* ---------- dinheiro ---------- */
+const DIN2={100:['#93C5FD','R$ 100'],50:['#FDBA74','R$ 50'],20:['#FDE68A','R$ 20'],10:['#FCA5A5','R$ 10'],5:['#D8B4FE','R$ 5'],2:['#A5B4FC','R$ 2'],1:['#E5E7EB','R$ 1'],0.5:['#E5E7EB','50 ¢'],0.25:['#FCD34D','25 ¢'],0.1:['#FCD34D','10 ¢'],0.05:['#E0B48A','5 ¢']};
+const din=v=>`<span class="din2 ${v<=1?'moe':''}" style="background:${DIN2[v][0]}${v===1?';border-color:#CA8A04;border-width:4px':''}">${DIN2[v][1]}</span>`;
+const dins=L=>`<span class="dins">${L.map(din).join('')}</span>`;
+
+/* ---------- arranjo retangular ---------- */
+const arranjo=(l,c,e)=>`<div class="arr" style="grid-template-columns:repeat(${c},auto)">${Array(l*c).fill(`<span>${e}</span>`).join('')}</div>`;
+
+/* ---------- atalhos de questões ---------- */
+const N=(cat,enun,resp,x,extra={})=>Object.assign({tipo:'num',cat,enun,resp,mostrar:fmtN(resp),x,dica:'Confira a conta com calma e tente de novo.'},extra);
+const opN=(certo,err)=>[fmtN(certo),err.filter(e=>e!==certo&&e>=0).map(fmtN)];
+const Q=(cat,enun,certo,err,x,extra={})=>q(cat,enun,fmtN(certo),[...new Set(err.filter(e=>e!==certo&&e>=0))].map(fmtN),x,Object.assign({grade:true},extra));
+/* figuras de quadradinhos aleatórias */
+function polimino(n){ let F=[[0,0]]; while(F.length<n){ const [x,y]=pick(F), d=pick([[1,0],[-1,0],[0,1],[0,-1]]), p=[x+d[0],y+d[1]]; if(!F.some(f=>f[0]===p[0]&&f[1]===p[1])) F.push(p); } return normal(F); }
+const espelho=F=>normal(F.map(([x,y])=>[-x,y]));
+function congruentes(A,B){ if(A.length!==B.length) return false; const kb=chave(B); let R=A; for(let i=0;i<4;i++){ if(chave(R)===kb||chave(espelho(R))===kb) return true; R=girar(R); } return false; }
+function mexer(F){ for(let t=0;t<50;t++){ const G=F.slice(); G.splice(rnd(0,G.length-1),1); const [x,y]=pick(G), d=pick([[1,0],[-1,0],[0,1],[0,-1]]), p=[x+d[0],y+d[1]];
+  if(G.some(f=>f[0]===p[0]&&f[1]===p[1])) continue; G.push(p); const N2=normal(G); if(conexo(N2)&&!congruentes(N2,F)) return N2; } return normal(F.concat([[Math.max(...F.map(p=>p[0]))+1,0]])); }
+function conexo(F){ const k=new Set(F.map(p=>p.join(':'))), vis=new Set([F[0].join(':')]), pilha=[F[0]]; while(pilha.length){ const [x,y]=pilha.pop(); [[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{ const s=(x+a)+':'+(y+b); if(k.has(s)&&!vis.has(s)){ vis.add(s); pilha.push([x+a,y+b]); } }); } return vis.size===F.length; }
+function crescer(F){ for(;;){ const [x,y]=pick(F), d=pick([[1,0],[-1,0],[0,1],[0,-1]]), p=[x+d[0],y+d[1]]; if(!F.some(f=>f[0]===p[0]&&f[1]===p[1])) return normal(F.concat([p])); } }
+/* ---------- gráfico de colunas duplas ---------- */
+function barras2({cats,series,max,passo,titulo=''}){
+  const W=400,H=290,ml=46,mb=40,mt=14,mr=8,ch=H-mt-mb,cw=W-ml-mr,Y=v=>mt+ch-(v/max)*ch,n=cats.length,slot=cw/n,bw=Math.min(26,slot*.36);
+  let s='';
+  for(let v=0;v<=max+1e-9;v+=passo){ const y=Y(v); s+=`<line x1="${ml}" y1="${y}" x2="${W-mr}" y2="${y}" stroke="#E5E7EB" stroke-width="1.5"/>`+TX(ml-20,y+6,nf(v),16); }
+  cats.forEach((c,i)=>{ series.forEach((se,k)=>{ const x=ml+i*slot+slot/2+(k-series.length/2)*bw, y=Y(se.vals[i]); s+=`<rect x="${x}" y="${y}" width="${bw-2}" height="${mt+ch-y}" rx="3" fill="${se.cor||CORES[k]}"/>`; }); s+=TX(ml+i*slot+slot/2,H-mb+24,c,16); });
+  s+=`<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+ch}" stroke="#1B2A26" stroke-width="2.5"/><line x1="${ml}" y1="${mt+ch}" x2="${W-mr}" y2="${mt+ch}" stroke="#1B2A26" stroke-width="2.5"/>`;
+  return `<p class="gtit">${titulo}</p>`+svg(W,H,s)+`<p class="mini" style="width:100%;margin:0">${series.map((se,k)=>`<b style="color:${se.cor||CORES[k]}">■ ${se.nome}</b>`).join(' &nbsp; ')}</p>`;
+}
+/* ---------- simetria: metade + 4 versões ---------- */
+function itemSimetria(cat){
+  const c=8,l=5; let F; do{ F=polimino(4).map(([x,y])=>[x+1,y]); }while(Math.max(...F.map(p=>p[0]))>3||Math.max(...F.map(p=>p[1]))>4||chave(F)===chave(espelho(F)));
+  const espe=F.map(([x,y])=>[7-x,y]), trans=F.map(([x,y])=>[x+4,y]), maxY=Math.max(...F.map(p=>p[1])), desl=espe.map(([x,y])=>[x,maxY<4?y+1:y-1]), falta=espe.slice(1);
+  const vers=[[espe,true],[trans,false],[desl,false],[falta,false]];
+  const ops=embaralhar(vers.map(([V2,ok])=>({ok,h:malha({c,l,cel:F.map(p=>[...p,'#2563EB']).concat(V2.map(p=>[...p,'#93C5FD'])),t:16,eixoX:4})})));
+  return {tipo:'mc',cat,html:true,grade:true,enun:'Em qual desenho a parte clara é o <b>reflexo</b> da parte escura em relação à linha vermelha (simetria)?',op:ops.map(o=>o.h),certo:ops.findIndex(o=>o.ok),x:'Na <b>simetria de reflexão</b>, a linha funciona como um espelho: cada quadradinho fica à <b>mesma distância</b> da linha, do outro lado.',dica:'Imagine dobrar o papel na linha vermelha: as duas partes devem se encaixar.'};
+}
+
+const dec=v=>nf(Math.round(v*100)/100);
+const reais=v=>'R$ '+v.toFixed(2).replace('.',',');
+
+/* ---------- 1. Números até 999.999 ---------- */
+function gNumeros5(){
+  const it=[];
+  const n1=rnd(100001,999999); it.push(N('numeros',`O porto recebeu <b>${extenso(n1)}</b> toneladas de carga no ano. Escreva com algarismos.`,n1,`<b>${extenso(n1)}</b> = <b>${mil(n1)}</b>.`,{dica:'Primeiro a classe dos milhares (antes do ponto), depois a das unidades simples.'}));
+  const n2=rnd(101010,989898); it.push(q('numeros',`Como se lê <b>${mil(n2)}</b>?`,extenso(n2),[n2+10000,n2+100,n2+1000].map(extenso),`<b>${mil(n2)}</b> se lê <b>${extenso(n2)}</b>.`));
+  const d=String(rnd(123456,987654)), p0=rnd(0,2), p=d[p0]==='0'?0:p0, v=+d[p]*10**(5-p);
+  it.push(Q('numeros',`No número <b>${mil(+d)}</b>, quanto vale o algarismo <b>${d[p]}</b> da casa ${['das centenas de milhar','das dezenas de milhar','das unidades de milhar'][p]}?`,v,[5,4,3,2].map(e=>+d[p]*10**e),`${d[p]} × ${mil(10**(5-p))} = <b>${mil(v)}</b>.`));
+  const b=rnd(2,8)*100000, L=[b+rnd(10000,90000),b+rnd(1000,9000),b+rnd(100,900),b-rnd(10000,90000)], ord=[...L].sort((x,y)=>y-x);
+  it.push(q('numeros','Qual lista está em <b>ordem decrescente</b> (do maior para o menor)?',ord.map(mil).join(' · '),[[...ord].reverse(),[ord[1],ord[0],ord[2],ord[3]],[ord[0],ord[2],ord[1],ord[3]]].map(a=>a.map(mil).join(' · ')),`Do maior para o menor: <b>${ord.map(mil).join(', ')}</b>.`));
+  const c=rnd(1,9),dm=rnd(0,9),um=rnd(0,9),ce=rnd(1,9); const n5=c*100000+dm*10000+um*1000+ce*100;
+  it.push(N('numeros',`Que número tem <b>${c}</b> centena${c>1?'s':''} de milhar, <b>${dm}</b> dezena${dm!==1?'s':''} de milhar, <b>${um}</b> unidade${um!==1?'s':''} de milhar e <b>${ce}</b> centena${ce>1?'s':''}?`,n5,`${mil(c*100000)} + ${mil(dm*10000)} + ${mil(um*1000)} + ${ce*100} = <b>${mil(n5)}</b>.`));
+  const n6=rnd(1,9)*100000-1; it.push(N('numeros',`Qual é o número que vem <b>logo depois</b> de <b>${mil(n6)}</b>?`,n6+1,`${mil(n6)} + 1 = <b>${mil(n6+1)}</b>.`));
+  return embaralhar(it);
+}
+
+/* ---------- 2. Números decimais ---------- */
+const FR_DEC=[['1','2','0,5'],['1','4','0,25'],['3','4','0,75'],['1','10','0,1'],['1','5','0,2'],['3','10','0,3'],['1','100','0,01']];
+function gDecimais(){
+  const it=[];
+  let u,de,ce; do{ u=rnd(1,9); de=rnd(1,9); ce=rnd(1,9); }while(new Set([u,de,ce]).size<3); const x=`${u},${de}${ce}`;
+  const casa=pick(['de','ce']);
+  it.push(q('decimais',`No número <b>${x}</b>, o algarismo <b>${casa==='de'?de:ce}</b> representa:`,casa==='de'?`${de} décimos`:`${ce} centésimos`,casa==='de'?[`${de} centésimos`,`${de} unidades`,`${de} dezenas`]:[`${ce} décimos`,`${ce} unidades`,`${ce} milésimos`],`Depois da vírgula vêm os <b>décimos</b> e depois os <b>centésimos</b>: ${x} = ${u} + ${de} décimos + ${ce} centésimos.`));
+  const i2=rnd(1,9),c2=rnd(1,99); it.push(N('decimais',`Escreva com algarismos: <b>${i2} inteiro${i2>1?'s':''} e ${c2} centésimo${c2>1?'s':''}</b>.`,i2+c2/100,`${c2} centésimos = 0,${String(c2).padStart(2,'0')}. Então: <b>${i2},${String(c2).padStart(2,'0')}</b>.`,{dica:'Centésimos ocupam duas casas depois da vírgula.'}));
+  const ini=rnd(0,3), k=pick([1,2,3,4,6,7,8,9]), vr=ini+k/10;
+  it.push(Q('decimais','Que número está no lugar da letra <b>A</b>?',vr,[ini+k/100,ini+1+k/10,ini+(k===9?8:k+1)/10],`Entre ${ini} e ${ini+1} há 10 partes iguais: cada uma vale <b>0,1</b>. A está em <b>${nf(vr)}</b>.`,{corpo:V(reta({ini,fim:ini+1,passo:.1,rot:[ini,ini+.5,ini+1],pts:[{v:vr,r:'A'}]}))}));
+  const a=rnd(2,9)/10, bb=Math.round((a-pick([.05,.03,.01,.02]))*100)/100, gs=embaralhar([a,bb]);
+  it.push(q('comparar',`Qual número é <b>maior</b>: ${nf(gs[0])} ou ${nf(gs[1])}?`,nf(a),[nf(bb),'São iguais'],`Escrevendo com duas casas: ${dec(a).padEnd(4,'0')} e ${dec(bb).padEnd(4,'0')}. Como ${Math.round(a*100)} centésimos é mais que ${Math.round(bb*100)} centésimos, o maior é <b>${nf(a)}</b>. Ter mais algarismos depois da vírgula <b>não</b> faz o número ser maior!`,{grade:true}));
+  const [f1,f2,fd]=pick(FR_DEC); it.push(q('comparar',`Qual decimal é igual à fração ${fr(f1,f2)}?`,fd,FR_DEC.filter(f=>f[2]!==fd).map(f=>f[2]),`${f1} ÷ ${f2} = <b>${fd}</b>.`,{html:true,grade:true}));
+  const L=embaralhar([.5,.45,.7,.09,1.2,.25]).slice(0,4), ord=[...L].sort((x,y)=>x-y);
+  it.push(q('comparar','Qual lista está em <b>ordem crescente</b>?',ord.map(nf).join(' · '),[[...ord].reverse(),[ord[1],ord[0],ord[2],ord[3]],[ord[0],ord[1],ord[3],ord[2]]].map(o=>o.map(nf).join(' · ')),`Do menor ao maior: <b>${ord.map(nf).join(' < ')}</b>.`));
+  return it;
+}
+
+/* ---------- 3. Operações com decimais ---------- */
+const PROB_DEC=[
+  ()=>{ const a=rnd(8000,15000)/100,b=rnd(5000,12000)/100; return N('opdec',`Na viagem, o caminhão rodou <b>${nf(a)} km</b> de manhã e <b>${nf(b)} km</b> à tarde. Quantos km no dia?`,Math.round((a+b)*100)/100,`Alinhe as vírgulas: ${nf(a)} + ${nf(b)} = <b>${dec(a+b)} km</b>.`,{un:'km',corpo:EM('🚛🛣️'),dica:'Arme a conta com vírgula embaixo de vírgula.'}); },
+  ()=>{ const p=rnd(1050,4890)/100, pg=p<20?20:p<50?50:100; return N('opdec',`A conta da lanchonete deu <b>${reais(p)}</b>. Paguei com <b>R$ ${pg},00</b>. Qual é o troco?`,Math.round((pg-p)*100)/100,`${pg},00 − ${nf(p)} = <b>${reais(pg-p)}</b>.`,{antes:'R$',corpo:V(din(pg))}); },
+  ()=>{ const p=pick([2.5,3.75,4.5,6.25,12.5,8.4]),n=rnd(3,8); return N('opdec',`Uma chipa custa <b>${reais(p)}</b>. Quanto custam <b>${n}</b> chipas?`,Math.round(p*n*100)/100,`${n} × ${nf(p)} = <b>${reais(p*n)}</b>.`,{antes:'R$',corpo:EM('🥯')}); },
+  ()=>{ const n=pick([2,3,4,5]),v=rnd(1105,3990)/100*1, tot=Math.round(v*n*100)/100; const cada=Math.round(tot/n*100)/100; return N('opdec',`<b>${n}</b> amigos dividiram igualmente uma conta de <b>${reais(tot)}</b>. Quanto cada um pagou?`,cada,`${nf(tot)} ÷ ${n} = <b>${reais(cada)}</b>.`,{antes:'R$'}); },
+  ()=>{ const x=rnd(101,999)/100, m=pick([10,100]); return N('opdec',`Quanto é <b>${nf(x)} × ${m}</b>?`,Math.round(x*m*100)/100,`Multiplicar por ${m} “anda” a vírgula ${m===10?'uma casa':'duas casas'} para a direita: <b>${nf(Math.round(x*m*100)/100)}</b>.`); },
+  ()=>{ const t=rnd(150,450)/10, s=rnd(55,140)/10; return N('opdec',`Um tanque tinha <b>${nf(t)} litros</b> de água e foram usados <b>${nf(s)} litros</b>. Quantos litros sobraram?`,Math.round((t-s)*10)/10,`${nf(t)} − ${nf(s)} = <b>${nf(Math.round((t-s)*10)/10)} L</b>.`,{un:'L'}); }
+];
+
+/* ---------- 4. Igualdades e termo desconhecido ---------- */
+const PROB_IG=[
+  ()=>{ const a=rnd(2,9),b=rnd(2,9),k=pick([2,3,4,5]); return N('igualdade',`Se <b>${a} + ${b} = ${a+b}</b>, então <b>(${a} + ${b}) × ${k} = ${a+b} × ?</b>`,k,`Multiplicando os <b>dois lados</b> pelo mesmo número, a igualdade continua: ? = <b>${k}</b>.`,{corpo:EM('⚖️')}); },
+  ()=>{ const k=pick([2,3,4,5]),a=k*rnd(3,9),b=k*rnd(2,8); return N('igualdade',`Se <b>${a} + ${b} = ${a+b}</b>, dividindo os dois lados por ${k}: <b>(${a} + ${b}) ÷ ${k} = ?</b>`,(a+b)/k,`Os dois lados continuam iguais: ${a+b} ÷ ${k} = <b>${(a+b)/k}</b>.`); },
+  ()=>q('igualdade','Uma balança está equilibrada. Se tirarmos <b>2 kg de cada prato</b>, ela:','Continua equilibrada',['Pende para a esquerda','Pende para a direita','Quebra'],'Fazer a <b>mesma operação nos dois lados</b> mantém a igualdade (a equivalência).',{corpo:EM('⚖️')}),
+  ()=>{ const r=rnd(25,60)*100,a=rnd(8,r/100-5)*100+rnd(1,9)*10; return N('desconhecido',`Que número completa: <b>? + ${mil(a)} = ${mil(r)}</b>`,r-a,`? = ${mil(r)} − ${mil(a)} = <b>${mil(r-a)}</b>.`); },
+  ()=>{ const a=rnd(4,12),x=rnd(12,45); return N('desconhecido',`Que número completa: <b>${a} × ? = ${a*x}</b>`,x,`? = ${a*x} ÷ ${a} = <b>${x}</b>.`); },
+  ()=>{ const d=rnd(3,9),x=rnd(11,30); return N('desconhecido',`Que número completa: <b>? ÷ ${d} = ${x}</b>`,d*x,`? = ${x} × ${d} = <b>${d*x}</b>. A multiplicação desfaz a divisão.`); },
+  ()=>{ const g=rnd(25,85),f=g+rnd(40,120); return N('desconhecido',`Bia tinha algum dinheiro, ganhou <b>R$ ${g},00</b> e ficou com <b>R$ ${f},00</b>. Quanto ela tinha?`,f-g,`? + ${g} = ${f}, então ? = ${f} − ${g} = <b>R$ ${f-g},00</b>.`,{antes:'R$'}); }
+];
+
+/* ---------- 5. Proporção e partilha ---------- */
+const PROB_PROP=[
+  ()=>{ const p=pick([250,400,500]),k=pick([2,3,4]); return N('proporcao',`Para fazer <b>20 chipas</b>, a receita usa <b>${p} g</b> de polvilho. Quantos gramas para <b>${20*k} chipas</b>?`,p*k,`${20*k} chipas é ${k} vezes a receita: ${p} × ${k} = <b>${mil(p*k)} g</b>.`,{un:'g',corpo:EM('🥯')}); },
+  ()=>{ const kg=rnd(2,4),pu=rnd(4,9),n=rnd(5,9); return N('proporcao',`<b>${kg} kg</b> de mandioca custam <b>R$ ${kg*pu},00</b>. Quanto custam <b>${n} kg</b>?`,n*pu,`1 kg custa ${kg*pu} ÷ ${kg} = R$ ${pu},00. Então ${n} kg custam ${n} × ${pu} = <b>R$ ${n*pu},00</b>.`,{antes:'R$'}); },
+  ()=>{ const e=pick([10,20,25,50]),cm=rnd(3,9); return N('proporcao',`No mapa da rota, <b>1 cm representa ${e} km</b>. Quantos km representam <b>${cm} cm</b>?`,e*cm,`${cm} × ${e} = <b>${e*cm} km</b>. Isso é usar a <b>escala</b> do mapa.`,{un:'km',corpo:EM('🗺️📏')}); },
+  ()=>{ const x=rnd(10,40),t=3*x; return N('partilha',`João e Maria vão dividir <b>R$ ${t},00</b> de modo que João receba o <b>dobro</b> de Maria. Quanto Maria recebe?`,x,`Maria = 1 parte, João = 2 partes: 3 partes ao todo. ${t} ÷ 3 = <b>R$ ${x},00</b> para Maria (e R$ ${2*x},00 para João).`,{antes:'R$',dica:'Desenhe: uma barrinha para Maria e duas para João.'}); },
+  ()=>{ const k=rnd(2,6); return N('partilha',`Num suco, para cada <b>1 copo</b> de polpa usam-se <b>3 copos</b> de água. Para fazer <b>${4*k} copos</b> de suco, quantos copos de polpa são necessários?`,k,`Cada “receita” tem 1 + 3 = 4 copos. ${4*k} ÷ 4 = <b>${k}</b> copos de polpa (e ${3*k} de água).`,{corpo:EM('🧃')}); },
+  ()=>{ const x=rnd(6,20); return N('partilha',`Uma turma tem <b>${3*x}</b> estudantes. Para cada 1 que vai de ônibus, 2 vão a pé. Quantos vão a pé?`,2*x,`Grupos de 3 (1 de ônibus + 2 a pé): ${3*x} ÷ 3 = ${x} grupos. A pé: ${x} × 2 = <b>${2*x}</b>.`); }
+];
+
+/* ---------- 6. Contagem e probabilidade ---------- */
+function gChances(){
+  const it=[];
+  const p=rnd(2,4),r=rnd(2,3),s=2; it.push(N('contagem',`No lanche da viagem há <b>${p}</b> tipos de pão, <b>${r}</b> recheios e <b>${s}</b> sucos. Quantos lanches diferentes (1 pão + 1 recheio + 1 suco) dá para montar?`,p*r*s,`Pelo princípio multiplicativo (ou uma árvore de possibilidades): ${p} × ${r} × ${s} = <b>${p*r*s}</b>.`,{corpo:EM('🥖🧀🧃'),dica:'Desenhe a árvore: cada pão se abre em recheios, e cada recheio em sucos.'}));
+  it.push(N('contagem','Quantos números de <b>dois algarismos diferentes</b> dá para formar com os algarismos <b>1, 2 e 3</b>?',6,'Para o primeiro algarismo há 3 opções e, para o segundo, 2: 3 × 2 = <b>6</b> (12, 13, 21, 23, 31, 32).'));
+  const n=rnd(1,6); it.push(q('probabilidade',`Ao lançar um dado comum, qual é a probabilidade de sair o número <b>${n}</b>?`,fr(1,6),[fr(1,2),fr(6,1),fr(1,3)],'São 6 resultados igualmente prováveis e só 1 é favorável: <b>1 em 6</b>.',{html:true,grade:true,corpo:EM('🎲')}));
+  it.push(q('probabilidade','Ao lançar um dado, qual é a probabilidade de sair um número <b>par</b>?',fr(1,2),[fr(1,6),fr(2,6),fr(1,3)],'Pares: 2, 4 e 6 → 3 de 6 resultados = <b>3/6 = 1/2</b>.',{html:true,grade:true,corpo:EM('🎲')}));
+  const rv=rnd(1,5),az=rnd(1,6),tot=rv+az; it.push(q('probabilidade',`Numa caixa há <b>${rv}</b> bola${rv>1?'s':''} vermelha${rv>1?'s':''} e <b>${az}</b> azu${az>1?'is':'l'}. Qual é a probabilidade de tirar uma <b>vermelha</b> sem olhar?`,fr(rv,tot),[fr(az,tot),fr(1,tot),fr(rv,az)].filter(f=>f!==fr(rv,tot)),`Favoráveis: ${rv}. Total: ${tot}. Probabilidade: <b>${rv} em ${tot}</b>.`,{html:true,grade:true,corpo:V(`<div class="bolas">${'🔴'.repeat(rv)}${'🔵'.repeat(az)}</div>`)}));
+  const iguais=Math.random()<.5, R=iguais?embaralhar(['azul','verde','amarelo','vermelho']):embaralhar(['azul','azul','verde','amarelo']);
+  it.push(q('probabilidade','Nesta roleta, todas as cores têm a <b>mesma chance</b> de sair?',iguais?'Sim, as partes são iguais e cada cor ocupa uma':'Não, o azul ocupa mais partes e tem mais chance',[iguais?'Não, o azul ocupa mais partes e tem mais chance':'Sim, as partes são iguais e cada cor ocupa uma','Depende da sorte de quem gira'],iguais?'Cada cor ocupa <b>1 de 4</b> partes iguais: resultados <b>igualmente prováveis</b>.':'O azul ocupa <b>2 de 4</b> partes: tem mais chance que as outras cores. Os resultados <b>não</b> são igualmente prováveis.',{corpo:V(roleta(R))}));
+  return it;
+}
+
+/* ---------- 7. Plano cartesiano e planilha ---------- */
+const LET='ABCDEF';
+function gPlano(){
+  const it=[]; let P=[]; while(P.length<4){ const p={x:rnd(1,7),y:rnd(1,7)}; if(p.x!==p.y&&!P.some(o=>(o.x===p.x&&o.y===p.y)||(o.x===p.y&&o.y===p.x))) P.push(p); }
+  P=P.map((p,i)=>Object.assign(p,{r:LET[i]})); const G=V(plano(P,8)); const j=rnd(0,3), k=(j+1+rnd(0,2))%4;
+  it.push(q('cartesiano',`Quais são as coordenadas do ponto <b>${P[j].r}</b>?`,`(${P[j].x}, ${P[j].y})`,[`(${P[j].y}, ${P[j].x})`,`(${P[j].x+1}, ${P[j].y})`,`(${P[j].x}, ${P[j].y-1})`],`Primeiro a posição no eixo <b>horizontal</b> (x = ${P[j].x}), depois no <b>vertical</b> (y = ${P[j].y}): <b>(${P[j].x}, ${P[j].y})</b>.`,{corpo:G,grade:true,dica:'Primeiro ande na horizontal, depois suba.'}));
+  it.push(q('cartesiano',`Qual ponto está em <b>(${P[k].x}, ${P[k].y})</b>?`,P[k].r,P.filter((_,i)=>i!==k).map(p=>p.r),`Andando ${P[k].x} na horizontal e subindo ${P[k].y}, chegamos ao ponto <b>${P[k].r}</b>.`,{corpo:G,grade:true}));
+  const x0=rnd(0,4),y0=rnd(0,4),dx=rnd(1,4),dy=rnd(1,4);
+  it.push(q('cartesiano',`O caminhão 🚚 está em <b>(${x0}, ${y0})</b>. Ele anda <b>${dx}</b> para a direita e <b>${dy}</b> para cima. Em que ponto ele chega?`,`(${x0+dx}, ${y0+dy})`,[`(${x0+dy}, ${y0+dx})`,`(${x0+dx}, ${y0})`,`(${x0-dx<0?x0+dx+1:x0-dx}, ${y0+dy})`],`Para a direita, o x aumenta ${dx}: ${x0+dx}. Para cima, o y aumenta ${dy}: ${y0+dy}. Chega em <b>(${x0+dx}, ${y0+dy})</b>.`,{corpo:V(plano([{x:x0,y:y0,e:'🚚',cor:'#F97316'}],8,[[x0,y0],[x0+dx,y0],[x0+dx,y0+dy]])),grade:true}));
+  const col=rnd(0,4),lin=rnd(1,5), C='ABCDE';
+  const pl=`<table class="planilha"><tr><th></th>${[...C].map(c=>`<th>${c}</th>`).join('')}</tr>${[1,2,3,4,5].map(l=>`<tr><th>${l}</th>${[...C].map((c,i)=>`<td class="${i===col&&l===lin?'on':''}"></td>`).join('')}</tr>`).join('')}</table>`;
+  const ok=C[col]+lin, cands=[C[(col+1)%5]+lin,C[col]+((lin%5)+1),lin+C[col],C[lin-1]+(col+1)];
+  it.push(q('cartesiano','Numa planilha eletrônica, qual é o nome da célula pintada?',ok,cands,`A célula fica na coluna <b>${C[col]}</b> e na linha <b>${lin}</b>: <b>${ok}</b>. É como uma coordenada!`,{corpo:V(pl),grade:true}));
+  it.push(q('cartesiano','Num mapa, a cidade está no quadrado <b>C4</b>. Isso indica:','A coluna C e a linha 4',['Que a cidade tem 4 bairros','Que fica a 4 km','Só a letra da cidade'],'Letra e número funcionam como <b>coordenadas</b>: coluna e linha.'));
+  return it;
+}
+
+/* ---------- 8. Sólidos, polígonos e ampliação ---------- */
+function gFiguras5(){
+  const it=[];
+  embaralhar(['cilindro','cone','prisma','piramide','bloco']).slice(0,2).forEach(k=>it.push(q('solidos','Este molde (planificação) forma qual figura?',NOME_SOLIDO[k],['cilindro','cone','prisma','piramide','bloco','cubo'].filter(x=>x!==k).map(x=>NOME_SOLIDO[x]),`É a planificação ${k==='piramide'?'da':'do'} <b>${NOME_SOLIDO[k].toLowerCase()}</b>.`,{corpo:V(planif(k))})));
+  const pg=pick([['pentagono',5],['hexagono',6],['triangulo',3]]);
+  it.push(q('poligonos','Qual é o nome deste polígono?',NOME_POLI[pg[0]],['Triângulo','Quadrado','Pentágono','Hexágono','Octógono'].filter(n=>n!==NOME_POLI[pg[0]]),`Ele tem <b>${pg[1]} lados</b>, ${pg[1]} vértices e ${pg[1]} ângulos: é um <b>${NOME_POLI[pg[0]].toLowerCase()}</b>.`,{corpo:V(poli(pg[0],'#C7D2FE'))}));
+  it.push(Q('poligonos','Quantos lados tem um <b>octógono</b>, como a placa de PARE?',8,[6,7,10],'<b>Octo</b> quer dizer oito: o octógono tem <b>8 lados</b>.',{corpo:EM('🛑')}));
+  const ops=embaralhar([['c',true],['triangulo',false],['pentagono',false],['quadrado',false]]);
+  it.push({tipo:'mc',cat:'poligonos',html:true,grade:true,enun:'Qual destas figuras <b>não</b> é um polígono?',op:ops.map(([k])=>k==='c'?svg(120,100,'<circle cx="60" cy="50" r="42" fill="#FBCFE8" stroke="#1B2A26" stroke-width="3"/>',120):poli(k,'#C7D2FE')),certo:ops.findIndex(o=>o[1]),x:'Polígonos são figuras planas fechadas formadas só por <b>segmentos de reta</b>. O círculo é curvo, então <b>não</b> é polígono.'});
+  const [w,h]=pick([[3,2],[3,1],[4,1],[2,1],[4,3]]), f=2;
+  const amp=V(`<div>${malha({c:w+2,l:h+2,cel:Array.from({length:w*h},(_,i)=>[1+i%w,1+Math.floor(i/w),'#60A5FA']),t:18})}<p class="gtit">original</p></div><div>${malha({c:w*f+2,l:h*f+2,cel:Array.from({length:w*h*f*f},(_,i)=>[1+i%(w*f),1+Math.floor(i/(w*f)),'#F97316']),t:18})}<p class="gtit">ampliada</p></div>`);
+  it.push(N('ampliacao',`A figura laranja é uma <b>ampliação</b> da azul: o lado de <b>${h}</b> quadradinho${h>1?'s':''} passou para <b>${h*f}</b>. O lado de <b>${w}</b> quadradinhos passou para quantos?`,w*f,`Na ampliação, <b>todos os lados</b> são multiplicados pelo mesmo número (aqui, × ${f}): ${w} × ${f} = <b>${w*f}</b>.`,{corpo:amp}));
+  it.push(q('ampliacao','Quando ampliamos uma figura na malha (dobrando todos os lados), o que acontece com os <b>ângulos</b>?','Continuam iguais',['Dobram de tamanho','Ficam pela metade','Somem'],'Na ampliação e na redução, os lados mudam na mesma proporção, mas os <b>ângulos não mudam</b>. Por isso a figura mantém a forma.'));
+  return it;
+}
+
+/* ---------- 9. Medidas: perímetro, área, volume e conversões ---------- */
+function gMedidas5(){
+  const it=[];
+  const P2=pick([10,12,14,16]), a1=P2===10?1:pick([1,2]), b1=P2/2-a1, a2=Math.floor(P2/4), b2=P2/2-a2; const A1=a1*b1, A2=a2*b2, r=A1>A2?'Terreno A':A2>A1?'Terreno B':'Os dois têm a mesma área';
+  const T=(w,h,c)=>malha({c:w+2,l:h+2,cel:Array.from({length:w*h},(_,i)=>[1+i%w,1+Math.floor(i/w),c]),t:18});
+  it.push(q('perimetroarea',`Os terrenos A e B têm o <b>mesmo perímetro</b> (${P2} lados de quadradinho). Qual tem <b>maior área</b>?`,r,['Terreno A','Terreno B','Os dois têm a mesma área'].filter(x=>x!==r),`A: ${b1} × ${a1} = <b>${A1}</b> quadradinhos. B: ${b2} × ${a2} = <b>${A2}</b>. Mesmo perímetro <b>não</b> quer dizer mesma área!`,{corpo:V(`<div>${T(b1,a1,'#60A5FA')}<p class="gtit">A</p></div><div>${T(b2,a2,'#F97316')}<p class="gtit">B</p></div>`)}));
+  const ar=pick([12,16,18,24]), ds=[]; for(let d=1;d*d<=ar;d++) if(ar%d===0) ds.push([d,ar/d]); const [p1,q1]=pick(ds.filter(d=>d[0]>1||ds.length<3));
+  it.push(N('perimetroarea',`Um retângulo de <b>${q1} × ${p1}</b> quadradinhos tem área ${ar}. Qual é o seu <b>perímetro</b> (em lados de quadradinho)?`,2*(p1+q1),`Perímetro: ${q1} + ${p1} + ${q1} + ${p1} = <b>${2*(p1+q1)}</b>. Outros retângulos de área ${ar} podem ter perímetros diferentes!`,{corpo:V(T(q1,p1,'#86EFAC'))}));
+  const L=rnd(2,4),C=rnd(2,3),A=rnd(2,3); it.push(N('volume',`Quantos cubinhos formam este bloco? (Conte também os que estão escondidos!)`,L*C*A,`São ${L} × ${C} = ${L*C} cubinhos em cada camada e <b>${A}</b> camadas: ${L*C} × ${A} = <b>${L*C*A}</b>. Esse é o <b>volume</b> em cubinhos.`,{corpo:V(cubos(L,C,A)),dica:'Conte quantos cubinhos há na camada de cima e quantas camadas existem.'}));
+  it.push(sortear([
+    ()=>{ const k=rnd(11,49)/10; return N('conversao',`A ponte tem <b>${nf(k)} km</b>. Quantos metros são?`,Math.round(k*1000),`1 km = 1.000 m. ${nf(k)} × 1.000 = <b>${mil(Math.round(k*1000))} m</b>.`,{un:'m'}); },
+    ()=>{ const l=pick([1.5,2.5,0.75,3.25]); return N('conversao',`Uma garrafa tem <b>${nf(l)} L</b> de água. Quantos mililitros são?`,l*1000,`1 L = 1.000 mL. ${nf(l)} × 1.000 = <b>${mil(l*1000)} mL</b>.`,{un:'mL'}); },
+    ()=>{ const h=rnd(2,5),m=pick([15,20,30,45]); return N('conversao',`Uma etapa da viagem durou <b>${h} h ${m} min</b>. Quantos minutos são?`,h*60+m,`${h} × 60 = ${h*60} min, mais ${m}: <b>${h*60+m} min</b>.`,{un:'min'}); },
+    ()=>{ const g=pick([250,500,750]),k=rnd(1,3); return N('conversao',`Uma caixa tem <b>${k} kg</b> de erva-mate e outra tem <b>${g} g</b>. Quantos gramas ao todo?`,k*1000+g,`${k} kg = ${mil(k*1000)} g. ${mil(k*1000)} + ${g} = <b>${mil(k*1000+g)} g</b>.`,{un:'g'}); }
+  ],2));
+  return it.flat();
+}
+
+/* ---------- 10. Gráficos e pesquisa ---------- */
+function gGraficos5(){
+  const it=[]; const meses=['Jan','Fev','Mar','Abr','Mai','Jun'];
+  let v; do{ v=meses.map(()=>rnd(4,18)*5); }while(new Set(v).size<6);
+  const G=V(linhas({cats:meses,series:[{nome:'Caminhões',vals:v,cor:'#2563EB'}],max:100,passo:10,titulo:'Caminhões por dia num posto (média do mês)'}));
+  const iM=v.indexOf(Math.max(...v)); const dif=v.slice(1).map((x,i)=>x-v[i]), iA=dif.indexOf(Math.max(...dif)), j=rnd(0,5);
+  it.push(q('graficos','Em que mês o movimento foi <b>maior</b>?',meses[iM],meses.filter((_,i)=>i!==iM),`O ponto mais alto da linha está em <b>${meses[iM]}</b> (${v[iM]}).`,{corpo:G,grade:true}));
+  it.push(N('graficos',`Qual foi a média de caminhões por dia em <b>${meses[j]}</b>?`,v[j],`O ponto de ${meses[j]} está na altura <b>${v[j]}</b>.`,{corpo:G,dica:'Cada linha do gráfico vale 10. O ponto pode estar no meio entre duas linhas.'}));
+  if(dif[iA]>0) it.push(q('graficos','Entre quais meses seguidos o movimento <b>mais aumentou</b>?',`${meses[iA]} → ${meses[iA+1]}`,dif.map((d,i)=>`${meses[i]} → ${meses[i+1]}`).filter((_,i)=>i!==iA),`A subida mais forte da linha é de ${meses[iA]} para ${meses[iA+1]}: <b>+${dif[iA]}</b>.`,{corpo:G}));
+  const tx=pick([['ciclistas','🚲'],['pedestres','🚶']]), cid=['Porto Murtinho','Jardim','Campo Grande'], a=cid.map(()=>rnd(10,40)), b=cid.map(()=>rnd(10,40));
+  const tb=V(tab(['Cidade','Manhã','Tarde'],cid.map((c,i)=>[c,a[i],b[i]]),`Contagem de ${tx[0]} (pesquisa da turma)`)); const tot=cid.map((_,i)=>a[i]+b[i]), iT=tot.indexOf(Math.max(...tot));
+  if(new Set(tot).size===3) it.push(q('tabela',`Somando manhã e tarde, onde foram contados <b>mais ${tx[0]}</b>?`,cid[iT],cid.filter((_,i)=>i!==iT),`Totais: ${cid.map((c,i)=>`${c} ${tot[i]}`).join(', ')}.`,{corpo:tb}));
+  const k=rnd(0,2); it.push(N('tabela',`Quantos ${tx[0]} foram contados em <b>${cid[k]}</b> no dia todo?`,a[k]+b[k],`${a[k]} + ${b[k]} = <b>${a[k]+b[k]}</b>.`,{corpo:tb}));
+  it.push(sortear([
+    ()=>q('pesquisa','Para mostrar como a temperatura <b>mudou ao longo dos dias</b>, o gráfico mais indicado é o de:','Linhas',['Setores (pizza) com uma cor só','Nenhum gráfico','Pictórico de frutas'],'O <b>gráfico de linhas</b> mostra bem como algo aumenta ou diminui com o tempo.'),
+    ()=>q('pesquisa','Numa pesquisa sobre o meio de transporte que os estudantes usam para ir à escola, a variável é:','Categórica (as respostas são categorias: ônibus, a pé, bicicleta…)',['Numérica','Uma conta de dividir','Um gráfico de linhas'],'Quando a resposta é uma <b>categoria</b> (palavra), a variável é <b>categórica</b>; quando é um número medido ou contado, é <b>numérica</b>.'),
+    ()=>q('pesquisa','Depois de organizar os dados numa tabela e num gráfico, o último passo de uma pesquisa é:','Escrever um texto com as conclusões',['Apagar os dados','Escolher outra pergunta','Fazer o gráfico de novo'],'Uma pesquisa termina com um <b>texto</b> que conta o que se descobriu e para que a pesquisa serviu.')
+  ],1)[0]);
+  return it;
+}
+
+const JOGO={
+  NOME:'Rota Bioceânica', CHAVE:'rotaBioceanica5.v1', FALA:true,
+  TXT:{missao:'Parada',missoes:'Paradas',mapa:'Mapa da rota',entrar:'Pegar a estrada! 🚚',fim:'Parada concluída! 🎉'},
+  PATENTES:[[0,'🎒 Passageiro'],[7,'🧭 Navegador'],[14,'🚚 Motorista'],[22,'🗺️ Guia da rota'],[28,'🏆 Mestre da Bioceânica']],
+  CATS:{numeros:'Números até 999.999 (MS.EF05MA01)',decimais:'Números decimais (MS.EF05MA02)',comparar:'Comparar frações e decimais (MS.EF05MA05)',opdec:'Operações com decimais (MS.EF05MA07, MS.EF05MA08)',igualdade:'Equivalência e igualdades (MS.EF05MA10)',desconhecido:'Termo desconhecido (MS.EF05MA11)',proporcao:'Proporcionalidade (MS.EF05MA12)',partilha:'Partilha em partes desiguais (MS.EF05MA13)',contagem:'Contagem (MS.EF05MA09)',probabilidade:'Probabilidade (MS.EF05MA22, MS.EF05MA23)',cartesiano:'Plano cartesiano e localização (MS.EF05MA14, MS.EF05MA15)',solidos:'Planificações (MS.EF05MA16)',poligonos:'Polígonos (MS.EF05MA17)',ampliacao:'Ampliação e redução (MS.EF05MA18)',perimetroarea:'Perímetro e área (MS.EF05MA20)',volume:'Volume (MS.EF05MA21)',conversao:'Conversão de unidades (MS.EF05MA19)',graficos:'Gráficos de linhas (MS.EF05MA24)',tabela:'Tabelas (MS.EF05MA24)',pesquisa:'Pesquisa (MS.EF05MA25)'},
+  HOME:{h1:'Rota <span>Bioceânica</span>', turma:'ex.: 5º A',
+    lead:'A Rota Bioceânica vai ligar Mato Grosso do Sul aos portos do Chile, passando pelo Paraguai e pela Argentina. Viaje por ela resolvendo desafios de números, decimais, proporção, probabilidade, coordenadas, geometria, medidas e gráficos!',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:16px;gap:8px"><div class="emoji-g">🇧🇷🚚🌎</div>${plano([{x:2,y:3,r:'A'},{x:6,y:5,r:'B'}],6,[[2,3],[6,3],[6,5]])}</div>`,
+    info:[['10','paradas'],['5º','ano'],['🔊','leitura em voz alta']],
+    rodape:'Matemática · 5º ano · Habilidades <b>MS.EF05MA01</b>, <b>MS.EF05MA02</b>, <b>MS.EF05MA05</b>, <b>MS.EF05MA07</b> a <b>MS.EF05MA25</b>'},
+  AJUDA:['🗺️ Siga a rota: cada parada traz desafios diferentes. Complete uma para liberar a próxima.','🔢 Nas perguntas de número, digite a resposta e toque em <b>Conferir</b>. Use vírgula nos decimais (ex.: 12,75).','🔊 Toque no alto-falante para ouvir a pergunta.','👩‍🏫 Professor(a): os números mudam a cada partida. Em ⚙️ dá para liberar todas as paradas.'],
+  MISSOES:[
+    {id:'m1',titulo:'Cargas do porto',ic:'⚓',hab:'MS.EF05MA01',desc:'Ler, escrever, ordenar e compor números até 999.999.',gerar:gNumeros5,intro:'<p>Nos números grandes, o ponto separa as <b>classes</b>: 345.678 = trezentos e quarenta e cinco <b>mil</b>, seiscentos e setenta e oito.</p>'},
+    {id:'m2',titulo:'Vírgula na estrada',ic:'🔟',hab:'MS.EF05MA02 · MS.EF05MA05',desc:'Décimos, centésimos, decimais na reta e comparação com frações.',gerar:gDecimais,intro:`<p>Depois da vírgula vêm os <b>décimos</b> e os <b>centésimos</b>. ${fr(1,2)} = 0,5 e ${fr(1,4)} = 0,25.</p>`},
+    {id:'m3',titulo:'Posto e lanchonete',ic:'⛽',hab:'MS.EF05MA07 · MS.EF05MA08',desc:'Somar, subtrair, multiplicar e dividir com decimais e dinheiro.',gerar:()=>sortear(PROB_DEC,6),intro:'<p>Nas contas com decimais, arme <b>vírgula embaixo de vírgula</b>. Multiplicar por 10 anda a vírgula uma casa para a direita.</p>'},
+    {id:'m4',titulo:'Balança da alfândega',ic:'⚖️',hab:'MS.EF05MA10 · MS.EF05MA11',desc:'Igualdades que se mantêm e o número que falta.',gerar:()=>sortear(PROB_IG,6),intro:'<p>Se fizermos a <b>mesma operação</b> dos dois lados de uma igualdade, ela continua verdadeira — como uma balança equilibrada.</p>'},
+    {id:'m5',titulo:'Cozinha de fronteira',ic:'🥯',hab:'MS.EF05MA12 · MS.EF05MA13',desc:'Receitas, preços, escala de mapa e partilha em partes desiguais.',gerar:()=>sortear(PROB_PROP,6),intro:'<p>Dobrou a receita? Dobra cada ingrediente! Isso é <b>proporcionalidade</b>. E para dividir em “o dobro”, pense em partes: 1 + 2 = 3 partes.</p>'},
+    {id:'m6',titulo:'Sorteios da viagem',ic:'🎲',hab:'MS.EF05MA09 · MS.EF05MA22 · MS.EF05MA23',desc:'Árvore de possibilidades e probabilidade em forma de fração.',gerar:gChances,intro:`<p>Probabilidade = casos favoráveis ÷ casos possíveis. No dado, sair 4 tem probabilidade ${fr(1,6)}.</p>`},
+    {id:'m7',titulo:'GPS da rota',ic:'📍',hab:'MS.EF05MA14 · MS.EF05MA15',desc:'Coordenadas no plano cartesiano, deslocamentos e células de planilha.',gerar:gPlano,intro:'<p>No par <b>(3, 5)</b>, o primeiro número é a posição na <b>horizontal</b> e o segundo, na <b>vertical</b>.</p>'},
+    {id:'m8',titulo:'Formas da paisagem',ic:'🔷',hab:'MS.EF05MA16 · MS.EF05MA17 · MS.EF05MA18',desc:'Planificações, polígonos e ampliação de figuras.',gerar:gFiguras5,intro:'<p>Polígonos são figuras fechadas feitas de segmentos de reta. Ao ampliar uma figura, os lados crescem na mesma proporção e os ângulos não mudam.</p>'},
+    {id:'m9',titulo:'Carga e medidas',ic:'📦',hab:'MS.EF05MA19 · MS.EF05MA20 · MS.EF05MA21',desc:'Perímetro × área, volume com cubinhos e conversões de unidades.',gerar:gMedidas5,intro:'<p><b>Perímetro</b> é o contorno, <b>área</b> é a superfície e <b>volume</b> é o espaço ocupado (contado em cubinhos).</p>'},
+    {id:'m10',titulo:'Relatório da viagem',ic:'📈',hab:'MS.EF05MA24 · MS.EF05MA25',desc:'Gráficos de linhas, tabelas e etapas de uma pesquisa.',gerar:gGraficos5,intro:'<p>O <b>gráfico de linhas</b> mostra como algo muda ao longo do tempo: subidas, descidas e o ponto mais alto.</p>'}
+  ]
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>
