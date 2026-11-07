@@ -17,6 +17,10 @@ const COMPONENTES = {
 };
 
 const JOGOS = [
+  { arquivo: 'agencia-de-generos.html', titulo: 'Agência de Gêneros', componente: 'lp', anos: [6,7,8,9],
+    tipo: 'Redação de agência', icone: '📰',
+    descricao: 'Reconheça 12 gêneros, ache o lide da notícia, separe fato de opinião, desmonte anúncios, escreva reclamações e descubra o foco narrativo.',
+    habilidades: ['MS.EF67LP02', 'MS.EF67LP04', 'MS.EF67LP07', 'MS.EF67LP08', 'MS.EF67LP10', 'MS.EF67LP16', 'MS.EF69LP16', 'MS.EF69LP17', 'MS.EF69LP47', 'MS.EF89LP23'] },
   { arquivo: 'acento-certo.html', titulo: 'Acento Certo', componente: 'lp', anos: [3,4,5,6,7,8,9],
     tipo: 'Ortografia com voz', icone: '✍️',
     descricao: 'Toque na sílaba tônica, classifique oxítonas e paroxítonas, aplique as regras de acentuação e vença mas/mais, mal/mau e os porquês.',
