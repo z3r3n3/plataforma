@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oficina de Montagem — Robótica: peças e projetos</title>
+<meta name="description" content="Jogo de robótica para conhecer as peças de um robô e montar projetos: placa controladora, motores, driver, sensores e atuadores, entrada-processamento-saída, montagem passo a passo, automação na casa e no campo e o ciclo de projeto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#9A3412;--agua2:#C2410C;--agua-claro:#FFEDD5}
+body{background:linear-gradient(180deg,#FFEDD5 0%,#FFF7ED 50%,#E0F2FE 100%)}
+.topo{background:#FFF7EDee}
+.projeto{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px;text-align:left;width:100%;max-width:560px}
+.projeto h4{margin:0 0 4px;font-family:var(--titulo);font-size:19px}
+.projeto p{margin:0;font-size:16px;color:var(--suave)}
+.bandeja{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+@media(min-width:620px){.bandeja{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.peca{display:flex;align-items:center;gap:8px;text-align:left;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:8px 10px;min-height:58px;cursor:pointer;font-size:15px;font-weight:700;line-height:1.15}
+.peca .e{font-size:28px;flex:none}
+.peca.sel{background:#FFEDD5;border-color:#EA580C;box-shadow:0 0 0 3px #FED7AA}
+.peca.ok{background:#DCFCE7;border-color:#16A34A}
+.peca[disabled]{cursor:default}
+.ordem-lista{display:grid;gap:8px;margin-top:10px}
+.passo{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:10px 12px;font-size:16px;font-weight:700;cursor:pointer;min-height:52px}
+.passo .num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#E5E7EB;font-family:var(--titulo);font-weight:800}
+.passo.usado{opacity:.35;cursor:default}
+.passo.escolhido .num{background:#EA580C;color:#fff}
+.codigo{font-family:ui-monospace,Consolas,monospace;font-size:15px;line-height:1.55;background:#0F172A;color:#E2E8F0;border-radius:12px;padding:12px 14px;text-align:left;white-space:pre;overflow-x:auto;max-width:100%}
+.codigo .k{color:#F472B6}.codigo .f{color:#7DD3FC}.codigo .n{color:#FDE047}.codigo .c{color:#94A3B8}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   OFICINA DE MONTAGEM — Robótica · Peças e projetos
+   MS.EF06CI07 sistema nervoso × sensores, placa e motores · MS.EF07CI11 uso da tecnologia
+   MS.EF06MA04 e MS.EF07MA07 algoritmos e fluxogramas · MS.EF08CI02 circuitos com bateria e dispositivos
+   ========================================================= */
+const EM=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
+const PECAS={
+  cerebro:['🧠','Placa controladora (Arduino)','É o “cérebro”: lê os sensores, segue o programa e dá as ordens.'],
+  bateria:['🔋','Bateria','Guarda a energia que faz tudo funcionar.'],
+  chassi:['🛹','Chassi (base)','A estrutura onde todas as peças ficam presas.'],
+  rodas:['🛞','Rodas','Fazem o robô rolar.'],
+  motor:['⚙️','2 motores','Giram as rodas.'],
+  driver:['🎛️','Driver de motor (ponte H)','Recebe as ordens da placa e entrega aos motores a energia que eles precisam.'],
+  ultra:['📡','Sensor ultrassônico','Mede a distância até os obstáculos.'],
+  linha:['⚫','Sensor de linha','Percebe se o chão é claro ou escuro.'],
+  ldr:['🌗','Sensor de luz (LDR)','Percebe se o ambiente está claro ou escuro.'],
+  temp:['🌡️','Sensor de temperatura','Mede se está quente ou frio.'],
+  umid:['💧','Sensor de umidade do solo','Mede se a terra está seca ou molhada.'],
+  botao:['🔘','Botão','Avisa a placa quando alguém aperta.'],
+  led:['💡','LED','Acende uma luz.'],
+  buzzer:['🔔','Buzzer','Faz um apito ou alarme.'],
+  servo:['🦾','Servomotor com garra','Gira até um ângulo exato: abre e fecha a garra.'],
+  rele:['🔌','Módulo relé','Interruptor comandado pela placa, para ligar aparelhos mais fortes.'],
+  bomba:['⛲','Mini bomba d’água','Empurra a água para regar.']
+};
+const SENSORES=['ultra','linha','ldr','temp','umid','botao'], ATUADORES=['motor','led','buzzer','servo','bomba'];
+const FALTA={cerebro:'Sem a <b>placa controladora</b>, ninguém lê os sensores nem segue o programa.',bateria:'Sem <b>bateria</b>, nada funciona!',chassi:'As peças precisam de uma base para ficarem presas: falta o <b>chassi</b>.',rodas:'Como o robô vai rolar sem <b>rodas</b>?',motor:'Sem <b>motores</b>, as rodas não giram.',driver:'A placa não tem força para ligar os motores direto: falta o <b>driver de motor</b>.',
+  ultra:'Como o robô vai perceber os obstáculos? Falta o <b>sensor ultrassônico</b>.',linha:'Como o robô vai enxergar a faixa no chão? Falta o <b>sensor de linha</b>.',ldr:'Como o sistema vai saber que escureceu? Falta o <b>sensor de luz</b>.',temp:'Como medir o calor? Falta o <b>sensor de temperatura</b>.',umid:'Como saber se a terra está seca? Falta o <b>sensor de umidade</b>.',botao:'Como saber que alguém apertou? Falta o <b>botão</b>.',
+  led:'Falta a peça que <b>acende a luz</b>.',buzzer:'Falta a peça que <b>faz o som</b>.',servo:'Falta a peça que <b>abre e fecha a garra</b>.',rele:'A placa não liga a bomba sozinha: falta o <b>relé</b>.',bomba:'Falta a peça que <b>empurra a água</b>.'};
+const BASE=['cerebro','bateria','chassi','rodas','motor','driver'];
+const PROJ=[
+  {n:'Robô explorador',ob:'Um robô que anda para a frente e faz curvas.',req:BASE,e:'🤖'},
+  {n:'Robô desviador',ob:'Um robô que anda sozinho e desvia dos obstáculos.',req:[...BASE,'ultra'],e:'🚧'},
+  {n:'Seguidor de linha',ob:'Um robô que segue uma faixa preta no chão.',req:[...BASE,'linha'],e:'〰️'},
+  {n:'Robô coletor',ob:'Um robô que encontra um objeto à frente e o pega com uma garra.',req:[...BASE,'ultra','servo'],e:'📦'},
+  {n:'Robô de resgate',ob:'Um robô que anda, desvia de obstáculos e apita quando encontra alguém.',req:[...BASE,'ultra','buzzer'],e:'🆘'},
+  {n:'Luz noturna automática',ob:'Uma luz que acende sozinha quando escurece. (Não precisa andar!)',req:['cerebro','bateria','ldr','led'],e:'🌙'},
+  {n:'Alarme de calor',ob:'Um alarme que toca quando a sala fica quente demais.',req:['cerebro','bateria','temp','buzzer'],e:'🔥'},
+  {n:'Irrigação automática',ob:'Um sistema que rega a horta quando a terra seca.',req:['cerebro','bateria','umid','rele','bomba'],e:'🌱'},
+  {n:'Campainha da sala',ob:'Uma campainha: apertou, tocou.',req:['cerebro','bateria','botao','buzzer'],e:'🛎️'}
+];
+
+/* ---------- tipo: escolher peças ---------- */
+const PEC={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.req);
+    return `${it.projHtml||''}<div class="bandeja">${it.bandeja.map(k=>{ const P=PECAS[k], c=it.feito?(ok.has(k)?'ok':''):(it.sel.includes(k)?'sel':''); return `<button class="peca ${c}" data-x="${k}" ${it.feito?'disabled':''} aria-pressed="${it.sel.includes(k)}"><span class="e">${P[0]}</span><span>${P[1]}</span></button>`; }).join('')}</div>
+      ${it.feito?'':`<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">${it.botao||'🔧 Montar e testar'}</button></div>`}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } it.sel=it.sel.includes(x)?it.sel.filter(v=>v!==x):it.sel.concat(x); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel.length) return toast('Toque nas peças para escolher.');
+    const falta=it.req.filter(k=>!it.sel.includes(k)), sobra=it.sel.filter(k=>!it.req.includes(k));
+    if(!falta.length&&!sobra.length) return responder(true);
+    const msg=falta.length?(it.faltaMsg?it.faltaMsg(falta[0]):FALTA[falta[0]]):(it.sobraMsg?it.sobraMsg(sobra[0]):`A peça <b>${PECAS[sobra[0]][1]}</b> não é necessária neste projeto. Robô bom não carrega peso nem gasta energia à toa!`);
+    responder(false,msg+(falta.length+sobra.length>1?` <br><small>(E ainda há ${falta.length+sobra.length-1} outro${falta.length+sobra.length>2?'s':''} ajuste${falta.length+sobra.length>2?'s':''}.)</small>`:'')); },
+  revelar(it){ it.sel=it.req.slice(); },
+  auto(it){ it.sel=it.req.slice(); PEC.conferir(it); }
+};
+function itemProjeto(p){ const outros=embaralhar(Object.keys(PECAS).filter(k=>!p.req.includes(k))).slice(0,p.req.length>5?3:4);
+  return {tipo:'pecas',cat:p.req.includes('motor')?'montagem':'automacao',enun:'Escolha <b>todas</b> as peças necessárias — e só elas!',projHtml:`<div class="vis"><div class="projeto"><h4>${p.e} ${p.n}</h4><p>${p.ob}</p></div></div>`,bandeja:embaralhar([...p.req,...outros]),req:p.req,
+    mostrar:p.req.map(k=>PECAS[k][1]).join(', '),x:`Peças: ${p.req.map(k=>`${PECAS[k][0]} ${PECAS[k][1]}`).join(' · ')}.`}; }
+function itemClassifica(qual){ const alvo=qual==='entrada'?SENSORES:ATUADORES, outro=qual==='entrada'?ATUADORES:SENSORES; const a=sortear(alvo,3), b=sortear(outro,3).concat(['cerebro']);
+  return {tipo:'pecas',cat:'es',enun:qual==='entrada'?'Toque em todas as peças de <b>ENTRADA</b> (sensores: elas <b>percebem</b> o mundo).':'Toque em todas as peças de <b>SAÍDA</b> (atuadores: elas <b>agem</b> no mundo).',bandeja:embaralhar([...a,...b]),req:a,botao:'✔ Conferir',
+    faltaMsg:k=>`<b>${PECAS[k][1]}</b> também é de ${qual==='entrada'?'entrada: ela percebe algo':'saída: ela age, produz movimento, luz ou som'}.`,sobraMsg:k=>k==='cerebro'?'A placa controladora não é entrada nem saída: ela é o <b>processamento</b> (o cérebro).':`<b>${PECAS[k][1]}</b> é de ${qual==='entrada'?'saída: ela age, não percebe':'entrada: ela percebe, não age'}.`,
+    mostrar:a.map(k=>PECAS[k][1]).join(', '),x:'<b>Entrada</b> (sensores) → <b>processamento</b> (placa) → <b>saída</b> (motores, LED, buzzer, garra).'}; }
+
+/* ---------- tipo: colocar em ordem ---------- */
+const ORD={
+  desenhar(it){ it.esc=it.esc||[];
+    return `<div class="ordem-lista">${it.vis.map(i=>{ const pos=it.esc.indexOf(i); return `<button class="passo ${pos>=0?'escolhido':''}" data-x="${i}" ${it.feito||pos>=0?'disabled':''}><span class="num">${pos>=0?pos+1:'•'}</span><span>${it.passos[i]}</span></button>`; }).join('')}</div>
+      ${it.feito?'':`<div class="seguir"><button class="btn" data-x="limpar">↺ Recomeçar</button><button class="btn agua" data-acao="conferir">✔ Conferir</button></div>`}`; },
+  acao(it,x){ if(x==='limpar'){ it.esc=[]; return desenhar(); } it.esc.push(+x); som('bip'); desenhar(); },
+  conferir(it){ if(it.esc.length<it.passos.length) return toast('Toque em todas as etapas, na ordem.'); const ok=it.esc.every((v,i)=>v===i); if(!ok){ const k=it.esc.findIndex((v,i)=>v!==i); it.esc=it.esc.slice(0,k); } responder(ok,ok?'':'Quase! Mantive as etapas certas do começo. Pense no que precisa acontecer antes do resto.'); },
+  revelar(it){ it.esc=it.passos.map((_,i)=>i); },
+  auto(it){ it.esc=it.passos.map((_,i)=>i); ORD.conferir(it); }
+};
+const ORDENS=[
+  {cat:'projeto',enun:'Coloque em ordem as etapas do <b>ciclo de projeto</b> de um engenheiro:',p:['Entender o problema','Imaginar soluções e desenhar o projeto','Montar o protótipo','Testar o protótipo','Melhorar e testar de novo'],x:'Engenheiros trabalham em ciclos: <b>entender → imaginar → construir → testar → melhorar</b>. Errar no teste faz parte!'},
+  {cat:'es',enun:'Coloque em ordem o que a placa do robô faz o tempo todo:',p:['Ler os sensores','Decidir o que fazer, seguindo o programa','Acionar motores, luzes ou sons','Repetir tudo de novo'],x:'Todo robô repete o ciclo <b>perceber → decidir → agir</b>, muitas vezes por segundo.'},
+  {cat:'montagem',enun:'Na oficina, a regra é: primeiro a estrutura e a <b>energia sempre por último</b>. Coloque a montagem em ordem:',p:['Prender os motores no chassi','Encaixar as rodas nos motores','Prender a placa, o driver e os sensores','Ligar os fios conferindo cada conexão','Conectar a bateria e testar'],x:'Ligar a bateria por último evita curtos e choques nos componentes enquanto mexemos nos fios.'},
+  {cat:'automacao',enun:'Coloque em ordem o programa da <b>irrigação automática</b>:',p:['Ler o sensor de umidade do solo','Comparar: a terra está seca?','Se estiver seca, ligar a bomba pelo relé','Esperar um pouco e ler o sensor de novo'],x:'Ler → comparar → agir → repetir: é o mesmo ciclo de qualquer automação.'}
+];
+const itemOrdem=o=>{ const vis=embaralhar(o.p.map((_,i)=>i)); if(vis.every((v,i)=>v===i)) vis.reverse(); return {tipo:'ordem',cat:o.cat,enun:o.enun,passos:o.p,vis,mostrar:o.p.join(' → '),x:o.x}; };
+
+/* ---------- questões ---------- */
+const PQ=[
+  ()=>q('pecas','Qual peça é o <b>“cérebro”</b> do robô?','Placa controladora (Arduino)',['Bateria','Rodas','Chassi'],'A <b>placa controladora</b> guarda o programa, lê os sensores e comanda os motores.',{corpo:EM('🧠')}),
+  ()=>q('pecas','Para que serve o <b>driver de motor</b> (ponte H)?','Entregar aos motores a energia que eles precisam, seguindo as ordens da placa',['Medir a distância','Fazer o robô apitar','Guardar o programa'],'A placa dá a ordem, mas não tem força para mover os motores. O <b>driver</b> faz essa ponte e ainda deixa o motor girar nos dois sentidos.',{corpo:EM('🎛️')}),
+  ()=>q('pecas','Qual a diferença do <b>servomotor</b> para um motor comum?','O servo gira até um ângulo exato e para ali (ótimo para garras e braços)',['O servo só funciona na água','O servo é um sensor','Não há diferença'],'O motor comum gira sem parar (bom para rodas). O <b>servo</b> vai até o ângulo pedido: 0°, 90°, 180°…',{corpo:EM('🦾')}),
+  ()=>q('pecas','O <b>sensor ultrassônico</b> funciona parecido com:','O morcego, que se orienta pelo eco do som',['O camaleão, que muda de cor','A tartaruga, que anda devagar','O peixe, que respira na água'],'Ele emite um som agudo e mede o tempo do <b>eco</b> para calcular a distância, como fazem os morcegos.',{corpo:EM('🦇📡')}),
+  ()=>q('pecas','Qual peça percebe se o chão é <b>claro ou escuro</b>?','Sensor de linha (infravermelho)',['Sensor de temperatura','Buzzer','Servomotor'],'O <b>sensor de linha</b> emite luz infravermelha: o chão claro reflete mais e o escuro, menos.',{corpo:EM('⚫⚪')})
+];
+const ANALOG=[
+  ()=>q('corpo','Comparando o robô com o corpo humano, os <b>sensores</b> fazem o papel:','Dos sentidos (olhos, ouvidos, pele)',['Dos músculos','Dos ossos','Do estômago'],'Assim como os sentidos, os <b>sensores</b> captam informações do ambiente e enviam ao “cérebro”.',{corpo:EM('👀👂')}),
+  ()=>q('corpo','E os <b>motores</b> do robô são como:','Os músculos, que produzem o movimento',['Os olhos','Os nervos','A pele'],'O cérebro manda a ordem e os <b>músculos</b> se movem; no robô, a placa manda e os <b>motores</b> giram.',{corpo:EM('💪⚙️')}),
+  ()=>q('corpo','Os <b>fios</b> que levam os sinais entre sensores, placa e motores lembram:','Os nervos',['Os ossos','O sangue','Os dentes'],'No corpo, o <b>sistema nervoso</b> leva mensagens entre os sentidos, o cérebro e os músculos. No robô, os fios fazem esse papel.',{corpo:EM('🧠⚡')})
+];
+const MOV=[
+  ()=>q('movimento','Um robô com <b>2 motores</b> (um em cada roda) vira para a <b>direita</b> quando:','A roda da esquerda gira e a da direita para ou vai mais devagar',['As duas rodas giram igual para a frente','A roda da direita gira mais rápido','As duas rodas param'],'É a <b>direção diferencial</b>: a roda que gira mais “empurra” o robô para o outro lado.',{corpo:EM('🛞↪️')}),
+  ()=>q('movimento','Para o robô andar <b>de ré</b>, os dois motores devem:','Girar no sentido contrário',['Parar','Girar cada um para um lado','Ficar mais quentes'],'O <b>driver</b> inverte o sentido da corrente e os motores giram ao contrário.'),
+  ()=>q('movimento','A bateria do robô está fraca. O que costuma acontecer?','Os motores ficam lentos e o robô pode falhar',['O robô fica mais rápido','Nada muda','O robô muda de cor'],'Com pouca energia, motores e placa não funcionam bem. Carregue ou troque a bateria antes dos testes.',{corpo:EM('🪫')})
+];
+const SEG=[
+  ()=>q('seguranca','Antes de trocar fios ou peças do robô, você deve:','Desligar a bateria',['Deixar tudo ligado para ver o que acontece','Molhar os fios','Encostar os fios uns nos outros'],'Mexer com o circuito ligado pode causar <b>curto-circuito</b> e queimar peças.',{corpo:EM('🔋❌')}),
+  ()=>q('seguranca','Dois fios desencapados da bateria encostaram um no outro. Isso é:','Um curto-circuito: esquenta e pode queimar peças',['Um jeito de economizar energia','Normal e seguro','Um sensor novo'],'No <b>curto-circuito</b> a corrente passa sem controle: os fios esquentam e a bateria pode ser danificada.',{corpo:EM('⚠️🔥')})
+];
+const cod=t=>`<div class="vis"><div class="codigo">${t}</div></div>`;
+const PROGQ=[
+  ()=>q('programa','Leia o programa do robô desviador. O que ele faz quando o sensor mede <b>8 cm</b>?','Vira à direita',['Anda para a frente','Para para sempre','Apita'],'8 é menor que 15: a condição é verdadeira e o robô <b>vira à direita</b>.',{corpo:cod(`<span class="k">repetir sempre</span> {
+  distancia = <span class="f">lerUltrassom</span>()
+  <span class="k">se</span> (distancia &lt; <span class="n">15</span>) {
+    <span class="f">virarDireita</span>()
+  } <span class="k">senão</span> {
+    <span class="f">andarFrente</span>()
+  }
+}`),grade:true}),
+  ()=>q('programa','No mesmo programa, o que acontece se trocarmos <b>15</b> por <b>40</b>?','O robô vai desviar mais cedo, quando o obstáculo ainda está longe',['O robô vai bater mais','O robô fica mais rápido','Nada muda'],'O número é o <b>limite</b> da decisão. Com 40 cm, a condição fica verdadeira antes, e ele vira mais cedo.',{corpo:cod(`<span class="k">se</span> (distancia &lt; <span class="n">15</span>) { <span class="f">virarDireita</span>() }`)}),
+  ()=>q('programa','Qual programa faz a <b>luz noturna</b> funcionar?','se (luz < 300) { acenderLED() } senão { apagarLED() }',['se (luz < 300) { apagarLED() } senão { acenderLED() }','acenderLED() sempre, sem ler o sensor','se (temperatura > 30) { acenderLED() }'],'Pouca luz (número pequeno) = escuro → <b>acende</b>. Muita luz → apaga.'),
+  ()=>q('programa','O seguidor de linha lê o sensor da esquerda e vê <b>preto</b>. Para voltar para a linha, ele deve:','Virar um pouco para a esquerda',['Virar para a direita','Parar para sempre','Andar de ré sem parar'],'Se o sensor da esquerda encontrou a linha, a linha está à esquerda: o robô corrige virando para a <b>esquerda</b>.',{corpo:EM('⚫🤖⚪')})
+];
+
+const JOGO={
+  NOME:'Oficina de Montagem', CHAVE:'oficinaMontagem.v1', AREA:'ROBÓTICA', FALA:true,
+  TXT:{missao:'Bancada',missoes:'Bancadas',mapa:'Bancadas da oficina',entrar:'Abrir a oficina 🔧',fim:'Bancada concluída! 🎉'},
+  PATENTES:[[0,'🔩 Aprendiz'],[5,'🔧 Montador'],[10,'⚙️ Técnico'],[14,'🛠️ Projetista'],[17,'🏆 Engenheiro de robôs']],
+  CATS:{pecas:'Função das peças (MS.EF07CI11)',corpo:'Robô × corpo humano (MS.EF06CI07)',es:'Entrada, processamento e saída (MS.EF06CI07)',montagem:'Montagem de robôs móveis (MS.EF08CI02)',movimento:'Movimento com 2 motores (MS.EF07CI11)',automacao:'Automação com sensores (MS.EF08CI02, MS.EF06MA04)',seguranca:'Segurança na bancada (MS.EF08CI02)',projeto:'Ciclo de projeto (MS.EF07MA07)',programa:'Ler o programa (MS.EF06MA04)'},
+  HOME:{h1:'Oficina de <span>Montagem</span>', turma:'ex.: 7º A',
+    lead:'Conheça as peças de um robô, descubra o que é entrada, processamento e saída e monte projetos de verdade: robô desviador, seguidor de linha, garra, luz noturna, alarme e irrigação automática.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:20px;gap:10px"><div class="emoji-g">🧠🔋⚙️🛞📡</div><div class="projeto" style="max-width:320px;text-align:center"><b>Sensor</b> percebe → <b>placa</b> decide → <b>motor</b> age</div></div>`,
+    info:[['6','bancadas'],['9','projetos'],['🔧','monte e teste']],
+    rodape:'Robótica · Montagem · Habilidades relacionadas: <b>MS.EF06CI07</b>, <b>MS.EF07CI11</b>, <b>MS.EF08CI02</b>, <b>MS.EF06MA04</b> e <b>MS.EF07MA07</b>'},
+  AJUDA:['🔧 Toque nas peças para escolher (toque de novo para tirar) e depois em <b>Montar e testar</b>.','✅ Escolha <b>só</b> as peças necessárias: peça a mais também conta como erro.','🔢 Nas etapas, toque na ordem certa. Se errar, as primeiras certas ficam marcadas.','👩‍🏫 Professor(a): esta é a 2ª parte da trilha de robótica, depois do Robô Programador. Em ⚙️ dá para liberar todas as bancadas.'],
+  MISSOES:[
+    {id:'m1',titulo:'Conheça as peças',ic:'🧰',hab:'MS.EF07CI11 · MS.EF06CI07',desc:'Placa, driver, servo, sensores e a comparação com o corpo humano.',gerar:()=>embaralhar([...sortear(PQ,4),...sortear(ANALOG,2)]),intro:'<p>Todo robô tem peças que <b>percebem</b> (sensores), uma que <b>decide</b> (placa) e peças que <b>agem</b> (motores, luzes, sons).</p>'},
+    {id:'m2',titulo:'Entrada e saída',ic:'🔀',hab:'MS.EF06CI07',desc:'Separe sensores (entrada) e atuadores (saída) e o ciclo perceber-decidir-agir.',gerar:()=>[itemClassifica('entrada'),itemClassifica('saida'),itemOrdem(ORDENS[1]),...sortear(ANALOG,1)],intro:'<p><b>Entrada</b>: sensores, botões. <b>Processamento</b>: a placa. <b>Saída</b>: motores, LED, buzzer, garra.</p>'},
+    {id:'m3',titulo:'Robô que anda',ic:'🛞',hab:'MS.EF07CI11 · MS.EF08CI02',desc:'Monte o robô explorador, entenda as curvas e a ordem de montagem.',gerar:()=>[itemProjeto(PROJ[0]),...sortear(MOV,2),itemOrdem(ORDENS[2]),...sortear(SEG,1)],intro:'<p>Para andar, o robô precisa de <b>chassi, rodas, motores, driver, placa e bateria</b>. Cada um tem sua função!</p>'},
+    {id:'m4',titulo:'Robôs com sensores',ic:'📡',hab:'MS.EF08CI02 · MS.EF06CI07',desc:'Desviador, seguidor de linha, coletor e robô de resgate.',gerar:()=>[...sortear(PROJ.slice(1,5),3).map(itemProjeto),...sortear(SEG,1)],intro:'<p>Um sensor dá ao robô um novo “sentido”. Escolha o sensor certo para cada missão — e só as peças que forem úteis.</p>'},
+    {id:'m5',titulo:'Automação na casa e no campo',ic:'🌱',hab:'MS.EF08CI02 · MS.EF06MA04',desc:'Luz noturna, alarme de calor, irrigação e campainha.',gerar:()=>[...sortear(PROJ.slice(5),3).map(itemProjeto),itemOrdem(ORDENS[3])],intro:'<p>Nem todo robô anda! Sistemas automáticos usam sensor + placa + atuador para cuidar da casa, da escola e da lavoura.</p>'},
+    {id:'m6',titulo:'Do projeto ao programa',ic:'💡',hab:'MS.EF06MA04 · MS.EF07MA07',desc:'Ciclo de projeto e leitura de programas com SE… SENÃO.',gerar:()=>[itemOrdem(ORDENS[0]),...sortear(PROGQ,4)],intro:'<p>O robô montado só ganha vida com o <b>programa</b>. E o projeto melhora a cada teste: entender, imaginar, construir, testar, melhorar.</p>'}
+  ],
+  TIPOS:{pecas:PEC,ordem:ORD}
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>

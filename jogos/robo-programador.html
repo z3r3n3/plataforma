@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robô Programador — Robótica: lógica e programação</title>
+<meta name="description" content="Jogo de robótica para programar um robô com blocos: sequência de comandos, repetição, caça aos erros (depuração), coleta de energia e decisões com sensores, com animação do robô no labirinto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#0F766E;--agua2:#0D9488;--agua-claro:#CCFBF1}
+body{background:linear-gradient(180deg,#CCFBF1 0%,#F0FDFA 50%,#E0F2FE 100%)}
+.topo{background:#F0FDFAee}
+.mapa svg{width:100%;max-width:400px;height:auto;touch-action:manipulation}
+#rb{transition:transform .32s ease}
+#seta{transition:transform .28s ease}
+.bate{animation:bate .45s}
+@keyframes bate{20%{transform:translate(-5px,0)}40%{transform:translate(5px,0)}60%{transform:translate(-4px,0)}80%{transform:translate(4px,0)}}
+.paleta{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.paleta .btn{min-height:50px;font-size:17px}
+.b-F{background:#DBEAFE;border-color:#2563EB}.b-E{background:#EDE9FE;border-color:#7C3AED}.b-D{background:#FCE7F3;border-color:#DB2777}.b-R{background:#FEF3C7;border-color:#D97706}
+.prog{background:#fff;border:2px dashed var(--borda);border-radius:14px;padding:10px;min-height:62px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;align-content:flex-start}
+.prog .vazio{color:var(--suave);font-size:15px;margin:auto}
+.blk{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:40px;padding:0 8px;border:2px solid;border-radius:10px;font-size:20px;font-weight:800;font-family:var(--titulo)}
+button.blk{cursor:pointer}
+.blk.roda,.rep.roda>.rep-h{outline:4px solid #FACC15;outline-offset:1px}
+.blk.errada{background:#FEE2E2;border-color:#DC2626;opacity:.6}
+.blk.certa{background:#DCFCE7;border-color:#16A34A}
+.rep{border:2px solid #D97706;background:#FFFBEB;border-radius:12px;padding:4px 6px 6px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.rep.aberta{box-shadow:0 0 0 3px #FDE68A}
+.rep-h{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:15px;color:#92400E;border-radius:8px;padding:2px 4px}
+.rep-h button{border:2px solid #D97706;background:#fff;border-radius:8px;font-weight:800;font-size:16px;min-width:44px;min-height:36px;cursor:pointer}
+.rep .dentro{display:flex;flex-wrap:wrap;gap:5px;min-width:40px;min-height:40px;border-left:3px solid #FCD34D;padding-left:6px}
+.info-prog{display:flex;justify-content:space-between;align-items:center;font-size:15px;color:var(--suave);margin:6px 2px;flex-wrap:wrap;gap:6px}
+.info-prog b{color:var(--texto)}
+.regras{display:grid;gap:10px;margin-top:10px}
+.regras .op{text-align:left}
+.fluxo{font-size:16px;line-height:1.5;text-align:left;background:#fff;border:2px solid var(--borda);border-radius:14px;padding:12px 14px;max-width:520px;width:100%}
+.fluxo code{background:#F1F5F9;border-radius:6px;padding:1px 6px;font-size:15px}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   ROBÔ PROGRAMADOR — Robótica · Lógica e programação
+   MS.EF06MA23 algoritmo passo a passo para deslocamento · MS.EF06MA04 e MS.EF07MA07 algoritmos e fluxogramas
+   MS.EF06MA34 interpretar fluxogramas · MS.EF07MA05 resolver o mesmo problema com algoritmos diferentes
+   ========================================================= */
+const DIRV=[[0,-1],[1,0],[0,1],[-1,0]];
+const ICO={F:'⬆️',E:'↶',D:'↷'}, NOMEC={F:'Avançar',E:'Virar à esquerda',D:'Virar à direita'};
+let UID=0;
+const NO=t=>({t,id:++UID});
+function parseProg(s){ const st=[[]]; for(const t of s.match(/R\d+\[|\]|[FED]/g)){ if(t[0]==='R'){ const n={t:'R',n:+t.slice(1,-1),b:[],id:++UID}; st[st.length-1].push(n); st.push(n.b); } else if(t===']') st.pop(); else st[st.length-1].push(NO(t)); } return st[0]; }
+const clonar=p=>p.map(n=>n.t==='R'?{t:'R',n:n.n,b:clonar(n.b),id:++UID}:NO(n.t));
+function expandir(p,out=[]){ for(const n of p){ if(out.length>300) break; if(n.t==='R'){ for(let k=0;k<n.n;k++) expandir(n.b,out); } else out.push(n); } return out; }
+const nBlocos=p=>p.reduce((s,n)=>s+(n.t==='R'?1+nBlocos(n.b):1),0);
+const temRep=p=>p.some(n=>n.t==='R');
+const textoProg=p=>p.map(n=>n.t==='R'?`🔁${n.n}× [ ${textoProg(n.b)} ]`:ICO[n.t]).join(' ');
+function lerMapa(rows,dir){ const L={c:rows[0].length,l:rows.length,obs:new Set(),en:[],dir}; rows.forEach((r,y)=>[...r].forEach((ch,x)=>{ if(ch==='#') L.obs.add(x+','+y); if(ch==='R') L.r=[x,y]; if(ch==='G') L.g=[x,y]; if(ch==='E') L.en.push([x,y]); })); return L; }
+const livre=(L,x,y)=>x>=0&&y>=0&&x<L.c&&y<L.l&&!L.obs.has(x+','+y);
+function simular(L,acoes){
+  let x=L.r[0],y=L.r[1],d=L.dir,ang=d*90; const col=new Set(), passos=[];
+  for(const a of acoes){
+    if(a.t==='F'){ const nx=x+DIRV[d][0],ny=y+DIRV[d][1]; if(!livre(L,nx,ny)){ passos.push({x,y,ang,id:a.id,bate:true}); return {ok:false,motivo:'bateu',passos,x,y,col}; } x=nx; y=ny; if(L.en.some(e=>e[0]===x&&e[1]===y)) col.add(x+','+y); }
+    else { d=(d+(a.t==='D'?1:3))%4; ang+=a.t==='D'?90:-90; }
+    passos.push({x,y,ang,id:a.id});
+  }
+  const fim=x===L.g[0]&&y===L.g[1], tudo=col.size===L.en.length;
+  return {ok:fim&&tudo,motivo:!fim?'longe':!tudo?'energia':'',passos,x,y,col};
+}
+/* regras com sensor: 0 = sempre avançar · 1 = se livre avança, senão vira à direita · 2 = senão vira à esquerda */
+const REGRAS=['🔁 Repetir sempre: ⬆️ avançar','🔁 Repetir até chegar:<br>SE a frente está livre → ⬆️ avançar<br>SENÃO → ↷ virar à direita','🔁 Repetir até chegar:<br>SE a frente está livre → ⬆️ avançar<br>SENÃO → ↶ virar à esquerda'];
+function simRegra(L,r){
+  let x=L.r[0],y=L.r[1],d=L.dir,ang=d*90; const passos=[];
+  for(let i=0;i<45;i++){
+    if(x===L.g[0]&&y===L.g[1]) return {ok:true,passos};
+    const nx=x+DIRV[d][0],ny=y+DIRV[d][1], ok=livre(L,nx,ny);
+    if(ok){ x=nx; y=ny; } else if(r===0){ passos.push({x,y,ang,bate:true}); return {ok:false,motivo:'bateu',passos}; } else { const s=r===1?1:-1; d=(d+4+s)%4; ang+=90*s; }
+    passos.push({x,y,ang});
+  }
+  return {ok:x===L.g[0]&&y===L.g[1],motivo:'voltas',passos};
+}
+
+/* ---------- desenho do mapa ---------- */
+const TC=54;
+function mapaSvg(L,{letras=null,semRobo=false,pos=null}={}){
+  let s=`<rect width="${L.c*TC}" height="${L.l*TC}" rx="10" fill="#ECFEFF"/>`;
+  for(let i=0;i<=L.c;i++) s+=`<line x1="${i*TC}" y1="0" x2="${i*TC}" y2="${L.l*TC}" stroke="#A5F3FC" stroke-width="1.5"/>`;
+  for(let j=0;j<=L.l;j++) s+=`<line x1="0" y1="${j*TC}" x2="${L.c*TC}" y2="${j*TC}" stroke="#A5F3FC" stroke-width="1.5"/>`;
+  const em=(x,y,e,extra='')=>`<text x="${x*TC+TC/2}" y="${y*TC+TC/2+12}" text-anchor="middle" font-size="32" ${extra}>${e}</text>`;
+  L.obs.forEach(k=>{ const [x,y]=k.split(',').map(Number); s+=`<rect x="${x*TC+3}" y="${y*TC+3}" width="${TC-6}" height="${TC-6}" rx="8" fill="#D1FAE5"/>`+em(x,y,(x*7+y*3)%3?'🌳':'🪨'); });
+  s+=`<rect x="${L.g[0]*TC+3}" y="${L.g[1]*TC+3}" width="${TC-6}" height="${TC-6}" rx="8" fill="#FEF9C3" stroke="#EAB308" stroke-width="2"/>`+em(L.g[0],L.g[1],'🏁');
+  L.en.forEach(([x,y])=>s+=em(x,y,'⚡',`id="e${x}_${y}"${pos&&pos.col&&pos.col.has(x+','+y)?' style="opacity:0"':''}`));
+  if(letras) letras.forEach(([x,y,t])=>s+=`<circle cx="${x*TC+TC/2}" cy="${y*TC+TC/2}" r="17" fill="#fff" stroke="#7C3AED" stroke-width="3"/><text x="${x*TC+TC/2}" y="${y*TC+TC/2+7}" text-anchor="middle" font-size="20" font-weight="800" fill="#5B21B6" font-family="Baloo 2,sans-serif">${t}</text>`);
+  if(!semRobo){ const [rx,ry]=pos?[pos.x,pos.y]:L.r, an=pos?pos.ang:L.dir*90; s+=`<g id="rb" style="transform:translate(${rx*TC+TC/2}px,${ry*TC+TC/2}px)"><g id="rbi"><circle r="23" fill="#99F6E4" stroke="#0F766E" stroke-width="3"/><text y="10" text-anchor="middle" font-size="27">🤖</text><g id="seta" style="transform:rotate(${an}deg)"><polygon points="0,-36 -9,-25 9,-25" fill="#DC2626"/></g></g></g>`; }
+  return `<div class="vis mapa"><svg viewBox="-2 -2 ${L.c*TC+4} ${L.l*TC+4}" role="img" aria-label="Mapa do robô">${s}</svg></div>`;
+}
+function posRobo(p){ const rb=document.getElementById('rb'), st=document.getElementById('seta'); if(!rb) return; rb.style.transform=`translate(${p.x*TC+TC/2}px,${p.y*TC+TC/2}px)`; st.style.transform=`rotate(${p.ang}deg)`; }
+function animar(passos,fim,vel=380){
+  let i=0; const rb=document.getElementById('rb');
+  const passo=()=>{
+    if(!rb||!document.body.contains(rb)) return;
+    document.querySelectorAll('.roda').forEach(e=>e.classList.remove('roda'));
+    if(i>=passos.length) return fim();
+    const p=passos[i++]; const b=p.id&&document.querySelector(`[data-id="${p.id}"]`); if(b) b.classList.add('roda');
+    if(p.bate){ const ri=document.getElementById('rbi'); ri.classList.add('bate'); som('erro'); setTimeout(()=>{ ri.classList.remove('bate'); fim(); },600); return; }
+    posRobo(p); const e=document.getElementById(`e${p.x}_${p.y}`); if(e&&e.style.opacity!=='0'){ e.style.opacity='0'; som('moeda'); }
+    setTimeout(passo,vel);
+  };
+  passo();
+}
+
+/* ---------- tipo: programar o robô ---------- */
+function progHtml(p,it,raiz=true){
+  const aberto=it.pilha&&it.pilha.length?it.pilha[it.pilha.length-1]:null;
+  return p.map(n=>n.t==='R'
+    ?`<div class="rep ${aberto===n?'aberta':''}" data-id="${n.id}"><span class="rep-h">🔁 Repetir <button data-x="n:${n.id}" aria-label="Trocar o número de repetições">${n.n}×</button></span><div class="dentro">${progHtml(n.b,it,false)||'<span class="mini">…</span>'}</div></div>`
+    :`<span class="blk b-${n.t}" data-id="${n.id}" title="${NOMEC[n.t]}">${ICO[n.t]}</span>`).join('');
+}
+const MSG={bateu:'💥 O robô bateu! O bloco marcado em vermelho é onde ele bateu. Corrija a partir dali.',longe:'O robô parou antes da bandeira 🏁. Faltam comandos ou algum giro está trocado.',energia:'O robô chegou, mas faltou recolher ⚡ energia pelo caminho.'};
+const PROG={
+  desenhar(it){
+    if(!it.prog) it.prog=[]; if(!it.pilha) it.pilha=[];
+    const L=it.L, nb=nBlocos(it.prog), dentro=it.pilha.length>0;
+    return mapaSvg(L,{pos:it.anim?null:it.pos})+`<div class="info-prog"><span>🧩 Blocos: <b>${nb}</b>${it.max?` / máx. <b>${it.max}</b>`:''}</span>${L.en.length?`<span>⚡ Recolher: <b>${L.en.length}</b></span>`:''}</div>
+      <div class="prog" aria-label="Meu programa">${it.prog.length?progHtml(it.prog,it).replace(`data-id="${it.ultimo}"`,`data-id="${it.ultimo}" style="outline:4px solid #F87171;outline-offset:1px"`):'<span class="vazio">Toque nos blocos abaixo para montar o programa.</span>'}</div>
+      ${it.feito?'':`<div class="paleta">
+        <button class="btn b-F" data-x="add:F">⬆️ Avançar</button><button class="btn b-E" data-x="add:E">↶ Esquerda</button><button class="btn b-D" data-x="add:D">↷ Direita</button>
+        ${it.rep?`<button class="btn b-R" data-x="rep">🔁 Repetir</button>`:''}${dentro?`<button class="btn b-R" data-x="fecha">✔ Fechar repetir</button>`:''}
+      </div><div class="seguir" style="margin-top:0"><button class="btn" data-x="desfaz">⌫ Desfazer</button><button class="btn" data-x="limpa">🗑 Limpar</button><button class="btn agua" data-x="run">▶ Executar</button></div>`}`;
+  },
+  alvo(it){ return it.pilha.length?it.pilha[it.pilha.length-1].b:it.prog; },
+  acao(it,x){
+    if(it.anim) return;
+    if(x!=='run'){ it.pos=null; it.ultimo=null; }
+    if(x.startsWith('add:')){ if(nBlocos(it.prog)>=40) return toast('Programa grande demais!'); PROG.alvo(it).push(NO(x.slice(4))); som('bip'); return desenhar(); }
+    if(x==='rep'){ const r={t:'R',n:2,b:[],id:++UID}; PROG.alvo(it).push(r); it.pilha.push(r); som('bip'); toast('Agora coloque os blocos que vão se repetir e toque em ✔ Fechar.'); return desenhar(); }
+    if(x==='fecha'){ it.pilha.pop(); return desenhar(); }
+    if(x.startsWith('n:')){ const busca=(p)=>{ for(const n of p){ if(n.t==='R'){ if(n.id===+x.slice(2)) return n; const r=busca(n.b); if(r) return r; } } }; const r=busca(it.prog); if(r){ r.n=r.n>=9?2:r.n+1; som('bip'); } return desenhar(); }
+    if(x==='desfaz'){ const a=PROG.alvo(it); if(a.length) a.pop(); else if(it.pilha.length){ const r=it.pilha.pop(); const pai=PROG.alvo(it); pai.splice(pai.indexOf(r),1); } return desenhar(); }
+    if(x==='limpa'){ it.prog=[]; it.pilha=[]; return desenhar(); }
+    if(x==='run') return PROG.executar(it,false);
+  },
+  executar(it,rapido){
+    if(!it.prog.length) return toast('Monte o programa primeiro!');
+    it.pilha=[];
+    const r=simular(it.L,expandir(it.prog)), nb=nBlocos(it.prog);
+    const fim=()=>{ it.anim=false; const u=r.passos[r.passos.length-1]; it.pos=u?{x:u.x,y:u.y,ang:u.ang,col:r.col}:null; it.ultimo=r.motivo==='bateu'&&u?u.id:null;
+      if(!r.ok) return responder(false,MSG[r.motivo]);
+      if(it.max&&nb>it.max) return responder(false,`O robô chegou! Mas você usou <b>${nb}</b> blocos e o máximo é <b>${it.max}</b>. Use o 🔁 <b>Repetir</b> para juntar comandos iguais.`);
+      if(it.exigeRep&&!temRep(it.prog)) return responder(false,'O robô chegou! Agora faça de novo usando o bloco 🔁 <b>Repetir</b>.');
+      responder(true); };
+    if(rapido) return fim();
+    it.pos=null; it.ultimo=null; it.anim=true; desenhar(); animar(r.passos,fim);
+  },
+  revelar(it){ it.prog=clonar(it.sol); it.pilha=[]; it.pos=null; it.ultimo=null; },
+  auto(it){ it.prog=clonar(it.sol); PROG.executar(it,true); }
+};
+
+/* ---------- tipo: caça ao erro ---------- */
+const BUG={
+  desenhar(it){
+    const chips=it.prog.map((n,i)=>{ const c=it.feito?(i===it.bug?'certa':''):((it.errs||[]).includes(i)?'errada':''); return `<button class="blk b-${n.t} ${c}" data-x="${i}" data-id="${n.id}" ${it.feito||(it.errs||[]).includes(i)?'disabled':''}>${ICO[n.t]}</button>`; }).join('');
+    return mapaSvg(it.L)+`<div class="prog">${chips}</div>${it.feito?'':`<div class="seguir" style="margin-top:6px"><button class="btn" data-x="run">▶ Ver o robô executar</button></div>`}`;
+  },
+  acao(it,x){
+    if(it.anim) return;
+    if(x==='run'){ it.anim=true; const r=simular(it.L,it.prog); return animar(r.passos,()=>{ it.anim=false; toast(r.ok?'Chegou!':'Viu onde deu errado? Agora toque no bloco errado.'); setTimeout(desenhar,900); }); }
+    const i=+x; if(i===it.bug) return responder(true);
+    it.errs=(it.errs||[]).concat(i); responder(false,'Esse bloco está certo. Siga o robô com o dedo no mapa, bloco por bloco, até achar onde ele sai do caminho.');
+  },
+  revelar(it){},
+  auto(it){ responder(true); }
+};
+
+/* ---------- tipo: escolher a regra do sensor ---------- */
+const REGRA={
+  desenhar(it){ return mapaSvg(it.L)+`<div class="regras">${REGRAS.map((r,i)=>{ const er=(it.errs||[]).includes(i), ok=it.feito&&i===it.certo; return `<button class="op ${er?'errada':''} ${ok?'certa':''}" data-x="${i}" ${er||it.feito?'disabled':''}><span>${r}</span></button>`; }).join('')}</div>`; },
+  acao(it,x){ if(it.anim) return; const i=+x, r=simRegra(it.L,i); it.anim=true;
+    animar(r.passos,()=>{ it.anim=false; if(r.ok) return responder(true); it.errs=(it.errs||[]).concat(i); responder(false,r.motivo==='bateu'?'Com essa regra o robô bateu, porque ele não olha o sensor.':'Com essa regra o robô fica dando voltas e não chega. Experimente a outra direção.'); },300); },
+  revelar(it){},
+  auto(it){ responder(simRegra(it.L,it.certo).ok); }
+};
+
+/* ---------- fases (desenhadas e conferidas) ---------- */
+/* R = robô · G = chegada · # = obstáculo · E = energia · dir: 0 norte, 1 leste, 2 sul, 3 oeste */
+const FASES={
+  seq:[
+    {m:['.....','R..G.','.....'],d:1,s:'F F F',dica:'Conte as casas até a bandeira.'},
+    {m:['...G.','.....','R....'],d:1,s:'F F F E F F',dica:'Ande até ficar embaixo da bandeira e depois vire à esquerda.'},
+    {m:['R.#..','..#G.','.....'],d:1,s:'D F F E F F F E F',dica:'Desça para passar por baixo das pedras e das árvores.'},
+    {m:['G....','###..','R....'],d:1,s:'F F F E F F E F F F',dica:'Faça um caminho em forma de U.'},
+    {m:['..#G','R.#.','....'],d:1,s:'F D F E F F E F F',dica:'Contorne o obstáculo por baixo.'},
+    {m:['.G...','.#...','.#R..'],d:0,s:'F F E F',dica:'O robô começa virado para cima (norte).'}
+  ],
+  rep:[
+    {m:['.......','R.....G','.......'],d:1,s:'R6[F]',max:3,dica:'São 6 passos iguais: coloque um ⬆️ dentro do 🔁 e ajuste para 6×.'},
+    {m:['....G','#....','.....','...#.','R..#.'],d:1,s:'R4[F E F D]',max:5,dica:'Repare no padrão de escada: avançar, virar à esquerda, avançar, virar à direita.'},
+    {m:['R...#','###..','G....'],d:1,s:'R3[F] D R2[F] D R3[F]',max:8,dica:'Use um 🔁 para cada trecho reto.'},
+    {m:['......G','.......','.......','R......'],d:1,s:'R6[F] E R3[F]',max:5,dica:'Dois trechos retos: um com 6 passos, outro com 3.'}
+  ],
+  energia:[
+    {m:['....E','R...G','.....'],d:1,s:'F F F F E F D D F',dica:'Passe pela bandeira, suba para pegar a energia e volte.'},
+    {m:['R..#..','.E.#..','...#..','....EG'],d:1,s:'D F E F D F F E F F F F',dica:'Pegue a energia de cima, desça e siga pela linha de baixo.'},
+    {m:['.......','R.E.E.G','.......'],d:1,s:'R6[F]',max:3,exigeRep:true,dica:'As energias estão no caminho reto. Use o 🔁.'},
+    {m:['E..E','R...','....','...G'],d:0,s:'F D R3[F] D R3[F]',dica:'O robô começa virado para cima. Pegue as duas energias de cima antes de descer.'}
+  ],
+  desafio:[
+    {m:['R..E','....','....','G..E'],d:1,s:'R3[R3[F] D]',max:6,dica:'Dá para colocar um 🔁 dentro de outro! Repita 3 vezes: “3 passos e virar à direita”.'},
+    {m:['#....G','..#...','......','.#....','....#.','R....#'],d:1,s:'R5[F E F D]',max:5,dica:'Escada de 5 degraus.'},
+    {m:['R.....','#####.','......','.#####','.....G'],d:1,s:'R5[F] D R2[F] D R5[F] E R2[F] E R5[F]',dica:'É um caminho em zigue-zague. Use 🔁 nos trechos retos.'}
+  ]
+};
+/* mapas para as regras com sensor */
+const MAPAS_REGRA=[
+  {m:['R...#','###..','G....'],d:1,certo:1},
+  {m:['G....','###..','R...#'],d:1,certo:2},
+  {m:['R.....','####..','.G.#..','...#..','......'],d:1,certo:1}
+];
+function itemProg(f,cat){ const L=lerMapa(f.m,f.d), sol=parseProg(f.s); return {tipo:'prog',cat,enun:f.enun||(f.max?`Leve o robô até a 🏁 usando no máximo <b>${f.max} blocos</b>.`:L.en.length?'Recolha toda a ⚡ energia e leve o robô até a 🏁.':'Monte o programa para o robô chegar à 🏁.'),L,sol,max:f.max,exigeRep:f.exigeRep,rep:/R/.test(f.s)||!!f.rep,mostrar:textoProg(sol),x:`Uma solução: <b>${textoProg(sol)}</b>. Pode haver outras!`,dica:f.dica}; }
+function itemBug(f){ const L=lerMapa(f.m,f.d), sol=expandir(parseProg(f.s)).map(n=>NO(n.t));
+  for(let t=0;t<30;t++){ const k=rnd(0,sol.length-1), novo=pick(['F','E','D'].filter(c=>c!==sol[k].t)), prog=sol.map((n,i)=>NO(i===k?novo:n.t));
+    if(simular(L,prog).ok) continue;
+    let unico=true; for(let i=0;i<prog.length&&unico;i++){ if(i===k) continue; for(const c of ['F','E','D']){ if(c===prog[i].t) continue; if(simular(L,prog.map((n,j)=>NO(j===i?c:n.t))).ok){ unico=false; break; } } }
+    if(!unico) continue;
+    return {tipo:'bug',cat:'depuracao',enun:'Este programa tem <b>um bloco errado</b>. Toque nele!',L,prog,bug:k,x:`O bloco ${k+1} deveria ser <b>${ICO[sol[k].t]} ${NOMEC[sol[k].t]}</b>. Encontrar e corrigir erros se chama <b>depuração</b>.`}; }
+  return null; }
+function itemPrever(f){ const L=lerMapa(f.m,f.d), acoes=expandir(parseProg(f.s)); const k=rnd(3,Math.max(3,acoes.length-1)), parte=acoes.slice(0,k).map(n=>NO(n.t)), r=simular(L,parte);
+  const livres=[]; for(let y=0;y<L.l;y++) for(let x=0;x<L.c;x++) if(livre(L,x,y)&&!(x===r.x&&y===r.y)&&!(x===L.r[0]&&y===L.r[1])&&!(x===L.g[0]&&y===L.g[1])) livres.push([x,y]);
+  const cs=embaralhar([[r.x,r.y,true],...embaralhar(livres).slice(0,3).map(p=>[...p,false])]); const letras=cs.map((c,i)=>[c[0],c[1],'ABCD'[i]]), certo='ABCD'[cs.findIndex(c=>c[2])];
+  return q('prever',`O robô vai executar este programa:<br><b style="font-size:24px;letter-spacing:4px">${parte.map(n=>ICO[n.t]).join(' ')}</b><br>Em que letra ele vai parar?`,certo,['A','B','C','D'].filter(l=>l!==certo),`Seguindo bloco por bloco, ele para na casa <b>${certo}</b>. Simular o programa “de cabeça” ajuda a prever erros.`,{corpo:mapaSvg(L,{letras}),grade:true}); }
+function itemRegra(f){ return {tipo:'regra',cat:'sensores',enun:'O robô tem um <b>sensor de obstáculo</b> na frente. Qual regra faz ele chegar à 🏁 sozinho? Toque para testar.',L:lerMapa(f.m,f.d),certo:f.certo,x:'Com sensor, o robô <b>decide</b> o que fazer: SE a frente está livre, avança; SENÃO, vira. É uma <b>estrutura condicional</b> dentro de uma repetição.'}; }
+
+/* ---------- questões de conceito ---------- */
+const CONC_REP=[
+  ()=>q('conceitos','Um <b>algoritmo</b> é:','Uma sequência de passos, em ordem, para resolver um problema',['Um tipo de robô','Uma peça do motor','Um jogo de computador'],'Receita de bolo, rota no mapa, programa do robô: todos são <b>algoritmos</b>.'),
+  ()=>q('conceitos','Para que serve o bloco 🔁 <b>Repetir</b>?','Para executar os mesmos comandos várias vezes sem escrever tudo de novo',['Para desligar o robô','Para apagar o programa','Para mudar a cor do robô'],'A <b>repetição</b> (laço) deixa o programa mais curto e mais fácil de corrigir.'),
+  ()=>q('conceitos','Qual programa faz o robô andar 4 casas para a frente?','🔁 4× [ ⬆️ ]',['🔁 2× [ ⬆️ ]','⬆️ ↷ ⬆️ ↷','🔁 4× [ ↷ ]'],'Repetir 4 vezes o bloco ⬆️ é o mesmo que ⬆️ ⬆️ ⬆️ ⬆️.',{grade:true}),
+  ()=>q('conceitos','O programa 🔁 4× [ ⬆️ ↷ ] faz o robô:','Andar em um quadradinho e voltar ao começo',['Andar 8 casas em linha reta','Girar sem sair do lugar','Bater na parede'],'4 vezes “avançar e virar à direita” desenha um quadrado: o robô volta para onde começou.')
+];
+const CONC_SENS=[
+  ()=>q('sensores','Um <b>sensor ultrassônico</b>, como os “olhos” de muitos robôs, mede:','A distância até um obstáculo',['A cor das paredes','A temperatura do motor','A bateria do celular'],'Ele emite um som agudo que não ouvimos e mede quanto tempo o eco demora para voltar.'),
+  ()=>q('sensores','Na regra “<b>SE</b> a distância for menor que 20 cm <b>ENTÃO</b> virar <b>SENÃO</b> avançar”, o que o robô faz quando o sensor mede <b>50 cm</b>?','Avança',['Vira','Para e desliga','Volta de ré'],'50 cm não é menor que 20 cm, então a condição é falsa e vale o <b>SENÃO</b>: avançar.',{grade:true}),
+  ()=>q('sensores','E se o sensor medir <b>10 cm</b>, com a mesma regra?','Vira',['Avança','Acelera','Não faz nada'],'10 cm é menor que 20 cm: a condição é verdadeira, então o robô <b>vira</b>.',{grade:true}),
+  ()=>q('sensores','Num <b>fluxograma</b>, o losango (◇) representa:','Uma pergunta ou decisão (sim ou não)',['O começo do programa','Uma repetição infinita','O desenho do robô'],'No fluxograma: ⬭ início/fim, ▭ ação, ◇ decisão. As setas mostram o caminho.',{corpo:`<div class="vis"><div class="fluxo">⬭ Início → ▭ Ler o sensor → ◇ <b>Obstáculo perto?</b><br>&nbsp;&nbsp;• Sim → ▭ Virar<br>&nbsp;&nbsp;• Não → ▭ Avançar<br>→ volta para “Ler o sensor”</div></div>`}),
+  ()=>q('sensores','Um robô aspirador que muda de direção ao encostar no móvel está usando:','Um sensor e uma decisão (condicional)',['Só repetição, sem sensor','Controle remoto o tempo todo','Nenhum programa'],'Ele <b>sente</b> o obstáculo e <b>decide</b> virar: entrada (sensor) → decisão → ação (motores).')
+];
+
+const JOGO={
+  NOME:'Robô Programador', CHAVE:'roboProgramador.v1', AREA:'ROBÓTICA', FALA:true,
+  TXT:{missao:'Missão',missoes:'Missões',mapa:'Missões do robô',entrar:'Ligar o robô 🤖',fim:'Missão cumprida! 🎉'},
+  PATENTES:[[0,'🔩 Aprendiz'],[5,'💻 Programador'],[10,'🐞 Caça-bugs'],[14,'📡 Engenheiro de sensores'],[17,'🏆 Mestre dos algoritmos']],
+  CATS:{sequencia:'Sequência de comandos (MS.EF06MA23)',repeticao:'Repetição / laços (MS.EF06MA23, MS.EF07MA05)',conceitos:'Algoritmos e laços (MS.EF06MA04)',depuracao:'Depuração: achar o erro (MS.EF06MA23)',prever:'Simular o programa (MS.EF06MA23)',energia:'Planejamento de rotas (MS.EF06MA23)',sensores:'Sensores e condicionais (MS.EF06MA04, MS.EF07MA07, MS.EF06MA34)',desafio:'Desafios com laços (MS.EF07MA05)'},
+  HOME:{h1:'Robô <span>Programador</span>', turma:'ex.: 6º A',
+    lead:'Monte programas com blocos e veja o robô obedecer! Aprenda sequência, repetição, caça aos erros e decisões com sensores — a lógica que faz os robôs de verdade funcionarem.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:14px">${mapaSvg(lerMapa(['R.#..','..#G.','.....'],1))}<div class="prog" style="max-width:340px;justify-content:center"><span class="blk b-D">↷</span><span class="blk b-F">⬆️</span><span class="blk b-F">⬆️</span><span class="blk b-E">↶</span><span class="rep"><span class="rep-h">🔁 3×</span><span class="blk b-F">⬆️</span></span></div></div>`,
+    info:[['6','missões'],['22','fases'],['▶','robô animado']],
+    rodape:'Robótica · Lógica e programação · Habilidades de Matemática ligadas a algoritmos: <b>MS.EF06MA04</b>, <b>MS.EF06MA23</b>, <b>MS.EF06MA34</b>, <b>MS.EF07MA05</b> e <b>MS.EF07MA07</b>'},
+  AJUDA:['🧩 Toque nos blocos para montar o programa: ⬆️ avança uma casa, ↶ e ↷ viram o robô sem sair do lugar.','🔁 No <b>Repetir</b>, coloque os blocos de dentro e toque em <b>✔ Fechar</b>. Toque no número para mudar quantas vezes repete.','▶ Toque em <b>Executar</b>: o bloco em amarelo mostra o que o robô está fazendo. Se errar, corrija e tente de novo!','🔺 A setinha vermelha mostra para onde o robô está virado.','👩‍🏫 Professor(a): em ⚙️ dá para liberar todas as missões. Esta é a 1ª parte da trilha de robótica: depois vêm a Oficina de Montagem e o Laboratório de Circuitos.'],
+  MISSOES:[
+    {id:'m1',titulo:'Primeiros comandos',ic:'🚀',hab:'MS.EF06MA23',desc:'Sequência de comandos: avançar e virar para chegar à bandeira.',gerar:()=>sortear(FASES.seq,4).map(f=>itemProg(f,'sequencia')),intro:'<p>O robô só faz <b>exatamente</b> o que o programa manda, na ordem. ⬆️ avança uma casa; ↶ e ↷ giram o robô no lugar.</p>'},
+    {id:'m2',titulo:'Poder da repetição',ic:'🔁',hab:'MS.EF06MA23 · MS.EF07MA05',desc:'Use o bloco Repetir para programas mais curtos.',gerar:()=>[...sortear(FASES.rep,3).map(f=>itemProg(f,'repeticao')),...sortear(CONC_REP,2)],intro:'<p>Em vez de ⬆️ ⬆️ ⬆️ ⬆️, use <b>🔁 4× [ ⬆️ ]</b>. Toque em 🔁, coloque os blocos de dentro e toque em ✔ Fechar.</p>'},
+    {id:'m3',titulo:'Caça aos bugs',ic:'🐞',hab:'MS.EF06MA23',desc:'Ache o bloco errado e preveja onde o robô vai parar.',gerar:()=>{ const b=sortear(FASES.seq.slice(1),3).map(itemBug).filter(Boolean); return embaralhar([...b,...sortear(FASES.seq.concat(FASES.energia.slice(0,2)),2).map(itemPrever)]); },intro:'<p>Erro em programa se chama <b>bug</b> 🐞. Para achar, siga o robô com o dedo, bloco por bloco: onde ele sai do caminho?</p>'},
+    {id:'m4',titulo:'Coleta de energia',ic:'⚡',hab:'MS.EF06MA23',desc:'Planeje a rota para recolher toda a energia antes de chegar.',gerar:()=>sortear(FASES.energia,3).map(f=>itemProg(Object.assign({rep:true},f),'energia')),intro:'<p>Agora o robô precisa passar por todas as ⚡ antes de chegar à 🏁. Planeje a rota antes de montar o programa!</p>'},
+    {id:'m5',titulo:'Robô com sensores',ic:'📡',hab:'MS.EF06MA04 · MS.EF07MA07 · MS.EF06MA34',desc:'SE… ENTÃO… SENÃO: o robô decide sozinho.',gerar:()=>embaralhar([...sortear(MAPAS_REGRA,2).map(itemRegra),...sortear(CONC_SENS,3)]),intro:'<p>Com um <b>sensor</b>, o robô não precisa de um caminho decorado: ele “olha” e <b>decide</b>. SE a frente está livre, avança; SENÃO, vira.</p>'},
+    {id:'m6',titulo:'Desafio do engenheiro',ic:'🏆',hab:'MS.EF07MA05',desc:'Fases longas com limite de blocos e repetição dentro de repetição.',gerar:()=>FASES.desafio.map(f=>itemProg(f,'desafio')),intro:'<p>Último desafio! Procure <b>padrões</b>: o que se repete pode virar 🔁. Dá até para colocar um 🔁 dentro de outro.</p>'}
+  ],
+  TIPOS:{prog:PROG,bug:BUG,regra:REGRA}
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>

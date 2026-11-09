@@ -2,7 +2,7 @@
    CATÁLOGO DE JOGOS — JRM Aventuras Educativas
    Para adicionar um jogo: coloque o arquivo .html na pasta
    "jogos" e acrescente um bloco aqui embaixo.
-   componente: lp | mat | cie | his | geo | art | ef | ing
+   componente: lp | mat | cie | his | geo | art | ef | ing | rob
    anos: lista de anos (1 a 9)
    ========================================================= */
 const COMPONENTES = {
@@ -13,7 +13,8 @@ const COMPONENTES = {
   geo: { nome: 'Geografia',         cor: '#0E7490', icone: '🗺️' },
   art: { nome: 'Arte',              cor: '#BE185D', icone: '🎨' },
   ef:  { nome: 'Educação Física',   cor: '#B45309', icone: '⚽' },
-  ing: { nome: 'Língua Inglesa',    cor: '#6D28D9', icone: '🌎' }
+  ing: { nome: 'Língua Inglesa',    cor: '#6D28D9', icone: '🌎' },
+  rob: { nome: 'Robótica',          cor: '#0F766E', icone: '🤖' }
 };
 
 const JOGOS = [
@@ -279,5 +280,17 @@ const JOGOS = [
   { arquivo: 'super-divisao.html', titulo: 'Super Divisão', componente: 'mat', anos: [4,5,6],
     tipo: 'Contas armadas', icone: '➗',
     descricao: 'Divisões exatas e com resto pelo método da chave, com modo para o professor digitar a conta.',
-    habilidades: [] }
+    habilidades: [] },
+  { arquivo: 'robo-programador.html', titulo: 'Robô Programador', componente: 'rob', anos: [4,5,6,7,8,9],
+    tipo: 'Programação em blocos', icone: '🤖',
+    descricao: 'Trilha de robótica 1 · Lógica: programe o robô com blocos, use repetição, cace bugs, colete energia e ensine o robô a decidir com sensores.',
+    habilidades: ['MS.EF06MA04', 'MS.EF06MA23', 'MS.EF06MA34', 'MS.EF07MA05', 'MS.EF07MA07'] },
+  { arquivo: 'oficina-de-montagem.html', titulo: 'Oficina de Montagem', componente: 'rob', anos: [5,6,7,8,9],
+    tipo: 'Montagem de robôs', icone: '🔧',
+    descricao: 'Trilha de robótica 2 · Montagem: conheça as peças, separe entrada e saída e monte robôs e sistemas automáticos para a casa, a escola e o campo.',
+    habilidades: ['MS.EF06CI07', 'MS.EF07CI11', 'MS.EF08CI02', 'MS.EF06MA04', 'MS.EF07MA07'] },
+  { arquivo: 'laboratorio-de-circuitos.html', titulo: 'Laboratório de Circuitos', componente: 'rob', anos: [6,7,8,9],
+    tipo: 'Eletrônica', icone: '⚡',
+    descricao: 'Trilha de robótica 3 · Eletrônica: monte circuitos na tela e ligue para testar — LED, chave, campainha, motor, sensores, série e paralelo e Arduino.',
+    habilidades: ['MS.EF08CI02', 'MS.EF05CI01', 'MS.EF08CI05', 'MS.EF06MA04'] }
 ];

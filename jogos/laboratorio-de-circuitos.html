@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratório de Circuitos — Robótica: eletrônica</title>
+<meta name="description" content="Jogo de robótica para montar circuitos na tela e testar: circuito aberto e fechado, condutores e isolantes, chave, botão, buzzer e motor, polaridade do LED e resistor, série e paralelo, sensores e os primeiros programas de Arduino.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#1E40AF;--agua2:#2563EB;--agua-claro:#DBEAFE}
+body{background:linear-gradient(180deg,#DBEAFE 0%,#EFF6FF 50%,#FEF9C3 100%)}
+.topo{background:#EFF6FFee}
+.circ svg{width:100%;max-width:420px;height:auto}
+.circ [data-x]{cursor:pointer}
+.gira{animation:gira .8s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes gira{to{transform:rotate(360deg)}}
+.brilho{animation:brilho 1s ease-in-out infinite alternate}
+@keyframes brilho{from{opacity:.55}to{opacity:1}}
+.bandeja{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.bandeja .btn{min-height:48px;font-size:15px}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.ctrl .btn{background:#FEF9C3;border-color:#CA8A04}
+.gtit{font-family:var(--titulo);font-weight:800;font-size:17px;margin:0 0 4px;text-align:center}
+.rotulo{font-size:14px;color:var(--suave);text-align:center;margin:6px 0 0}
+.codigo{font-family:ui-monospace,Consolas,monospace;font-size:15px;line-height:1.55;background:#0F172A;color:#E2E8F0;border-radius:12px;padding:12px 14px;text-align:left;white-space:pre;overflow-x:auto;max-width:100%}
+.codigo .k{color:#F472B6}.codigo .f{color:#7DD3FC}.codigo .n{color:#FDE047}.codigo .c{color:#94A3B8}
+.ordem-lista{display:grid;gap:8px;margin-top:10px}
+.passo{display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:10px 12px;font-size:15px;font-weight:700;cursor:pointer;min-height:50px;font-family:ui-monospace,Consolas,monospace}
+.passo .num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#E5E7EB;font-family:var(--titulo);font-weight:800}
+.passo.escolhido .num{background:#2563EB;color:#fff}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   LABORATÓRIO DE CIRCUITOS — Robótica · Eletrônica
+   MS.EF08CI02 construir circuitos com bateria, fios e dispositivos · MS.EF05CI01 condutibilidade elétrica
+   MS.EF08CI05 uso eficiente da energia · MS.EF06MA04 algoritmos (programas de Arduino)
+   ========================================================= */
+const EM=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
+const COMP={
+  resistor:['〰️','Resistor'],led:['💡','LED'],chave:['🔀','Chave'],botao:['🔘','Botão'],buzzer:['🔔','Buzzer'],motor:['⚙️','Motor'],
+  ldr:['🌗','Sensor de luz'],umid:['💧','Sensor de umidade'],borracha:['🧽','Borracha'],clipe:['📎','Clipe de metal']
+};
+const FALTAC={resistor:'Sem o <b>resistor</b>, passa corrente demais pelo LED e ele queima! 💥',led:'Falta o <b>LED</b>, a luz do circuito.',chave:'Falta a <b>chave</b> para ligar e desligar.',botao:'Falta o <b>botão</b> da campainha.',buzzer:'Falta o <b>buzzer</b>, que faz o som.',motor:'Falta o <b>motor</b>.',ldr:'Falta o <b>sensor de luz</b>, que percebe quando escurece.',umid:'Falta o <b>sensor de umidade</b>, que percebe a terra seca.'};
+/* desenho de cada peça, centrado em (0,0) */
+function glifo(v,it){ const k=v.k, on=it.aceso;
+  if(k==='resistor') return `<rect x="-24" y="-8" width="48" height="16" rx="7" fill="#D6B98C" stroke="#78350F" stroke-width="2"/><rect x="-12" y="-8" width="4" height="16" fill="#B91C1C"/><rect x="-3" y="-8" width="4" height="16" fill="#7C3AED"/><rect x="6" y="-8" width="4" height="16" fill="#CA8A04"/>`;
+  if(k==='led') return `${on?'<circle r="22" fill="#FDE047" opacity=".7" class="brilho"/>':''}<circle r="12" fill="${on?'#FACC15':'#FCA5A5'}" stroke="#991B1B" stroke-width="2"/><text y="-16" text-anchor="middle" font-size="15" font-weight="800" fill="#1E3A8A">${v.inv?'− ◀ +':'+ ▶ −'}</text>`;
+  if(k==='chave') return `<circle cx="-16" cy="4" r="4" fill="#1E293B"/><circle cx="16" cy="4" r="4" fill="#1E293B"/><line x1="-16" y1="4" x2="${it.chave?16:10}" y2="${it.chave?4:-14}" stroke="#1E293B" stroke-width="4" stroke-linecap="round"/>`;
+  if(k==='botao') return `<rect x="-16" y="0" width="32" height="10" rx="3" fill="#64748B"/><circle cy="${it.botao?0:-6}" r="9" fill="${it.botao?'#DC2626':'#F87171'}" stroke="#7F1D1D" stroke-width="2"/>`;
+  if(k==='motor') return `<circle r="15" fill="#E2E8F0" stroke="#334155" stroke-width="2.5"/><g class="${on?'gira':''}"><line x1="-11" y1="0" x2="11" y2="0" stroke="#334155" stroke-width="3"/><line x1="0" y1="-11" x2="0" y2="11" stroke="#334155" stroke-width="3"/></g><text y="28" text-anchor="middle" font-size="11" font-weight="700">M</text>`;
+  if(k==='borracha') return `<rect x="-20" y="-9" width="40" height="18" rx="5" fill="#F9A8D4" stroke="#9D174D" stroke-width="2"/>`;
+  return `<text y="10" text-anchor="middle" font-size="28">${COMP[k][0]}</text>${k==='buzzer'&&on?'<text x="22" y="-6" font-size="18" class="brilho">🔊</text>':''}`;
+}
+function circSvg(it){
+  const n=it.sl.length, X0=76, X1=340, passo=(X1-X0)/n, Y=56;
+  let s=`<rect x="0" y="0" width="370" height="180" rx="14" fill="#fff"/>`;
+  const fio='stroke="#1E293B" stroke-width="4" fill="none" stroke-linejoin="round"';
+  s+=`<path d="M34 ${Y} H352 V160 H34 V128 M34 92 V${Y}" ${fio}/>`;
+  s+=`<g transform="translate(34,110)"><line x1="-22" y1="-18" x2="22" y2="-18" stroke="#1E293B" stroke-width="5"/><line x1="-12" y1="14" x2="12" y2="14" stroke="#1E293B" stroke-width="9"/><text x="28" y="-10" font-size="24" font-weight="800" fill="#DC2626">+</text><text x="28" y="24" font-size="26" font-weight="800" fill="#2563EB">−</text><text x="30" y="8" font-size="14" font-weight="700" fill="#334155">bateria</text></g>`;
+  [[190,160,'◀'],[352,112,'▼']].forEach(([x,y,a])=>s+=`<text x="${x}" y="${y+6}" text-anchor="middle" font-size="18" fill="#F97316">${a}</text>`);
+  it.sl.forEach((v,i)=>{ const cx=X0+passo*i+passo/2;
+    s+=`<g data-x="s:${i}" transform="translate(${cx},${Y})"><rect x="${-passo/2+5}" y="-30" width="${passo-10}" height="60" rx="10" fill="${v?'#F8FAFC':'#F1F5F9'}" stroke="${v?'#94A3B8':'#2563EB'}" stroke-width="2" ${v?'':'stroke-dasharray="6 4"'}/>${v?glifo(v,it):'<text y="8" text-anchor="middle" font-size="22" fill="#2563EB" font-weight="800">?</text>'}</g>`; });
+  s+=`<text x="200" y="132" text-anchor="middle" font-size="14" fill="#F97316">a corrente sai do + e volta pelo −</text>`;
+  if(it.aceso) s+=`<text x="200" y="110" text-anchor="middle" font-size="18" font-weight="800" fill="#16A34A">⚡ Funcionou!</text>`;
+  if(it.queimou) s+=`<text x="200" y="110" text-anchor="middle" font-size="18" font-weight="800" fill="#DC2626">💥 Queimou!</text>`;
+  return `<div class="vis circ"><svg viewBox="0 0 370 180" role="img" aria-label="Circuito">${s}</svg></div>`;
+}
+function avaliar(it){
+  if(it.sl.some(v=>!v)) return {estado:'Ainda há um espaço vazio: o circuito está <b>aberto</b> e a corrente não passa.'};
+  const ks=it.sl.map(v=>v.k);
+  if(ks.includes('borracha')) return {erro:'A <b>borracha é isolante</b>: não deixa a corrente passar. Troque por uma peça do circuito.'};
+  const falta=it.req.filter(r=>ks.filter(k=>k===r).length<it.req.filter(k=>k===r).length), sobra=ks.filter(k=>!it.req.includes(k));
+  if(falta.length) return {erro:(sobra[0]==='clipe'?'O clipe de metal conduz a corrente, mas está ocupando o lugar de uma peça importante. ':'')+FALTAC[falta[0]],queima:falta[0]==='resistor'&&ks.includes('led')};
+  const led=it.sl.find(v=>v.k==='led'); if(led&&led.inv) return {erro:'O LED está <b>ao contrário</b>! Ele só deixa a corrente passar num sentido: o lado <b>+</b> do LED (perna maior) vai para o lado <b>+</b> da bateria. Toque em 🔄 Virar o LED.'};
+  if(ks.includes('chave')&&!it.chave) return {estado:'A chave está <b>aberta</b>: o caminho da corrente está interrompido. Feche a chave!'};
+  if(ks.includes('botao')&&!it.botao) return {estado:'Aperte o botão para fechar o circuito!'};
+  if(ks.includes('ldr')&&!it.noite) return {estado:'Está de dia ☀️: o sensor deixa o circuito desligado. Simule a noite 🌙!'};
+  if(ks.includes('umid')&&!it.seco) return {estado:'A terra está molhada: o sensor não liga o motor da bomba. Simule a terra seca 🌵!'};
+  return {ok:true};
+}
+const CIRC={
+  desenhar(it){ if(!it.sl) it.sl=Array(it.req.length).fill(null);
+    const ks=it.sl.filter(Boolean).map(v=>v.k), tem=k=>ks.includes(k);
+    return `${circSvg(it)}${it.feito?'':`<p class="rotulo">Toque numa peça para colocar no circuito. Toque numa peça do circuito para tirar.</p>
+      <div class="bandeja">${it.bandeja.map(k=>`<button class="btn" data-x="t:${k}">${COMP[k][0]} ${COMP[k][1]}</button>`).join('')}</div>
+      <div class="ctrl">${tem('led')?'<button class="btn" data-x="vira">🔄 Virar o LED</button>':''}${tem('chave')?`<button class="btn" data-x="chave">${it.chave?'🔀 Abrir a chave':'🔀 Fechar a chave'}</button>`:''}${tem('botao')?`<button class="btn" data-x="botao">${it.botao?'👆 Soltar o botão':'👆 Apertar o botão'}</button>`:''}${tem('ldr')?`<button class="btn" data-x="noite">${it.noite?'☀️ Virar dia':'🌙 Virar noite'}</button>`:''}${tem('umid')?`<button class="btn" data-x="seco">${it.seco?'💧 Molhar a terra':'🌵 Secar a terra'}</button>`:''}</div>
+      <div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">⚡ Ligar</button></div>`}`; },
+  acao(it,x){ it.queimou=false;
+    if(x.startsWith('t:')){ const i=it.sl.indexOf(null); if(i<0) return toast('Não há espaço livre. Toque numa peça do circuito para tirar.'); it.sl[i]={k:x.slice(2),inv:x.slice(2)==='led'&&!!it.ledInv}; som('bip'); return desenhar(); }
+    if(x.startsWith('s:')){ const i=+x.slice(2); if(it.sl[i]){ it.sl[i]=null; som('bip'); } return desenhar(); }
+    if(x==='vira'){ it.sl.forEach(v=>{ if(v&&v.k==='led') v.inv=!v.inv; }); return desenhar(); }
+    if(['chave','botao','noite','seco'].includes(x)){ it[x]=!it[x]; som('bip'); return desenhar(); }
+    if(x==='limpar'){ it.sl=Array(it.req.length).fill(null); return desenhar(); }
+  },
+  conferir(it){ const r=avaliar(it);
+    if(r.estado){ desenhar(); return toast(r.estado.replace(/<[^>]+>/g,'')); }
+    if(r.erro){ it.queimou=!!r.queima; return responder(false,r.erro); }
+    it.aceso=true; responder(true); },
+  revelar(it){ it.sl=it.req.map(k=>({k,inv:false})); it.chave=it.botao=it.noite=it.seco=true; it.aceso=true; },
+  auto(it){ CIRC.revelar(it); it.aceso=false; CIRC.conferir(it); }
+};
+function itemCirc(c){ return {tipo:'circuito',cat:c.cat,enun:c.enun,req:c.req,bandeja:embaralhar([...c.req.filter((k,i,a)=>a.indexOf(k)===i),...c.extra]),ledInv:c.ledInv,mostrar:c.req.map(k=>COMP[k][1]).join(' + '),x:c.x}; }
+const CIRCS={
+  luz:{cat:'fechado',enun:'💡 Acenda o LED: monte um <b>circuito fechado</b> com a bateria.',req:['resistor','led'],extra:['borracha','clipe'],x:'Circuito <b>fechado</b>: a corrente sai do + da bateria, passa pelo resistor e pelo LED e volta pelo −.'},
+  chave:{cat:'controle',enun:'🔀 Monte uma luz que <b>liga e desliga</b> com a chave.',req:['chave','resistor','led'],extra:['borracha','buzzer'],x:'A <b>chave</b> abre e fecha o caminho da corrente: é o interruptor da sua casa!'},
+  campainha:{cat:'controle',enun:'🔔 Monte uma <b>campainha</b>: apertou o botão, tocou.',req:['botao','buzzer'],extra:['led','borracha'],x:'O <b>botão</b> só fecha o circuito enquanto está apertado. Soltou, parou!'},
+  motor:{cat:'controle',enun:'⚙️ Monte um <b>ventilador</b>: o motor gira quando a chave fecha.',req:['chave','motor'],extra:['resistor','borracha'],x:'O <b>motor</b> transforma energia elétrica em movimento. É ele que gira as rodas do robô.'},
+  polar:{cat:'polaridade',enun:'💡 Este LED veio <b>ao contrário</b>. Monte o circuito e deixe o LED no sentido certo.',req:['resistor','led'],extra:['clipe'],ledInv:true,x:'O LED tem <b>polaridade</b>: a perna maior (+, ânodo) vai para o lado do + da bateria.'},
+  noturna:{cat:'sensores',enun:'🌙 Monte a <b>luz noturna</b>: o LED acende sozinho quando escurece.',req:['ldr','resistor','led'],extra:['botao','borracha'],x:'O <b>sensor de luz</b> funciona como uma chave automática: fecha o circuito quando fica escuro.'},
+  rega:{cat:'sensores',enun:'🌱 Monte a <b>rega automática</b>: o motor da bomba liga quando a terra seca.',req:['umid','motor'],extra:['ldr','led'],x:'O <b>sensor de umidade</b> fecha o circuito quando a terra está seca e liga a bomba.'}
+};
+
+/* ---------- esquemas série e paralelo ---------- */
+function esquema(tipo,apagado=false){
+  const L=(x,y,a=true)=>`<circle cx="${x}" cy="${y}" r="13" fill="${a?'#FDE047':'#E5E7EB'}" stroke="#854D0E" stroke-width="2"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13">${a?'💡':'✖'}</text>`;
+  const f='stroke="#1E293B" stroke-width="3" fill="none"';
+  const s=tipo==='serie'
+    ?`<path d="M20 30 H200 V110 H20 Z" ${f}/>${L(80,30,!apagado)}${L(140,30,!apagado)}`
+    :`<path d="M20 20 H200 V120 H20 Z M110 20 V120" ${f}/>${L(110,70,true)}${L(200,70,!apagado)}`;
+  return `<svg viewBox="0 0 230 140" width="230"><rect width="230" height="140" rx="10" fill="#fff"/>${s}<text x="8" y="80" font-size="18">🔋</text></svg>`;
+}
+const SP=[
+  ()=>q('serieparalelo','Em qual circuito, se uma lâmpada queimar, a outra <b>continua acesa</b>?','No circuito em paralelo (B)',['No circuito em série (A)','Nos dois','Em nenhum'],'No <b>paralelo</b>, cada lâmpada tem seu próprio caminho. No <b>série</b>, há um caminho só: se ele se interrompe, tudo apaga.',{corpo:`<div class="vis"><div><p class="gtit">A · série</p>${esquema('serie')}</div><div><p class="gtit">B · paralelo</p>${esquema('paralelo')}</div></div>`}),
+  ()=>q('serieparalelo','As tomadas e lâmpadas da nossa casa são ligadas:','Em paralelo, para cada aparelho funcionar mesmo com outro desligado',['Em série, uma depois da outra','Sem fios','Só na bateria'],'Em casa tudo fica em <b>paralelo</b>: desligar a TV não apaga a luz da cozinha.',{corpo:EM('🏠🔌')}),
+  ()=>q('serieparalelo','No circuito em <b>série</b>, uma lâmpada foi retirada. O que acontece com a outra?','Apaga também, porque o caminho da corrente foi interrompido',['Fica mais forte','Continua igual','Muda de cor'],'No <b>série</b> há um único caminho: abriu em um ponto, a corrente para em todo o circuito.',{corpo:`<div class="vis">${esquema('serie',true)}</div>`}),
+  ()=>q('serieparalelo','Duas lâmpadas iguais ligadas em <b>série</b> numa pilha, comparadas a uma lâmpada sozinha, ficam:','Mais fracas, porque dividem a energia da pilha',['Mais fortes','Iguais','Apagadas sempre'],'Em série, as lâmpadas dividem a tensão da pilha e brilham menos.')
+];
+const BAS=[
+  ()=>q('fechado','Para a corrente elétrica passar, o circuito precisa estar:','Fechado, formando um caminho completo de ida e volta',['Aberto','Molhado','Sem bateria'],'A corrente só circula num <b>caminho fechado</b>: do + da bateria, pelos componentes, de volta ao −.'),
+  ()=>q('materiais','Qual destes materiais deixa a corrente elétrica passar (é <b>condutor</b>)?','Clipe de metal',['Borracha','Plástico','Madeira seca'],'Metais são <b>condutores</b>. Borracha, plástico e madeira seca são <b>isolantes</b> — por isso cobrem os fios.',{corpo:EM('📎🧽🪵'),grade:true}),
+  ()=>q('materiais','Por que os fios elétricos são cobertos de plástico?','Porque o plástico é isolante e protege contra choques e curtos',['Para ficarem coloridos','Para conduzir melhor','Para pesar menos'],'O cobre dentro conduz; o <b>plástico isolante</b> por fora protege as pessoas e evita curtos-circuitos.'),
+  ()=>q('energia','Para iluminar com menos gasto de energia, é melhor usar:','Lâmpada de LED',['Lâmpada incandescente (de filamento)','Deixar a luz acesa o dia todo','Duas lâmpadas no lugar de uma'],'O <b>LED</b> transforma mais energia em luz e menos em calor: gasta bem menos.',{corpo:EM('💡')})
+];
+const POL=[
+  ()=>q('polaridade','No LED, a <b>perna maior</b> é o lado:','Positivo (+), chamado ânodo',['Negativo (−)','Tanto faz','Do resistor'],'Perna maior = <b>+ (ânodo)</b>; perna menor = <b>− (cátodo)</b>. Ligado ao contrário, o LED não acende.',{corpo:EM('💡')}),
+  ()=>q('polaridade','Para que serve o <b>resistor</b> no circuito do LED?','Limitar a corrente para o LED não queimar',['Fazer o LED piscar','Aumentar a energia da bateria','Mudar a cor do LED'],'O <b>resistor</b> “segura” a corrente. Sem ele, o LED recebe corrente demais e queima.',{corpo:EM('〰️💡')}),
+  ()=>q('polaridade','O LED foi ligado ao contrário (sem queimar). O que acontece?','Ele não acende, porque só deixa a corrente passar num sentido',['Acende mais forte','Acende de outra cor','A bateria explode'],'O LED é um <b>diodo</b>: conduz num só sentido. Basta desvirar que ele acende.')
+];
+const SENS=[
+  ()=>q('sensores','O <b>LDR</b> (sensor de luz) muda conforme:','A quantidade de luz que chega nele',['O barulho da sala','A temperatura da água','O peso do robô'],'O LDR muda a resistência com a luz. A placa lê essa mudança e sabe se está claro ou escuro.',{corpo:EM('🌗')}),
+  ()=>q('sensores','Na luz noturna, o sensor de luz funciona como:','Uma chave automática, que fecha o circuito quando escurece',['Uma bateria','Um motor','Uma lâmpada'],'Sensores + circuitos = <b>automação</b>: o sistema age sozinho, sem ninguém apertar botão.'),
+  ()=>q('sensores','Um sensor de chuva liga um alarme quando começa a chover. A <b>entrada</b> e a <b>saída</b> desse sistema são:','Entrada: sensor de chuva · Saída: alarme',['Entrada: alarme · Saída: sensor','Entrada: bateria · Saída: fio','Não há entrada'],'O sensor <b>percebe</b> (entrada) e o alarme <b>age</b> (saída).',{corpo:EM('🌧️🔔')})
+];
+const cod=t=>`<div class="vis"><div class="codigo">${t}</div></div>`;
+const PISCA=`<span class="k">void</span> <span class="f">setup</span>() {
+  <span class="f">pinMode</span>(<span class="n">13</span>, OUTPUT);
+}
+<span class="k">void</span> <span class="f">loop</span>() {
+  <span class="f">digitalWrite</span>(<span class="n">13</span>, HIGH);
+  <span class="f">delay</span>(<span class="n">1000</span>);
+  <span class="f">digitalWrite</span>(<span class="n">13</span>, LOW);
+  <span class="f">delay</span>(<span class="n">1000</span>);
+}`;
+const ARD=[
+  ()=>q('arduino','O que faz este programa de Arduino?','Faz o LED do pino 13 piscar: 1 segundo aceso, 1 segundo apagado',['Mede a temperatura','Liga o motor para sempre','Toca uma música'],'<b>HIGH</b> liga o pino, <b>LOW</b> desliga e <b>delay(1000)</b> espera 1000 milissegundos = 1 segundo. O <b>loop</b> repete para sempre.',{corpo:cod(PISCA)}),
+  ()=>q('arduino','Em <b>delay(1000)</b>, o número 1000 está em milissegundos. Isso é:','1 segundo',['1 minuto','10 segundos','1 hora'],'1000 milissegundos = <b>1 segundo</b>.',{grade:true}),
+  ()=>q('arduino','Para o LED piscar <b>mais rápido</b>, devemos:','Diminuir o número do delay (por exemplo, delay(200))',['Aumentar o delay para 5000','Trocar HIGH por LOW em tudo','Apagar o loop'],'Com <b>delay(200)</b>, cada fase dura só 0,2 segundo: o LED pisca mais rápido.',{corpo:cod(PISCA)}),
+  ()=>q('arduino','Qual é a diferença entre <b>setup()</b> e <b>loop()</b>?','O setup roda uma vez ao ligar; o loop repete sem parar',['Os dois rodam uma vez só','O loop roda uma vez e o setup repete','Não há diferença'],'<b>setup</b>: preparação (uma vez). <b>loop</b>: o “repetir sempre” do Arduino.')
+];
+const ORDARD={enun:'Coloque em ordem as linhas do <b>loop</b> para o LED piscar (liga, espera, desliga, espera):',p:['digitalWrite(13, HIGH);','delay(500);','digitalWrite(13, LOW);','delay(500);'],x:'Liga → espera → desliga → espera. Como o loop repete, o LED pisca sem parar.'};
+const ORD={
+  desenhar(it){ it.esc=it.esc||[];
+    return `<div class="ordem-lista">${it.vis.map(i=>{ const pos=it.esc.indexOf(i); return `<button class="passo ${pos>=0?'escolhido':''}" data-x="${i}" ${it.feito||pos>=0?'disabled':''}><span class="num">${pos>=0?pos+1:'•'}</span><span>${it.passos[i]}</span></button>`; }).join('')}</div>
+      ${it.feito?'':`<div class="seguir"><button class="btn" data-x="limpar">↺ Recomeçar</button><button class="btn agua" data-acao="conferir">✔ Conferir</button></div>`}`; },
+  acao(it,x){ if(x==='limpar'){ it.esc=[]; return desenhar(); } it.esc.push(+x); som('bip'); desenhar(); },
+  conferir(it){ if(it.esc.length<it.passos.length) return toast('Toque em todas as linhas, na ordem.');
+    const seq=it.esc.map(i=>it.passos[i]), ok=seq.every((t,i)=>t===it.passos[i]);
+    if(!ok){ const k=seq.findIndex((t,i)=>t!==it.passos[i]); it.esc=it.esc.slice(0,k); }
+    responder(ok,ok?'':'Quase! Mantive as linhas certas do começo. Primeiro o LED precisa acender…'); },
+  revelar(it){ it.esc=it.passos.map((_,i)=>i); },
+  auto(it){ it.esc=it.passos.map((_,i)=>i); ORD.conferir(it); }
+};
+const itemOrdArd=()=>{ const vis=embaralhar([0,1,2,3]); if(vis[0]===0&&vis[2]===2) vis.reverse(); return {tipo:'ordem',cat:'arduino',enun:ORDARD.enun,passos:ORDARD.p,vis,mostrar:ORDARD.p.join(' '),x:ORDARD.x}; };
+
+const JOGO={
+  NOME:'Laboratório de Circuitos', CHAVE:'labCircuitos.v1', AREA:'ROBÓTICA', FALA:true,
+  TXT:{missao:'Experimento',missoes:'Experimentos',mapa:'Experimentos do laboratório',entrar:'Entrar no laboratório ⚡',fim:'Experimento concluído! 🎉'},
+  PATENTES:[[0,'🔋 Iniciante'],[5,'💡 Eletricista mirim'],[10,'🔌 Técnico'],[14,'🧪 Cientista'],[17,'🏆 Engenheiro eletrônico']],
+  CATS:{fechado:'Circuito aberto e fechado (MS.EF08CI02)',materiais:'Condutores e isolantes (MS.EF05CI01)',energia:'Uso eficiente da energia (MS.EF08CI05)',controle:'Chave, botão, buzzer e motor (MS.EF08CI02)',polaridade:'Polaridade do LED e resistor (MS.EF08CI02)',serieparalelo:'Série e paralelo (MS.EF08CI02)',sensores:'Sensores e automação (MS.EF08CI02)',arduino:'Programação do Arduino (MS.EF06MA04)'},
+  HOME:{h1:'Laboratório de <span>Circuitos</span>', turma:'ex.: 8º A',
+    lead:'Monte circuitos na tela e aperte ⚡ Ligar: acenda LEDs, faça a campainha tocar, gire o motor, crie uma luz noturna e uma rega automática — e escreva seus primeiros programas de Arduino.',
+    cena:`<div style="background:#fff;display:grid;place-items:center;padding:14px">${circSvg({sl:[{k:'chave'},{k:'resistor'},{k:'led',inv:false}],chave:true,aceso:true})}</div>`,
+    info:[['6','experimentos'],['7','circuitos'],['⚡','ligue e teste']],
+    rodape:'Robótica · Eletrônica · Habilidades relacionadas: <b>MS.EF08CI02</b>, <b>MS.EF05CI01</b>, <b>MS.EF08CI05</b> e <b>MS.EF06MA04</b>'},
+  AJUDA:['🔌 Toque numa peça embaixo para colocar no circuito (ela vai para o primeiro espaço “?”). Toque numa peça do circuito para tirar.','⚡ Toque em <b>Ligar</b> para testar. Chave, botão e sensores têm botões para abrir, apertar ou simular dia, noite e terra seca.','🔄 O LED tem lado certo: o <b>+</b> do LED fica do lado do <b>+</b> da bateria. Use “Virar o LED”.','👩‍🏫 Professor(a): esta é a 3ª parte da trilha de robótica, depois do Robô Programador e da Oficina de Montagem. Os circuitos são simplificados para a tela; na bancada, use sempre pilhas ou baterias de baixa tensão.'],
+  MISSOES:[
+    {id:'m1',titulo:'Circuito fechado',ic:'🔋',hab:'MS.EF08CI02 · MS.EF05CI01',desc:'Acenda o LED e descubra condutores e isolantes.',gerar:()=>[itemCirc(CIRCS.luz),...sortear(BAS,4)],intro:'<p>A corrente elétrica precisa de um <b>caminho fechado</b>: sai do + da bateria, passa pelas peças e volta ao −.</p>'},
+    {id:'m2',titulo:'Chave, botão e motor',ic:'🔀',hab:'MS.EF08CI02',desc:'Luz com interruptor, campainha e ventilador.',gerar:()=>[itemCirc(CIRCS.chave),itemCirc(CIRCS.campainha),itemCirc(CIRCS.motor)],intro:'<p>A <b>chave</b> e o <b>botão</b> abrem e fecham o caminho da corrente. O <b>motor</b> transforma eletricidade em movimento.</p>'},
+    {id:'m3',titulo:'Polaridade e proteção',ic:'💡',hab:'MS.EF08CI02',desc:'O lado certo do LED e a função do resistor.',gerar:()=>[itemCirc(CIRCS.polar),...sortear(POL,3)],intro:'<p>O LED tem <b>lado certo</b>: perna maior no +. E precisa de um <b>resistor</b> para não queimar.</p>'},
+    {id:'m4',titulo:'Série e paralelo',ic:'🔗',hab:'MS.EF08CI02',desc:'Um caminho só ou vários caminhos? Compare com a sua casa.',gerar:()=>sortear(SP,4),intro:'<p><b>Série</b>: um caminho só para todos. <b>Paralelo</b>: cada peça tem seu próprio caminho.</p>'},
+    {id:'m5',titulo:'Sensores no circuito',ic:'🌙',hab:'MS.EF08CI02',desc:'Luz noturna e rega automática.',gerar:()=>[itemCirc(CIRCS.noturna),itemCirc(CIRCS.rega),...sortear(SENS,2)],intro:'<p>Sensores funcionam como <b>chaves automáticas</b>: fecham o circuito quando algo acontece (escurece, a terra seca…).</p>'},
+    {id:'m6',titulo:'Arduino no comando',ic:'🧑‍💻',hab:'MS.EF06MA04',desc:'Seu primeiro programa: fazer um LED piscar.',gerar:()=>[...sortear(ARD,3),itemOrdArd()],intro:'<p>Com o Arduino, quem liga e desliga o circuito é o <b>programa</b>. <b>HIGH</b> liga, <b>LOW</b> desliga, <b>delay</b> espera.</p>'}
+  ],
+  TIPOS:{circuito:CIRC,ordem:ORD}
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>
