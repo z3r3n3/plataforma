@@ -228,7 +228,7 @@ function telaEditor(id){
 const COMPS={'':'— escolha —',lp:'Língua Portuguesa',mat:'Matemática',cie:'Ciências',his:'História',geo:'Geografia',art:'Arte',ef:'Educação Física',ing:'Língua Inglesa',er:'Ensino Religioso',rob:'Robótica / outro'};
 const HABS=()=>window.HABILIDADES||{};
 const curta=c=>String(c||'').replace(/\.[sn]\.\d\d$/,m=>/00\.[sn]/.test(c)?m:'');
-function descHab(c){ c=normHab(c); if(!c) return ''; const h=HABS()[c]; return h?(h[3]||'Habilidade do Currículo de MS.'):'⚠️ Código não encontrado no Currículo de MS — confira.'; }
+function descHab(c){ c=normHab(c); if(!c) return ''; const h=HABS()[c]; return h?(h[3]?(h[3].length>260?h[3].slice(0,260).replace(/\s\S*$/,'')+'…':h[3]):'Habilidade do Currículo de MS.'):'⚠️ Código não encontrado no Currículo de MS — confira.'; }
 function opcoesHab(comp,ano){ const H=HABS(); return Object.entries(H).filter(([k,v])=>(!comp||comp==='rob'||v[0]===comp)&&(!ano||v[1].includes(+ano))).slice(0,400).map(([k,v])=>`<option value="${k}">${esc((v[3]||'').slice(0,90))}</option>`).join(''); }
 function desenharEditor(){
   app.innerHTML=`<section class="card"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="flex:1">${QUIZZES.some(q=>q.id===ED.id)?'Editar quiz':'Novo quiz'}</h2>

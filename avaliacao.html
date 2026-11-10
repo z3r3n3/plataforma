@@ -358,7 +358,7 @@ function textoFormulario(t,G,comNomes){
   const cont=[0,0,0,0]; ps.forEach(p=>cont[nivelK(p)]++);
   const datas=G.ats.map(a=>a.data), tipos={quiz:0,rubrica:0,jogo:0}; G.ats.forEach(a=>tipos[a.tipo]++);
   const habs=Object.entries(G.HAB).map(([h,x])=>({h,p:pctDe(x)}));
-  const fx=(lo,hi)=>habs.filter(x=>x.p>=lo&&x.p<hi).sort((a,b)=>b.p-a.p).map(x=>`• ${x.h} – ${descHab(x.h,120)||'(habilidade do Currículo de MS)'} (${Math.round(x.p)}% de acerto)`);
+  const fx=(lo,hi)=>habs.filter(x=>x.p>=lo&&x.p<hi).sort((a,b)=>b.p-a.p).map(x=>`• ${x.h} – ${descHab(x.h,300)||'(habilidade do Currículo de MS)'} (${Math.round(x.p)}% de acerto)`);
   const L=[];
   { const d1=fmtData(Math.min(...datas)), d2=fmtData(Math.max(...datas)); L.push(`Turma ${t.nome} – ${d1===d2?`em ${d1}`:`período de ${d1} a ${d2}`}.`); }
   L.push(`${G.ats.length===1?'Foi realizada 1 atividade avaliativa':`Foram realizadas ${G.ats.length} atividades avaliativas`} (${[tipos.quiz?`${tipos.quiz} quiz${tipos.quiz>1?'zes':''} ao vivo`:'',tipos.rubrica?`${tipos.rubrica} avaliaç${tipos.rubrica>1?'ões':'ão'} por indicadores`:'',tipos.jogo?`${tipos.jogo} registro${tipos.jogo>1?'s':''} de jogos digitais`:''].filter(Boolean).join(', ')}), com a participação de ${av.length} estudante${av.length!==1?'s':''}${t.alunos.length?` de ${t.alunos.length} da turma`:''}.`);
