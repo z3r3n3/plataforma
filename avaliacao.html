@@ -177,16 +177,18 @@ function resumoAtividade(a){
 }
 /* agregação da turma (com filtros) */
 function agregar(turma,filtro={}){
-  const AL={}, HAB={}, INDI={}, desconhecidos={}; const ats=ATV.filter(a=>turmaDe(a)===turma&&(!filtro.comp||a.componente===filtro.comp)&&(!filtro.de||a.data>=filtro.de)&&(!filtro.ate||a.data<=filtro.ate));
-  turma.alunos.forEach(a=>AL[a.k]={k:a.k,nome:a.nome,g:{s:0,w:0},hab:{},ind:{},ats:new Set()});
+  const AL={}, HAB={}, INDI={}, AT={}, desconhecidos={}; const ats=ATV.filter(a=>turmaDe(a)===turma&&(!filtro.comp||a.componente===filtro.comp)&&(!filtro.de||a.data>=filtro.de)&&(!filtro.ate||a.data<=filtro.ate));
+  turma.alunos.forEach(a=>AL[a.k]={k:a.k,nome:a.nome,g:{s:0,w:0},hab:{},ind:{},at:{},ats:new Set()});
   ats.forEach(a=>{ Object.entries(a.alunos||{}).forEach(([u,al])=>{
     const k=AV.alunoDe(turma,al.nome); if(!k){ (desconhecidos[AV.chave(al.nome)]=desconhecidos[AV.chave(al.nome)]||{nome:al.nome,ats:new Set()}).ats.add(a.titulo); return; }
-    const S=AL[k]||(AL[k]={k,nome:al.nome,g:{s:0,w:0},hab:{},ind:{},ats:new Set()});
-    a.itens.forEach(it=>{ const x=valor(a,u,it); if(!x) return; S.ats.add(a.id); S.g.s+=x.v*x.w; S.g.w+=x.w;
+    const S=AL[k]||(AL[k]={k,nome:al.nome,g:{s:0,w:0},hab:{},ind:{},at:{},ats:new Set()});
+    a.itens.forEach(it=>{ const x=valor(a,u,it); if(!x) return; S.ats.add(a.id); S.g.s+=x.v*x.w; S.g.w+=x.w; soma(S.at,a.id,x.v,x.w);
       (it.hab||[]).forEach(h=>{ soma(S.hab,h,x.v,x.w); soma(HAB,h,x.v,x.w); });
       if(it.ind){ soma(S.ind,it.ind,x.v,x.w); soma(INDI,it.ind,x.v,x.w); } }); }); });
   const alunos=Object.values(AL).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  return {ats,alunos,HAB,INDI,desconhecidos};
+  /* média da turma em cada atividade = média das notas dos estudantes (cada estudante pesa igual) */
+  ats.forEach(a=>{ const ps=alunos.map(x=>pctDe(x.at[a.id])).filter(p=>p!=null); AT[a.id]={p:ps.length?ps.reduce((u,v)=>u+v,0)/ps.length:null,n:ps.length}; });
+  return {ats,alunos,HAB,INDI,AT,desconhecidos};
 }
 
 /* =========================================================
@@ -313,6 +315,14 @@ function telaTurma(id){
   const nivHab=h=>{ const c=[0,0,0,0]; av.forEach(x=>{ const p=pctDe(x.hab[h]); if(p!=null) c[nivelK(p)]++; }); return c; };
   const nivInd=h=>{ const c=[0,0,0,0]; av.forEach(x=>{ const p=pctDe(x.ind[h]); if(p!=null) c[nivelK(p)]++; }); return c; };
   const des=Object.values(G.desconhecidos);
+  const semHab=!habs.length&&!inds.length;
+  const porAt=[...G.ats].sort((a,b)=>a.data-b.data).map(a=>({a,p:G.AT[a.id].p,n:G.AT[a.id].n}));
+  const nivAt=id=>{ const c=[0,0,0,0]; av.forEach(x=>{ const p=pctDe(x.at[id]); if(p!=null) c[nivelK(p)]++; }); return c; };
+  const cartaoAt=`<div class="bloco cartao"><h3>Resultado por atividade</h3>${semHab?legenda():''}<p class="mini">Em ordem de data, para acompanhar a evolução. Toque na atividade para ver o relatório completo.</p>
+      <div class="tab-w"><table class="tb"><thead><tr><th>Atividade</th><th class="c">Turma</th><th>Estudantes por nível</th><th>Situação</th></tr></thead><tbody>
+      ${porAt.map(({a,p,n})=>{ const c=nivAt(a.id); return `<tr><td><a href="#a=${a.id}"><b>${TIPO[a.tipo][0]} ${esc(a.titulo)}</b></a><div class="mini">${fmtData(a.data)}${a.componente&&COMPS[a.componente]?' · '+esc(COMPS[a.componente]):''} · ${n} estudante${n!==1?'s':''}</div></td><td class="c"><b>${pctTxt(p)}</b></td><td style="min-width:140px">${barraNiveis(c)}<div class="mini">${c[2]+c[3]} de ${c.reduce((u,v)=>u+v,0)} no adequado ou acima</div></td><td>${situHtml(p)}</td></tr>`; }).join('')}</tbody></table></div></div>`;
+  const dicaHab=`<div class="bloco cartao nao-imprimir"><h3>Habilidades do Currículo de MS</h3><p class="mini">As atividades desta turma ainda não têm habilidades marcadas, por isso o resultado acima está por atividade. Para ver também por habilidade, abra um quiz e toque em <b>✏️ Habilidades das perguntas</b> (dá para marcar depois da aula), ou use <a href="#rubrica">✅ Avaliar com indicadores</a>.</p></div>`;
+  const colM=semHab?porAt.map(({a})=>({t:a.titulo.slice(0,18),tt:a.titulo+' – '+fmtData(a.data),f:x=>pctDe(x.at[a.id])})):[...habs.map(({h})=>({t:h.replace('MS.EF',''),tt:descHab(h),f:x=>pctDe(x.hab[h])})),...inds.map(({h})=>({t:h.slice(0,22),tt:h,f:x=>pctDe(x.ind[h])}))];
   const comps=[...new Set(ATV.filter(a=>turmaDe(a)===t).map(a=>a.componente).filter(Boolean))];
   app.innerHTML=`<div class="cartao">
       <div class="linha" style="justify-content:space-between"><div><span class="selo">TURMA</span><h2 style="margin-top:6px">${esc(t.nome)}</h2></div>
@@ -330,15 +340,15 @@ function telaTurma(id){
       ${!t.alunos.length&&av.length?`<p class="mini nao-imprimir">💡 Dica: cadastre a lista da turma em <b>👥 Estudantes da turma</b>. Assim o painel junta “Ana”, “ana” e “Ana C.” como a mesma estudante.</p>`:''}
     </div>
     ${!G.ats.length?'<div class="bloco vazio-box">Nenhuma atividade desta turma com esses filtros.</div>':`
-    <div class="bloco cartao"><h3>Habilidades do Currículo de MS</h3>${legenda()}
+    ${semHab?cartaoAt+dicaHab:`<div class="bloco cartao"><h3>Habilidades do Currículo de MS</h3>${legenda()}
       ${habs.length?`<div class="tab-w"><table class="tb"><thead><tr><th>Habilidade</th><th class="c">Turma</th><th>Estudantes por nível</th><th>Situação</th></tr></thead><tbody>
-      ${habs.map(({h,p})=>{ const c=nivHab(h); return `<tr><td><span class="cod">${esc(h)}</span><div class="desc">${esc(descHab(h,170))}</div></td><td class="c"><b>${pctTxt(p)}</b></td><td style="min-width:140px">${barraNiveis(c)}<div class="mini">${c[2]+c[3]} de ${c.reduce((a,b)=>a+b,0)} no adequado ou acima</div></td><td>${situHtml(p)}</td></tr>`; }).join('')}</tbody></table></div>`:'<p class="mini">As atividades desta turma ainda não têm habilidades marcadas.</p>'}</div>
+      ${habs.map(({h,p})=>{ const c=nivHab(h); return `<tr><td><span class="cod">${esc(h)}</span><div class="desc">${esc(descHab(h,170))}</div></td><td class="c"><b>${pctTxt(p)}</b></td><td style="min-width:140px">${barraNiveis(c)}<div class="mini">${c[2]+c[3]} de ${c.reduce((a,b)=>a+b,0)} no adequado ou acima</div></td><td>${situHtml(p)}</td></tr>`; }).join('')}</tbody></table></div>`:'<p class="mini">As atividades desta turma ainda não têm habilidades marcadas.</p>'}</div>`}
     ${inds.length?`<div class="bloco cartao"><h3>Indicadores do professor</h3><div class="tab-w"><table class="tb"><thead><tr><th>Indicador</th><th class="c">Turma</th><th>Estudantes por nível</th><th>Situação</th></tr></thead><tbody>
       ${inds.map(({h,p})=>`<tr><td><b>${esc(h)}</b></td><td class="c"><b>${pctTxt(p)}</b></td><td style="min-width:140px">${barraNiveis(nivInd(h))}</td><td>${situHtml(p)}</td></tr>`).join('')}</tbody></table></div></div>`:''}
-    <div class="bloco cartao"><h3>Estudantes × habilidades</h3><p class="mini">Toque no nome para ver o histórico do estudante.</p>
-      <div class="tab-w"><table class="tb mat"><thead><tr><th class="nm">Estudante</th><th class="c">Geral</th>${habs.map(({h})=>`<th class="hab" title="${esc(descHab(h))}">${esc(h.replace('MS.EF',''))}</th>`).join('')}${inds.map(({h})=>`<th class="hab" title="${esc(h)}">${esc(h.slice(0,22))}</th>`).join('')}</tr></thead><tbody>
-      ${G.alunos.map(x=>{ const p=pctDe(x.g); return `<tr><td class="nm"><a href="#" data-aluno="${esc(x.k)}">${esc(x.nome)}</a></td><td class="cel" style="${fundo(p)}">${pctTxt(p)}</td>${habs.map(({h})=>{ const q=pctDe(x.hab[h]); return `<td class="cel" style="${fundo(q)}">${q==null?'·':Math.round(q)}</td>`; }).join('')}${inds.map(({h})=>{ const q=pctDe(x.ind[h]); return `<td class="cel" style="${fundo(q)}">${q==null?'·':Math.round(q)}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>
-    <div class="bloco cartao"><h3>Atividades da turma</h3><div class="lista-at">${G.ats.map(itemAtv).join('')}</div></div>`}`;
+    <div class="bloco cartao"><h3>Estudantes × ${semHab?'atividades':'habilidades'}</h3><p class="mini">Toque no nome para ver o histórico do estudante.${semHab?' Passe o dedo ou o mouse sobre a coluna para ver o nome completo da atividade.':''}</p>
+      <div class="tab-w"><table class="tb mat"><thead><tr><th class="nm">Estudante</th><th class="c">Geral</th>${colM.map(c=>`<th class="hab" title="${esc(c.tt)}">${esc(c.t)}</th>`).join('')}</tr></thead><tbody>
+      ${G.alunos.map(x=>{ const p=pctDe(x.g); return `<tr><td class="nm"><a href="#" data-aluno="${esc(x.k)}">${esc(x.nome)}</a></td><td class="cel" style="${fundo(p)}">${pctTxt(p)}</td>${colM.map(c=>{ const q=c.f(x); return `<td class="cel" style="${fundo(q)}">${q==null?'·':Math.round(q)}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>
+    ${semHab?'':cartaoAt}`}`;
   const filtrar=()=>{ const de=$('#f-de').value, ate=$('#f-ate').value; FILTRO={comp:$('#f-comp').value||'',de:de?new Date(de+'T00:00').getTime():null,ate:ate?new Date(ate+'T00:00').getTime()+864e5-1:null}; telaTurma(id); };
   ['#f-comp','#f-de','#f-ate'].forEach(s=>$(s).onchange=filtrar);
   ACAO.turma=t; ACAO.G=G;
@@ -358,9 +368,17 @@ function textoFormulario(t,G,comNomes){
   if(b.length) L.push(`\nHabilidades em desenvolvimento (${NIV[1].min}% a ${NIV[2].min-1}%):\n${b.join('\n')}`);
   if(c.length) L.push(`\nHabilidades que precisam ser retomadas (abaixo de ${NIV[1].min}%):\n${c.join('\n')}`);
   const inds=Object.entries(G.INDI).map(([h,x])=>`• ${h}: ${Math.round(pctDe(x))}%`); if(inds.length) L.push(`\nIndicadores acompanhados pelo professor:\n${inds.join('\n')}`);
+  const semHab=!habs.length&&!inds.length;
+  const porAt=[...G.ats].sort((x,y)=>x.data-y.data).map(at=>({at,p:G.AT[at.id].p})).filter(x=>x.p!=null);
+  const fxA=(lo,hi)=>porAt.filter(x=>x.p>=lo&&x.p<hi).map(x=>`• ${x.at.titulo} (${fmtData(x.at.data)}): ${Math.round(x.p)}% de aproveitamento`);
+  const aA=semHab?fxA(NIV[2].min,101):[], bA=semHab?fxA(NIV[1].min,NIV[2].min):[], cA=semHab?fxA(-1,NIV[1].min):[];
+  if(aA.length) L.push(`\nAtividades com objetivos consolidados (${NIV[2].min}% ou mais):\n${aA.join('\n')}`);
+  if(bA.length) L.push(`\nAtividades com objetivos em desenvolvimento (${NIV[1].min}% a ${NIV[2].min-1}%):\n${bA.join('\n')}`);
+  if(cA.length) L.push(`\nAtividades cujos conteúdos precisam ser retomados (abaixo de ${NIV[1].min}%):\n${cA.join('\n')}`);
+  if(semHab&&porAt.length>1){ const d=porAt[porAt.length-1].p-porAt[0].p; L.push(`\nComparando a primeira e a última atividade do período, o aproveitamento da turma ${Math.abs(d)<5?'manteve-se estável':d>0?`subiu ${Math.round(d)} pontos percentuais`:`caiu ${Math.round(-d)} pontos percentuais`} (de ${Math.round(porAt[0].p)}% para ${Math.round(porAt[porAt.length-1].p)}%).`); }
   const apoio=av.filter(x=>nivelK(pctDe(x.g))===0);
   if(apoio.length) L.push(`\n${comNomes?`Estudantes que precisam de acompanhamento (${NIV[0].nome.toLowerCase()}): ${apoio.map(x=>x.nome).join(', ')}.`:`${apoio.length} estudante${apoio.length>1?'s precisam':' precisa'} de acompanhamento individual (nível ${NIV[0].nome.toLowerCase()}).`}`);
-  L.push(`\nEncaminhamentos: ${c.length?'retomar as habilidades com menor aproveitamento, com novas atividades e intervenções em pequenos grupos; ':''}${apoio.length?'acompanhar individualmente os estudantes com menor desempenho; ':''}manter o uso de atividades gamificadas e o registro contínuo para monitorar a evolução da turma.`);
+  L.push(`\nEncaminhamentos: ${c.length?'retomar as habilidades com menor aproveitamento, com novas atividades e intervenções em pequenos grupos; ':''}${cA.length?'retomar os conteúdos das atividades com menor aproveitamento, com novas atividades e intervenções em pequenos grupos; ':''}${apoio.length?'acompanhar individualmente os estudantes com menor desempenho; ':''}manter o uso de atividades gamificadas e o registro contínuo para monitorar a evolução da turma.`);
   return L.join('\n');
 }
 function modalTexto(){ const t=ACAO.turma, G=ACAO.G;
@@ -370,10 +388,10 @@ function modalTexto(){ const t=ACAO.turma, G=ACAO.G;
     <div class="texto-form" id="txt-f"></div><div class="linha bloco" style="justify-content:flex-end"><button class="btn" data-acao="fechar">Fechar</button><button class="btn ipe" data-acao="copiar-texto">📋 Copiar texto</button></div>`);
   desenha(false); $('#com-nomes').onchange=e=>desenha(e.target.checked);
 }
-function csvTurma(){ const t=ACAO.turma, G=ACAO.G; const habs=Object.keys(G.HAB).sort(), inds=Object.keys(G.INDI).sort();
-  const lin=G.alunos.map(x=>{ const p=pctDe(x.g); return [x.nome,p==null?'':Math.round(p),p==null?'':NIV[nivelK(p)].nome,...habs.map(h=>{ const q=pctDe(x.hab[h]); return q==null?'':Math.round(q); }),...inds.map(h=>{ const q=pctDe(x.ind[h]); return q==null?'':Math.round(q); })]; });
-  const tur=['TURMA (média)', '', '',...habs.map(h=>Math.round(pctDe(G.HAB[h]))),...inds.map(h=>Math.round(pctDe(G.INDI[h])))];
-  baixar(`turma-${nomeArq(t.nome)}-${hojeISO()}.csv`,csv([[`Turma ${t.nome} – desempenho em % por habilidade (Currículo de MS)`],[],['Estudante','Geral (%)','Nível',...habs,...inds.map(i=>'Indicador: '+i)],...lin,tur,[],['Habilidade','Descrição'],...habs.map(h=>[h,descHab(h)])]));
+function csvTurma(){ const t=ACAO.turma, G=ACAO.G; const habs=Object.keys(G.HAB).sort(), inds=Object.keys(G.INDI).sort(), ats=[...G.ats].sort((a,b)=>a.data-b.data);
+  const lin=G.alunos.map(x=>{ const p=pctDe(x.g); return [x.nome,p==null?'':Math.round(p),p==null?'':NIV[nivelK(p)].nome,...habs.map(h=>{ const q=pctDe(x.hab[h]); return q==null?'':Math.round(q); }),...inds.map(h=>{ const q=pctDe(x.ind[h]); return q==null?'':Math.round(q); }),...ats.map(a=>{ const q=pctDe(x.at[a.id]); return q==null?'':Math.round(q); })]; });
+  const tur=['TURMA (média)', '', '',...habs.map(h=>Math.round(pctDe(G.HAB[h]))),...inds.map(h=>Math.round(pctDe(G.INDI[h]))),...ats.map(a=>G.AT[a.id].p==null?'':Math.round(G.AT[a.id].p))];
+  baixar(`turma-${nomeArq(t.nome)}-${hojeISO()}.csv`,csv([[`Turma ${t.nome} – desempenho em % por habilidade (Currículo de MS) e por atividade`],[],['Estudante','Geral (%)','Nível',...habs,...inds.map(i=>'Indicador: '+i),...ats.map(a=>`${a.titulo} (${fmtData(a.data)})`)],...lin,tur,[],['Habilidade','Descrição'],...habs.map(h=>[h,descHab(h)])]));
 }
 function modalLista(){ const t=ACAO.turma; const vistos=new Set();
   ATV.filter(a=>turmaDe(a)===t).forEach(a=>Object.values(a.alunos||{}).forEach(al=>vistos.add(al.nome)));
