@@ -19,6 +19,12 @@
   .hero h1 span{color:var(--ipe)}
   .hero p{font-size:19px;max-width:560px;margin:0 0 18px;color:#E3F1E7}
   .hero .selo{color:var(--ipe);background:#F5B70022}
+  .hero-in>div{min-width:0}
+  .pin-box{margin-top:18px;max-width:460px;background:#ffffff14;border:2px solid #ffffff2e;border-radius:18px;padding:12px 14px}
+  .pin-box label{display:block;font-size:15px;color:#E3F1E7;margin-bottom:8px}
+  .pin-linha{display:flex;gap:8px}
+  .pin-linha input{flex:1;min-width:0;width:100%;min-height:48px;border-radius:14px;border:2px solid #ffffff55;padding:0 14px;font:800 22px/1 var(--titulo,inherit);letter-spacing:.12em;color:var(--tinta)}
+  .pin-linha input::placeholder{font-size:16px;letter-spacing:0;font-weight:600}
   .selos{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
   .selos span{background:#ffffff1a;border:1px solid #ffffff33;border-radius:30px;padding:5px 12px;font-size:14px;font-weight:700}
   .arvore{position:relative;height:280px}
@@ -87,6 +93,10 @@
     <h1>Aprender <span>jogando</span>, do 1º ao 9º ano.</h1>
     <p>Jogos e desafios feitos por um professor da rede estadual de Mato Grosso do Sul, ligados às habilidades do Currículo de Referência, para o estudante ser protagonista da própria aprendizagem.</p>
     <a class="btn ipe" href="#catalogo">Escolher um jogo ↓</a>
+    <form class="pin-box" action="quiz/jogar.html" method="get">
+      <label for="pin-home">⚡ <b>Quiz ao vivo:</b> o professor passou um PIN? Digite aqui.</label>
+      <div class="pin-linha"><input id="pin-home" name="pin" inputmode="numeric" autocomplete="off" maxlength="7" size="6" placeholder="PIN da sala" required><button class="btn ipe" type="submit">Entrar ➔</button></div>
+    </form>
     <div class="selos" style="margin-top:16px"><span>🚫 Sem anúncios</span><span>🙅 Sem cadastro</span><span>🔒 Nenhum dado coletado</span><span>📱 Celular, tablet e PC</span></div>
   </div>
   <div class="arvore" aria-hidden="true">

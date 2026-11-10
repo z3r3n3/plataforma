@@ -175,6 +175,7 @@ async function finalizarRegistro(){ if(!REG||REG.finalizada) return; REG.finaliz
 const linkRelatorio=()=>REG?new URL('../avaliacao.html#a='+REG.id, location.href).toString():'../avaliacao.html';
 function lerSessao(){ try{ return JSON.parse(sessionStorage.getItem(CH_SESSAO)); }catch(e){ return null; } }
 function limparSessao(){ try{ sessionStorage.removeItem(CH_SESSAO); }catch(e){} }
+const endEntrar=()=>{ const u=new URL('../entrar/',location.href); return (u.host+u.pathname).replace(/\/$/,''); };
 const urlAluno=()=>{ const u=new URL('jogar.html', location.href); u.search=''; u.searchParams.set('pin',PIN); if(R&&R.tipo==='teste') u.searchParams.set('teste','1'); return u.toString(); };
 
 /* ---------- Telas ---------- */
@@ -191,6 +192,7 @@ function telaInicio(){
       <p class="mini" style="margin-top:6px">Perguntas com tempo próprio no CSV mantêm o tempo delas.</p>
       <div class="linha-acoes"><button class="btn" data-acao="modelo">⬇ Baixar modelo CSV</button><button class="btn" data-acao="ajuda">❓ Como funciona</button></div>
       <a class="btn roxo" style="margin-top:12px;width:100%" href="../avaliacao.html">📊 Painel de Avaliação: relatórios e indicadores</a>
+      <a class="btn" style="margin-top:10px;width:100%" href="jogar.html">🙋 Sou estudante: entrar numa sala com o PIN</a>
     </section>
     <section class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="flex:1">Meus quizzes</h2>
@@ -325,6 +327,7 @@ function telaLobby(){
     <section class="card centro">
       <span class="selo">${esc(QUIZ.titulo)} · ${QUIZ.perguntas.length} perguntas${TURMA?' · '+esc(TURMA):''}</span>
       <p style="margin:14px 0 2px;font-weight:700">Entre pelo celular e digite o PIN</p>
+      <p class="mini" style="margin:0">no endereço <b style="font-size:17px;color:var(--roxo,#6D28D9)">${esc(endEntrar())}</b> ou pelo QR Code</p>
       <div class="pin-grande">${PIN.slice(0,3)} ${PIN.slice(3)}</div>
       <div style="display:flex;justify-content:center"><div class="qr" id="qr"></div></div>
       <div class="link-aluno"><input id="link" readonly value="${esc(urlAluno())}" aria-label="Link para os estudantes"><button class="btn pequeno" data-acao="copiar">Copiar</button></div>
