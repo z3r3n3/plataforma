@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="quiz.css">
 <script src="config.js"></script>
+<script src="../curriculo/habilidades.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -34,6 +35,7 @@
    Ranking com TODOS os participantes.
    ========================================================= */
 import {conectar, TS} from './rede.js';
+import * as AV from '../avaliacao-dados.js';
 
 const PONTOS_MAX=1000, PONTOS_MIN=200, MARGEM=1.25;
 const FORMAS=['▲','◆','●','■'];
@@ -113,7 +115,8 @@ const classeTexto=t=>{ const n=String(t||'').length; return n>420?'t3':n>170?'t2
 const novoId=()=>'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 
 /* CSV no formato do Quiz STE original:
-   pergunta;opção 1;opção 2;opção 3;opção 4;correta (1 a 4);tempo (opcional) */
+   pergunta;opção 1;opção 2;opção 3;opção 4;correta (1 a 4);tempo (opcional);habilidade (opcional);indicador (opcional) */
+const normHab=h=>{ h=String(h||'').trim().replace(/\s+/g,''); if(!h) return ''; const m=h.match(/^(?:MS\.)?(EF\d\d[A-Za-z]{2}\d\d)(?:\.([sn])\.(\d\d))?$/i); if(!m) return h.slice(0,40); const base='MS.'+m[1].toUpperCase(); return /00$/.test(m[1])&&m[2]?base+'.'+m[2].toLowerCase()+'.'+m[3]:base; };
 function lerCSV(txt){
   const out=[];
   txt.replace(/^﻿/,'').split(/\r?\n/).forEach(l=>{
@@ -122,7 +125,7 @@ function lerCSV(txt){
     if(c.length<6) return;
     const correta=parseInt(c[5]); if(!(correta>=1&&correta<=4)) return;   // pula cabeçalho
     const t=parseInt(c[6]);
-    out.push({texto:c[0], opcoes:[c[1],c[2],c[3],c[4]], correta, tempo:(t>0?Math.min(t,180):null)});
+    out.push({texto:c[0], opcoes:[c[1],c[2],c[3],c[4]], correta, tempo:(t>0?Math.min(t,180):null), hab:normHab(c[7]), ind:String(c[8]||'').slice(0,120)});
   });
   return out.filter(q=>q.texto && q.opcoes[q.correta-1]);
 }
@@ -134,7 +137,7 @@ async function lerArquivo(f){
 }
 function paraCSV(q){
   const cel=s=>{ s=String(s??''); return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
-  return '﻿'+q.perguntas.map(p=>[p.texto,...p.opcoes,p.correta,p.tempo||''].map(cel).join(';')).join('\r\n');
+  return '﻿'+q.perguntas.map(p=>[p.texto,...p.opcoes,p.correta,p.tempo||'',p.hab||'',p.ind||''].map(cel).join(';')).join('\r\n');
 }
 function baixar(nome,conteudo,tipo='text/csv;charset=utf-8'){
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo})); a.download=nome; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
@@ -146,9 +149,30 @@ let R=null;           // rede
 let PIN=null, QUIZ=null, IDX=-1, FASE='inicio';
 let ENTRADA={}, PLACAR={}, ESTADO=null, ALERTAS={}, alertasVistos=new Set();
 let ouvintes=[], ouvResp=null, timerId=null, revelando=false, armadoEncerrar=false;
+let TURMA='', REG=null;   // turma da aula e registro que vai para o Painel de Avaliação
 const tempoDe=p=>p.tempo||CFG.tempo;
 const sessao=()=>ler(CH_SESSAO,null);
-function salvarSessao(){ try{ sessionStorage.setItem(CH_SESSAO, JSON.stringify({pin:PIN, quizId:QUIZ&&QUIZ.id, idx:IDX})); }catch(e){} }
+function salvarSessao(){ try{ sessionStorage.setItem(CH_SESSAO, JSON.stringify({pin:PIN, quizId:QUIZ&&QUIZ.id, idx:IDX, turma:TURMA, regId:REG&&REG.id})); }catch(e){} }
+function novoRegistro(){
+  REG={id:AV.novoId('q_'), tipo:'quiz', titulo:QUIZ.titulo, quizId:QUIZ.id, turma:TURMA, componente:QUIZ.componente||'', ano:QUIZ.ano||'', data:Date.now(),
+    itens:QUIZ.perguntas.map((p,i)=>({id:'p'+(i+1), rotulo:p.texto||'(pergunta com imagem)', hab:p.hab?[p.hab]:[], ind:p.ind||'', opcoes:p.opcoes.slice(), correta:p.correta, tempo:tempoDe(p)})),
+    alunos:{}, res:{}, saidas:{}, aplicadas:0, finalizada:false};
+  salvarSessao();
+}
+async function gravarRegistro(){ if(!REG) return; try{ await AV.salvar('atividades',REG); }catch(err){ console.error(err); toast('⚠️ Não consegui salvar o registro da aula neste navegador.'); } }
+async function registrar(idx,resp,e){
+  if(!REG) return;
+  const item=REG.itens[idx]; if(!item) return;
+  Object.entries(ENTRADA).forEach(([u,j])=>{ REG.alunos[u]={nome:j.nome}; });
+  Object.keys(e.part||{}).forEach(u=>{ if(!ENTRADA[u]) return;
+    const r=resp[u], seg=r?(r.t-e.inicio)/1000:null, ok=r&&seg<=e.tempo+MARGEM;
+    (REG.res[u]=REG.res[u]||{})[item.id]=ok?{r:r.r, ok:r.r===item.correta, seg:Math.max(0,+seg.toFixed(1))}:{r:0, ok:false}; });
+  Object.keys(REG.alunos).forEach(u=>{ const n=violacoes(u); if(n) REG.saidas[u]=n; });
+  REG.aplicadas=Math.max(REG.aplicadas||0, idx+1);
+  await gravarRegistro();
+}
+async function finalizarRegistro(){ if(!REG||REG.finalizada) return; REG.finalizada=true; Object.keys(REG.alunos).forEach(u=>{ const n=violacoes(u); if(n) REG.saidas[u]=n; }); await gravarRegistro(); }
+const linkRelatorio=()=>REG?new URL('../avaliacao.html#a='+REG.id, location.href).toString():'../avaliacao.html';
 function lerSessao(){ try{ return JSON.parse(sessionStorage.getItem(CH_SESSAO)); }catch(e){ return null; } }
 function limparSessao(){ try{ sessionStorage.removeItem(CH_SESSAO); }catch(e){} }
 const urlAluno=()=>{ const u=new URL('jogar.html', location.href); u.search=''; u.searchParams.set('pin',PIN); if(R&&R.tipo==='teste') u.searchParams.set('teste','1'); return u.toString(); };
@@ -166,6 +190,7 @@ function telaInicio(){
       <select id="tempo">${TEMPOS.map(t=>`<option value="${t}" ${t==CFG.tempo?'selected':''}>${rotTempo(t)}</option>`).join('')}</select>
       <p class="mini" style="margin-top:6px">Perguntas com tempo próprio no CSV mantêm o tempo delas.</p>
       <div class="linha-acoes"><button class="btn" data-acao="modelo">⬇ Baixar modelo CSV</button><button class="btn" data-acao="ajuda">❓ Como funciona</button></div>
+      <a class="btn roxo" style="margin-top:12px;width:100%" href="../avaliacao.html">📊 Painel de Avaliação: relatórios e indicadores</a>
     </section>
     <section class="card">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="flex:1">Meus quizzes</h2>
@@ -181,12 +206,13 @@ function telaInicio(){
     const txt=await lerArquivo(f); let titulo=f.name.replace(/(\.quiz)?\.(csv|txt|json)$/i,''), ps=[];
     if(/\.json$/i.test(f.name)||/^\s*\{/.test(txt)){
       try{ const j=JSON.parse(txt); titulo=j.titulo||titulo;
-        ps=(j.perguntas||[]).map(p=>({texto:String(p.texto||''), opcoes:[0,1,2,3].map(k=>String((p.opcoes||[])[k]||'')), correta:Math.min(4,Math.max(1,+p.correta||1)), tempo:p.tempo>0?Math.min(+p.tempo,180):null, img:(typeof p.img==='string'&&p.img.startsWith('data:image/'))?p.img:null, imgCel:!!p.imgCel}))
+        ps=(j.perguntas||[]).map(p=>({texto:String(p.texto||''), opcoes:[0,1,2,3].map(k=>String((p.opcoes||[])[k]||'')), correta:Math.min(4,Math.max(1,+p.correta||1)), tempo:p.tempo>0?Math.min(+p.tempo,180):null, img:(typeof p.img==='string'&&p.img.startsWith('data:image/'))?p.img:null, imgCel:!!p.imgCel, hab:normHab(p.hab), ind:String(p.ind||'').slice(0,120)}))
           .filter(p=>(p.texto||p.img)&&p.opcoes[p.correta-1]);
       }catch(err){ ps=[]; }
     } else ps=lerCSV(txt);
     if(!ps.length){ toast('Não encontrei perguntas no arquivo. Confira o formato (CSV com ponto e vírgula ou .quiz.json).'); return; }
-    await salvarQuiz({id:novoId(), titulo, perguntas:ps});
+    let meta={}; try{ if(/^\s*\{/.test(txt)){ const j=JSON.parse(txt); meta={componente:j.componente||'', ano:j.ano||''}; } }catch(err){}
+    await salvarQuiz(Object.assign({id:novoId(), titulo, perguntas:ps}, meta));
     toast(`${ps.length} perguntas importadas!`); telaInicio(); };
 }
 
@@ -197,10 +223,19 @@ function telaEditor(id){
   ED=base?JSON.parse(JSON.stringify(base)):{id:novoId(), titulo:'', perguntas:[{texto:'',opcoes:['','','',''],correta:1,tempo:null}]};
   FASE='editor'; desenharEditor();
 }
+const COMPS={'':'— escolha —',lp:'Língua Portuguesa',mat:'Matemática',cie:'Ciências',his:'História',geo:'Geografia',art:'Arte',ef:'Educação Física',ing:'Língua Inglesa',er:'Ensino Religioso',rob:'Robótica / outro'};
+const HABS=()=>window.HABILIDADES||{};
+const curta=c=>String(c||'').replace(/\.[sn]\.\d\d$/,m=>/00\.[sn]/.test(c)?m:'');
+function descHab(c){ c=normHab(c); if(!c) return ''; const h=HABS()[c]; return h?(h[3]||'Habilidade do Currículo de MS.'):'⚠️ Código não encontrado no Currículo de MS — confira.'; }
+function opcoesHab(comp,ano){ const H=HABS(); return Object.entries(H).filter(([k,v])=>(!comp||comp==='rob'||v[0]===comp)&&(!ano||v[1].includes(+ano))).slice(0,400).map(([k,v])=>`<option value="${k}">${esc((v[3]||'').slice(0,90))}</option>`).join(''); }
 function desenharEditor(){
   app.innerHTML=`<section class="card"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="flex:1">${QUIZZES.some(q=>q.id===ED.id)?'Editar quiz':'Novo quiz'}</h2>
       <button class="btn" data-acao="cancelar-ed">Cancelar</button><button class="btn roxo" data-acao="salvar-ed">💾 Salvar quiz</button></div>
     <label class="campo" for="ed-tit">Título (ex.: Revisão de frações — 6º A)</label><input class="inp" id="ed-tit" maxlength="80" value="${esc(ED.titulo)}">
+    <div class="meta-quiz"><div><label class="campo" for="ed-comp">Componente</label><select id="ed-comp">${Object.entries(COMPS).map(([k,v])=>`<option value="${k}" ${ED.componente===k?'selected':''}>${v}</option>`).join('')}</select></div>
+      <div><label class="campo" for="ed-ano">Ano</label><select id="ed-ano"><option value="">—</option>${[1,2,3,4,5,6,7,8,9].map(a=>`<option value="${a}" ${+ED.ano===a?'selected':''}>${a}º ano</option>`).join('')}</select></div></div>
+    <p class="mini" style="margin:6px 0 0">📊 Em cada pergunta, informe a <b>habilidade do Currículo de MS</b> (ex.: MS.EF06MA03) e, se quiser, um <b>indicador</b> com suas palavras. Assim o Painel de Avaliação mostra o desempenho da turma por habilidade.</p>
+    <datalist id="dl-hab">${opcoesHab(ED.componente,ED.ano)}</datalist>
     <div id="ed-qs">${ED.perguntas.map((p,i)=>`<div class="q-ed" data-q="${i}">
       <div class="cab-q"><b>Pergunta ${i+1}</b>
         <select data-campo="tempo" style="width:auto;padding:6px 8px" aria-label="Tempo"><option value="">Tempo padrão</option>${TEMPOS.map(t=>`<option value="${t}" ${p.tempo==t?'selected':''}>${rotTempoCurto(t)}</option>`).join('')}</select>
@@ -212,16 +247,24 @@ function desenharEditor(){
         <span class="mini" style="display:block;max-width:360px">Sem marcar, a imagem aparece só no telão (economiza internet e a cota grátis).</span></div>`
         :`<label class="btn pequeno" style="cursor:pointer">🖼️ Adicionar imagem<input type="file" accept="image/*" data-img hidden></label><span class="mini">ou copie uma imagem e cole aqui com Ctrl+V</span>`}</div>
       <div class="alts">${[0,1,2,3].map(j=>`<label class="alt a${j+1}"><span class="forma">${FORMAS[j]}</span><input type="text" data-op="${j}" placeholder="Alternativa ${j+1}${j>1?' (opcional)':''}" value="${esc(p.opcoes[j]||'')}"><input type="radio" name="c${i}" value="${j+1}" ${p.correta===j+1?'checked':''} aria-label="Marcar como correta" title="Correta"></label>`).join('')}</div>
-      <p class="mini" style="margin:6px 0 0">Marque a bolinha da alternativa correta.</p></div>`).join('')}</div>
+      <p class="mini" style="margin:6px 0 0">Marque a bolinha da alternativa correta.</p>
+      <div class="hab-q"><label><span>📌 Habilidade</span><input type="text" data-campo="hab" list="dl-hab" placeholder="MS.EF06MA03" value="${esc(p.hab||'')}" autocomplete="off"></label><label><span>🎯 Indicador (opcional)</span><input type="text" data-campo="ind" maxlength="120" placeholder="Ex.: resolve problemas com frações" value="${esc(p.ind||'')}"></label></div>
+      <p class="mini desc-hab">${esc(descHab(p.hab))}</p></div>`).join('')}</div>
     <div class="linha-acoes"><button class="btn" data-acao="add-q">＋ Adicionar pergunta</button></div></section>`;
 }
+document.addEventListener('input',e=>{ const t=e.target; if(!t.dataset) return;
+  if(t.dataset.campo==='hab'){ const d=t.closest('.q-ed').querySelector('.desc-hab'); if(d) d.textContent=descHab(t.value); }
+});
+document.addEventListener('change',e=>{ if(e.target.id==='ed-comp'||e.target.id==='ed-ano'){ const dl=$('#dl-hab'); if(dl) dl.innerHTML=opcoesHab($('#ed-comp').value,$('#ed-ano').value); } });
 function lerEditor(){
   ED.titulo=$('#ed-tit').value.trim();
   document.querySelectorAll('.q-ed').forEach(div=>{ const i=+div.dataset.q, p=ED.perguntas[i];
     p.texto=$('[data-campo="texto"]',div).value.trim(); p.tempo=+$('[data-campo="tempo"]',div).value||null;
     const ic=$('[data-campo="imgcel"]',div); if(ic) p.imgCel=ic.checked;
     p.opcoes=[0,1,2,3].map(j=>$(`[data-op="${j}"]`,div).value.trim());
-    const r=$('input[type=radio]:checked',div); p.correta=r?+r.value:1; });
+    const r=$('input[type=radio]:checked',div); p.correta=r?+r.value:1;
+    p.hab=normHab($('[data-campo="hab"]',div).value); p.ind=$('[data-campo="ind"]',div).value.trim(); });
+  ED.componente=$('#ed-comp').value; ED.ano=$('#ed-ano').value;
 }
 async function salvarEditor(){
   lerEditor();
@@ -234,14 +277,26 @@ async function salvarEditor(){
 }
 
 /* ---------- Sala ---------- */
+async function perguntarTurma(quizId){
+  let turmas=[]; try{ turmas=(await AV.todos('turmas')).map(t=>t.nome).sort((a,b)=>a.localeCompare(b,'pt-BR')); }catch(e){}
+  const ult=ler('quizSTE.ultTurma','');
+  abrirModal(`<h2>Qual é a turma?</h2><p class="muted">Os resultados desta aula ficam registrados no <b>Painel de Avaliação</b>, separados por turma.</p>
+    <label class="campo" for="turma-in">Turma (ex.: 7º A)</label><input class="inp" id="turma-in" list="dl-turmas" maxlength="30" value="${esc(ult)}" autocomplete="off">
+    <datalist id="dl-turmas">${turmas.map(t=>`<option value="${esc(t)}">`).join('')}</datalist>
+    ${turmas.length?`<div class="chips-turma">${turmas.slice(0,12).map(t=>`<button class="btn pequeno" data-turma-ch="${esc(t)}">${esc(t)}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn" data-acao="fechar">Cancelar</button><button class="btn roxo" data-abrir-turma="${quizId}">▶ Abrir sala</button></div>`);
+  setTimeout(()=>{ const i=$('#turma-in'); if(i){ i.focus(); i.select(); i.onkeydown=ev=>{ if(ev.key==='Enter') $('[data-abrir-turma]').click(); }; } },50);
+}
 async function abrirSala(quizId){
   QUIZ=QUIZZES.find(q=>q.id===quizId); if(!QUIZ) return;
+  REG=null;
   if(!R){ toast('Sem conexão com o servidor do quiz.'); return; }
   try{
     let pin, tent=0;
     do{ pin=String(100000+Math.floor(Math.random()*900000)); tent++; } while(await R.get('salas/'+pin+'/dono') && tent<8);
     PIN=pin; IDX=-1;
     await R.set('salas/'+PIN, {dono:R.uid, criadaEm:TS, titulo:QUIZ.titulo, estado:{fase:'lobby', idx:-1, total:QUIZ.perguntas.length}});
+    if(TURMA) AV.garantirTurma(TURMA).catch(()=>{});
     salvarSessao(); ouvirSala(); telaLobby();
     R.salasVelhas(86400000).then(ks=>ks.forEach(k=>R.remove('salas/'+k).catch(()=>{})));
   }catch(e){ console.error(e); toast('Não foi possível abrir a sala ('+(e.code||e.message||'erro')+'). Verifique a internet e as regras do Firebase.'); }
@@ -268,7 +323,7 @@ function telaLobby(){
   FASE='lobby';
   app.innerHTML=`<div class="grade2">
     <section class="card centro">
-      <span class="selo">${esc(QUIZ.titulo)} · ${QUIZ.perguntas.length} perguntas</span>
+      <span class="selo">${esc(QUIZ.titulo)} · ${QUIZ.perguntas.length} perguntas${TURMA?' · '+esc(TURMA):''}</span>
       <p style="margin:14px 0 2px;font-weight:700">Entre pelo celular e digite o PIN</p>
       <div class="pin-grande">${PIN.slice(0,3)} ${PIN.slice(3)}</div>
       <div style="display:flex;justify-content:center"><div class="qr" id="qr"></div></div>
@@ -287,6 +342,7 @@ function desenharQR(el,tam){ el.innerHTML=''; if(window.QRCode) new QRCode(el,{t
 
 /* ---------- Pergunta ---------- */
 async function mandarPergunta(i){
+  if(!REG||REG.quizId!==QUIZ.id||REG.finalizada) novoRegistro();
   IDX=i; salvarSessao(); revelando=false; RESP={};
   const p=QUIZ.perguntas[i];
   const part={}; Object.keys(ENTRADA).forEach(u=>part[u]=true);
@@ -347,6 +403,7 @@ async function revelar(){
     if(ok){ placar[u].pontos+=pts; placar[u].acertos+=1; placar[u].tempoAcertos=+(placar[u].tempoAcertos+Math.min(seg,e.tempo)).toFixed(2); }
   });
   PLACAR=placar;
+  registrar(IDX,resp,e);
   await R.update('salas/'+PIN, {placar, 'estado/fase':'revelada', 'estado/correta':p.correta, 'estado/dist':dist});
   ESTADO=Object.assign({},ESTADO,{fase:'revelada',correta:p.correta,dist});
   FASE='revelada'; telaPergunta(true);
@@ -355,6 +412,7 @@ async function revelar(){
 /* ---------- Ranking ---------- */
 function ordenar(){ return Object.entries(PLACAR||{}).filter(([u])=>ENTRADA[u]).map(([u,p])=>({u,...p})).sort((a,b)=>(b.pontos-a.pontos)||(b.acertos-a.acertos)||(a.tempoAcertos-b.tempoAcertos)||a.nome.localeCompare(b.nome,'pt-BR')); }
 async function telaRanking(final){
+  if(final) finalizarRegistro();
   await R.update('salas/'+PIN, {'estado/fase':final?'fim':'ranking'});
   FASE=final?'fim':'ranking';
   const L=ordenar(), ultimo=IDX>=QUIZ.perguntas.length-1;
@@ -366,7 +424,7 @@ async function telaRanking(final){
     <div class="ranking">${L.map((j,i)=>`<div class="rk ${i<3?'top'+(i+1):''}"><span class="pos">${i+1}º</span>${avatar(j.nome)}<span class="nm">${esc(j.nome)}</span><span class="dl ${j.ultimo&&j.ultimo.pts?'':'zero'}">${j.ultimo&&j.ultimo.pts?'+'+j.ultimo.pts:'+0'}</span><span class="pts">${j.pontos}</span></div>`).join('')||'<p class="muted centro">Ninguém pontuou ainda.</p>'}</div>
     <p class="dicas-proj">Pontos: acerto rápido vale até 1.000; no fim do tempo, 200. Empate: mais acertos e depois menor tempo.</p>
     <div class="acoes-jogo">${final
-      ?`<button class="btn" data-acao="exportar">⬇ Baixar resultado (CSV)</button><button class="btn" data-acao="trocar">🔁 Jogar outro quiz com a turma</button><button class="btn perigo" data-acao="encerrar">⏹ Encerrar sala</button>`
+      ?`${REG?`<a class="btn roxo" href="${esc(linkRelatorio())}" target="_blank" rel="noopener">📊 Relatório da aula</a>`:''}<button class="btn" data-acao="exportar">⬇ Baixar resultado (CSV)</button><button class="btn" data-acao="trocar">🔁 Jogar outro quiz com a turma</button><button class="btn perigo" data-acao="encerrar">⏹ Encerrar sala</button>`
       :(ultimo?'<button class="btn roxo grande" data-acao="final">🏁 Pódio final</button>':'<button class="btn perigo" data-acao="finalizar">🏁 Finalizar o quiz agora</button><button class="btn roxo grande" data-acao="proxima">Próxima pergunta ➔</button>')}</div></section>`;
 }
 function exportar(){
@@ -404,15 +462,17 @@ function modalTrocar(){
     <div class="acoes"><button class="btn" data-acao="fechar">Cancelar</button></div>`);
 }
 async function trocarQuiz(id){
+  await finalizarRegistro(); REG=null;
   QUIZ=QUIZZES.find(q=>q.id===id); IDX=-1; salvarSessao(); fecharModal();
   await R.update('salas/'+PIN, {titulo:QUIZ.titulo, placar:null, respostas:null, estado:{fase:'lobby', idx:-1, total:QUIZ.perguntas.length}});
   PLACAR={}; telaLobby();
 }
 async function encerrarSala(){
+  await finalizarRegistro(); const regFeito=REG; REG=null;
   pararOuvintes();
   try{ await R.remove('salas/'+PIN); }catch(e){}
   PIN=null; limparSessao(); ENTRADA={}; PLACAR={}; ALERTAS={}; alertasVistos=new Set(); ESTADO=null;
-  toast('Sala encerrada.'); telaInicio();
+  toast(regFeito&&regFeito.aplicadas?'Sala encerrada. Os resultados ficaram no Painel de Avaliação.':'Sala encerrada.'); telaInicio();
 }
 
 function ajuda(){
@@ -422,7 +482,8 @@ function ajuda(){
     <div>⚡ <b>Pontos:</b> acerto rápido vale até 1.000 pontos; no fim do tempo, 200. Erro vale 0.</div>
     <div>🏆 <b>Ranking:</b> aparece com todos os participantes. No celular, cada estudante vê a própria posição.</div>
     <div>🛡️ <b>Fiscalização:</b> o painel registra quem sai da tela durante as perguntas.</div>
-    <div>🔒 <b>Privacidade:</b> só o primeiro nome e os pontos ficam no servidor, e a sala é apagada quando você encerra.</div></div>
+    <div>📊 <b>Registro:</b> cada resposta é guardada automaticamente <b>neste computador</b>, no Painel de Avaliação, por turma e por habilidade. Não precisa baixar nada no fim.</div>
+    <div>🔒 <b>Privacidade:</b> no servidor ficam só o primeiro nome e os pontos, e a sala é apagada quando você encerra. O registro da aula fica apenas neste navegador.</div></div>
     <div class="acoes"><button class="btn roxo" data-acao="fechar">Entendi</button></div>`);
 }
 
@@ -430,12 +491,14 @@ function ajuda(){
 document.addEventListener('click', async e=>{
   const el=e.target.closest('button'); if(!el||el.disabled) return;
   const d=el.dataset;
-  if(d.abrir) return abrirSala(d.abrir);
+  if(d.abrir) return perguntarTurma(d.abrir);
+  if(d.turmaCh){ const i=$('#turma-in'); if(i) i.value=d.turmaCh; return; }
+  if(d.abrirTurma){ TURMA=($('#turma-in').value||'').trim().slice(0,30); gravar('quizSTE.ultTurma',TURMA); fecharModal(); return abrirSala(d.abrirTurma); }
   if(d.editar) return telaEditor(d.editar);
   if(d.baixar) return modalBaixar(d.baixar);
   if(d.fmt){ const q=QUIZZES.find(x=>x.id===d.id); fecharModal();
     if(d.fmt==='csv') return baixar(nomeArquivo(q.titulo)+'.csv', paraCSV(q));
-    return baixar(nomeArquivo(q.titulo)+'.quiz.json', JSON.stringify({formato:'quizSTE', versao:2, titulo:q.titulo, perguntas:q.perguntas}), 'application/json'); }
+    return baixar(nomeArquivo(q.titulo)+'.quiz.json', JSON.stringify({formato:'quizSTE', versao:3, titulo:q.titulo, componente:q.componente||'', ano:q.ano||'', perguntas:q.perguntas}), 'application/json'); }
   if(d.tirarImg||d.trocarImg){ lerEditor(); const i=+el.closest('.q-ed').dataset.q;
     if(d.tirarImg){ ED.perguntas[i].img=null; return desenharEditor(); }
     const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.onchange=()=>inp.files[0]&&colocarImagem(i,inp.files[0]); inp.click(); return; }
@@ -451,7 +514,7 @@ document.addEventListener('click', async e=>{
   else if(a==='add-q'){ lerEditor(); ED.perguntas.push({texto:'',opcoes:['','','',''],correta:1,tempo:null}); desenharEditor(); const qs=document.querySelectorAll('.q-ed'); qs[qs.length-1].scrollIntoView({behavior:'smooth'}); }
   else if(a==='salvar-ed') salvarEditor();
   else if(a==='cancelar-ed') telaInicio();
-  else if(a==='modelo') baixar('modelo-quiz-ste.csv','﻿'+'Qual é a capital de Mato Grosso do Sul?;Dourados;Campo Grande;Corumbá;Três Lagoas;2;30\r\nQuanto é 7 x 8?;54;56;48;64;2;20\r\n');
+  else if(a==='modelo') baixar('modelo-quiz-ste.csv','﻿'+'Qual é a capital de Mato Grosso do Sul?;Dourados;Campo Grande;Corumbá;Três Lagoas;2;30;MS.EF04GE01;Localiza a capital do estado\r\nQuanto é 7 x 8?;54;56;48;64;2;20;MS.EF04MA06;Multiplica com fatos básicos\r\n');
   else if(a==='ajuda') ajuda();
   else if(a==='copiar'){ const i=$('#link'); i.select(); try{ await navigator.clipboard.writeText(i.value); }catch(err){ document.execCommand('copy'); } toast('Link copiado!'); }
   else if(a==='comecar') mandarPergunta(0);
@@ -514,7 +577,9 @@ function semConfig(){
       const sala=await R.get('salas/'+s.pin);
       const q=QUIZZES.find(x=>x.id===s.quizId);
       if(sala&&sala.dono===R.uid&&q){
-        PIN=s.pin; QUIZ=q; IDX=s.idx??-1; PLACAR=sala.placar||{}; ESTADO=sala.estado; ouvirSala();
+        PIN=s.pin; QUIZ=q; IDX=s.idx??-1; PLACAR=sala.placar||{}; ESTADO=sala.estado; TURMA=s.turma||'';
+        if(s.regId){ try{ REG=await AV.pegar('atividades',s.regId)||null; }catch(err){ REG=null; } }
+        ouvirSala();
         const f=sala.estado&&sala.estado.fase;
         if(f==='pergunta'){ FASE='pergunta'; telaPergunta(); ouvResp=R.on('salas/'+PIN+'/respostas/'+IDX, v=>{ RESP=v||{}; atualizarRespostas(); }); }
         else if(f==='revelada'){ FASE='revelada'; telaPergunta(true); }

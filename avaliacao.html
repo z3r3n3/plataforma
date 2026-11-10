@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Avaliação — JRM Aventuras Educativas</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg fill='%23F5B700'%3E%3Ccircle cx='20' cy='9' r='8'/%3E%3Ccircle cx='30.5' cy='16.6' r='8'/%3E%3Ccircle cx='26.5' cy='29' r='8'/%3E%3Ccircle cx='13.5' cy='29' r='8'/%3E%3Ccircle cx='9.5' cy='16.6' r='8'/%3E%3C/g%3E%3Ccircle cx='20' cy='20' r='5' fill='%239A3412'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo"><div class="topo-in">
+  <a class="marca" href="./"><svg class="flor" viewBox="0 0 40 40" aria-hidden="true"><g fill="#F5B700"><circle cx="20" cy="9" r="8"/><circle cx="30.5" cy="16.6" r="8"/><circle cx="26.5" cy="29" r="8"/><circle cx="13.5" cy="29" r="8"/><circle cx="9.5" cy="16.6" r="8"/></g><circle cx="20" cy="20" r="5" fill="#9A3412"/></svg>
+    <span><b>JRM Aventuras Educativas</b><small>jogos para aprender · MS</small></span></a>
+  <nav class="menu"><a href="./">Jogos</a><a href="professor.html" aria-current="page">Área do Professor</a><a class="apoie" href="apoie.html">💛 Apoie</a></nav>
+</div></header>
+
+<style>
+  .av-topo{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between;margin-bottom:6px}
+  .av-topo h1{font-size:clamp(30px,4.4vw,46px);margin:8px 0 4px}
+  .av-topo p{margin:0;max-width:760px;color:var(--suave)}
+  .abas{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 18px;padding:6px;background:#fff;border:2px solid var(--borda);border-radius:16px}
+  .abas a{text-decoration:none;color:var(--tinta);font-weight:700;padding:9px 14px;border-radius:11px;font-size:15px}
+  .abas a.on{background:var(--mata2);color:#fff}
+  .grade-c{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .num{font-family:var(--titulo);font-size:38px;font-weight:800;line-height:1}
+  .num small{font-size:16px;color:var(--suave);font-weight:700}
+  .rot{font-size:14px;color:var(--suave);font-weight:700}
+  .cartao h2{font-size:24px;margin-bottom:6px}
+  .cartao h3{font-size:19px;margin:0 0 6px}
+  .bloco{margin-top:18px}
+  .linha{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn.peq{min-height:40px;padding:8px 14px;font-size:15px;border-radius:12px}
+  .btn.perigo{border-color:#FCA5A5;color:#B91C1C}
+  .btn:disabled{opacity:.5;cursor:default;transform:none}
+  .tag{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:3px 10px;background:#F1E6CF;color:#6B4E00;white-space:nowrap}
+  .tag.quiz{background:#EDE9FE;color:#5B21B6}.tag.rubrica{background:#DCFCE7;color:#166534}.tag.jogo{background:#DBEAFE;color:#1E40AF}
+  .lista-at{display:grid;gap:8px;margin-top:10px}
+  .item-at{display:flex;gap:12px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px;text-decoration:none;color:inherit}
+  .item-at:hover{border-color:var(--mata2)}
+  .item-at .ic{font-size:26px}
+  .item-at .tx{flex:1;min-width:0}
+  .item-at b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item-at small{color:var(--suave)}
+  .pct{font-family:var(--titulo);font-weight:800;font-size:22px}
+  .chip-n{display:inline-block;font-size:12px;font-weight:800;border-radius:20px;padding:3px 10px;background:color-mix(in srgb,var(--c) 16%,#fff);color:var(--c);border:1.5px solid color-mix(in srgb,var(--c) 45%,#fff);white-space:nowrap}
+  .chip-n.vazio{--c:#94A3B8}
+  .barra{height:12px;border-radius:8px;background:#F1F5F9;overflow:hidden;display:flex;min-width:90px}
+  .barra i{display:block;height:100%}
+  .tab-w{overflow-x:auto;border:2px solid var(--borda);border-radius:14px;background:#fff;margin-top:10px}
+  table.tb{border-collapse:collapse;width:100%;font-size:15px}
+  .tb th,.tb td{padding:8px 10px;border-bottom:1px solid #EFE6D3;text-align:left;vertical-align:middle}
+  .tb thead th{background:#FBF6EA;font-size:13px;color:var(--suave);position:sticky;top:0}
+  .tb td.c,.tb th.c{text-align:center}
+  .tb tr:last-child td{border-bottom:0}
+  .mat th.nm,.mat td.nm{position:sticky;left:0;background:#fff;z-index:1;min-width:150px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mat thead th.nm{background:#FBF6EA;z-index:2}
+  .mat td.cel{text-align:center;font-weight:800;font-size:14px;min-width:62px;border-left:1px solid #F5EEDD}
+  .mat th.hab{font-size:12px;writing-mode:vertical-rl;transform:rotate(180deg);height:120px;white-space:nowrap;text-align:left;padding:6px 4px}
+  .cod{font-family:ui-monospace,Consolas,monospace;font-size:13px;font-weight:700}
+  .desc{font-size:13px;color:var(--suave);line-height:1.35}
+  .situ{font-size:12px;font-weight:800;border-radius:8px;padding:3px 8px;white-space:nowrap}
+  .alerta{background:#FEF3C7;border:2px solid #FCD34D;border-radius:14px;padding:12px 14px;margin-top:12px}
+  .vazio-box{background:#fff;border:2px dashed var(--borda);border-radius:16px;padding:22px;text-align:center;color:var(--suave)}
+  .perg{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:12px 14px}
+  .perg .cab{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+  .perg .en{font-weight:700;white-space:pre-line;max-height:5.6em;overflow:hidden}
+  .alts-r{display:grid;gap:5px;margin-top:8px}
+  .alt-r{display:grid;grid-template-columns:26px 1fr 110px 46px;gap:8px;align-items:center;font-size:14px}
+  .alt-r .f{font-weight:800;text-align:center;border-radius:6px;color:#fff;padding:1px 0}
+  .alt-r.ok .tx{font-weight:800;color:#166534}
+  .alt-r .tx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .f1{background:#DC2626}.f2{background:#2563EB}.f3{background:#CA8A04}.f4{background:#16A34A}
+  .campo-l{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:700;color:var(--suave)}
+  .inp,.sel,textarea.inp{border:2px solid var(--borda);border-radius:12px;padding:10px 12px;font:inherit;background:#fff;color:var(--tinta);width:100%}
+  .form-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  .rub td.cel{padding:4px}
+  .rub button.nv{width:100%;min-width:64px;min-height:44px;border-radius:10px;border:2px solid var(--borda);background:#fff;font-weight:800;font-size:14px;cursor:pointer}
+  .ind-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--borda);border-radius:30px;padding:6px 12px;font-size:14px;font-weight:700;cursor:pointer}
+  .ind-chip.on{background:#DCFCE7;border-color:#16A34A}
+  .modal-f{position:fixed;inset:0;background:#0007;display:grid;place-items:center;padding:16px;z-index:50}
+  .modal-f .caixa{background:#fff;border-radius:20px;padding:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1C2A22;color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;z-index:60;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+  .toast.on{opacity:1}
+  .legenda{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .texto-form{white-space:pre-wrap;font-size:15px;background:#FBF6EA;border:2px solid var(--borda);border-radius:12px;padding:14px;max-height:52vh;overflow:auto}
+  .filtros{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
+  .filtros .campo-l{min-width:150px}
+  @media print{.topo,.abas,.rodape,.nao-imprimir,.btn{display:none!important}.pagina{padding:0}.cartao,.tab-w{border-width:1px}body{background:#fff}.tab-w{overflow:visible}}
+  @media (max-width:640px){.alt-r{grid-template-columns:24px 1fr 70px 40px}.mat th.nm,.mat td.nm{min-width:110px;max-width:130px}}
+  .so-cel{display:none}@media (max-width:760px){.so-cel{display:block;color:#6D28D9;font-weight:700}}
+</style>
+<main class="pagina">
+  <div class="av-topo">
+    <div><span class="selo">ÁREA DO PROFESSOR</span><h1>Painel de Avaliação</h1>
+    <p>Resultados do Quiz ao vivo, avaliações por indicadores e relatórios dos jogos, organizados por turma e pelas habilidades do Currículo de Referência de MS.</p></div>
+  </div>
+  <nav class="abas" id="abas">
+    <a href="#inicio" data-aba="inicio">🏠 Visão geral</a>
+    <a href="#turmas" data-aba="turmas">👥 Turmas</a>
+    <a href="#atividades" data-aba="atividades">🗂️ Atividades</a>
+    <a href="#rubrica" data-aba="rubrica">✅ Avaliar com indicadores</a>
+    <a href="#importar" data-aba="importar">📥 Relatórios dos jogos</a>
+    <a href="#config" data-aba="config">⚙️ Níveis e backup</a>
+  </nav>
+  <div id="app"><div class="vazio-box">Carregando…</div></div>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="modal"></div>
+
+<script src="catalogo.js"></script>
+<script src="curriculo/habilidades.js"></script>
+<script type="module">
+import * as AV from './avaliacao-dados.js';
+/* =========================================================
+   PAINEL DE AVALIAÇÃO — JRM Aventuras Educativas
+   Fontes: Quiz STE ao vivo (registro automático), avaliação por
+   indicadores (rubrica de 4 níveis, para qualquer atividade) e
+   relatórios copiados dos jogos. Tudo fica neste navegador.
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let toastT; const toast=m=>{ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),3200); };
+const H=()=>window.HABILIDADES||{};
+const COMPS={lp:'Língua Portuguesa',mat:'Matemática',cie:'Ciências',his:'História',geo:'Geografia',art:'Arte',ef:'Educação Física',ing:'Língua Inglesa',er:'Ensino Religioso',rob:'Robótica'};
+const TIPO={quiz:['⚡','Quiz ao vivo'],rubrica:['✅','Avaliação por indicadores'],jogo:['🎮','Relatórios de jogo']};
+const fmtData=ms=>new Date(ms).toLocaleDateString('pt-BR');
+const hojeISO=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const pctTxt=v=>v==null?'—':Math.round(v)+'%';
+const descHab=(c,n)=>{ const h=H()[c]; const d=h&&h[3]?h[3]:''; return n&&d.length>n?d.slice(0,n).replace(/\s\S*$/,'')+'…':d; };
+const normHab=h=>{ h=String(h||'').trim().replace(/\s+/g,''); if(!h) return ''; const m=h.match(/^(?:MS\.)?(EF\d\d[A-Za-z]{2}\d\d)(?:\.([sn])\.(\d\d))?$/i); if(!m) return h.slice(0,40); const b='MS.'+m[1].toUpperCase(); return /00$/.test(m[1])&&m[2]?b+'.'+m[2].toLowerCase()+'.'+m[3]:b; };
+function baixar(nome,conteudo,tipo='text/csv;charset=utf-8'){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo})); a.download=nome; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); }
+const csv=linhas=>'﻿'+linhas.map(l=>l.map(c=>{ c=String(c??''); return /[;"\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(';')).join('\r\n');
+const nomeArq=t=>String(t||'relatorio').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w-]+/g,'-').replace(/-+/g,'-').toLowerCase().slice(0,50);
+async function copiar(txt){ try{ await navigator.clipboard.writeText(txt); toast('Copiado! 📋'); }catch(e){ const t=document.createElement('textarea'); t.value=txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); toast('Copiado! 📋'); } }
+function abrirModal(h){ $('#modal').innerHTML=`<div class="modal-f" id="mf"><div class="caixa" role="dialog" aria-modal="true">${h}</div></div>`; $('#mf').addEventListener('click',e=>{ if(e.target.id==='mf') fecharModal(); }); }
+const fecharModal=()=>{ $('#modal').innerHTML=''; };
+
+/* ---------- dados ---------- */
+let ATV=[], TUR=[], IND=[], NIV=AV.NIVEIS_PADRAO;
+async function carregar(){
+  [ATV,TUR,IND,NIV]=await Promise.all([AV.todos('atividades'),AV.todos('turmas'),AV.todos('indicadores'),AV.niveis()]);
+  for(const a of ATV) if(a.turma&&!TUR.some(t=>t.id===AV.idTurma(a.turma))){ const t=await AV.garantirTurma(a.turma); TUR.push(t); }
+  ATV.sort((a,b)=>b.data-a.data); TUR.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR',{numeric:true}));
+}
+const turmaDe=a=>a.turma?TUR.find(t=>t.id===AV.idTurma(a.turma)):null;
+const nivelK=p=>AV.nivelDe(p,NIV);
+const chip=p=>{ const k=nivelK(p); return k==null?'<span class="chip-n vazio">sem dados</span>':`<span class="chip-n" style="--c:${NIV[k].cor}">${esc(NIV[k].nome)}</span>`; };
+const fundo=p=>{ const k=nivelK(p); return k==null?'':`background:color-mix(in srgb,${NIV[k].cor} 18%,#fff);color:color-mix(in srgb,${NIV[k].cor} 85%,#000)`; };
+const situacao=p=>p==null?'':p<NIV[1].min?['Retomar','#DC2626']:p<NIV[2].min?['Em desenvolvimento','#D97706']:['Consolidada','#16A34A'];
+const situHtml=p=>{ const s=situacao(p); return s?`<span class="situ" style="background:color-mix(in srgb,${s[1]} 15%,#fff);color:${s[1]}">${s[0]}</span>`:''; };
+const barraNiveis=cont=>{ const t=cont.reduce((a,b)=>a+b,0); return `<div class="barra" title="${NIV.map((n,i)=>n.nome+': '+cont[i]).join(' · ')}">${t?cont.map((c,i)=>c?`<i style="width:${100*c/t}%;background:${NIV[i].cor}"></i>`:'').join(''):''}</div>`; };
+const legenda=()=>`<div class="legenda">${NIV.map((n,i)=>`<span class="chip-n" style="--c:${n.cor}">${esc(n.nome)} · ${i<3?`${n.min}% a ${NIV[i+1].min-1}%`:`${n.min}% ou mais`}</span>`).join('')}</div>`;
+
+/* valor de um item para um estudante, de 0 a 1, com peso */
+function valor(a,u,it){
+  const r=(a.res[u]||{})[it.id]; if(r==null) return null;
+  if(a.tipo==='quiz') return {v:r.ok?1:0,w:1,nr:!r.r};
+  if(a.tipo==='rubrica') return r>=1&&r<=4?{v:AV.pctDaRubrica(r,NIV)/100,w:1}:null;
+  if(a.tipo==='jogo') return r.total?{v:r.ok/r.total,w:r.total}:null;
+  return null;
+}
+const soma=(o,k,v,w)=>{ const x=o[k]||(o[k]={s:0,w:0}); x.s+=v*w; x.w+=w; };
+const pctDe=x=>x&&x.w?100*x.s/x.w:null;
+/* resumo de uma atividade por estudante */
+function resumoAtividade(a){
+  const t=turmaDe(a), L=[];
+  Object.entries(a.alunos||{}).forEach(([u,al])=>{ const g={s:0,w:0}; let nr=0, n=0;
+    a.itens.forEach(it=>{ const x=valor(a,u,it); if(!x) return; n++; g.s+=x.v*x.w; g.w+=x.w; if(x.nr) nr++; });
+    if(n) L.push({u,nome:al.nome,k:AV.alunoDe(t,al.nome),pct:pctDe(g),n,nr,ok:a.tipo==='quiz'?a.itens.filter(it=>{ const x=valor(a,u,it); return x&&x.v===1; }).length:null}); });
+  return L.sort((x,y)=>(y.pct-x.pct)||x.nome.localeCompare(y.nome,'pt-BR'));
+}
+/* agregação da turma (com filtros) */
+function agregar(turma,filtro={}){
+  const AL={}, HAB={}, INDI={}, desconhecidos={}; const ats=ATV.filter(a=>turmaDe(a)===turma&&(!filtro.comp||a.componente===filtro.comp)&&(!filtro.de||a.data>=filtro.de)&&(!filtro.ate||a.data<=filtro.ate));
+  turma.alunos.forEach(a=>AL[a.k]={k:a.k,nome:a.nome,g:{s:0,w:0},hab:{},ind:{},ats:new Set()});
+  ats.forEach(a=>{ Object.entries(a.alunos||{}).forEach(([u,al])=>{
+    const k=AV.alunoDe(turma,al.nome); if(!k){ (desconhecidos[AV.chave(al.nome)]=desconhecidos[AV.chave(al.nome)]||{nome:al.nome,ats:new Set()}).ats.add(a.titulo); return; }
+    const S=AL[k]||(AL[k]={k,nome:al.nome,g:{s:0,w:0},hab:{},ind:{},ats:new Set()});
+    a.itens.forEach(it=>{ const x=valor(a,u,it); if(!x) return; S.ats.add(a.id); S.g.s+=x.v*x.w; S.g.w+=x.w;
+      (it.hab||[]).forEach(h=>{ soma(S.hab,h,x.v,x.w); soma(HAB,h,x.v,x.w); });
+      if(it.ind){ soma(S.ind,it.ind,x.v,x.w); soma(INDI,it.ind,x.v,x.w); } }); }); });
+  const alunos=Object.values(AL).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  return {ats,alunos,HAB,INDI,desconhecidos};
+}
+
+/* =========================================================
+   TELAS
+   ========================================================= */
+function marcarAba(a){ $$('#abas a').forEach(x=>x.classList.toggle('on',x.dataset.aba===a)); }
+async function rota(){
+  const h=decodeURIComponent(location.hash.slice(1)); fecharModal();
+  await carregar();
+  if(h.startsWith('a=')) return telaAtividade(h.slice(2));
+  if(h.startsWith('t=')) return telaTurma(h.slice(2));
+  if(h.startsWith('rubrica')) return telaRubrica(h.split('=')[1]||null);
+  if(h==='turmas') return telaTurmas();
+  if(h==='atividades') return telaAtividades();
+  if(h==='importar') return telaImportar();
+  if(h==='config') return telaConfig();
+  return telaInicio();
+}
+window.addEventListener('hashchange',rota);
+
+/* ---------- visão geral ---------- */
+function itemAtv(a){ const L=resumoAtividade(a), m=L.length?L.reduce((s,x)=>s+x.pct,0)/L.length:null;
+  return `<a class="item-at" href="#a=${a.id}"><span class="ic">${TIPO[a.tipo][0]}</span><span class="tx"><b>${esc(a.titulo)}</b><small>${fmtData(a.data)} · ${a.turma?esc(a.turma):'<i>sem turma</i>'} · ${L.length} estudante${L.length!==1?'s':''}${a.tipo==='quiz'?` · ${a.aplicadas||0} pergunta${a.aplicadas!==1?'s':''}`:''}</small></span><span class="pct">${pctTxt(m)}</span></a>`; }
+function telaInicio(){
+  marcarAba('inicio');
+  const nq=ATV.filter(a=>a.tipo==='quiz').length, nr=ATV.filter(a=>a.tipo==='rubrica').length, nj=ATV.filter(a=>a.tipo==='jogo').length;
+  app.innerHTML=`<div class="grade-c">
+      <div class="cartao"><div class="rot">Turmas</div><div class="num">${TUR.length}</div></div>
+      <div class="cartao"><div class="rot">Quizzes registrados</div><div class="num">${nq}</div></div>
+      <div class="cartao"><div class="rot">Avaliações por indicadores</div><div class="num">${nr}</div></div>
+      <div class="cartao"><div class="rot">Relatórios de jogos</div><div class="num">${nj}</div></div></div>
+    <div class="bloco grade-c" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div class="cartao"><h2>Últimas atividades</h2>${ATV.length?`<div class="lista-at">${ATV.slice(0,6).map(itemAtv).join('')}</div>`:`<div class="vazio-box">Nenhuma atividade ainda. Rode um <a href="quiz/">Quiz ao vivo</a> ou faça uma <a href="#rubrica">avaliação por indicadores</a>.</div>`}</div>
+      <div class="cartao"><h2>Como funciona</h2>
+        <p><b>⚡ Quiz ao vivo:</b> cada resposta é registrada sozinha, pergunta por pergunta. Ao criar o quiz, informe a habilidade de cada pergunta.</p>
+        <p><b>✅ Avaliar com indicadores:</b> para qualquer atividade de qualquer componente (seminário, experimento, produção de texto, jogo em sala). Escolha habilidades do currículo ou seus próprios indicadores e marque o nível de cada estudante.</p>
+        <p><b>📥 Relatórios dos jogos:</b> os estudantes copiam o relatório na tela Desempenho dos jogos e você cola aqui.</p>
+        <p><b>📊 Na turma:</b> veja o desempenho por habilidade, os estudantes que precisam de apoio, a planilha e um texto pronto para os formulários.</p>
+        <p class="mini">🔒 Os dados ficam só neste navegador. Faça <a href="#config">backup</a> de vez em quando ou para levar a outro computador.</p></div></div>
+    ${TUR.length?`<div class="bloco cartao"><h2>Turmas</h2><div class="lista-at">${TUR.map(itemTurma).join('')}</div></div>`:''}`;
+}
+function itemTurma(t){ const g=agregar(t); const ps=g.alunos.filter(a=>a.g.w).map(a=>pctDe(a.g)); const m=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;
+  return `<a class="item-at" href="#t=${t.id}"><span class="ic">👥</span><span class="tx"><b>${esc(t.nome)}</b><small>${g.ats.length} atividade${g.ats.length!==1?'s':''} · ${ps.length} estudante${ps.length!==1?'s':''} avaliado${ps.length!==1?'s':''}${t.alunos.length?` · lista com ${t.alunos.length}`:''}</small></span><span class="pct">${pctTxt(m)}</span></a>`; }
+function telaTurmas(){
+  marcarAba('turmas');
+  app.innerHTML=`<div class="cartao"><div class="linha" style="justify-content:space-between"><h2>Turmas</h2><button class="btn ipe peq" data-acao="nova-turma">＋ Nova turma</button></div>
+    <p class="mini">As turmas também são criadas sozinhas quando você abre um quiz informando a turma.</p>
+    ${TUR.length?`<div class="lista-at">${TUR.map(itemTurma).join('')}</div>`:'<div class="vazio-box">Nenhuma turma ainda.</div>'}</div>`;
+}
+function telaAtividades(){
+  marcarAba('atividades');
+  app.innerHTML=`<div class="cartao"><h2>Todas as atividades</h2><p class="mini">Toque numa atividade para ver o relatório completo.</p>
+    ${ATV.length?`<div class="lista-at">${ATV.map(itemAtv).join('')}</div>`:'<div class="vazio-box">Nenhuma atividade registrada ainda.</div>'}</div>`;
+}
+
+/* ---------- relatório de uma atividade ---------- */
+function telaAtividade(id){
+  marcarAba('atividades');
+  const a=ATV.find(x=>x.id===id); if(!a){ app.innerHTML='<div class="vazio-box">Atividade não encontrada neste navegador.</div>'; return; }
+  const L=resumoAtividade(a), t=turmaDe(a), med=L.length?L.reduce((s,x)=>s+x.pct,0)/L.length:null;
+  const cont=[0,0,0,0]; L.forEach(x=>cont[nivelK(x.pct)]++);
+  const itensAp=a.tipo==='quiz'?a.itens.slice(0,a.aplicadas||0):a.itens;
+  const porItem=itensAp.map(it=>{ const g={s:0,w:0}, dist=[0,0,0,0,0]; let tempo=0,nt=0;
+    Object.keys(a.alunos).forEach(u=>{ const x=valor(a,u,it); if(!x) return; g.s+=x.v*x.w; g.w+=x.w; const r=(a.res[u]||{})[it.id]; if(a.tipo==='quiz'){ dist[r.r||0]++; if(r.seg!=null&&r.r){ tempo+=r.seg; nt++; } } });
+    return {it,pct:pctDe(g),dist,tempo:nt?tempo/nt:null}; });
+  const HAB={}; itensAp.forEach(it=>Object.keys(a.alunos).forEach(u=>{ const x=valor(a,u,it); if(x) (it.hab||[]).forEach(h=>soma(HAB,h,x.v,x.w)); }));
+  const desconh=t?L.filter(x=>!x.k):[];
+  app.innerHTML=`<div class="cartao">
+      <div class="linha" style="justify-content:space-between;align-items:flex-start"><div><span class="tag ${a.tipo}">${TIPO[a.tipo][0]} ${TIPO[a.tipo][1]}</span>
+        <h2 style="margin-top:8px">${esc(a.titulo)}</h2><div class="mini">${fmtData(a.data)}${a.componente?' · '+esc(COMPS[a.componente]||a.componente):''}${a.ano?' · '+a.ano+'º ano':''}${a.tipo==='quiz'&&!a.finalizada?' · <b>quiz não finalizado</b> (registrado até a pergunta '+(a.aplicadas||0)+')':''}</div></div>
+        <div class="linha nao-imprimir"><label class="campo-l" style="min-width:150px">Turma<input class="inp" id="at-turma" list="dl-tur" value="${esc(a.turma||'')}" placeholder="Informe a turma"></label><datalist id="dl-tur">${TUR.map(x=>`<option value="${esc(x.nome)}">`).join('')}</datalist></div></div>
+      <div class="grade-c bloco">
+        <div><div class="rot">Participantes</div><div class="num">${L.length}</div></div>
+        <div><div class="rot">Aproveitamento médio</div><div class="num">${pctTxt(med)}</div>${med!=null?chip(med):''}</div>
+        <div><div class="rot">${a.tipo==='quiz'?'Perguntas aplicadas':'Itens avaliados'}</div><div class="num">${itensAp.length}${a.tipo==='quiz'?`<small> de ${a.itens.length}</small>`:''}</div></div>
+        <div><div class="rot">Estudantes por nível</div>${barraNiveis(cont)}<div class="mini" style="margin-top:4px">${NIV.map((n,i)=>`${n.curto} ${cont[i]}`).join(' · ')}</div></div></div>
+      <div class="linha bloco nao-imprimir"><button class="btn peq" data-acao="csv-atv">⬇ Planilha (CSV)</button><button class="btn peq" onclick="print()">🖨️ Imprimir</button>
+        ${a.tipo!=='jogo'?`<button class="btn peq" data-acao="${a.tipo==='rubrica'?'editar-rub':'editar-habs'}">✏️ ${a.tipo==='rubrica'?'Editar avaliação':'Habilidades das perguntas'}</button>`:''}
+        ${t?`<a class="btn peq" href="#t=${t.id}">👥 Ver a turma</a>`:''}<button class="btn peq perigo" data-acao="apagar-atv">🗑 Apagar</button></div>
+      ${desconh.length?`<div class="alerta">⚠️ ${desconh.length} nome${desconh.length>1?'s':''} não ${desconh.length>1?'estão':'está'} na lista da turma: <b>${desconh.map(x=>esc(x.nome)).join(', ')}</b>. <a href="#t=${t.id}">Vincular na página da turma</a>.</div>`:''}
+    </div>
+    ${Object.keys(HAB).length?`<div class="bloco cartao"><h3>Por habilidade</h3><div class="tab-w"><table class="tb"><thead><tr><th>Habilidade</th><th class="c">Acerto da turma</th><th>Situação</th></tr></thead><tbody>
+      ${Object.entries(HAB).sort((x,y)=>pctDe(x[1])-pctDe(y[1])).map(([h,x])=>`<tr><td><span class="cod">${esc(h)}</span><div class="desc">${esc(descHab(h,160))}</div></td><td class="c"><b>${pctTxt(pctDe(x))}</b></td><td>${situHtml(pctDe(x))}</td></tr>`).join('')}</tbody></table></div></div>`:
+      (a.tipo==='quiz'?`<div class="alerta">💡 As perguntas deste quiz não têm habilidade marcada. Toque em <b>✏️ Habilidades das perguntas</b> para marcar agora e ver o resultado por habilidade.</div>`:'')}
+    ${a.tipo==='quiz'?`<div class="bloco cartao"><div class="linha" style="justify-content:space-between"><h3>Perguntas</h3><span class="mini">da mais difícil para a mais fácil</span></div><div class="lista-at">
+      ${porItem.slice().sort((x,y)=>x.pct-y.pct).map(p=>{ const n=p.dist.reduce((a,b)=>a+b,0)||1, it=p.it, erro=[1,2,3,4].filter(j=>j!==it.correta).sort((x,y)=>p.dist[y]-p.dist[x])[0];
+        return `<div class="perg"><div class="cab"><div style="min-width:0"><span class="tag">Pergunta ${it.id.slice(1)}</span> ${(it.hab||[]).map(h=>`<span class="tag" title="${esc(descHab(h))}">${esc(h)}</span>`).join(' ')}${it.ind?` <span class="tag">🎯 ${esc(it.ind)}</span>`:''}<div class="en" style="margin-top:6px">${esc(it.rotulo)}</div></div><div style="text-align:right"><div class="pct">${pctTxt(p.pct)}</div><div class="mini">acertaram</div></div></div>
+          <div class="alts-r">${(it.opcoes||[]).map((o,j)=>o?`<div class="alt-r ${j+1===it.correta?'ok':''}"><span class="f f${j+1}">${'ABCD'[j]}</span><span class="tx">${j+1===it.correta?'✔ ':''}${esc(o)}</span><div class="barra"><i style="width:${100*p.dist[j+1]/n}%;background:${j+1===it.correta?'#16A34A':'#94A3B8'}"></i></div><span class="mini">${p.dist[j+1]}</span></div>`:'').join('')}
+            ${p.dist[0]?`<div class="mini">Sem resposta: ${p.dist[0]}</div>`:''}</div>
+          ${p.pct!=null&&p.pct<60&&p.dist[erro]>=Math.max(2,0.25*n)?`<div class="mini" style="margin-top:6px">⚠️ <b>${Math.round(100*p.dist[erro]/n)}%</b> marcaram “${esc(it.opcoes[erro-1])}”: vale discutir esse erro com a turma.</div>`:''}
+          ${p.tempo!=null?`<div class="mini">⏱ tempo médio de resposta: ${p.tempo.toFixed(1)} s</div>`:''}</div>`; }).join('')}</div></div>`:''}
+    <div class="bloco cartao"><h3>Estudantes</h3>${legenda()}<div class="tab-w"><table class="tb mat"><thead><tr><th class="nm">Estudante</th><th class="c">${a.tipo==='quiz'?'Acertos':'Itens'}</th><th class="c">%</th><th>Nível</th>${a.tipo==='quiz'?'<th class="c">Sem resposta</th><th class="c">Saídas da tela</th>':''}${itensAp.map(it=>`<th class="c" title="${esc(it.rotulo)}">${a.tipo==='quiz'?it.id.slice(1):esc(it.rotulo.slice(0,14))}</th>`).join('')}</tr></thead><tbody>
+      ${L.map(x=>`<tr><td class="nm">${esc(x.nome)}${t&&!x.k?' <span title="fora da lista da turma">⚠️</span>':''}</td><td class="c">${a.tipo==='quiz'?`${x.ok}/${x.n}`:x.n}</td><td class="c"><b>${pctTxt(x.pct)}</b></td><td>${chip(x.pct)}</td>${a.tipo==='quiz'?`<td class="c">${x.nr||''}</td><td class="c">${(a.saidas||{})[x.u]?'🛡️ '+a.saidas[x.u]:''}</td>`:''}
+        ${itensAp.map(it=>{ const r=(a.res[x.u]||{})[it.id]; if(r==null) return '<td class="cel">·</td>';
+          if(a.tipo==='quiz') return `<td class="cel" style="${r.ok?'background:#DCFCE7;color:#166534':r.r?'background:#FEE2E2;color:#991B1B':'color:#94A3B8'}">${r.r?'ABCD'[r.r-1]:'—'}</td>`;
+          if(a.tipo==='rubrica') return `<td class="cel" style="${fundo(AV.pctDaRubrica(r,NIV))}">${NIV[r-1].curto}</td>`;
+          return `<td class="cel" style="${fundo(100*r.ok/r.total)}">${Math.round(100*r.ok/r.total)}%</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+      ${a.tipo==='quiz'?'<p class="mini">Na tabela: letra marcada por cada estudante (verde = certa, vermelha = errada, — = não respondeu).</p>':''}</div>`;
+  $('#at-turma').onchange=async e=>{ a.turma=e.target.value.trim().slice(0,30); if(a.turma) await AV.garantirTurma(a.turma); await AV.salvar('atividades',a); toast('Turma atualizada.'); rota(); };
+  ACAO.atual=a;
+}
+function csvAtividade(a){
+  const L=resumoAtividade(a), its=a.tipo==='quiz'?a.itens.slice(0,a.aplicadas||0):a.itens;
+  const cab=['Estudante','%','Nível',...its.map(it=>(a.tipo==='quiz'?'P'+it.id.slice(1):it.rotulo)+((it.hab||[]).length?' ('+it.hab.join(', ')+')':''))];
+  const lin=L.map(x=>[x.nome,Math.round(x.pct),NIV[nivelK(x.pct)].nome,...its.map(it=>{ const r=(a.res[x.u]||{})[it.id]; if(r==null) return ''; if(a.tipo==='quiz') return r.r?('ABCD'[r.r-1]+(r.ok?' ✔':' ✖')):'sem resposta'; if(a.tipo==='rubrica') return NIV[r-1].nome; return r.ok+'/'+r.total; })]);
+  baixar(`${nomeArq(a.titulo)}-${new Date(a.data).toISOString().slice(0,10)}.csv`,csv([[a.titulo],[`Turma: ${a.turma||'-'}`,`Data: ${fmtData(a.data)}`],[],cab,...lin]));
+}
+function modalHabs(a){
+  abrirModal(`<h2>Habilidades das perguntas</h2><p class="mini">Informe o código do Currículo de MS (ex.: MS.EF06MA03). O relatório por habilidade é recalculado na hora.</p>
+    <datalist id="dl-h">${Object.entries(H()).filter(([k,v])=>!a.componente||v[0]===a.componente).slice(0,600).map(([k,v])=>`<option value="${k}">${esc((v[3]||'').slice(0,80))}</option>`).join('')}</datalist>
+    <div class="lista-at">${a.itens.map((it,i)=>`<div class="perg"><div class="en" style="max-height:3em">${i+1}. ${esc(it.rotulo)}</div><div class="form-g" style="margin-top:6px"><label class="campo-l">Habilidade<input class="inp" data-h="${i}" list="dl-h" value="${esc((it.hab||[])[0]||'')}"></label><label class="campo-l">Indicador (opcional)<input class="inp" data-ind="${i}" maxlength="120" value="${esc(it.ind||'')}"></label></div></div>`).join('')}</div>
+    <div class="linha bloco" style="justify-content:flex-end"><button class="btn" data-acao="fechar">Cancelar</button><button class="btn mata" data-acao="salvar-habs">💾 Salvar</button></div>`);
+}
+
+/* ---------- turma ---------- */
+let FILTRO={};
+function telaTurma(id){
+  marcarAba('turmas');
+  const t=TUR.find(x=>x.id===id); if(!t){ app.innerHTML='<div class="vazio-box">Turma não encontrada.</div>'; return; }
+  const G=agregar(t,FILTRO), av=G.alunos.filter(x=>x.g.w), ps=av.map(x=>pctDe(x.g)), med=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;
+  const cont=[0,0,0,0]; ps.forEach(p=>cont[nivelK(p)]++);
+  const habs=Object.entries(G.HAB).map(([h,x])=>({h,p:pctDe(x)})).sort((a,b)=>a.p-b.p);
+  const inds=Object.entries(G.INDI).map(([h,x])=>({h,p:pctDe(x)})).sort((a,b)=>a.p-b.p);
+  const nivHab=h=>{ const c=[0,0,0,0]; av.forEach(x=>{ const p=pctDe(x.hab[h]); if(p!=null) c[nivelK(p)]++; }); return c; };
+  const nivInd=h=>{ const c=[0,0,0,0]; av.forEach(x=>{ const p=pctDe(x.ind[h]); if(p!=null) c[nivelK(p)]++; }); return c; };
+  const des=Object.values(G.desconhecidos);
+  const comps=[...new Set(ATV.filter(a=>turmaDe(a)===t).map(a=>a.componente).filter(Boolean))];
+  app.innerHTML=`<div class="cartao">
+      <div class="linha" style="justify-content:space-between"><div><span class="selo">TURMA</span><h2 style="margin-top:6px">${esc(t.nome)}</h2></div>
+        <div class="linha nao-imprimir"><button class="btn peq" data-acao="lista">👥 Estudantes da turma (${t.alunos.length})</button><button class="btn peq ipe" data-acao="texto-form">📝 Texto para o formulário</button><button class="btn peq" data-acao="csv-turma">⬇ Planilha (CSV)</button><button class="btn peq" onclick="print()">🖨️ Imprimir</button></div></div>
+      <div class="filtros nao-imprimir"><label class="campo-l">Componente<select class="sel" id="f-comp"><option value="">Todos</option>${comps.map(c=>`<option value="${c}" ${FILTRO.comp===c?'selected':''}>${esc(COMPS[c]||c)}</option>`).join('')}</select></label>
+        <label class="campo-l">De<input class="inp" type="date" id="f-de" value="${FILTRO.de?new Date(FILTRO.de).toISOString().slice(0,10):''}"></label><label class="campo-l">Até<input class="inp" type="date" id="f-ate" value="${FILTRO.ate?new Date(FILTRO.ate-864e5+1).toISOString().slice(0,10):''}"></label>
+        ${FILTRO.comp||FILTRO.de||FILTRO.ate?'<button class="btn peq" data-acao="limpar-filtro">Limpar filtros</button>':''}</div>
+      <div class="grade-c bloco">
+        <div><div class="rot">Estudantes avaliados</div><div class="num">${av.length}${t.alunos.length?`<small> de ${t.alunos.length}</small>`:''}</div></div>
+        <div><div class="rot">Atividades</div><div class="num">${G.ats.length}</div></div>
+        <div><div class="rot">Aproveitamento médio</div><div class="num">${pctTxt(med)}</div>${med!=null?chip(med):''}</div>
+        <div><div class="rot">Estudantes por nível</div>${barraNiveis(cont)}<div class="mini" style="margin-top:4px">${NIV.map((n,i)=>`${n.curto} ${cont[i]}`).join(' · ')}</div></div></div>
+      ${des.length?`<div class="alerta nao-imprimir">⚠️ <b>Nomes que não estão na lista da turma</b> (digitados no quiz ou nos relatórios). Vincule cada um a um estudante para juntar os resultados:
+        <div class="lista-at">${des.map(d=>`<div class="linha"><b style="min-width:120px">${esc(d.nome)}</b><select class="sel" data-vinc="${esc(AV.chave(d.nome))}" style="max-width:260px"><option value="">— vincular a… —</option>${t.alunos.map(a=>`<option value="${esc(a.k)}">${esc(a.nome)}</option>`).join('')}<option value="+">➕ Adicionar à lista como novo estudante</option></select><span class="mini">${[...d.ats].slice(0,2).map(esc).join(', ')}</span></div>`).join('')}</div></div>`:''}
+      ${!t.alunos.length&&av.length?`<p class="mini nao-imprimir">💡 Dica: cadastre a lista da turma em <b>👥 Estudantes da turma</b>. Assim o painel junta “Ana”, “ana” e “Ana C.” como a mesma estudante.</p>`:''}
+    </div>
+    ${!G.ats.length?'<div class="bloco vazio-box">Nenhuma atividade desta turma com esses filtros.</div>':`
+    <div class="bloco cartao"><h3>Habilidades do Currículo de MS</h3>${legenda()}
+      ${habs.length?`<div class="tab-w"><table class="tb"><thead><tr><th>Habilidade</th><th class="c">Turma</th><th>Estudantes por nível</th><th>Situação</th></tr></thead><tbody>
+      ${habs.map(({h,p})=>{ const c=nivHab(h); return `<tr><td><span class="cod">${esc(h)}</span><div class="desc">${esc(descHab(h,170))}</div></td><td class="c"><b>${pctTxt(p)}</b></td><td style="min-width:140px">${barraNiveis(c)}<div class="mini">${c[2]+c[3]} de ${c.reduce((a,b)=>a+b,0)} no adequado ou acima</div></td><td>${situHtml(p)}</td></tr>`; }).join('')}</tbody></table></div>`:'<p class="mini">As atividades desta turma ainda não têm habilidades marcadas.</p>'}</div>
+    ${inds.length?`<div class="bloco cartao"><h3>Indicadores do professor</h3><div class="tab-w"><table class="tb"><thead><tr><th>Indicador</th><th class="c">Turma</th><th>Estudantes por nível</th><th>Situação</th></tr></thead><tbody>
+      ${inds.map(({h,p})=>`<tr><td><b>${esc(h)}</b></td><td class="c"><b>${pctTxt(p)}</b></td><td style="min-width:140px">${barraNiveis(nivInd(h))}</td><td>${situHtml(p)}</td></tr>`).join('')}</tbody></table></div></div>`:''}
+    <div class="bloco cartao"><h3>Estudantes × habilidades</h3><p class="mini">Toque no nome para ver o histórico do estudante.</p>
+      <div class="tab-w"><table class="tb mat"><thead><tr><th class="nm">Estudante</th><th class="c">Geral</th>${habs.map(({h})=>`<th class="hab" title="${esc(descHab(h))}">${esc(h.replace('MS.EF',''))}</th>`).join('')}${inds.map(({h})=>`<th class="hab" title="${esc(h)}">${esc(h.slice(0,22))}</th>`).join('')}</tr></thead><tbody>
+      ${G.alunos.map(x=>{ const p=pctDe(x.g); return `<tr><td class="nm"><a href="#" data-aluno="${esc(x.k)}">${esc(x.nome)}</a></td><td class="cel" style="${fundo(p)}">${pctTxt(p)}</td>${habs.map(({h})=>{ const q=pctDe(x.hab[h]); return `<td class="cel" style="${fundo(q)}">${q==null?'·':Math.round(q)}</td>`; }).join('')}${inds.map(({h})=>{ const q=pctDe(x.ind[h]); return `<td class="cel" style="${fundo(q)}">${q==null?'·':Math.round(q)}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>
+    <div class="bloco cartao"><h3>Atividades da turma</h3><div class="lista-at">${G.ats.map(itemAtv).join('')}</div></div>`}`;
+  const filtrar=()=>{ const de=$('#f-de').value, ate=$('#f-ate').value; FILTRO={comp:$('#f-comp').value||'',de:de?new Date(de+'T00:00').getTime():null,ate:ate?new Date(ate+'T00:00').getTime()+864e5-1:null}; telaTurma(id); };
+  ['#f-comp','#f-de','#f-ate'].forEach(s=>$(s).onchange=filtrar);
+  ACAO.turma=t; ACAO.G=G;
+}
+function textoFormulario(t,G,comNomes){
+  const av=G.alunos.filter(x=>x.g.w), ps=av.map(x=>pctDe(x.g)), med=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:0;
+  const cont=[0,0,0,0]; ps.forEach(p=>cont[nivelK(p)]++);
+  const datas=G.ats.map(a=>a.data), tipos={quiz:0,rubrica:0,jogo:0}; G.ats.forEach(a=>tipos[a.tipo]++);
+  const habs=Object.entries(G.HAB).map(([h,x])=>({h,p:pctDe(x)}));
+  const fx=(lo,hi)=>habs.filter(x=>x.p>=lo&&x.p<hi).sort((a,b)=>b.p-a.p).map(x=>`• ${x.h} – ${descHab(x.h,120)||'(habilidade do Currículo de MS)'} (${Math.round(x.p)}% de acerto)`);
+  const L=[];
+  { const d1=fmtData(Math.min(...datas)), d2=fmtData(Math.max(...datas)); L.push(`Turma ${t.nome} – ${d1===d2?`em ${d1}`:`período de ${d1} a ${d2}`}.`); }
+  L.push(`${G.ats.length===1?'Foi realizada 1 atividade avaliativa':`Foram realizadas ${G.ats.length} atividades avaliativas`} (${[tipos.quiz?`${tipos.quiz} quiz${tipos.quiz>1?'zes':''} ao vivo`:'',tipos.rubrica?`${tipos.rubrica} avaliaç${tipos.rubrica>1?'ões':'ão'} por indicadores`:'',tipos.jogo?`${tipos.jogo} registro${tipos.jogo>1?'s':''} de jogos digitais`:''].filter(Boolean).join(', ')}), com a participação de ${av.length} estudante${av.length!==1?'s':''}${t.alunos.length?` de ${t.alunos.length} da turma`:''}.`);
+  L.push(`O aproveitamento médio da turma foi de ${Math.round(med)}%. Distribuição dos estudantes por nível: ${NIV.map((n,i)=>`${n.nome} ${cont[i]} (${av.length?Math.round(100*cont[i]/av.length):0}%)`).join('; ')}.`);
+  const a=fx(NIV[2].min,101), b=fx(NIV[1].min,NIV[2].min), c=fx(-1,NIV[1].min);
+  if(a.length) L.push(`\nHabilidades consolidadas (${NIV[2].min}% ou mais):\n${a.join('\n')}`);
+  if(b.length) L.push(`\nHabilidades em desenvolvimento (${NIV[1].min}% a ${NIV[2].min-1}%):\n${b.join('\n')}`);
+  if(c.length) L.push(`\nHabilidades que precisam ser retomadas (abaixo de ${NIV[1].min}%):\n${c.join('\n')}`);
+  const inds=Object.entries(G.INDI).map(([h,x])=>`• ${h}: ${Math.round(pctDe(x))}%`); if(inds.length) L.push(`\nIndicadores acompanhados pelo professor:\n${inds.join('\n')}`);
+  const apoio=av.filter(x=>nivelK(pctDe(x.g))===0);
+  if(apoio.length) L.push(`\n${comNomes?`Estudantes que precisam de acompanhamento (${NIV[0].nome.toLowerCase()}): ${apoio.map(x=>x.nome).join(', ')}.`:`${apoio.length} estudante${apoio.length>1?'s precisam':' precisa'} de acompanhamento individual (nível ${NIV[0].nome.toLowerCase()}).`}`);
+  L.push(`\nEncaminhamentos: ${c.length?'retomar as habilidades com menor aproveitamento, com novas atividades e intervenções em pequenos grupos; ':''}${apoio.length?'acompanhar individualmente os estudantes com menor desempenho; ':''}manter o uso de atividades gamificadas e o registro contínuo para monitorar a evolução da turma.`);
+  return L.join('\n');
+}
+function modalTexto(){ const t=ACAO.turma, G=ACAO.G;
+  const desenha=n=>{ $('#txt-f').textContent=textoFormulario(t,G,n); };
+  abrirModal(`<h2>Texto para o formulário</h2><p class="mini">Um resumo pronto, com base nas atividades desta turma (e nos filtros escolhidos). Copie e ajuste com as suas palavras.</p>
+    <label class="mini" style="display:flex;gap:6px;align-items:center;margin:8px 0"><input type="checkbox" id="com-nomes"> Incluir os nomes dos estudantes que precisam de acompanhamento</label>
+    <div class="texto-form" id="txt-f"></div><div class="linha bloco" style="justify-content:flex-end"><button class="btn" data-acao="fechar">Fechar</button><button class="btn ipe" data-acao="copiar-texto">📋 Copiar texto</button></div>`);
+  desenha(false); $('#com-nomes').onchange=e=>desenha(e.target.checked);
+}
+function csvTurma(){ const t=ACAO.turma, G=ACAO.G; const habs=Object.keys(G.HAB).sort(), inds=Object.keys(G.INDI).sort();
+  const lin=G.alunos.map(x=>{ const p=pctDe(x.g); return [x.nome,p==null?'':Math.round(p),p==null?'':NIV[nivelK(p)].nome,...habs.map(h=>{ const q=pctDe(x.hab[h]); return q==null?'':Math.round(q); }),...inds.map(h=>{ const q=pctDe(x.ind[h]); return q==null?'':Math.round(q); })]; });
+  const tur=['TURMA (média)', '', '',...habs.map(h=>Math.round(pctDe(G.HAB[h]))),...inds.map(h=>Math.round(pctDe(G.INDI[h])))];
+  baixar(`turma-${nomeArq(t.nome)}-${hojeISO()}.csv`,csv([[`Turma ${t.nome} – desempenho em % por habilidade (Currículo de MS)`],[],['Estudante','Geral (%)','Nível',...habs,...inds.map(i=>'Indicador: '+i)],...lin,tur,[],['Habilidade','Descrição'],...habs.map(h=>[h,descHab(h)])]));
+}
+function modalLista(){ const t=ACAO.turma; const vistos=new Set();
+  ATV.filter(a=>turmaDe(a)===t).forEach(a=>Object.values(a.alunos||{}).forEach(al=>vistos.add(al.nome)));
+  abrirModal(`<h2>Estudantes da turma ${esc(t.nome)}</h2><p class="mini">Um nome por linha (nome e sobrenome ajudam a evitar confusão). Os nomes digitados no quiz que forem diferentes podem ser vinculados depois.</p>
+    <textarea class="inp" id="lista-t" rows="12" placeholder="Ana Beatriz Souza&#10;Bruno Lima&#10;…">${esc(t.alunos.map(a=>a.nome).join('\n'))}</textarea>
+    <div class="linha" style="margin-top:8px"><button class="btn peq" data-acao="lista-vistos">➕ Acrescentar os nomes que já apareceram nas atividades (${vistos.size})</button></div>
+    <div class="linha bloco" style="justify-content:flex-end"><button class="btn" data-acao="fechar">Cancelar</button><button class="btn mata" data-acao="salvar-lista">💾 Salvar lista</button></div>`);
+  ACAO.vistos=[...vistos];
+}
+function modalAluno(k){ const t=ACAO.turma, G=ACAO.G, x=G.alunos.find(a=>a.k===k); if(!x) return;
+  const ats=G.ats.filter(a=>x.ats.has(a.id)).map(a=>{ const r=resumoAtividade(a).find(z=>z.k===k); return {a,p:r?r.pct:null}; });
+  abrirModal(`<h2>${esc(x.nome)}</h2><div class="linha" style="margin:6px 0 10px"><span class="pct">${pctTxt(pctDe(x.g))}</span>${chip(pctDe(x.g))}</div>
+    ${Object.keys(x.hab).length?`<h3>Por habilidade</h3><div class="tab-w"><table class="tb"><tbody>${Object.entries(x.hab).sort((a,b)=>pctDe(a[1])-pctDe(b[1])).map(([h,v])=>`<tr><td><span class="cod">${esc(h)}</span><div class="desc">${esc(descHab(h,140))}</div></td><td class="c"><b>${pctTxt(pctDe(v))}</b></td><td>${chip(pctDe(v))}</td></tr>`).join('')}</tbody></table></div>`:''}
+    ${Object.keys(x.ind).length?`<h3 style="margin-top:12px">Indicadores</h3><div class="tab-w"><table class="tb"><tbody>${Object.entries(x.ind).map(([h,v])=>`<tr><td>${esc(h)}</td><td class="c"><b>${pctTxt(pctDe(v))}</b></td><td>${chip(pctDe(v))}</td></tr>`).join('')}</tbody></table></div>`:''}
+    <h3 style="margin-top:12px">Atividades</h3><div class="lista-at">${ats.map(({a,p})=>`<a class="item-at" href="#a=${a.id}"><span class="ic">${TIPO[a.tipo][0]}</span><span class="tx"><b>${esc(a.titulo)}</b><small>${fmtData(a.data)}</small></span><span class="pct">${pctTxt(p)}</span></a>`).join('')}</div>
+    <div class="linha bloco" style="justify-content:flex-end"><button class="btn" data-acao="fechar">Fechar</button></div>`); }
+
+/* ---------- avaliação por indicadores (rubrica) ---------- */
+const SUGESTOES=[
+  'Compreende e interpreta o enunciado e as informações da atividade',
+  'Aplica o conceito estudado para resolver problemas',
+  'Argumenta e justifica as respostas com clareza',
+  'Comunica-se por escrito de forma organizada e adequada',
+  'Comunica-se oralmente com clareza (apresentação, debate)',
+  'Usa o vocabulário próprio do componente',
+  'Participa e colabora com os colegas',
+  'Realiza as atividades com autonomia e responsabilidade',
+  'Pesquisa e seleciona informações em fontes confiáveis',
+  'Usa tecnologias digitais de forma crítica e criativa'
+];
+let RUB=null;
+function telaRubrica(id){
+  marcarAba('rubrica');
+  if(id&&(!RUB||RUB.id!==id)){ const a=ATV.find(x=>x.id===id); RUB=a?JSON.parse(JSON.stringify(a)):null; }
+  if(!RUB||(!id&&RUB.salvo)) RUB={id:AV.novoId('r_'),tipo:'rubrica',titulo:'',turma:'',componente:'',data:Date.now(),itens:[],alunos:{},res:{},finalizada:true,novo:true};
+  const t=RUB.turma?TUR.find(x=>x.id===AV.idTurma(RUB.turma)):null, alunos=t?t.alunos:[];
+  app.innerHTML=`<div class="cartao"><h2>${RUB.novo?'Nova avaliação por indicadores':'Editar avaliação'}</h2>
+      <p class="mini">Serve para qualquer atividade de qualquer componente: seminário, experimento, produção de texto, maquete, jogo em sala, robótica… Escolha os indicadores e marque o nível de cada estudante.</p>
+      <div class="form-g bloco"><label class="campo-l">Atividade<input class="inp" id="r-tit" maxlength="80" value="${esc(RUB.titulo)}" placeholder="Ex.: Seminário sobre o Pantanal"></label>
+        <label class="campo-l">Turma<input class="inp" id="r-tur" list="dl-tur" maxlength="30" value="${esc(RUB.turma)}" placeholder="Ex.: 7º A"></label><datalist id="dl-tur">${TUR.map(x=>`<option value="${esc(x.nome)}">`).join('')}</datalist>
+        <label class="campo-l">Componente<select class="sel" id="r-comp"><option value="">—</option>${Object.entries(COMPS).map(([k,v])=>`<option value="${k}" ${RUB.componente===k?'selected':''}>${v}</option>`).join('')}</select></label>
+        <label class="campo-l">Data<input class="inp" type="date" id="r-data" value="${new Date(RUB.data-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10)}"></label></div></div>
+    <div class="bloco cartao"><h3>1. O que vai ser avaliado</h3>
+      <div class="lista-at">${RUB.itens.map((it,i)=>`<div class="linha" style="background:#FBF6EA;border-radius:12px;padding:8px 10px"><span style="flex:1"><b>${esc(it.rotulo)}</b>${(it.hab||[]).length?` <span class="tag">${esc(it.hab.join(', '))}</span>`:''}</span><button class="btn peq perigo" data-tirar-it="${i}" aria-label="Remover">✕</button></div>`).join('')||'<p class="mini">Nenhum indicador ainda. Adicione abaixo.</p>'}</div>
+      <div class="form-g bloco"><label class="campo-l">➕ Habilidade do Currículo de MS<span class="linha"><input class="inp" id="r-hab" list="dl-h" placeholder="Ex.: MS.EF07CI01" style="flex:1"><button class="btn peq" data-acao="add-hab">Adicionar</button></span></label>
+        <label class="campo-l">➕ Indicador com as suas palavras<span class="linha"><input class="inp" id="r-ind" maxlength="120" placeholder="Ex.: Explica o ciclo da água com exemplos" style="flex:1"><button class="btn peq" data-acao="add-ind">Adicionar</button></span></label></div>
+      <datalist id="dl-h">${Object.entries(H()).filter(([k,v])=>!RUB.componente||v[0]===RUB.componente).slice(0,700).map(([k,v])=>`<option value="${k}">${esc((v[3]||'').slice(0,80))}</option>`).join('')}</datalist>
+      <p class="mini" style="margin-top:10px">Indicadores que valem para todos os componentes (toque para usar):</p>
+      <div class="linha">${[...new Set([...IND.map(i=>i.nome),...SUGESTOES])].map(s=>`<button class="ind-chip ${RUB.itens.some(it=>it.ind===s)?'on':''}" data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>
+    <div class="bloco cartao"><h3>2. Nível de cada estudante</h3>${legenda()}<p class="mini">Toque na célula para mudar: — → ${NIV.map(n=>n.curto).join(' → ')} → —.</p>
+      ${!RUB.turma?'<div class="vazio-box">Informe a turma acima.</div>':!alunos.length?`<div class="vazio-box">A turma ${esc(RUB.turma)} ainda não tem lista de estudantes. <br><button class="btn peq ipe" data-acao="lista-rub" style="margin-top:8px">👥 Cadastrar a lista</button></div>`:!RUB.itens.length?'<div class="vazio-box">Adicione pelo menos um indicador.</div>':`
+      ${RUB.itens.length>2?'<p class="mini so-cel">👉 Arraste a tabela para o lado para ver os outros indicadores.</p>':''}
+      <div class="tab-w"><table class="tb mat rub"><thead><tr><th class="nm">Estudante</th>${RUB.itens.map((it,j)=>`<th class="c" title="${esc(it.rotulo)}" style="min-width:90px;font-size:12px">${esc(it.rotulo.slice(0,40))}<br><button class="btn peq" data-col="${j}" style="min-height:28px;padding:2px 8px;font-size:11px;margin-top:4px">todos ↻</button></th>`).join('')}</tr></thead><tbody>
+      ${alunos.map(al=>`<tr><td class="nm">${esc(al.nome)}</td>${RUB.itens.map(it=>{ const v=(RUB.res[al.k]||{})[it.id]; return `<td class="cel"><button class="nv" data-cel="${esc(al.k)}|${it.id}" style="${v?fundo(AV.pctDaRubrica(v,NIV))+';border-color:'+NIV[v-1].cor:''}">${v?NIV[v-1].curto:'—'}</button></td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`}
+      <div class="linha bloco" style="justify-content:flex-end"><button class="btn mata" data-acao="salvar-rub">💾 Salvar avaliação</button></div></div>`;
+  const ler=()=>{ RUB.titulo=$('#r-tit').value.trim(); RUB.componente=$('#r-comp').value; const d=$('#r-data').value; if(d) RUB.data=new Date(d+'T12:00').getTime(); };
+  $('#r-tit').onchange=ler; $('#r-comp').onchange=()=>{ ler(); telaRubrica(RUB.novo?null:RUB.id); }; $('#r-data').onchange=ler;
+  $('#r-tur').onchange=async e=>{ ler(); RUB.turma=e.target.value.trim().slice(0,30); if(RUB.turma){ const nt=await AV.garantirTurma(RUB.turma); if(!TUR.some(x=>x.id===nt.id)) TUR.push(nt); } telaRubrica(RUB.novo?null:RUB.id); };
+  ACAO.lerRub=ler;
+}
+
+/* ---------- relatórios dos jogos ---------- */
+function lerRelatorios(txt){
+  const out=[]; const blocos=String(txt).replace(/\r/g,'').split(/\n(?=[^\n]+ — Relatório\s*$)/m);
+  for(const b of blocos){ const ls=b.split('\n').map(l=>l.trim()).filter(Boolean); const h=ls.findIndex(l=>/ — Relatório$/.test(l)); if(h<0) continue;
+    const jogo=ls[h].replace(/ — Relatório$/,'').trim(); const est=ls.find(l=>/^Estudante:/.test(l))||'';
+    const m=est.match(/Estudante:\s*(.*?)\s*·\s*Turma:\s*(.*?)\s*·\s*(\d{2})\/(\d{2})\/(\d{4})/); if(!m) continue;
+    const cats=[]; ls.forEach(l=>{ const c=l.match(/^-\s*(.+?):\s*(\d+)\/(\d+)\s*\(\d+%\)\s*$/); if(c) cats.push({rotulo:c[1],ok:+c[2],total:+c[3],hab:[...new Set((c[1].match(/MS\.EF\d\d[A-Z]{2}\d\d(?:\.[sn]\.\d\d)?/g)||[]).map(normHab))]}); });
+    if(!cats.length) continue;
+    const cat=(window.JOGOS||(typeof JOGOS!=='undefined'?JOGOS:[])).find(j=>AV.chave(j.titulo)===AV.chave(jogo));
+    out.push({jogo:cat?cat.titulo:jogo.charAt(0)+jogo.slice(1).toLowerCase(),comp:cat?cat.componente:'',nome:m[1]==='(sem nome)'?'':m[1],turma:m[2]==='-'?'':m[2],data:new Date(+m[5],+m[4]-1,+m[3],12).getTime(),cats});
+  }
+  return out;
+}
+let IMP=[];
+function telaImportar(){
+  marcarAba('importar');
+  app.innerHTML=`<div class="cartao"><h2>Relatórios dos jogos</h2>
+      <p>Nos jogos da plataforma, o estudante abre <b>📊 Desempenho</b> e toca em <b>📋 Copiar relatório</b>. Peça para enviarem no grupo da turma, no Classroom ou por e-mail. Depois, cole aqui um ou vários relatórios de uma vez.</p>
+      <textarea class="inp" id="imp-txt" rows="10" placeholder="EXPEDIÇÃO BONITO — Relatório&#10;Estudante: Ana · Turma: 3º A · 07/11/2026&#10;…"></textarea>
+      <div class="form-g bloco"><label class="campo-l">Turma (se vazio, uso a que está no relatório)<input class="inp" id="imp-tur" list="dl-tur" maxlength="30"></label><datalist id="dl-tur">${TUR.map(x=>`<option value="${esc(x.nome)}">`).join('')}</datalist></div>
+      <div class="linha bloco"><button class="btn ipe" data-acao="ler-imp">🔎 Ler relatórios</button></div>
+      <div id="imp-prev"></div></div>`;
+}
+function previaImport(){
+  IMP=lerRelatorios($('#imp-txt').value); const tf=$('#imp-tur').value.trim();
+  if(!IMP.length){ $('#imp-prev').innerHTML='<div class="alerta">Não encontrei relatórios no texto. Confira se colou o texto completo, começando pela linha “NOME DO JOGO — Relatório”.</div>'; return; }
+  IMP.forEach(r=>{ if(tf) r.turma=tf; });
+  const semT=IMP.filter(r=>!r.turma).length, semN=IMP.filter(r=>!r.nome).length;
+  $('#imp-prev').innerHTML=`<div class="bloco tab-w"><table class="tb"><thead><tr><th>Estudante</th><th>Turma</th><th>Jogo</th><th>Data</th><th class="c">Acertos</th><th>Habilidades</th></tr></thead><tbody>
+    ${IMP.map(r=>{ const ok=r.cats.reduce((a,c)=>a+c.ok,0), to=r.cats.reduce((a,c)=>a+c.total,0); return `<tr><td>${esc(r.nome)||'<i>sem nome</i>'}</td><td>${esc(r.turma)||'<i>sem turma</i>'}</td><td>${esc(r.jogo)}</td><td>${fmtData(r.data)}</td><td class="c">${ok}/${to} (${Math.round(100*ok/to)}%)</td><td class="desc">${[...new Set(r.cats.flatMap(c=>c.hab))].join(', ')}</td></tr>`; }).join('')}</tbody></table></div>
+    ${semT||semN?`<div class="alerta">${semN?`${semN} relatório(s) sem nome serão ignorados. `:''}${semT?`${semT} sem turma: informe a turma no campo acima e leia de novo.`:''}</div>`:''}
+    <div class="linha bloco"><button class="btn mata" data-acao="salvar-imp">💾 Registrar ${IMP.filter(r=>r.nome&&r.turma).length} relatório(s)</button></div>`;
+}
+async function salvarImport(){
+  let n=0;
+  for(const r of IMP.filter(x=>x.nome&&x.turma)){
+    const dia=new Date(r.data).toISOString().slice(0,10), id='j_'+AV.chave(r.jogo).replace(/ /g,'-')+'_'+AV.idTurma(r.turma)+'_'+dia;
+    let a=ATV.find(x=>x.id===id)||{id,tipo:'jogo',titulo:r.jogo,turma:r.turma,componente:r.comp,data:r.data,itens:[],alunos:{},res:{},finalizada:true};
+    const u='a_'+AV.chave(r.nome).replace(/ /g,'_'); a.alunos[u]={nome:r.nome}; a.res[u]={};
+    r.cats.forEach(c=>{ const iid='c_'+AV.chave(c.rotulo.replace(/\(.*\)/,'')).replace(/ /g,'_').slice(0,40); if(!a.itens.some(it=>it.id===iid)) a.itens.push({id:iid,rotulo:c.rotulo.replace(/\s*\(MS\..*\)\s*$/,''),hab:c.hab,ind:''}); a.res[u][iid]={ok:c.ok,total:c.total}; });
+    await AV.garantirTurma(r.turma); await AV.salvar('atividades',a); if(!ATV.includes(a)) ATV.push(a); n++;
+  }
+  toast(`${n} relatório(s) registrado(s)!`); location.hash='atividades';
+}
+
+/* ---------- níveis e backup ---------- */
+async function telaConfig(){
+  marcarAba('config');
+  let persist=false; try{ persist=navigator.storage&&navigator.storage.persisted?await navigator.storage.persisted():false; }catch(e){}
+  app.innerHTML=`<div class="grade-c" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="cartao"><h2>Níveis de desempenho</h2><p class="mini">Faixas usadas em todos os relatórios. O padrão segue a escala de proficiência das avaliações externas (abaixo do básico, básico, adequado e avançado).</p>
+      ${NIV.map((n,i)=>`<div class="form-g" style="grid-template-columns:2fr 1fr;margin-top:8px"><label class="campo-l">Nível ${i+1}<input class="inp" data-nn="${i}" value="${esc(n.nome)}" maxlength="30"></label><label class="campo-l">A partir de (%)<input class="inp" type="number" min="0" max="100" data-nm="${i}" value="${n.min}" ${i===0?'disabled':''}></label></div>`).join('')}
+      <div class="linha bloco"><button class="btn mata" data-acao="salvar-niv">💾 Salvar níveis</button><button class="btn" data-acao="padrao-niv">Voltar ao padrão</button></div></div>
+    <div class="cartao"><h2>Backup dos dados</h2><p>Os registros ficam <b>só neste navegador</b>. Se limpar os dados do navegador ou trocar de computador, eles não vão junto.</p>
+      <p class="mini">${persist?'✅ Este navegador está guardando os dados de forma permanente.':'Dica: toque em “Proteger os dados” para pedir ao navegador que não apague estes registros sozinho.'}</p>
+      <div class="linha"><button class="btn ipe" data-acao="backup">⬇ Baixar backup (.json)</button><label class="btn" style="cursor:pointer">📂 Restaurar backup<input type="file" id="arq-bk" accept=".json" hidden></label>${persist?'':'<button class="btn" data-acao="persistir">🔒 Proteger os dados</button>'}</div>
+      <p class="mini" style="margin-top:14px">Restaurar <b>junta</b> o backup com o que já existe aqui. Serve para levar os registros de um computador para outro.</p>
+      <hr style="border:0;border-top:2px solid var(--borda);margin:16px 0"><button class="btn perigo peq" data-acao="apagar-tudo">🗑 Apagar todos os registros deste navegador</button></div></div>`;
+  $('#arq-bk').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ const n=await AV.importarTudo(JSON.parse(await f.text())); toast(`Backup restaurado: ${n} atividade(s).`); rota(); }catch(err){ toast('Não consegui ler esse arquivo de backup.'); } };
+}
+
+/* ---------- ações ---------- */
+const ACAO={};
+document.addEventListener('change',async e=>{
+  const v=e.target.dataset&&e.target.dataset.vinc; if(v===undefined) return;
+  const t=ACAO.turma, val=e.target.value; if(!val) return;
+  if(val==='+'){ const d=Object.values(ACAO.G.desconhecidos).find(x=>AV.chave(x.nome)===v); t.alunos.push({k:v,nome:d?d.nome:v}); }
+  else t.apelidos[v]=val;
+  await AV.salvar('turmas',t); toast('Vinculado!'); rota();
+});
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-acao],[data-aluno],[data-sug],[data-tirar-it],[data-cel],[data-col]'); if(!el) return;
+  const d=el.dataset;
+  if(d.aluno!==undefined){ e.preventDefault(); return modalAluno(d.aluno); }
+  if(d.sug){ ACAO.lerRub(); const i=RUB.itens.findIndex(it=>it.ind===d.sug); if(i>=0) RUB.itens.splice(i,1); else { const ci=IND.find(x=>x.nome===d.sug); RUB.itens.push({id:AV.novoId('i'),rotulo:d.sug,ind:d.sug,hab:ci?ci.hab||[]:[]}); } return telaRubrica(RUB.novo?null:RUB.id); }
+  if(d.tirarIt!==undefined){ ACAO.lerRub(); RUB.itens.splice(+d.tirarIt,1); return telaRubrica(RUB.novo?null:RUB.id); }
+  if(d.cel){ const [k,iid]=d.cel.split('|'); const r=RUB.res[k]||(RUB.res[k]={}); r[iid]=((r[iid]||0)+1)%5||undefined; if(!r[iid]) delete r[iid];
+    const v=r[iid]; el.textContent=v?NIV[v-1].curto:'—'; el.setAttribute('style',v?fundo(AV.pctDaRubrica(v,NIV))+';border-color:'+NIV[v-1].cor:''); return; }
+  if(d.col!==undefined){ const it=RUB.itens[+d.col], t=TUR.find(x=>x.id===AV.idTurma(RUB.turma)); const vals=t.alunos.map(a=>(RUB.res[a.k]||{})[it.id]||0); const nv=(Math.max(...vals)%4)+1; t.alunos.forEach(a=>{ (RUB.res[a.k]=RUB.res[a.k]||{})[it.id]=nv; }); ACAO.lerRub(); return telaRubrica(RUB.novo?null:RUB.id); }
+  const a=d.acao;
+  if(a==='fechar') return fecharModal();
+  if(a==='csv-atv') return csvAtividade(ACAO.atual);
+  if(a==='editar-habs') return modalHabs(ACAO.atual);
+  if(a==='editar-rub'){ RUB=null; location.hash='rubrica='+ACAO.atual.id; return; }
+  if(a==='salvar-habs'){ const at=ACAO.atual; at.itens.forEach((it,i)=>{ const h=normHab($(`[data-h="${i}"]`).value); it.hab=h?[h]:[]; it.ind=$(`[data-ind="${i}"]`).value.trim(); }); await AV.salvar('atividades',at); toast('Habilidades salvas!'); return rota(); }
+  if(a==='apagar-atv'){ if(el.dataset.armado){ await AV.apagar('atividades',ACAO.atual.id); toast('Atividade apagada.'); location.hash='atividades'; } else { el.dataset.armado=1; el.textContent='Clique de novo para apagar'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🗑 Apagar'; } },3500); } return; }
+  if(a==='texto-form') return modalTexto();
+  if(a==='copiar-texto') return copiar($('#txt-f').textContent);
+  if(a==='csv-turma') return csvTurma();
+  if(a==='lista') return modalLista();
+  if(a==='lista-rub'){ ACAO.lerRub(); ACAO.turma=TUR.find(x=>x.id===AV.idTurma(RUB.turma)); ACAO.voltaRub=true; return modalLista(); }
+  if(a==='lista-vistos'){ const ta=$('#lista-t'), ja=new Set(ta.value.split('\n').map(AV.chave)); const novos=ACAO.vistos.filter(n=>!ja.has(AV.chave(n))); ta.value=(ta.value.trim()+'\n'+novos.join('\n')).trim(); return; }
+  if(a==='salvar-lista'){ const t=ACAO.turma, vistos=new Set(); t.alunos=$('#lista-t').value.split('\n').map(s=>s.trim().slice(0,60)).filter(Boolean).filter(n=>{ const k=AV.chave(n); if(!k||vistos.has(k)) return false; vistos.add(k); return true; }).map(n=>({k:AV.chave(n),nome:n})); await AV.salvar('turmas',t); toast('Lista salva!'); fecharModal(); if(ACAO.voltaRub){ ACAO.voltaRub=false; return telaRubrica(RUB.novo?null:RUB.id); } return rota(); }
+  if(a==='limpar-filtro'){ FILTRO={}; return rota(); }
+  if(a==='nova-turma'){ const n=prompt('Nome da turma (ex.: 7º A)'); if(n&&n.trim()){ const t=await AV.garantirTurma(n.trim().slice(0,30)); location.hash='t='+t.id; } return; }
+  if(a==='add-hab'){ ACAO.lerRub(); const h=normHab($('#r-hab').value); if(!h) return toast('Digite o código da habilidade.'); if(!H()[h]) toast('⚠️ Código não encontrado no Currículo de MS, mas foi adicionado.'); RUB.itens.push({id:AV.novoId('i'),rotulo:h+(descHab(h)?' – '+descHab(h,70):''),hab:[h],ind:''}); return telaRubrica(RUB.novo?null:RUB.id); }
+  if(a==='add-ind'){ ACAO.lerRub(); const s=$('#r-ind').value.trim().slice(0,120); if(!s) return; RUB.itens.push({id:AV.novoId('i'),rotulo:s,ind:s,hab:[]}); if(!IND.some(x=>x.nome===s)){ const ni={id:AV.novoId('ind'),nome:s,hab:[]}; IND.push(ni); AV.salvar('indicadores',ni); } return telaRubrica(RUB.novo?null:RUB.id); }
+  if(a==='salvar-rub'){ ACAO.lerRub(); if(!RUB.titulo) return toast('Dê um nome à atividade.'); if(!RUB.turma) return toast('Informe a turma.'); if(!RUB.itens.length) return toast('Adicione pelo menos um indicador.');
+    const t=TUR.find(x=>x.id===AV.idTurma(RUB.turma)); RUB.alunos={}; (t?t.alunos:[]).forEach(al=>{ if(RUB.res[al.k]&&Object.keys(RUB.res[al.k]).length) RUB.alunos[al.k]={nome:al.nome}; });
+    if(!Object.keys(RUB.alunos).length) return toast('Marque o nível de pelo menos um estudante.');
+    const s=JSON.parse(JSON.stringify(RUB)); delete s.novo; delete s.salvo; await AV.salvar('atividades',s); RUB.salvo=true; toast('Avaliação salva!'); location.hash='a='+s.id; return; }
+  if(a==='ler-imp') return previaImport();
+  if(a==='salvar-imp') return salvarImport();
+  if(a==='salvar-niv'){ const N=NIV.map((n,i)=>({...n,nome:$(`[data-nn="${i}"]`).value.trim()||n.nome,min:i?Math.max(1,Math.min(100,+$(`[data-nm="${i}"]`).value||n.min)):0}));
+    if(!(N[1].min<N[2].min&&N[2].min<N[3].min)) return toast('As faixas precisam estar em ordem crescente.'); await AV.cfgSalvar('niveis',N); toast('Níveis salvos!'); return rota(); }
+  if(a==='padrao-niv'){ await AV.cfgSalvar('niveis',AV.NIVEIS_PADRAO); toast('Níveis padrão.'); return rota(); }
+  if(a==='backup'){ const b=await AV.exportarTudo(); return baixar(`backup-painel-avaliacao-${hojeISO()}.json`,JSON.stringify(b),'application/json'); }
+  if(a==='persistir'){ const ok=await AV.pedirPersistencia(); toast(ok?'Dados protegidos neste navegador.':'O navegador não permitiu. Faça backups de vez em quando.'); return rota(); }
+  if(a==='apagar-tudo'){ if(el.dataset.armado){ for(const x of ATV) await AV.apagar('atividades',x.id); for(const x of TUR) await AV.apagar('turmas',x.id); toast('Registros apagados.'); return rota(); } el.dataset.armado=1; el.textContent='⚠️ Clique de novo para apagar TUDO'; setTimeout(()=>{ if(el.isConnected){ delete el.dataset.armado; el.textContent='🗑 Apagar todos os registros deste navegador'; } },4000); return; }
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') fecharModal(); });
+
+AV.pedirPersistencia();
+rota();
+</script>
+
+<footer class="rodape"><div class="rodape-in">
+  <div><b>JRM Aventuras Educativas</b><br>Jogos educativos criados pelo Prof. José Rene Miranda, da rede estadual de Mato Grosso do Sul. Os jogos não coletam dados: o progresso de cada estudante fica salvo apenas no navegador do aparelho que ele usa.</div>
+  <div><a href="./">Jogos</a><a href="professor.html">Área do Professor</a><a href="apoie.html">Apoie o projeto</a><a href="privacidade.html">Privacidade</a></div>
+</div></footer>
+</body>
+</html>

@@ -37,6 +37,18 @@ Versão on-line do Quiz STE do Prof. José Rene: o professor abre `quiz/` e proj
 - `rede.js`: conexão com o Firebase Realtime Database (ou modo de teste local com `?teste=1`).
 - `config.js`: configuração do app Web do Firebase (não é senha).
 - `regras-firebase.json`: regras de segurança, para colar em Realtime Database → Regras.
-- CSV aceito: `pergunta;alt1;alt2;alt3;alt4;correta(1-4);tempo(opcional, até 180)`, em UTF-8 ou no formato do Excel.
+- CSV aceito: `pergunta;alt1;alt2;alt3;alt4;correta(1-4);tempo(opcional, até 180);habilidade(opcional, ex.: EF06MA04);indicador(opcional)`, em UTF-8 ou no formato do Excel.
+- Cada partida é registrada automaticamente (pergunta a pergunta) no Painel de Avaliação, com a turma informada ao abrir a sala.
 - Arquivo `.quiz.json`: leva o quiz completo, com imagens (exportado pelo botão ⬇ do painel).
 - Os quizzes ficam no IndexedDB do navegador do professor; as imagens são comprimidas (JPEG, até ~140 KB) antes de ir para os celulares.
+
+## Painel de Avaliação (`avaliacao.html`)
+
+Registros e indicadores de aprendizagem baseados no Currículo de Referência de MS, para qualquer componente.
+
+- `avaliacao-dados.js`: banco local (IndexedDB `jrmAvaliacao`: atividades, turmas, indicadores, configurações). Nada vai para servidor.
+- `curriculo/habilidades.js`: códigos e descrições das habilidades do Currículo de Referência de MS (usado no quiz e no painel).
+- Três fontes de dados: **quiz ao vivo** (registro automático), **avaliação por indicadores** (rubrica de 4 níveis para qualquer atividade, com habilidades do currículo ou indicadores do professor) e **relatórios dos jogos** (o estudante copia o relatório e o professor cola em Importar).
+- Relatórios: por atividade (estilo Kahoot: pergunta mais difícil, alternativa errada mais escolhida, tempo médio, tabela por estudante) e por turma (habilidades a retomar/consolidadas, mapa estudantes × habilidades, texto pronto para o formulário de acompanhamento). Exporta CSV e imprime.
+- Níveis padrão: Abaixo do básico (<40%), Básico (40–69%), Adequado (70–89%), Avançado (≥90%) — editáveis em Configurações.
+- Os dados ficam no navegador do professor: use **Configurações → Baixar backup** para guardar ou levar a outro computador.
