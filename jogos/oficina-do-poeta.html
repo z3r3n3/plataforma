@@ -47,6 +47,28 @@ h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0;font-weight:800}
 .topo .tit{flex:1;min-width:0;display:flex;flex-direction:column}
 .topo b{font-family:var(--titulo);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topo small{color:var(--suave);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conta{display:flex;align-items:center;gap:12px;background:var(--branco);border:2px solid var(--linha);border-radius:16px;padding:10px 12px;max-width:440px;margin-bottom:6px}
+.conta .av{width:44px;height:44px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-family:var(--titulo);font-size:22px;flex:none}
+.conta>div{flex:1;min-width:0;line-height:1.35}
+.st-nuvem{font-size:14px;color:var(--ok);font-weight:700}
+.st-nuvem[data-st="salvando"]{color:var(--suave)}
+.st-nuvem[data-st="erro"]{color:var(--erro)}
+.faixa-nuvem{max-width:1100px;margin:-6px auto 6px;padding:0 16px;text-align:right}
+.entrar-turma{margin:6px 0 10px}
+.sem-turma{margin-top:6px}
+.sem-turma summary{cursor:pointer;font-weight:700;color:var(--suave);margin-bottom:8px}
+.linha-cod{display:flex;gap:8px;flex-wrap:wrap}
+.linha-cod input{flex:1;min-width:150px;border:2px solid var(--linha2);border-radius:12px;padding:10px 14px;font-size:24px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:var(--branco)}
+.nomes{display:flex;flex-wrap:wrap;gap:8px;max-height:46vh;overflow:auto;padding:2px}
+.figs{display:grid;grid-template-columns:repeat(3,72px);gap:10px;justify-content:center;margin:8px 0}
+.fig{width:72px;height:72px;font-size:38px;border-radius:16px;border:2px solid var(--linha2);background:var(--branco)}
+.fig:active{transform:scale(.94)}
+.senha-pontos{display:flex;gap:10px;justify-content:center;margin:6px 0}
+.senha-pontos i{width:46px;height:46px;border-radius:12px;border:2px dashed var(--linha2);display:grid;place-items:center;font-style:normal;font-size:28px}
+.senha-pontos i.on{border-style:solid;border-color:var(--teal);background:#2A8C8014}
+.senha-grande{font-size:46px;text-align:center;letter-spacing:8px;margin:6px 0}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:15px;margin:10px 0}
+.check input{width:20px;height:20px;margin-top:2px;flex:none}
 .chip{display:inline-flex;align-items:center;gap:6px;font-weight:700;background:var(--branco);border:2px solid var(--linha);border-radius:12px;padding:5px 11px;white-space:nowrap;font-size:15px}
 
 /* HOME */
@@ -590,9 +612,41 @@ const PALAVRAS = ('amor flor cor dor calor sabor valor sol farol girassol anzol 
 /* ---------------- ESTADO ---------------- */
 function padrao(){ return {nome:'',turma:'',licoes:{},poemas:[],atual:null}; }
 let S = padrao();
-try{ const g = JSON.parse(localStorage.getItem(CHAVE)); if(g && typeof g==='object') S = Object.assign(padrao(), g); }catch(e){}
-if(!Array.isArray(S.poemas)) S.poemas = [];
-function salvar(){ try{ localStorage.setItem(CHAVE, JSON.stringify(S)); }catch(e){ toast('Não consegui salvar neste navegador.'); } }
+/* ---- turma on-line: a sessão vale só para esta aba (cada estudante entra com o seu nome) ---- */
+const CHAVE_SESSAO = 'oficinaPoeta.sessao';
+let NUVEM = null;          // {cod, aid, nome, turma, s}
+try{ const ss = JSON.parse(sessionStorage.getItem(CHAVE_SESSAO)); if(ss && ss.cod && ss.aid && Date.now()-(ss.t||0) < 3*3600e3) NUVEM = ss; else sessionStorage.removeItem(CHAVE_SESSAO); }catch(e){}
+const chaveCache = ()=>'oficinaPoeta.nuvem.'+NUVEM.cod+'.'+NUVEM.aid;
+function lerLocal(){ try{ const g = JSON.parse(localStorage.getItem(CHAVE)); if(g && typeof g==='object') return Object.assign(padrao(), g); }catch(e){} return padrao(); }
+function carregarEstado(){
+  if(NUVEM){ try{ const g=JSON.parse(localStorage.getItem(chaveCache())); S = Object.assign(padrao(), g||{}); }catch(e){ S = padrao(); } S.nome=NUVEM.nome; S.turma=NUVEM.turma; }
+  else S = lerLocal();
+  if(!Array.isArray(S.poemas)) S.poemas = [];
+}
+carregarEstado();
+let tNuvem=null, estadoNuvem='ok';
+function salvar(){
+  if(NUVEM){
+    S._t = Date.now();
+    try{ localStorage.setItem(chaveCache(), JSON.stringify(S)); }catch(e){}
+    try{ NUVEM.t=Date.now(); sessionStorage.setItem(CHAVE_SESSAO, JSON.stringify(NUVEM)); }catch(e){}
+    marcarNuvem('salvando'); clearTimeout(tNuvem); tNuvem=setTimeout(enviarNuvem, 1200);
+    return;
+  }
+  try{ localStorage.setItem(CHAVE, JSON.stringify(S)); }catch(e){ toast('Não consegui salvar neste navegador.'); }
+}
+async function enviarNuvem(){
+  clearTimeout(tNuvem); tNuvem=null; if(!NUVEM) return;
+  try{
+    const N = await import('./turma-nuvem.js');
+    const atual = S.poemas.find(p=>p.id===S.atual);
+    await N.salvarTrabalho(NUVEM.cod, NUVEM.aid, S, {poemas:S.poemas.length, estrelas:totalEstrelas(), ultimo:(atual&&atual.titulo||'').slice(0,60)});
+    marcarNuvem('ok');
+  }catch(e){ console.warn(e); marcarNuvem('erro'); tNuvem=setTimeout(enviarNuvem, 15000); }
+}
+function marcarNuvem(st){ estadoNuvem=st; $$('.st-nuvem').forEach(el=>{ el.dataset.st=st; el.textContent = st==='ok'?'☁️ salvo para o professor':st==='salvando'?'☁️ salvando…':'⚠️ sem internet: salvo neste aparelho, tentando de novo'; }); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden' && tNuvem) enviarNuvem(); });
+window.addEventListener('pagehide',()=>{ if(tNuvem) enviarNuvem(); });
 function lerLS(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
 function gravarLS(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 
@@ -834,16 +888,112 @@ function render(){
   else if(a==='poemas') telaPoemas();
   else telaHome();
   window.scrollTo(0,0);
+  if(NUVEM) marcarNuvem(estadoNuvem);
 }
 function topo(titulo, sub, voltar){
   return `<header class="topo">
     <a class="btn peq fant" href="#${voltar||''}" aria-label="Voltar">←</a>
     <div class="tit"><b>${titulo}</b><small>${sub||'Oficina do Poeta'}</small></div>
-    ${S.nome?`<span class="chip">✍️ ${esc(S.nome)}${S.turma?' · '+esc(S.turma):''}</span>`:''}
-  </header>`;
+    ${S.nome?`<span class="chip">${NUVEM?'☁️':'✍️'} ${esc(S.nome)}${S.turma?' · '+esc(S.turma):''}</span>`:''}
+  </header>${NUVEM?`<div class="faixa-nuvem"><span class="st-nuvem" data-st="${estadoNuvem}"></span></div>`:''}`;
 }
 function estrelasHTML(n,max=3){ let s=''; for(let i=1;i<=max;i++) s+=`<span class="${i<=n?'on':''}">★</span>`; return `<span class="estrelas" aria-label="${n} de ${max} estrelas">${s}</span>`; }
 function totalEstrelas(){ return LICOES.reduce((s,l)=>s+((S.licoes[l.id]||{}).estrelas||0),0); }
+
+/* ---------------- TURMA ON-LINE (entrar / cadastrar / sair) ---------------- */
+let N_ = null;
+async function nuvem(){ if(!N_) N_ = await import('./turma-nuvem.js'); return N_; }
+function msgFalha(e, N){
+  const t = N ? N.msgErro(e) : 'rede';
+  return t==='permissao' ? 'O servidor recusou. Se você é o professor, confira se as regras do Firebase foram atualizadas.' : t==='config' ? 'O site ainda não está ligado ao servidor da turma.' : 'Sem conexão com a internet. Tente de novo.';
+}
+function entrarTurma(codIni){
+  abrirModal(`<h2>🏫 Entrar na turma</h2>
+    <p>Digite o <b>código da turma</b> que o professor passou.</p>
+    <form id="fCod" class="linha-cod"><input id="iCod" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Ex.: K7P2QX" value="${esc(codIni||'')}" autofocus required><button class="btn pri">Entrar</button></form>
+    <p class="mini" id="mCod"></p>
+    <div class="acoes"><button type="button" class="btn" onclick="fecharModal()">Cancelar</button></div>`);
+  $('#iCod').focus();
+  $('#fCod').onsubmit=async e=>{ e.preventDefault(); const m=$('#mCod'); m.textContent='Procurando a turma…';
+    let N; try{ N=await nuvem(); const info=await N.infoTurma($('#iCod').value); if(!info){ m.textContent='Não encontrei essa turma. Confira o código com o professor.'; return; } escolherNome(info); }
+    catch(err){ console.warn(err); m.textContent=msgFalha(err,N); } };
+}
+function escolherNome(info){
+  abrirModal(`<h2>Turma ${esc(info.nome)}</h2>
+    <p>${info.alunos.length?'Toque no <b>seu nome</b>:':'Ainda não há ninguém cadastrado. Seja o primeiro!'}</p>
+    <div class="nomes">${info.alunos.map(a=>`<button class="btn" data-aid="${a.aid}">${esc(a.nome)}</button>`).join('')}</div>
+    <div class="acoes"><button class="btn" id="bVoltaCod">← Outro código</button><button class="btn tea" id="bNovo">➕ Sou novo(a): cadastrar meu nome</button></div>`);
+  $('#bVoltaCod').onclick=()=>entrarTurma(info.cod);
+  $('#bNovo').onclick=()=>cadastrar(info);
+  $$('[data-aid]').forEach(b=>b.onclick=()=>{ const a=info.alunos.find(x=>x.aid===b.dataset.aid); pedirFigurinhas(`Olá, ${esc(a.nome)}!`, 'Toque nas suas <b>3 figurinhas secretas</b>, na ordem.', async senha=>{
+    const N=await nuvem(); let dados;
+    try{ dados=await N.entrarAluno(info.cod, a.aid, senha); }
+    catch(err){ return N.msgErro(err)==='permissao' ? 'Figurinhas erradas. Tente de novo. Esqueceu? Peça ao professor.' : msgFalha(err,N); }
+    iniciarSessao(info, a.aid, a.nome, senha, dados); return null; }, ()=>escolherNome(info)); });
+}
+/* grade de 9 figurinhas: o estudante escolhe 3, em ordem */
+function pedirFigurinhas(titulo, texto, aoCompletar, voltar){
+  abrirModal(`<h2>${titulo}</h2><p>${texto}</p>
+    <div class="senha-pontos" id="sPts"><i></i><i></i><i></i></div>
+    <div class="figs">${(N_?N_.FIGURINHAS:[]).map((f,i)=>`<button class="fig" data-f="${i}" aria-label="Figurinha ${i+1}">${f}</button>`).join('')}</div>
+    <p class="mini" id="mSen" role="status"></p>
+    <div class="acoes"><button class="btn" id="bVoltaF">← Voltar</button><button class="btn" id="bLimpa">Apagar</button></div>`);
+  let senha='';
+  const pts=()=>$$('#sPts i').forEach((el,i)=>{ el.className=i<senha.length?'on':''; el.textContent=i<senha.length?N_.FIGURINHAS[+senha[i]]:''; });
+  $('#bVoltaF').onclick=voltar; $('#bLimpa').onclick=()=>{ senha=''; pts(); };
+  $$('.fig').forEach(b=>b.onclick=async()=>{ if(senha.length>=3) return; senha+=b.dataset.f; pts();
+    if(senha.length===3){ $('#mSen').textContent='Conferindo…'; const erro=await aoCompletar(senha); if(erro){ $('#mSen').textContent=erro; senha=''; setTimeout(pts,500); } } });
+}
+function cadastrar(info){
+  const local = lerLocal(); const temLocal = local.poemas.length || Object.keys(local.licoes||{}).length;
+  abrirModal(`<h2>➕ Cadastrar na turma ${esc(info.nome)}</h2>
+    <label class="campo">Seu nome (primeiro nome e a inicial do sobrenome)<input id="iNovo" maxlength="30" autocomplete="off" placeholder="Ex.: Ana C." autofocus></label>
+    ${temLocal?`<label class="check"><input type="checkbox" id="cLeva"> Levar para a turma o que está salvo neste aparelho${local.nome?` (de <b>${esc(local.nome)}</b>)`:''}: ${local.poemas.length} poema(s) e ${Object.keys(local.licoes||{}).length} lição(ões). Só marque se for seu!</label>`:''}
+    <p class="mini" id="mNovo"></p>
+    <div class="acoes"><button class="btn" id="bVoltaN">← Voltar</button><button class="btn pri" id="bSegue">Continuar</button></div>`);
+  $('#iNovo').focus();
+  $('#bVoltaN').onclick=()=>escolherNome(info);
+  $('#bSegue').onclick=()=>{
+    const nome=$('#iNovo').value.trim().replace(/\s+/g,' ');
+    if(nome.length<2){ $('#mNovo').textContent='Escreva o seu nome.'; return; }
+    if(info.alunos.some(a=>a.nome.toLowerCase()===nome.toLowerCase())){ $('#mNovo').innerHTML=`Já existe <b>${esc(nome)}</b> nesta turma. Se é você, volte e toque no seu nome. Se não, acrescente a inicial do sobrenome.`; return; }
+    const leva = $('#cLeva') && $('#cLeva').checked;
+    pedirFigurinhas('Crie a sua senha de figurinhas', `Escolha <b>3 figurinhas</b>, na ordem que quiser. Você vai usar sempre para entrar. <b>Não conte para ninguém!</b>`, async senha=>{
+      const N=await nuvem(); let aid;
+      try{ aid=await N.cadastrarAluno(info.cod, nome, senha); }catch(err){ console.warn(err); return msgFalha(err,N); }
+      abrirModal(`<h2>Pronto, ${esc(nome)}! 🎉</h2><p>A sua senha de figurinhas é:</p><div class="senha-grande">${senha.split('').map(i=>N.FIGURINHAS[+i]).join(' ')}</div><p class="mini">Guarde bem. Se esquecer, o professor pode ver e trocar.</p><div class="acoes"><button class="btn pri" id="bOk">Começar ✍️</button></div>`);
+      $('#bOk').onclick=()=>iniciarSessao(info, aid, nome, senha, leva?Object.assign(local,{nome,turma:info.nome}):null, true);
+      return null;
+    }, ()=>cadastrar(info));
+  };
+}
+function iniciarSessao(info, aid, nome, senha, dados, novo){
+  NUVEM={cod:info.cod, aid, nome, turma:info.nome, s:senha, t:Date.now()};
+  try{ sessionStorage.setItem(CHAVE_SESSAO, JSON.stringify(NUVEM)); }catch(e){}
+  carregarEstado();
+  if(dados && typeof dados==='object' && (dados._t||0) >= (S._t||0)) S=Object.assign(padrao(), dados);
+  if(!Array.isArray(S.poemas)) S.poemas=[];
+  S.nome=nome; S.turma=info.nome;
+  salvar(); enviarNuvem();
+  fecharModal(); location.hash=''; render();
+  toast(novo?`Bem-vindo(a), ${nome}! Tudo o que você fizer fica salvo para o professor.`:`Que bom te ver, ${nome}! Continue de onde parou.`);
+}
+async function sairTurma(){
+  if(!NUVEM) return;
+  if(tNuvem) await enviarNuvem();
+  if(estadoNuvem==='erro'){ abrirModal(`<h2>⚠️ Ainda não salvou na internet</h2><p>O seu trabalho está guardado neste aparelho, mas ainda não chegou ao professor. Confira a internet e tente sair de novo.</p><div class="acoes"><button class="btn" id="bForca">Sair mesmo assim</button><button class="btn pri" onclick="fecharModal()">Ficar</button></div>`); $('#bForca').onclick=()=>{ fecharModal(); encerrarSessao(); }; return; }
+  encerrarSessao();
+}
+async function encerrarSessao(){
+  const cod=NUVEM.cod; NUVEM=null;
+  try{ sessionStorage.removeItem(CHAVE_SESSAO); }catch(e){}
+  try{ const N=await nuvem(); N.sairAluno(cod); }catch(e){}
+  S=lerLocal(); location.hash=''; render(); toast('Você saiu. Até a próxima! 👋');
+}
+/* se a sessão desta aba voltou do cache, busca a versão da nuvem (pode ter sido feita em outro computador) */
+if(NUVEM) (async()=>{ try{ const N=await nuvem(); const d=await N.entrarAluno(NUVEM.cod, NUVEM.aid, NUVEM.s); if(d && (d._t||0) > (S._t||0)){ S=Object.assign(padrao(), d); S.nome=NUVEM.nome; S.turma=NUVEM.turma; try{ localStorage.setItem(chaveCache(), JSON.stringify(S)); }catch(e){} render(); } marcarNuvem('ok'); }catch(e){ console.warn(e); marcarNuvem('erro'); } })();
+/* link direto com o código: oficina-do-poeta.html?turma=K7P2QX */
+(function(){ const c=new URLSearchParams(location.search).get('turma'); if(c && !NUVEM) setTimeout(()=>entrarTurma(c.toUpperCase()),300); })();
 
 /* ---------------- HOME ---------------- */
 function telaHome(){
@@ -857,11 +1007,22 @@ function telaHome(){
         <div class="kicker">Língua Portuguesa · 6º ao 9º ano</div>
         <h1>Oficina do <em>Poeta</em></h1>
         <p class="lead">Aprenda os segredos da poesia, escreva o seu poema com a ajuda do <b>Raio-X de rimas</b>, revise com um colega, grave a declamação e publique no <b>Painel Poético</b>.</p>
+        ${NUVEM?`<div class="conta">
+          <span class="av">${esc((S.nome||'?')[0].toUpperCase())}</span>
+          <div><b>${esc(S.nome)}</b> · Turma ${esc(S.turma)}<br><span class="st-nuvem" data-st="${estadoNuvem}"></span></div>
+          <button class="btn peq" id="bSair">Sair</button>
+        </div>
+        <p class="mini">Terminou? Toque em <b>Sair</b> para o próximo colega usar o computador.</p>`:`
+        <div class="entrar-turma">
+          <button class="btn pri grande" id="bTurma">🏫 Entrar na minha turma</button>
+          <p class="mini">Com o código da turma, o seu trabalho fica salvo com o seu nome e o professor acompanha. Dá para continuar em qualquer computador.</p>
+        </div>
+        <details class="sem-turma"${S.nome?' open':''}><summary>Usar sem turma (salva só neste aparelho)</summary>
         <div class="campos">
           <label>Primeiro nome<input id="iNome" maxlength="24" autocomplete="off" value="${esc(S.nome)}" placeholder="Ex.: Ana"></label>
           <label>Turma<input id="iTurma" maxlength="10" autocomplete="off" value="${esc(S.turma)}" placeholder="Ex.: 7º A"></label>
         </div>
-        <p class="mini">Use só o primeiro nome. Tudo fica salvo apenas neste aparelho.</p>
+        <p class="mini">Atenção: sem turma, quem usar este aparelho depois continua no mesmo progresso.</p></details>`}
       </div>
       <div class="folha" aria-hidden="true">
         <div class="tt">Recreio</div>
@@ -899,15 +1060,17 @@ function telaHome(){
     </section>
     <footer class="rodape">
       <span>Habilidades: MS.EF69LP44 · MS.EF69LP48 · MS.EF69LP51 · MS.EF69LP53 · EF09CO09<br>Projeto “Tecendo Palavras” · JRM Aventuras Educativas</span>
-      <span class="acoes"><button class="btn peq" id="bRel">📋 Relatório para o professor</button><button class="btn peq fant" id="bApagar">Apagar meu progresso</button></span>
+      <span class="acoes"><button class="btn peq" id="bRel">📋 Relatório para o professor</button>${NUVEM?'':'<button class="btn peq fant" id="bApagar">Apagar meu progresso</button>'}<a class="btn peq fant" href="oficina-turmas.html">👩‍🏫 Professor: turmas</a></span>
     </footer>
   </main>`;
-  const salvaNome=()=>{ S.nome=$('#iNome').value.trim().split(/\s+/)[0]||''; S.turma=$('#iTurma').value.trim(); salvar(); };
-  $('#iNome').addEventListener('change',salvaNome); $('#iTurma').addEventListener('change',salvaNome);
+  const salvaNome=()=>{ if(NUVEM) return; S.nome=$('#iNome').value.trim().split(/\s+/)[0]||''; S.turma=$('#iTurma').value.trim(); salvar(); };
+  if(!NUVEM){ $('#iNome').addEventListener('change',salvaNome); $('#iTurma').addEventListener('change',salvaNome); $('#bTurma').onclick=()=>entrarTurma(); }
+  else $('#bSair').onclick=()=>sairTurma();
+  marcarNuvem(estadoNuvem);
   $$('[data-ir]').forEach(b=>b.onclick=()=>{ salvaNome(); ir(b.dataset.ir); });
   $('[data-acao]').onclick=e=>{ salvaNome(); if(e.currentTarget.dataset.acao==='novo') novoPoema(); ir('criar/'+(poemaAtual().texto?'escrever':'planejar')); };
   $('#bRel').onclick=()=>{ salvaNome(); relatorio(); };
-  $('#bApagar').onclick=()=>{
+  if($('#bApagar')) $('#bApagar').onclick=()=>{
     abrirModal(`<h2>Apagar tudo?</h2><p>Isso apaga o seu nome, as estrelas e <b>todos os poemas</b> deste aparelho. Não dá para desfazer.</p><div class="acoes"><button class="btn" onclick="fecharModal()">Cancelar</button><button class="btn pri" id="bConf">Apagar</button></div>`);
     $('#bConf').onclick=()=>{ S=padrao(); salvar(); fecharModal(); render(); toast('Progresso apagado.'); };
   };

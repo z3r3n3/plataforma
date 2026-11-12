@@ -1,7 +1,9 @@
 {
   "rules": {
     "salas": {
-      ".indexOn": ["criadaEm"],
+      ".indexOn": [
+        "criadaEm"
+      ],
       "$pin": {
         ".read": "auth != null",
         ".write": "auth != null && ((!data.exists() && newData.child('dono').val() === auth.uid) || (data.exists() && data.child('dono').val() === auth.uid) || (data.exists() && !newData.exists() && data.child('criadaEm').val() < now - 86400000))",
@@ -24,6 +26,59 @@
           "$id": {
             ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && root.child('salas').child($pin).child('dono').exists()",
             ".validate": "newData.child('nome').isString() && newData.child('tipo').isString()"
+          }
+        }
+      }
+    },
+    "oficina": {
+      "k": {
+        "$cod": {
+          ".write": "auth != null && !data.exists() && newData.isString() && newData.val().length >= 6 && newData.val().length <= 12"
+        }
+      },
+      "s": {
+        "$cod": {
+          ".read": "auth != null && root.child('oficina').child('t').child($cod).child('donos').child(auth.uid).exists()",
+          "$aid": {
+            ".write": "auth != null && (!data.exists() || root.child('oficina').child('t').child($cod).child('donos').child(auth.uid).exists())",
+            ".validate": "newData.isString() && newData.val().length <= 12"
+          }
+        }
+      },
+      "t": {
+        "$cod": {
+          ".read": "auth != null && data.child('donos').child(auth.uid).exists()",
+          ".write": "auth != null && data.child('donos').child(auth.uid).exists()",
+          "info": {
+            ".read": "auth != null",
+            ".write": "auth != null && !data.exists() && newData.child('dono').val() === auth.uid",
+            ".validate": "newData.child('nome').isString() && newData.child('nome').val().length <= 30"
+          },
+          "donos": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && newData.val() === root.child('oficina').child('k').child($cod).val()"
+            }
+          },
+          "alunos": {
+            ".read": "auth != null",
+            "$aid": {
+              ".write": "auth != null && root.child('oficina').child('t').child($cod).child('info').exists() && (!data.exists() || root.child('oficina').child('t').child($cod).child('sess').child(auth.uid).child('a').val() === $aid)",
+              ".validate": "newData.child('nome').isString() && newData.child('nome').val().length > 0 && newData.child('nome').val().length <= 30"
+            }
+          },
+          "sess": {
+            "$uid": {
+              ".read": "auth != null && auth.uid === $uid",
+              ".write": "auth != null && auth.uid === $uid",
+              ".validate": "newData.hasChildren(['a','s']) && newData.child('a').isString() && newData.child('s').val() === root.child('oficina').child('s').child($cod).child(newData.child('a').val()).val()"
+            }
+          },
+          "w": {
+            "$aid": {
+              ".read": "auth != null && root.child('oficina').child('t').child($cod).child('sess').child(auth.uid).child('a').val() === $aid",
+              ".write": "auth != null && root.child('oficina').child('t').child($cod).child('sess').child(auth.uid).child('a').val() === $aid",
+              ".validate": "newData.isString() && newData.val().length < 300000"
+            }
           }
         }
       }

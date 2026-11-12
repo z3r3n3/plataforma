@@ -30,6 +30,14 @@ O site é publicado pelo GitHub Pages: **Settings → Pages → Branch `main` / 
 - O poema vai codificado no próprio link (`painel-poetico.html#p=…`), sem servidor.
 - Para o painel da turma: Google Formulário (pergunta “Cole aqui o link do seu poema”) → planilha com a coluna `Aprovado` (escrever `sim`) → Publicar na Web em CSV. Cole o link no botão ⚙️ Professor do painel ou na constante `LINK_PLANILHA`. O link curto do formulário vai em `LINK_FORMULARIO` (nas duas páginas) ou no endereço `oficina-do-poeta.html?form=https://forms.gle/…`.
 
+## Turmas da Oficina do Poeta (`jogos/oficina-turmas.html`)
+
+- O professor cria a turma e recebe o **código da turma** (para os estudantes) e a **chave do professor** (para abrir a turma em outro computador).
+- Na Oficina, o estudante toca em “Entrar na minha turma”, digita o código, cadastra o nome e uma senha de 3 figurinhas. Nas próximas vezes, toca no nome e nas figurinhas e continua de onde parou. A sessão vale só para a aba aberta; o botão **Sair** libera o computador para o próximo.
+- Link direto: `jogos/oficina-do-poeta.html?turma=CÓDIGO`.
+- Dados no Firebase do quiz, no nó `oficina/` (`jogos/turma-nuvem.js`). **As regras de `quiz/regras-firebase.json` precisam estar coladas no console** (Realtime Database → Regras) para as turmas funcionarem.
+- Teste sem internet: `?teste=1` nas duas páginas.
+
 ## Quiz STE ao vivo (`quiz/`)
 
 Versão on-line do Quiz STE do Prof. José Rene: o professor abre `quiz/` e projeta, os estudantes entram em `quiz/jogar.html` com o PIN.

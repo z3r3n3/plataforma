@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turmas da Oficina do Poeta</title>
+<meta name="description" content="Área do professor da Oficina do Poeta: crie turmas com código, acompanhe o progresso de cada estudante e leia os poemas em andamento.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M30 4C18 8 10 20 9 34l3 1c2-6 6-12 11-15-3 0-6 1-8 2 4-6 10-10 15-12z' fill='%23D2603A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+:root{--papel:#FBF6EC;--branco:#FFFDF8;--linha:#E2D6BF;--linha2:#CDBD9D;--tinta:#1F2340;--suave:#5E5A6E;--indigo:#2B2F66;--indigo-e:#1B1E48;--terra:#D2603A;--terra-e:#A8452A;--ouro:#E8A93B;--teal:#2A8C80;--ok:#2E8B57;--erro:#C2413A;
+  --titulo:'Fraunces',Georgia,serif;--texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden}
+body{font-family:var(--texto);font-size:16px;line-height:1.5;color:var(--tinta);background:var(--papel);min-height:100vh}
+button,input{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--titulo);line-height:1.15;margin:0}
+a{color:var(--terra-e)}
+.hidden{display:none!important}
+:focus-visible{outline:3px solid var(--ouro);outline-offset:2px}
+.btn{border:2px solid var(--linha2);background:var(--branco);border-radius:12px;padding:9px 14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;cursor:pointer;text-decoration:none;color:var(--tinta)}
+.btn:hover{border-color:var(--tinta)}
+.btn.pri{background:var(--terra);border-color:var(--terra-e);color:#fff;box-shadow:0 3px 0 var(--terra-e)}
+.btn.ind{background:var(--indigo);border-color:var(--indigo-e);color:#fff}
+.btn.peq{min-height:36px;padding:5px 10px;font-size:14px}
+.btn.fant{background:transparent;border-color:transparent}
+.btn.perigo{color:var(--erro)}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 60px}
+.topo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.topo h1{font-size:clamp(26px,5vw,36px);flex:1}
+.topo h1 em{color:var(--terra)}
+.cartao{background:var(--branco);border:2px solid var(--linha);border-radius:18px;padding:16px;margin-bottom:14px}
+.cartao h2{font-size:22px;margin-bottom:6px}
+.mini{font-size:13px;color:var(--suave)}
+.grade2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.linha{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.linha label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:700;color:var(--suave);flex:1;min-width:130px}
+.linha input{border:2px solid var(--linha2);border-radius:10px;padding:9px 11px;background:#fff;font-size:16px}
+.turmas{display:flex;flex-wrap:wrap;gap:8px}
+.turmas .btn b{font-family:var(--titulo);font-size:18px}
+.codigo{font-family:ui-monospace,Consolas,monospace;font-weight:800;letter-spacing:.12em}
+.cab-turma{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.cab-turma h2{font-size:28px;flex:1;min-width:200px}
+.caixa-cod{background:var(--papel);border:2px dashed var(--linha2);border-radius:14px;padding:8px 14px;text-align:center}
+.caixa-cod .codigo{font-size:26px;color:var(--indigo)}
+.resumo{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.resumo div{background:var(--papel);border-radius:14px;padding:10px 12px}
+.resumo b{display:block;font-family:var(--titulo);font-size:26px}
+.tab-w{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:13px;color:var(--suave);border-bottom:2px solid var(--linha);padding:6px 8px;white-space:nowrap}
+td{border-bottom:1px solid var(--linha);padding:8px;vertical-align:middle}
+tr.al{cursor:pointer}
+tr.al:hover td{background:#FFF7E8}
+.est{color:var(--ouro);font-weight:800;white-space:nowrap}
+.barra{height:8px;border-radius:4px;background:#EFE6D3;overflow:hidden;min-width:70px}
+.barra i{display:block;height:100%;background:var(--teal)}
+.agora{color:var(--ok);font-weight:700}
+.overlay{position:fixed;inset:0;z-index:50;background:#1F234088;display:grid;place-items:center;padding:16px}
+.modal{background:var(--branco);border-radius:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:22px;box-shadow:0 30px 60px #0005}
+.modal h2{font-size:26px;margin-bottom:8px}
+.acoes{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+.poema{border:2px solid var(--linha);border-radius:14px;padding:12px 14px;margin:10px 0;background:var(--papel)}
+.poema h4{margin:0 0 4px;font-family:var(--titulo);font-size:20px}
+.poema pre{white-space:pre-wrap;font-family:var(--texto);font-size:16px;background:#fff;border-radius:10px;padding:10px 12px;margin:8px 0 0;max-height:320px;overflow:auto}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+.tags span{font-size:13px;background:#fff;border:1px solid var(--linha);border-radius:999px;padding:2px 9px}
+.licoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin:6px 0}
+.licoes div{background:var(--papel);border-radius:10px;padding:6px 10px;font-size:14px;display:flex;justify-content:space-between;gap:6px}
+.figs{font-size:38px;letter-spacing:8px}
+.projetar{position:fixed;inset:0;z-index:70;background:var(--indigo);color:#fff;display:grid;place-items:center;text-align:center;padding:20px}
+.projetar .codigo{font-size:clamp(60px,14vw,170px);color:#F2C14E;line-height:1}
+.projetar p{font-size:clamp(18px,3vw,30px);margin:10px 0}
+.projetar .qr{background:#fff;border-radius:14px;padding:10px;display:inline-block;line-height:0}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:90;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+.aviso-erro{background:#FBE6E3;border:2px solid #F0B8B0;border-radius:14px;padding:12px 14px;margin-bottom:14px}
+@media print{.nao-imprimir,.btn{display:none!important}body{background:#fff}.cartao{border:none;padding:0}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<div id="overlay" class="overlay hidden"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script type="module">
+import * as N from './turma-nuvem.js';
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const esc=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const app=$('#app');
+let tt; const toast=m=>{ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('on'),2800); };
+const abrir=h=>{ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); };
+const fechar=()=>{ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; };
+window.fechar=fechar;
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fechar(); });
+const LICOES=[['verso','Verso e estrofe'],['rima','Rima'],['ritmo','Ritmo e sílabas poéticas'],['figuras','Figuras de linguagem'],['formas','Formas de poema'],['historia','Poesia e história'],['reescrita','Do rascunho ao poema'],['declamar','Declamar']];
+const FORMAS={livre:'Verso livre',quadra:'Quadra',haicai:'Haicai',cordel:'Cordel (sextilha)',soneto:'Soneto',acrostico:'Acróstico'};
+const TEMAS={raizes:'Minhas raízes',ms:'MS em versos',vozes:'Vozes que fizeram história',escola:'Minha escola, meu tempo',natureza:'Natureza',livre:'Tema livre'};
+const MAXEST=LICOES.length*3;
+const CH='oficinaPoeta.turmasProf';
+const minhas=()=>{ try{ return JSON.parse(localStorage.getItem(CH))||[]; }catch(e){ return []; } };
+const guardar=t=>{ const l=minhas().filter(x=>x.cod!==t.cod); l.unshift(t); try{ localStorage.setItem(CH,JSON.stringify(l)); }catch(e){} };
+const linkAluno=cod=>new URL('oficina-do-poeta.html?turma='+cod, location.href).href.replace(/[?&]teste=1/,'')+(new URLSearchParams(location.search).has('teste')?'&teste=1':'');
+function quando(t){ if(!t) return '—'; const d=Date.now()-t; if(d<120e3) return '<span class="agora">agora</span>'; if(d<3600e3) return 'há '+Math.round(d/60e3)+' min'; if(d<86400e3) return 'há '+Math.round(d/3600e3)+' h'; return new Date(t).toLocaleDateString('pt-BR'); }
+function falha(e){ const t=N.msgErro(e); return t==='permissao'?'O servidor recusou. Confira o código e a chave do professor. Se for a primeira vez, as regras do Firebase precisam ser atualizadas (veja “Como funciona”).':t==='config'?'O site não está ligado ao Firebase.':'Sem conexão com a internet. Tente de novo.'; }
+
+/* ---------------- tela inicial ---------------- */
+function inicio(){
+  parar();
+  const l=minhas();
+  app.innerHTML=`<div class="topo"><a class="btn fant" href="oficina-do-poeta.html">← Oficina</a><h1>Turmas da Oficina do <em>Poeta</em></h1></div>
+  <div class="cartao"><h2>Minhas turmas</h2>
+    ${l.length?`<div class="turmas">${l.map(t=>`<button class="btn" data-abre="${t.cod}"><b>${esc(t.nome)}</b> <span class="codigo mini">${t.cod}</span></button>`).join('')}</div>`:'<p class="mini">Nenhuma turma neste computador ainda. Crie uma abaixo.</p>'}
+  </div>
+  <div class="grade2">
+    <div class="cartao"><h2>➕ Criar turma</h2><p class="mini">Você recebe um <b>código da turma</b> (para os estudantes) e uma <b>chave do professor</b> (só sua).</p>
+      <form class="linha" id="fCria"><label>Nome da turma<input id="iNome" maxlength="30" placeholder="Ex.: 7º A – manhã" required></label><button class="btn pri">Criar</button></form></div>
+    <div class="cartao"><h2>🔑 Abrir em outro computador</h2><p class="mini">Use o código da turma e a chave do professor.</p>
+      <form class="linha" id="fAbre"><label>Código da turma<input id="iCod" maxlength="8" class="codigo" required></label><label>Chave do professor<input id="iChave" maxlength="8" class="codigo" required></label><button class="btn ind">Abrir</button></form></div>
+  </div>
+  <div class="cartao"><h2>Como funciona</h2>
+    <ol>
+      <li>Crie a turma e mostre o <b>código</b> no projetor (botão 📺).</li>
+      <li>Na Oficina do Poeta, o estudante toca em <b>🏫 Entrar na minha turma</b>, digita o código e se cadastra com o nome e uma <b>senha de 3 figurinhas</b>.</li>
+      <li>Nas próximas aulas, em qualquer computador, ele toca no próprio nome, nas figurinhas e <b>continua de onde parou</b>. Ao terminar, toca em <b>Sair</b>.</li>
+      <li>Aqui você acompanha cada estudante em tempo real: lições, estrelas e os poemas em andamento, com todas as versões. Se alguém esquecer as figurinhas, você vê e troca.</li>
+    </ol>
+    <p class="mini">O trabalho fica no mesmo servidor do Quiz ao vivo (Firebase). Os estudantes não conseguem ver o trabalho dos colegas. Guarde a <b>chave do professor</b>: é ela que abre a turma em outro computador.</p>
+  </div>`;
+  $$('[data-abre]').forEach(b=>b.onclick=()=>abrirTurma(minhas().find(t=>t.cod===b.dataset.abre)));
+  $('#fCria').onsubmit=async e=>{ e.preventDefault(); const b=e.submitter; b.disabled=true;
+    try{ const t=await N.criarTurma($('#iNome').value.trim()); guardar(t); mostrarChave(t); }catch(err){ console.warn(err); toast(falha(err)); } b.disabled=false; };
+  $('#fAbre').onsubmit=async e=>{ e.preventDefault();
+    try{ const t=await N.entrarProfessor($('#iCod').value,$('#iChave').value); guardar(t); abrirTurma(t); }catch(err){ console.warn(err); toast(N.msgErro(err)==='permissao'?'Código ou chave do professor errados.':falha(err)); } };
+}
+function mostrarChave(t){
+  abrir(`<h2>Turma ${esc(t.nome)} criada! 🎉</h2>
+    <p>Código da turma (para os estudantes): <span class="codigo" style="font-size:28px;color:var(--indigo)">${t.cod}</span></p>
+    <p>Chave do professor (só sua): <span class="codigo" style="font-size:22px;color:var(--terra-e)">${t.chave}</span></p>
+    <p class="mini">Anote a chave do professor num lugar seguro. Com o código e a chave você abre esta turma em qualquer computador.</p>
+    <div class="acoes"><button class="btn pri" id="bOk">Abrir a turma</button></div>`);
+  $('#bOk').onclick=()=>{ fechar(); abrirTurma(t); };
+}
+/* ---------------- turma ---------------- */
+let sair=null, T=null, DADOS=null, FIGS={};
+function parar(){ if(sair){ try{ sair(); }catch(e){} sair=null; } }
+async function abrirTurma(t){
+  parar(); T=t; DADOS=null; location.hash='t='+t.cod;
+  app.innerHTML=`<div class="topo"><button class="btn fant" id="bVolta">← Turmas</button><h1>Turma ${esc(t.nome)}</h1></div><div class="cartao"><p>Carregando…</p></div>`;
+  $('#bVolta').onclick=()=>{ location.hash=''; inicio(); };
+  try{
+    await N.entrarProfessor(t.cod, t.chave);
+    sair=await N.ouvirTurma(t.cod, d=>{ DADOS=d||{}; desenhar(); });
+    FIGS=await N.figurinhasDe(t.cod);
+  }catch(err){ console.warn(err); app.querySelector('.cartao').innerHTML=`<p class="aviso-erro">${esc(falha(err))}</p>`; }
+}
+function alunos(){ const a=(DADOS&&DADOS.alunos)||{}; return Object.entries(a).map(([aid,x])=>({aid,...x})).sort((a,b)=>a.nome.localeCompare(b.nome,'pt')); }
+function trabalho(aid){ try{ return JSON.parse(((DADOS&&DADOS.w)||{})[aid]||'null')||{}; }catch(e){ return {}; } }
+function estrelas(w){ return LICOES.reduce((s,[id])=>s+(((w.licoes||{})[id]||{}).estrelas||0),0); }
+function desenhar(){
+  if(!T) return;
+  const L=alunos(); const ws=L.map(a=>trabalho(a.aid));
+  const totP=ws.reduce((s,w)=>s+(w.poemas||[]).length,0);
+  const ativos=L.filter(a=>Date.now()-(a.atualizado||0)<10*60e3).length;
+  const mediaEst=(L.length?Math.round(ws.reduce((s,w)=>s+estrelas(w),0)/L.length*10)/10:0).toLocaleString('pt-BR');
+  app.innerHTML=`<div class="topo nao-imprimir"><button class="btn fant" id="bVolta">← Turmas</button><h1>Turma ${esc(T.nome)}</h1></div>
+  <div class="cartao">
+    <div class="cab-turma"><h2>${esc(T.nome)}</h2>
+      <div class="caixa-cod"><div class="mini">Código da turma</div><div class="codigo">${T.cod}</div></div>
+      <button class="btn ind nao-imprimir" id="bProj">📺 Mostrar para a turma</button></div>
+    <div class="resumo"><div><b>${L.length}</b>estudantes</div><div><b>${ativos}</b>ativos agora</div><div><b>${totP}</b>poemas</div><div><b>${mediaEst}</b>estrelas em média (de ${MAXEST})</div></div>
+    ${L.length?`<div class="tab-w"><table><thead><tr><th>Estudante</th><th>Lições</th><th>★</th><th>Poemas</th><th>Poema atual</th><th>Última atividade</th></tr></thead><tbody>
+      ${L.map((a,i)=>{ const w=ws[i]; const e=estrelas(w); const feitas=Object.keys(w.licoes||{}).length; const atual=(w.poemas||[]).find(p=>p.id===w.atual)||(w.poemas||[])[0];
+        return `<tr class="al" data-aid="${a.aid}"><td><b>${esc(a.nome)}</b></td><td><div class="barra" title="${feitas} de ${LICOES.length} lições"><i style="width:${feitas/LICOES.length*100}%"></i></div><span class="mini">${feitas}/${LICOES.length}</span></td><td class="est">${e} ★</td><td>${(w.poemas||[]).length}</td><td>${atual?esc(atual.titulo||'(sem título)')+`<div class="mini">${contarVersos(atual.texto)} verso(s) · ${(atual.versoes||[]).length} versão(ões)</div>`:'—'}</td><td>${quando(a.atualizado)}</td></tr>`; }).join('')}
+    </tbody></table></div>`:`<p>Ninguém entrou ainda. Mostre o código <b class="codigo">${T.cod}</b> para a turma e peça para tocarem em <b>🏫 Entrar na minha turma</b> na Oficina do Poeta.</p>`}
+    <div class="acoes nao-imprimir"><button class="btn" id="bRel">📋 Copiar relatório da turma</button><button class="btn" id="bCsv">⬇ Planilha (CSV)</button><button class="btn" onclick="print()">🖨 Imprimir</button><button class="btn" id="bChave">🔑 Ver chave do professor</button></div>
+  </div>`;
+  $('#bVolta').onclick=()=>{ location.hash=''; inicio(); };
+  $('#bProj').onclick=projetar;
+  $('#bChave').onclick=()=>abrir(`<h2>🔑 Chave do professor</h2><p>Código da turma: <span class="codigo" style="font-size:24px">${T.cod}</span><br>Chave do professor: <span class="codigo" style="font-size:24px;color:var(--terra-e)">${T.chave}</span></p><p class="mini">Com os dois, você abre a turma em outro computador. Não mostre a chave para os estudantes.</p><div class="acoes"><button class="btn" onclick="fechar()">Fechar</button></div>`);
+  $('#bRel').onclick=()=>{ const txt=relatorio(); abrir(`<h2>📋 Relatório da turma</h2><textarea style="width:100%;min-height:260px;font:14px ui-monospace,monospace;border:2px solid var(--linha);border-radius:12px;padding:10px">${esc(txt)}</textarea><div class="acoes"><button class="btn" onclick="fechar()">Fechar</button><button class="btn pri" id="bCop">Copiar</button></div>`); $('#bCop').onclick=async()=>{ try{ await navigator.clipboard.writeText(txt); toast('Copiado!'); }catch(e){ $('#modal textarea').select(); document.execCommand('copy'); toast('Copiado!'); } }; };
+  $('#bCsv').onclick=csv;
+  $$('tr.al').forEach(tr=>tr.onclick=()=>verAluno(tr.dataset.aid));
+}
+const contarVersos=t=>String(t||'').split('\n').filter(l=>l.trim()).length;
+const contarEstrofes=t=>String(t||'').replace(/\r/g,'').split(/\n\s*\n/).filter(b=>b.trim()).length;
+async function verAluno(aid){
+  try{ FIGS=await N.figurinhasDe(T.cod); }catch(e){}
+  const a=alunos().find(x=>x.aid===aid); if(!a) return; const w=trabalho(aid); const senha=FIGS[aid]||'';
+  const poemas=[...(w.poemas||[])].sort((x,y)=>(y.editado||0)-(x.editado||0));
+  abrir(`<h2>${esc(a.nome)}</h2>
+    <p class="mini">Cadastrado(a) em ${a.criado?new Date(a.criado).toLocaleDateString('pt-BR'):'—'} · última atividade ${quando(a.atualizado)}</p>
+    <h3>Lições (${estrelas(w)} de ${MAXEST} ★)</h3>
+    <div class="licoes">${LICOES.map(([id,t])=>{ const r=(w.licoes||{})[id]; return `<div><span>${t}</span><b class="est">${r?'★'.repeat(r.estrelas||0)+'☆'.repeat(3-(r.estrelas||0)):'<span class="mini">não feita</span>'}</b></div>`; }).join('')}</div>
+    <h3 style="margin-top:12px">Poemas (${poemas.length})</h3>
+    ${poemas.length?poemas.map(p=>{ const rv=Object.values(p.revisao||{}).filter(Boolean).length; return `<div class="poema"><h4>${esc(p.titulo||'(sem título)')}</h4>
+      <div class="tags"><span>${FORMAS[p.forma]||p.forma}</span>${p.tema?`<span>${TEMAS[p.tema]||p.tema}</span>`:''}<span>${contarVersos(p.texto)} versos · ${contarEstrofes(p.texto)} estrofes</span><span>${(p.versoes||[]).length} versão(ões) salvas</span><span>revisão: ${rv} item(ns)</span>${p.colega&&p.colega.nome?`<span>colega: ${esc(p.colega.nome)}</span>`:''}${p.declarou?'<span>✔ declarou autoria</span>':''}<span>editado ${quando(p.editado)}</span></div>
+      ${p.colega&&(p.colega.gostei||p.colega.sugestao)?`<p class="mini">💬 ${p.colega.gostei?'Gostei: '+esc(p.colega.gostei):''} ${p.colega.sugestao?' · Sugestão: '+esc(p.colega.sugestao):''}</p>`:''}
+      <pre>${esc(p.texto||'(ainda sem texto)')}</pre>
+      ${(p.versoes||[]).length?`<details><summary class="mini">Ver versões anteriores</summary>${p.versoes.map((v,i)=>`<pre>Versão ${i+1}${v.data?' · '+new Date(v.data).toLocaleString('pt-BR'):''}${v.motivo?' · '+esc(v.motivo):''}\n\n${esc(v.titulo?v.titulo+'\n\n':'')}${esc(v.texto||'')}</pre>`).join('')}</details>`:''}
+    </div>`; }).join(''):'<p class="mini">Ainda não começou nenhum poema.</p>'}
+    <h3 style="margin-top:12px">Senha de figurinhas</h3>
+    <p class="figs">${senha?senha.split('').map(i=>N.FIGURINHAS[+i]).join(''):'—'}</p>
+    <div class="acoes"><button class="btn peq perigo" id="bRem">Remover da turma</button><button class="btn peq" id="bRen">✏️ Corrigir nome</button><button class="btn peq" id="bFig">🔄 Trocar figurinhas</button><button class="btn pri" onclick="fechar()">Fechar</button></div>`);
+  $('#bFig').onclick=async()=>{ const nova=Array.from(crypto.getRandomValues(new Uint8Array(3)),x=>x%9).join(''); try{ await N.redefinirFigurinhas(T.cod,aid,nova); FIGS[aid]=nova; verAluno(aid); toast('Figurinhas trocadas. Mostre a nova senha ao estudante.'); }catch(e){ toast(falha(e)); } };
+  $('#bRen').onclick=async()=>{ const n=prompt('Nome do estudante:', a.nome); if(n&&n.trim()){ try{ await N.renomearAluno(T.cod,aid,n.trim()); fechar(); }catch(e){ toast(falha(e)); } } };
+  let conf=false; $('#bRem').onclick=async e=>{ if(!conf){ conf=true; e.target.textContent='Toque de novo para remover (apaga os poemas)'; return; } try{ await N.removerAluno(T.cod,aid); fechar(); toast('Estudante removido.'); }catch(err){ toast(falha(err)); } };
+}
+function projetar(){
+  const link=linkAluno(T.cod); let qr='';
+  try{ const q=qrcode(0,'M'); q.addData(link); q.make(); qr=q.createSvgTag({cellSize:5,margin:2}); }catch(e){}
+  const d=document.createElement('div'); d.className='projetar';
+  d.innerHTML=`<div><p>Oficina do Poeta → <b>🏫 Entrar na minha turma</b></p><p>Código da turma <b>${esc(T.nome)}</b>:</p><div class="codigo">${T.cod}</div>${qr?`<p style="margin-top:18px"><span class="qr">${qr}</span></p>`:''}<p style="font-size:16px;opacity:.8">Toque em qualquer lugar para fechar</p></div>`;
+  d.onclick=()=>d.remove(); document.body.appendChild(d);
+}
+function relatorio(){
+  const L=alunos(); const out=[`OFICINA DO POETA — Turma ${T.nome} (código ${T.cod})`,`Gerado em ${new Date().toLocaleString('pt-BR')}`,`Lições: ${LICOES.map(l=>l[1]).join(', ')}`,''];
+  L.forEach(a=>{ const w=trabalho(a.aid); out.push(`${a.nome}: ${Object.keys(w.licoes||{}).length}/${LICOES.length} lições, ${estrelas(w)}/${MAXEST} estrelas, ${(w.poemas||[]).length} poema(s)`);
+    (w.poemas||[]).forEach(p=>out.push(`   - “${p.titulo||'sem título'}” (${FORMAS[p.forma]||p.forma}${p.tema?', '+(TEMAS[p.tema]||p.tema):''}): ${contarVersos(p.texto)} versos, ${(p.versoes||[]).length} versões${p.colega&&p.colega.nome?', revisado por '+p.colega.nome:''}${p.declarou?', declarou autoria':''}`)); });
+  return out.join('\n');
+}
+function csv(){
+  const L=alunos(); const lin=[['Estudante','Lições feitas','Estrelas',...LICOES.map(l=>l[1]),'Poemas','Títulos','Última atividade']];
+  L.forEach(a=>{ const w=trabalho(a.aid); lin.push([a.nome,Object.keys(w.licoes||{}).length,estrelas(w),...LICOES.map(([id])=>((w.licoes||{})[id]||{}).estrelas??''),(w.poemas||[]).length,(w.poemas||[]).map(p=>p.titulo||'sem título').join(' | '),a.atualizado?new Date(a.atualizado).toLocaleString('pt-BR'):'']); });
+  const txt='﻿'+lin.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const u=URL.createObjectURL(new Blob([txt],{type:'text/csv'})); const x=document.createElement('a'); x.href=u; x.download=`oficina-${T.nome.replace(/\W+/g,'-')}.csv`; x.click(); setTimeout(()=>URL.revokeObjectURL(u),2000);
+}
+/* abre direto pela URL (#t=CÓDIGO) se a turma estiver salva neste computador */
+const h=location.hash.match(/t=([A-Z0-9]+)/); const salva=h&&minhas().find(t=>t.cod===h[1]);
+if(salva) abrirTurma(salva); else inicio();
+</script>
+</body>
+</html>
