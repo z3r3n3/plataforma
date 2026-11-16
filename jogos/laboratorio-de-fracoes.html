@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratório de Frações</title>
+<meta name="description" content="Jogo de Matemática do 5º ao 7º ano para entender frações de verdade: da figura para a fração e da fração para a figura, frações equivalentes e as quatro operações pela regrinha das frações equivalentes, tocando nos números, circulando e ligando com setas, passo a passo, até simplificar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#7C2D12;--agua2:#EA580C;--agua-claro:#FFEDD5;--mata2:#2563EB}
+body{background:linear-gradient(160deg,#FFEDD5 0%,#FEF9C3 50%,#DBEAFE 100%)}
+.topo{background:#FFF7EDee;border-bottom-color:#FED7AA}
+.trilho{background:#FED7AA}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #2563EB33}
+/* ---- lousa ---- */
+.lousa{background:#14532D;background:linear-gradient(160deg,#166534,#14532D);border:10px solid #92400E;border-radius:18px;padding:14px 10px 16px;color:#F8FAFC;box-shadow:inset 0 0 30px #0006,0 6px 0 #0002;margin:6px auto;max-width:640px}
+.lin{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px 10px;min-height:96px}
+.lin.lin1{position:relative;gap:4px 110px;padding:34px 4px;flex-wrap:nowrap}
+.lin+.lin{border-top:1px dashed #FFFFFF33}
+.fr{display:inline-grid;justify-items:center;gap:2px}
+.fr i{display:block;width:100%;min-width:52px;height:4px;border-radius:2px;background:#F8FAFC}
+.tk{min-width:56px;min-height:52px;padding:0 8px;border-radius:50%;border:3px solid transparent;background:transparent;color:#F8FAFC;font-family:var(--titulo);font-weight:800;font-size:36px;line-height:1;cursor:pointer;position:relative;z-index:2;display:grid;place-items:center}
+.tk:hover{background:#FFFFFF14}
+.tk.sel{border-color:#FDE047;background:#FDE04722;animation:pulsa 1s infinite}
+.tk.c0{border-color:#60A5FA}.tk.c1{border-color:#F87171}.tk.c2{border-color:#4ADE80}
+.tk.desc{color:#FDE047;border:3px dashed #FDE04799;border-radius:14px}
+.tk.vazio{color:#FFFFFF66}
+.tk.novo{color:#FDE047;animation:aparece .5s}
+.vl{min-width:40px;text-align:center;font-family:var(--titulo);font-weight:800;font-size:30px;line-height:1.15}
+.vl.q{color:#FFFFFF55}
+.vl.novo{color:#FDE047;animation:aparece .5s}
+.opl{font-family:var(--titulo);font-size:34px;font-weight:800;color:#FDE68A;position:relative;z-index:2}
+.setas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+.passo{background:#fff;border:2px solid #FED7AA;border-left:8px solid var(--mata2);border-radius:14px;padding:10px 14px;margin:10px auto 0;max-width:640px;font-size:17px}
+.passo b.n{display:inline-block;background:var(--mata2);color:#fff;border-radius:999px;padding:0 10px;margin-right:6px;font-size:14px}
+.calc{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px auto 0;font-family:var(--titulo);font-size:28px;font-weight:800}
+.calc input{width:110px;font:inherit;text-align:center;border:3px solid var(--mata2);border-radius:14px;padding:4px 8px;background:#fff}
+.err{background:#FEE2E2;border:2px solid #FCA5A5;border-radius:12px;padding:8px 12px;margin:8px auto 0;max-width:640px;font-size:16px}
+.divs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.divs .btn{min-width:64px;font-size:20px}
+.ajuda-p{display:flex;justify-content:center;margin-top:8px}
+/* ---- barras e figuras ---- */
+.barras{display:grid;gap:8px;max-width:420px;margin:12px auto 0}
+.barras .rot{font-size:14px;font-weight:700;color:#57534E;display:flex;justify-content:space-between}
+.fig-area{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;margin:6px 0}
+.fig-area svg .parte{cursor:pointer}
+.fig-area svg .parte:hover{opacity:.85}
+.conj{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:360px;font-size:40px}
+.conj span{filter:grayscale(1) opacity(.45)}
+.conj span.on{filter:none}
+.montador{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:8px}
+.frac-ed{display:grid;justify-items:center;gap:4px;background:#fff;border:3px solid #FED7AA;border-radius:18px;padding:10px 16px}
+.frac-ed .lin-ed{display:flex;align-items:center;gap:10px}
+.frac-ed .lin-ed span{min-width:56px;text-align:center;font-family:var(--titulo);font-weight:800;font-size:40px}
+.frac-ed hr{width:100%;border:none;border-top:5px solid #1F2937;border-radius:3px;margin:2px 0}
+.frac-ed .btn{min-width:48px;min-height:48px;font-size:26px;padding:0}
+.legenda-fr{font-size:15px;color:#57534E;max-width:220px;line-height:1.4}
+.legenda-fr b{color:var(--agua)}
+.partes-ed{display:flex;align-items:center;gap:10px;justify-content:center;font-weight:700;margin-bottom:6px}
+.partes-ed span{font-family:var(--titulo);font-size:30px;min-width:40px;text-align:center}
+@keyframes pulsa{50%{box-shadow:0 0 0 6px #FDE04733}}
+@keyframes aparece{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:520px){.lin.lin1{gap:4px 62px;padding:34px 0}.tk{font-size:30px;min-width:48px;min-height:46px}.vl{font-size:24px;min-width:30px}.opl{font-size:28px}.lin{gap:4px 6px}.lousa{border-width:7px;padding:10px 4px 12px}}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   LABORATÓRIO DE FRAÇÕES — Matemática · 5º ao 7º ano
+   MS.EF05MA03 e MS.EF06MA07 representar frações (parte do todo, maiores que a unidade)
+   MS.EF05MA04 e MS.EF06MA07 frações equivalentes e simplificação
+   MS.EF06MA10 adição e subtração · MS.EF07MA11 multiplicação e divisão · MS.EF06MA09 fração de quantidade
+   MS.EF07MA12 problemas com as operações
+   Método das operações: transformar em frações equivalentes com o mesmo denominador
+   (multiplica os denominadores; depois, em cruz, o denominador de uma pelo numerador da outra).
+   ========================================================= */
+
+const COR_PAR=['#60A5FA','#F87171','#4ADE80'];
+const COR_PINTA='#F97316', COR_VAZIO='#FFF7ED', COR_LINHA='#7C2D12';
+
+/* ================= figuras ================= */
+function pizzaSVG(partes, pint, clic, r=72, chave=''){
+  const S=r*2+8, c=r+4; let h=`<svg width="${S}" height="${S}" viewBox="0 0 ${S} ${S}" role="img" aria-label="Círculo dividido em ${partes} partes, ${pint.length} pintadas">`;
+  if(partes===1) h+=`<circle class="${clic?'parte':''}" ${clic?`data-x="p${chave}0"`:''} cx="${c}" cy="${c}" r="${r}" fill="${pint.includes(0)?COR_PINTA:COR_VAZIO}" stroke="${COR_LINHA}" stroke-width="3"/>`;
+  else for(let i=0;i<partes;i++){ const a0=-Math.PI/2+i*2*Math.PI/partes, a1=a0+2*Math.PI/partes;
+    const x0=c+r*Math.cos(a0), y0=c+r*Math.sin(a0), x1=c+r*Math.cos(a1), y1=c+r*Math.sin(a1);
+    h+=`<path class="${clic?'parte':''}" ${clic?`data-x="p${chave}${i}"`:''} d="M${c},${c} L${x0.toFixed(1)},${y0.toFixed(1)} A${r},${r} 0 ${partes===2?1:0},1 ${x1.toFixed(1)},${y1.toFixed(1)} Z" fill="${pint.includes(i)?COR_PINTA:COR_VAZIO}" stroke="${COR_LINHA}" stroke-width="2.5"/>`; }
+  return h+'</svg>';
+}
+function barraSVG(partes, pint, clic, w=300, h=58){
+  const pw=w/partes; let s=`<svg width="${w+6}" height="${h+6}" viewBox="0 0 ${w+6} ${h+6}" role="img" aria-label="Barra dividida em ${partes} partes, ${pint.length} pintadas">`;
+  for(let i=0;i<partes;i++) s+=`<rect class="${clic?'parte':''}" ${clic?`data-x="p${i}"`:''} x="${3+i*pw}" y="3" width="${pw}" height="${h}" fill="${pint.includes(i)?COR_PINTA:COR_VAZIO}" stroke="${COR_LINHA}" stroke-width="2.5"/>`;
+  return s+'</svg>';
+}
+function gradeSVG(lin, col, pint, clic, cel=46){
+  let s=`<svg width="${col*cel+6}" height="${lin*cel+6}" viewBox="0 0 ${col*cel+6} ${lin*cel+6}" role="img" aria-label="Retângulo com ${lin*col} quadradinhos, ${pint.length} pintados">`;
+  for(let i=0;i<lin*col;i++){ const r=Math.floor(i/col), c=i%col; s+=`<rect class="${clic?'parte':''}" ${clic?`data-x="p${i}"`:''} x="${3+c*cel}" y="${3+r*cel}" width="${cel}" height="${cel}" fill="${pint.includes(i)?COR_PINTA:COR_VAZIO}" stroke="${COR_LINHA}" stroke-width="2.5"/>`; }
+  return s+'</svg>';
+}
+/* barra fina para a lousa (mostra a equivalência): n partes pintadas de d; se passar de 1 inteiro, desenha mais barras */
+function barraFina(n,d,cor){
+  const inteiros=Math.max(1,Math.ceil(n/d)); let h='';
+  for(let k=0;k<inteiros;k++){ const pint=Math.max(0,Math.min(d,n-k*d)); const w=300, pw=w/d;
+    h+=`<svg width="100%" viewBox="0 0 306 34" preserveAspectRatio="none" style="display:block;max-width:420px;height:34px">`;
+    for(let i=0;i<d;i++) h+=`<rect x="${3+i*pw}" y="3" width="${pw}" height="28" fill="${i<pint?cor:'#fff'}" stroke="#57534E" stroke-width="${d>24?1:1.6}"/>`;
+    h+=`<rect x="3" y="3" width="300" height="28" fill="none" stroke="#1F2937" stroke-width="2.5"/></svg>`; }
+  return h;
+}
+
+/* ================= 1. figura → fração (montar) ================= */
+const MONTAR={
+  desenhar(it){ return `<div class="fig-area">${it.fig}</div>
+    <div class="montador"><div class="frac-ed" aria-label="Montar a fração">
+      <div class="lin-ed"><button class="btn" data-x="n-" aria-label="Diminuir numerador">−</button><span>${it.n}</span><button class="btn" data-x="n+" aria-label="Aumentar numerador">+</button></div><hr>
+      <div class="lin-ed"><button class="btn" data-x="d-" aria-label="Diminuir denominador">−</button><span>${it.d}</span><button class="btn" data-x="d+" aria-label="Aumentar denominador">+</button></div></div>
+      <div class="legenda-fr"><b>Numerador</b> (em cima): quantas partes ${it.palavra||'foram pintadas'}.<br><b>Denominador</b> (embaixo): em quantas partes <b>iguais</b> ${it.todo||'o inteiro foi dividido'}.</div></div>
+    ${it.feito?'':'<div class="seguir"><button class="btn agua" data-acao="conferir">Conferir</button></div>'}`; },
+  acao(it,x){ if(x==='n+') it.n=Math.min(40,it.n+1); if(x==='n-') it.n=Math.max(0,it.n-1); if(x==='d+') it.d=Math.min(40,it.d+1); if(x==='d-') it.d=Math.max(1,it.d-1); it.msg=''; desenhar(); },
+  conferir(it){ const [rn,rd]=it.resp;
+    if(it.n===rn&&it.d===rd) return responder(true);
+    if(it.n*rd===it.d*rn&&it.d>0){ it.x=`Você montou <b>${it.n}/${it.d}</b>, que é equivalente a <b>${rn}/${rd}</b>. ${it.x||''}`; return responder(true); }
+    responder(false, it.d!==rd&&!(it.n*rd===it.d*rn) ? (it.dicaD||'Conte em quantas partes <b>iguais</b> o inteiro foi dividido: esse é o <b>denominador</b>.') : (it.dicaN||'Conte as partes pintadas: esse é o <b>numerador</b>.')); },
+  revelar(it){ [it.n,it.d]=it.resp; }, auto(it){ [it.n,it.d]=it.resp; MONTAR.conferir(it); }
+};
+function itMontar(){
+  const t=pick(['pizza','pizza','barra','grade','conj']); let fig, resp, extra={};
+  if(t==='pizza'){ const p=pick([2,3,4,5,6,8]), n=rnd(1,p-1); resp=[n,p]; fig=pizzaSVG(p,[...Array(n).keys()],false); extra.enun='Que fração da pizza está <b>pintada</b>? Monte a fração.'; }
+  else if(t==='barra'){ const p=pick([3,4,5,6,8,10]), n=rnd(1,p-1); const pos=embaralhar([...Array(p).keys()]).slice(0,n); resp=[n,p]; fig=barraSVG(p,pos,false); extra.enun='Que fração da barra de chocolate está <b>pintada</b>? Monte a fração.'; }
+  else if(t==='grade'){ const [l,c]=pick([[2,3],[2,4],[3,3],[3,4],[2,5]]), tot=l*c, n=rnd(1,tot-1); const pos=embaralhar([...Array(tot).keys()]).slice(0,n); resp=[n,tot]; fig=gradeSVG(l,c,pos,false); extra.enun='Que fração do terreno está <b>pintada</b>? Monte a fração.'; extra.x=`São ${tot} quadradinhos iguais (${l} × ${c}) e ${n} estão pintados.`; }
+  else { const [e,nome]=pick([['🍬','balas'],['🎈','balões'],['⚽','bolas'],['🐟','peixes']]), tot=rnd(5,12), n=rnd(1,tot-1);
+    fig=`<div class="conj">${Array.from({length:tot},(_,i)=>`<span class="${i<n?'on':''}">${e}</span>`).join('')}</div>`; resp=[n,tot];
+    extra={enun:`Que fração dos ${nome} está <b>colorida</b>? Monte a fração.`,palavra:'estão coloridas',todo:'é o total de '+nome,dicaD:`Num grupo, o <b>denominador</b> é o total de ${nome}. Conte todos!`,dicaN:`Conte só os ${nome} coloridos: esse é o <b>numerador</b>.`}; }
+  return Object.assign({tipo:'montar',cat:'figura',fig,resp,n:1,d:1,mostrar:`${resp[0]}/${resp[1]}`,x:extra.x||`<b>${resp[0]}</b> partes pintadas de <b>${resp[1]}</b> partes iguais: <b>${resp[0]}/${resp[1]}</b>.`},extra);
+}
+function itMontarMaior(){
+  const p=pick([2,3,4]), inteiros=2, n=rnd(p+1,2*p-1);
+  const fig=[0,1].map(k=>pizzaSVG(p,[...Array(Math.max(0,Math.min(p,n-k*p))).keys()],false,56)).join('');
+  return {tipo:'montar',cat:'figura',fig,resp:[n,p],n:1,d:1,mostrar:`${n}/${p}`,enun:`Cada pizza foi cortada em <b>${p}</b> pedaços iguais. Que fração de pizza foi pintada?`,
+    todo:'cada pizza (o inteiro) foi dividida',x:`Cada pizza tem ${p} pedaços, então o denominador é <b>${p}</b>. Foram pintados <b>${n}</b> pedaços: <b>${n}/${p}</b>, mais de 1 inteiro (${Math.floor(n/p)} inteiro e ${n%p}/${p}).`,
+    dicaD:`O denominador é em quantos pedaços <b>cada pizza</b> foi cortada, não o total das duas.`};
+}
+/* ================= 2. fração → figura (pintar) ================= */
+const PINTAR={
+  desenhar(it){ const pint=it.pint;
+    const fig=it.forma==='pizza'?pizzaSVG(it.partes,pint,!it.feito):barraSVG(it.partes,pint,!it.feito);
+    return `${it.dividir&&!it.feito?`<div class="partes-ed">Dividir em <button class="btn" data-x="d-" aria-label="Menos partes">−</button><span>${it.partes}</span><button class="btn" data-x="d+" aria-label="Mais partes">+</button> partes iguais</div>`:''}
+      <div class="fig-area">${fig}</div><p class="mini" style="text-align:center">Pintadas: <b>${pint.length}</b> de <b>${it.partes}</b> partes. Toque numa parte para pintar ou despintar.</p>
+      ${it.feito?'':'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>'}`; },
+  acao(it,x){ if(x==='d+'){ it.partes=Math.min(16,it.partes+1); it.pint=[]; } else if(x==='d-'){ it.partes=Math.max(1,it.partes-1); it.pint=[]; } else if(x==='limpar') it.pint=[];
+    else if(x[0]==='p'){ const i=+x.slice(1); it.pint=it.pint.includes(i)?it.pint.filter(j=>j!==i):it.pint.concat(i); } it.msg=''; desenhar(); },
+  conferir(it){ const [a,b]=it.alvo;
+    if(it.pint.length*b===a*it.partes) return responder(true);
+    if(it.partes%b!==0) return responder(false,`O inteiro precisa estar dividido em <b>${b}</b> partes iguais (o denominador)${it.dividir?'. Use os botões − e +':''}.`);
+    responder(false,`Com ${it.partes} partes, ${a}/${b} são <b>${a*it.partes/b}</b> partes pintadas. Você pintou ${it.pint.length}.`); },
+  revelar(it){ const [a,b]=it.alvo; if(it.partes%b) it.partes=b; it.pint=[...Array(a*it.partes/b).keys()]; },
+  auto(it){ PINTAR.revelar(it); PINTAR.conferir(it); }
+};
+function itPintar(modo){
+  const forma=pick(['pizza','barra']); const b=pick([2,3,4,5,6,8]), a=rnd(1,b-1);
+  if(modo==='dividir') return {tipo:'pintar',cat:'representar',forma,alvo:[a,b],partes:1,pint:[],dividir:true,mostrar:`${b} partes, ${a} pintadas`,enun:`Represente <b>${a}/${b}</b>: primeiro divida ${forma==='pizza'?'a pizza':'a barra'} em partes iguais, depois pinte.`,x:`O denominador <b>${b}</b> diz em quantas partes dividir; o numerador <b>${a}</b>, quantas pintar.`};
+  if(modo==='equiv'){ const k=2, bb=pick([2,3,4]), aa=rnd(1,bb-1); return {tipo:'pintar',cat:'representar',forma:'barra',alvo:[aa,bb],partes:bb*k,pint:[],mostrar:`${aa*k} partes`,enun:`A barra já está dividida em <b>${bb*k}</b> partes. Pinte <b>${aa}/${bb}</b> dela.`,x:`${aa}/${bb} = <b>${aa*k}/${bb*k}</b>: com o dobro de partes, pintamos o dobro de partes. São frações <b>equivalentes</b>!`,dica:`Cada 1/${bb} da barra tem ${k} partes.`}; }
+  return {tipo:'pintar',cat:'representar',forma,alvo:[a,b],partes:b,pint:[],mostrar:`${a} partes`,enun:`Pinte <b>${a}/${b}</b> ${forma==='pizza'?'da pizza':'da barra'}.`,x:`${a} partes de ${b}: <b>${a}/${b}</b>.`};
+}
+
+/* ================= LOUSA: circular, ligar com setas e calcular ================= */
+/* it.L: linhas da lousa. Cada linha: lista de blocos {f:[idNum,idDen]} | {op:'+'} | {t:'='}
+   it.V: valores conhecidos (id → número). it.Q: ids que o estudante pode tocar (só na 1ª linha).
+   it.P: passos. Tipos: 'ligar' {pares:[{p:[id,id],conta,resp,enche,rot}]}, 'calc' {conta,resp,enche}, 'escolha' {ops,certo,enche}, 'simp' {}  */
+const LOUSA={
+  desenhar(it){
+    const P=it.P[it.pi]; const ligados=it.feitos||[];
+    const corDe=id=>{ const k=ligados.findIndex(f=>f.p.includes(id)); return k<0?'':' c'+(ligados[k].cor); };
+    const blk=(b,lin)=>{ if(b.op) return `<span class="opl">${b.op}</span>`; if(b.t) return `<span class="opl">${b.t}</span>`;
+      const cel=id=>{ const v=it.V[id]; const novo=it.novos&&it.novos.includes(id);
+        if(lin===0){ const toc=it.Q.includes(id)&&!it.feito; return `<button class="tk${v==null?' desc':''}${it.sel===id?' sel':''}${corDe(id)}${novo?' novo':''}" id="tk-${id}" ${toc?`data-x="t:${id}"`:'tabindex="-1"'} aria-label="${v==null?'valor desconhecido':v}">${v==null?'?':v}</button>`; }
+        return `<span class="vl${v==null?' q':''}${novo?' novo':''}">${v==null?'?':v}</span>`; };
+      return `<span class="fr">${cel(b.f[0])}<i></i>${cel(b.f[1])}</span>`; };
+    let h=`<div class="lousa">${it.L.map((l,i)=>`<div class="lin${i===0?' lin1':''}" ${i===0?'id="lin1"':''}>${l.map(b=>blk(b,i)).join('')}${i===0?'<svg class="setas" id="setas" aria-hidden="true"></svg>':''}</div>`).join('')}</div>`;
+    if(it.feito) return h+(it.barras?it.barras(it):'');
+    /* painel do passo atual */
+    let painel='';
+    if(P.tipo==='ligar'){
+      if(it.calc){ painel=`<div class="calc"><span>${it.calc.conta} =</span><input id="cx" inputmode="numeric" autocomplete="off" aria-label="Resultado"><button class="btn agua" data-x="ok">OK</button></div>`; }
+    } else if(P.tipo==='calc'){ painel=`<div class="calc"><span>${P.conta} =</span><input id="cx" inputmode="numeric" autocomplete="off" aria-label="Resultado"><button class="btn agua" data-x="ok">OK</button></div>`; }
+    else if(P.tipo==='escolha'){ painel=`<div class="divs">${P.ops.map((o,j)=>`<button class="btn" data-x="e:${j}">${o}</button>`).join('')}</div>`; }
+    else if(P.tipo==='simp'){ const [n,d]=it.atual(); const max=Math.min(n,d);
+      const ks=[2,3,4,5,6,7,8,9,10,11,12].filter(k=>k<=max);
+      painel=`<div class="divs">${ks.map(k=>`<button class="btn" data-x="s:${k}">÷ ${k}</button>`).join('')}<button class="btn agua" data-x="fim">✔ Não dá mais</button></div>`; }
+    const instr=P.tipo==='simp'?`<b class="n">Último passo</b> Dá para <b>simplificar</b> ${it.atual().join('/')}? Escolha um número que <b>divide o numerador e o denominador</b>. Se não houver, toque em “Não dá mais”.`:(typeof P.instr==='function'?P.instr(it):P.instr);
+    return h+`<div class="passo">${instr}</div>${painel}${it.err?`<div class="err">${it.err}</div>`:''}${(it.errPasso||0)>=2?`<div class="ajuda-p"><button class="btn" data-x="mostra">💡 Me mostra este passo</button></div>`:''}${it.barras?it.barras(it):''}`;
+  },
+  depois(it){
+    const svg=document.getElementById('setas'), box=document.getElementById('lin1'); if(!svg||!box) return;
+    const R=box.getBoundingClientRect(); const pos=id=>{ const e=document.getElementById('tk-'+id); if(!e) return null; const r=e.getBoundingClientRect(); return {x:r.left-R.left+r.width/2,y:r.top-R.top+r.height/2,w:r.width,h:r.height}; };
+    const den=id=>it.L[0].some(b=>b.f&&b.f[1]===id);
+    let s=`<defs>${COR_PAR.map((c,i)=>`<marker id="mk${i}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${c}"/></marker>`).join('')}</defs>`;
+    (it.feitos||[]).forEach(f=>{ const A=pos(f.p[0]), B=pos(f.p[1]); if(!A||!B) return; const c=COR_PAR[f.cor];
+      let d;
+      if(den(f.p[0])===den(f.p[1])){ const baixo=den(f.p[0]); const y0=baixo?A.y+A.h/2-2:A.y-A.h/2+2, y1=baixo?B.y+B.h/2-2:B.y-B.h/2+2; const cy=baixo?Math.max(y0,y1)+32:Math.min(y0,y1)-32; d=`M${A.x},${y0} Q${(A.x+B.x)/2},${cy} ${B.x},${y1}`; f.mx=(A.x+B.x)/2; f.my=baixo?cy-12:cy+12; }
+      else { const dx=B.x-A.x, dy=B.y-A.y, L=Math.hypot(dx,dy), ux=dx/L, uy=dy/L, ra=Math.min(A.w,A.h)/2+2; d=`M${A.x+ux*ra},${A.y+uy*ra} L${B.x-ux*ra},${B.y-uy*ra}`; f.mx=A.x+dx*(f.cor===1?.3:.7); f.my=A.y+dy*(f.cor===1?.3:.7); }
+      s+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="3.5" marker-start="url(#mk${f.cor})" marker-end="url(#mk${f.cor})" stroke-linecap="round"/>`;
+      s+=`<g><circle cx="${f.mx}" cy="${f.my}" r="${f.rot&&f.rot.length>1?17:13}" fill="${c}"/><text x="${f.mx}" y="${f.my+5}" text-anchor="middle" font-size="${f.rot&&f.rot.length>2?12:15}" font-weight="800" fill="#0F172A">${f.rot||'×'}</text></g>`; });
+    svg.innerHTML=s;
+    const cx=document.getElementById('cx'); if(cx){ cx.focus({preventScroll:true}); cx.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); LOUSA.acao(it,'ok'); } }; }
+  },
+  acao(it,x){
+    const P=it.P[it.pi]; it.novos=[];
+    if(x==='mostra') return LOUSA.mostrarPasso(it);
+    if(x.startsWith('t:')&&P.tipo==='ligar'&&!it.calc){
+      const id=x.slice(2);
+      if(!it.sel){ it.sel=id; it.err=''; return desenhar(); }
+      if(it.sel===id){ it.sel=null; return desenhar(); }
+      const par=P.pares.find(p=>!p.ok&&p.p.includes(it.sel)&&p.p.includes(id));
+      it.sel=null;
+      if(!par){ return LOUSA.erro(it, P.erro); }
+      it.feitos=(it.feitos||[]).concat({p:par.p,cor:par.cor,rot:par.rotIni||'×'}); it.calc=par; it.err=''; return desenhar();
+    }
+    if(x==='ok'){
+      const el=document.getElementById('cx'); const v=parseInt((el&&el.value||'').replace(/\D/g,''),10);
+      const alvo=it.calc||P; if(isNaN(v)){ toast('Digite o resultado.'); return; }
+      if(v!==alvo.resp){ return LOUSA.erro(it, alvo.dicaErr?alvo.dicaErr(v):`Confira a conta <b>${alvo.conta}</b>. Faça com calma, no caderno se precisar.`); }
+      LOUSA.encher(it, alvo); if(it.calc){ const f=it.feitos[it.feitos.length-1]; if(alvo.rot) f.rot=alvo.rot; alvo.ok=true; it.calc=null; if(P.pares.every(p=>p.ok)) LOUSA.avanca(it); }
+      else LOUSA.avanca(it);
+      return desenhar();
+    }
+    if(x.startsWith('e:')&&P.tipo==='escolha'){ const j=+x.slice(2); if(j!==P.certo) return LOUSA.erro(it,P.erro); LOUSA.encher(it,P); LOUSA.avanca(it); return desenhar(); }
+    if(P.tipo==='simp'){
+      const [n,d]=it.atual();
+      if(x==='fim'){ const g=mdc(n,d); if(g>1) return LOUSA.erro(it,`Ainda dá! ${n} e ${d} podem ser divididos por <b>${g===2||n%2===0&&d%2===0?2:g}</b>.`); return LOUSA.terminar(it); }
+      if(x.startsWith('s:')){ const k=+x.slice(2); if(n%k||d%k) return LOUSA.erro(it,`${k} não divide ${n%k?n:d} exatamente. Escolha um número que divida <b>os dois</b>.`);
+        const id='z'+it.cadeia.length; it.V[id+'n']=n/k; it.V[id+'d']=d/k; it.cadeia.push([id+'n',id+'d',k]); it.L[it.L.length-1].push({t:'='},{f:[id+'n',id+'d']}); it.novos=[id+'n',id+'d']; it.err='';
+        if(d/k===1){ return LOUSA.terminar(it); } return desenhar(); }
+    }
+  },
+  erro(it,msg){ it.err=msg; it.errPasso=(it.errPasso||0)+1; it.errTot=(it.errTot||0)+1; som('erro'); if(it.errTot===2) registrar('i'+M.i,it.cat,false); desenhar(); },
+  encher(it,alvo){ Object.entries(alvo.enche||{}).forEach(([k,v])=>{ it.V[k]=v; it.novos.push(k); }); },
+  avanca(it){ it.pi++; it.errPasso=0; it.err=''; it.sel=null; if(it.pi>=it.P.length) LOUSA.terminar(it); },
+  mostrarPasso(it){ const P=it.P[it.pi]; it.novos=[];
+    if(P.tipo==='ligar'){ const par=it.calc||P.pares.find(p=>!p.ok); if(!it.calc) it.feitos=(it.feitos||[]).concat({p:par.p,cor:par.cor,rot:par.rotIni||'×'}); LOUSA.encher(it,par); const f=it.feitos[it.feitos.length-1]; if(par.rot) f.rot=par.rot; par.ok=true; it.calc=null; it.err=`Veja: ${par.conta.replace('?',par.resp)} = <b>${par.resp}</b>.`; it.errPasso=0; if(P.pares.every(p=>p.ok)) LOUSA.avanca(it); }
+    else if(P.tipo==='calc'||P.tipo==='escolha'){ LOUSA.encher(it,P); LOUSA.avanca(it); }
+    else if(P.tipo==='simp'){ const [n,d]=it.atual(); const g=mdc(n,d); if(g>1) return LOUSA.acao(it,'s:'+g); return LOUSA.terminar(it); }
+    desenhar(); },
+  atualDe(it){ const u=it.cadeia.length?it.cadeia[it.cadeia.length-1]:it.res; return [it.V[u[0]],it.V[u[1]]]; },
+  terminar(it){ it.sel=null; it.calc=null; it.err=''; const [n,d]=it.atual(); it.x=(it.resumo?it.resumo(it,n,d):'')+(d===1?` Como o denominador é 1, o resultado é o número inteiro <b>${n}</b>.`:n>d?` Como ${n} > ${d}, o resultado é maior que 1 inteiro: ${Math.floor(n/d)} inteiro${Math.floor(n/d)>1?'s':''} e ${n%d}/${d}.`:'');
+    if(it.errTot>=2){ it.feito=true; it.okt='Concluído com ajuda'; it.msg=''; desenhar(); } else responder(true); },
+  auto(it){ let g=0; while(!it.feito&&g++<30){ const P=it.P[it.pi]; if(P.tipo==='simp'){ const [n,d]=it.atual(); const k=mdc(n,d); if(k>1) LOUSA.acao(it,'s:'+k); else LOUSA.terminar(it); } else { it.errPasso=0; LOUSA.mostrarPasso(it); } } },
+  revelar(it){}
+};
+function novaLousa(base){ const it=Object.assign({tipo:'lousa',pi:0,feitos:[],cadeia:[],mostraLin:0,mostrar:'(siga os passos)'},base); it.atual=()=>LOUSA.atualDe(it); return it; }
+/* ---- adição e subtração ---- */
+function lousaSomaSub(a,b,c,d,op,cat,enun){
+  const bd=b*d, ad=a*d, bc=b*c, r=op==='+'?ad+bc:ad-bc;
+  const it=novaLousa({cat:cat||'somasub',enun:enun||`Calcule <b>${a}/${b} ${op} ${c}/${d}</b> pela regrinha das frações equivalentes.`,
+    L:[[{f:['a','b']},{op},{f:['c','d']}],[{t:'='},{f:['e1n','e1d']},{op},{f:['e2n','e2d']}],[{t:'='},{f:['rn','rd']}]],
+    V:{a,b,c,d}, Q:['a','b','c','d'], res:['rn','rd'],
+    P:[
+      {tipo:'ligar',instr:`<b class="n">Passo 1</b> Toque nos dois <b>denominadores</b> (os números de baixo) para ligar e multiplicar.`,erro:'Primeiro ligamos os <b>denominadores</b>: o número de baixo da 1ª fração com o número de baixo da 2ª.',
+        pares:[{p:['b','d'],cor:0,conta:`${b} × ${d}`,resp:bd,enche:{e1d:bd,e2d:bd}}]},
+      {tipo:'ligar',instr:`<b class="n">Passo 2</b> Agora ligue <b>em cruz</b>: o denominador de uma fração com o <b>numerador da outra</b>. São duas setas!`,erro:'Ligue em cruz: o <b>denominador</b> de uma fração com o <b>numerador da outra</b> (o de baixo de uma com o de cima da outra).',
+        pares:[{p:['d','a'],cor:1,conta:`${d} × ${a}`,resp:ad,enche:{e1n:ad}},{p:['b','c'],cor:2,conta:`${b} × ${c}`,resp:bc,enche:{e2n:bc}}]},
+      {tipo:'calc',instr:`<b class="n">Passo 3</b> Pronto: as frações ficaram com o <b>mesmo denominador (${bd})</b>. Agora ${op==='+'?'some':'subtraia'} só os <b>numeradores</b>. O denominador continua ${bd}.`,conta:`${ad} ${op} ${bc}`,resp:r,enche:{rn:r,rd:bd}},
+      {tipo:'simp'}],
+    barras(it){ const ok1=it.V.e1d!=null; const D=ok1?bd:null;
+      return `<div class="barras"><div class="rot"><span>${a}/${b}${ok1?` = ${ad}/${bd}`:''}</span></div>${ok1?barraFina(ad,bd,'#60A5FA'):barraFina(a,b,'#60A5FA')}
+        <div class="rot"><span>${c}/${d}${ok1?` = ${bc}/${bd}`:''}</span></div>${ok1?barraFina(bc,bd,'#F87171'):barraFina(c,d,'#F87171')}
+        ${it.V.rn!=null?`<div class="rot"><span>Resultado: ${r}/${bd}</span></div>${barraFina(r,bd,'#4ADE80')}`:''}</div>`; },
+    resumo:(it,n,dd)=>`${a}/${b} ${op} ${c}/${d}: denominadores ${b} × ${d} = ${bd}; em cruz ${d} × ${a} = ${ad} e ${b} × ${c} = ${bc}. Então ${ad}/${bd} ${op} ${bc}/${bd} = <b>${r}/${bd}</b>${(n!==r)?` = <b>${n}/${dd}</b> (simplificada)`:''}.`
+  });
+  return it;
+}
+function gSomaSub(op){
+  for(let t=0;t<50;t++){ const b=rnd(2,6), d=rnd(2,6); if(b===d||b*d>30) continue; const a=rnd(1,b-1), c=rnd(1,d-1);
+    if(op==='-'&&a*d<=b*c) continue; return [a,b,c,d]; }
+  return [1,2,1,3];
+}
+/* ---- multiplicação ---- */
+function lousaMult(a,b,c,d,cat,enun,quant){
+  const n=a*c, dd=b*d;
+  return novaLousa({cat:cat||'mult',enun:enun||`Calcule <b>${a}/${b} × ${c}/${d}</b>.`,
+    L:[[{f:['a','b']},{op:'×'},{f:['c','d']}],[{t:'='},{f:['rn','rd']}]], V:{a,b,c,d}, Q:['a','b','c','d'], res:['rn','rd'],
+    P:[{tipo:'ligar',instr:`<b class="n">Passo 1</b> Na multiplicação é direto: ligue <b>numerador com numerador</b> e <b>denominador com denominador</b>.${quant?` (O ${c} inteiro virou a fração ${c}/1.)`:''}`,erro:'Na multiplicação, ligue o de <b>cima com o de cima</b> e o de <b>baixo com o de baixo</b>.',
+        pares:[{p:['a','c'],cor:1,conta:`${a} × ${c}`,resp:n,enche:{rn:n}},{p:['b','d'],cor:0,conta:`${b} × ${d}`,resp:dd,enche:{rd:dd}}]},{tipo:'simp'}],
+    resumo:(it,x,y)=>`${a}/${b} × ${c}/${d} = ${a}×${c} / ${b}×${d} = <b>${n}/${dd}</b>${x!==n?` = <b>${x}/${y}</b>`:''}.${quant?` Ou seja, ${a}/${b} de ${c} é <b>${n/dd}</b>.`:''}`});
+}
+/* ---- divisão pelas frações equivalentes ---- */
+function lousaDiv(a,b,c,d,cat,enun){
+  const bd=b*d, ad=a*d, bc=b*c;
+  const ops=embaralhar([[`${ad}/${bc}`,1],[`${bc}/${ad}`,0],[`${ad}/${bd}`,0]]);
+  return novaLousa({cat:cat||'div',enun:enun||`Calcule <b>${a}/${b} ÷ ${c}/${d}</b>.`,
+    L:[[{f:['a','b']},{op:'÷'},{f:['c','d']}],[{t:'='},{f:['e1n','e1d']},{op:'÷'},{f:['e2n','e2d']}],[{t:'='},{f:['rn','rd']}]], V:{a,b,c,d}, Q:['a','b','c','d'], res:['rn','rd'],
+    P:[
+      {tipo:'ligar',instr:`<b class="n">Passo 1</b> Igual à soma: ligue os dois <b>denominadores</b> e multiplique.`,erro:'Primeiro ligamos os <b>denominadores</b> (os de baixo).',pares:[{p:['b','d'],cor:0,conta:`${b} × ${d}`,resp:bd,enche:{e1d:bd,e2d:bd}}]},
+      {tipo:'ligar',instr:`<b class="n">Passo 2</b> Agora ligue <b>em cruz</b>: o denominador de uma com o numerador da outra.`,erro:'Em cruz: o <b>denominador</b> de uma fração com o <b>numerador da outra</b>.',
+        pares:[{p:['d','a'],cor:1,conta:`${d} × ${a}`,resp:ad,enche:{e1n:ad}},{p:['b','c'],cor:2,conta:`${b} × ${c}`,resp:bc,enche:{e2n:bc}}]},
+      {tipo:'escolha',instr:`<b class="n">Passo 3</b> Com o mesmo denominador, a divisão fica só entre os <b>numeradores</b>: ${ad} ÷ ${bc}. Como fica em forma de fração?`,ops:ops.map(o=>o[0]),certo:ops.findIndex(o=>o[1]),erro:`O numerador da 1ª (${ad}) vai em cima e o numerador da 2ª (${bc}) vai embaixo: ${ad} ÷ ${bc} = ${ad}/${bc}.`,enche:{rn:ad,rd:bc}},
+      {tipo:'simp'}],
+    resumo:(it,x,y)=>`${a}/${b} ÷ ${c}/${d} = ${ad}/${bd} ÷ ${bc}/${bd} = <b>${ad}/${bc}</b>${x!==ad?` = <b>${x}/${y}</b>`:''}. Atalho que dá o mesmo resultado: multiplicar pela inversa, ${a}/${b} × ${d}/${c}.`});
+}
+/* ---- equivalentes: completar ?/D (×) ou simplificar (÷) ---- */
+function lousaEquiv(){
+  const b=rnd(2,6), a=rnd(1,b-1), k=rnd(2,5); const div=Math.random()<.4;
+  if(!div) return novaLousa({cat:'equiv',enun:`Complete para que as frações sejam <b>equivalentes</b>: ${a}/${b} = ?/${b*k}`,
+    L:[[{f:['a','b']},{t:'='},{f:['x','D']}]], V:{a,b,D:b*k}, Q:['a','b','x','D'], res:['a','b'],
+    P:[{tipo:'ligar',instr:`<b class="n">Passo 1</b> Ligue os <b>denominadores</b> ${b} e ${b*k}. Por quanto multiplicamos o ${b} para chegar ao ${b*k}?`,erro:'Comece pelos <b>denominadores</b> (os de baixo), que já conhecemos.',pares:[{p:['b','D'],cor:0,conta:`${b} × ?`,resp:k,rot:'×'+k,enche:{},dicaErr:v=>`${b} × ${v} = ${b*v}, e queremos ${b*k}.`}]},
+       {tipo:'ligar',instr:`<b class="n">Passo 2</b> O que fazemos embaixo, fazemos em cima! Ligue o numerador <b>${a}</b> ao <b>?</b> e multiplique pelo mesmo número.`,erro:'Agora ligue os <b>numeradores</b>: o de cima da 1ª com o <b>?</b>.',pares:[{p:['a','x'],cor:1,conta:`${a} × ${k}`,resp:a*k,rot:'×'+k,rotIni:'×'+k,enche:{x:a*k}}]}],
+    barras:(it)=>`<div class="barras"><div class="rot"><span>${a}/${b}</span></div>${barraFina(a,b,'#60A5FA')}<div class="rot"><span>${it.V.x!=null?a*k:'?'}/${b*k}</span></div>${barraFina(it.V.x!=null?a*k:0,b*k,'#4ADE80')}</div>`,
+    resumo:()=>`${a}/${b} = <b>${a*k}/${b*k}</b>: multiplicamos o numerador e o denominador por <b>${k}</b>. A parte pintada é a mesma, só que dividida em pedaços menores.`});
+  const A=a*k, B=b*k;
+  return novaLousa({cat:'equiv',enun:`Simplifique: ${A}/${B} = ?/${b}`,
+    L:[[{f:['A','B']},{t:'='},{f:['x','D']}]], V:{A,B,D:b}, Q:['A','B','x','D'], res:['A','B'],
+    P:[{tipo:'ligar',instr:`<b class="n">Passo 1</b> Ligue os <b>denominadores</b> ${B} e ${b}. Por quanto dividimos o ${B} para chegar ao ${b}?`,erro:'Comece pelos <b>denominadores</b> (os de baixo).',pares:[{p:['B','D'],cor:0,conta:`${B} ÷ ?`,resp:k,rot:'÷'+k,enche:{},dicaErr:v=>`${B} ÷ ${v} não dá ${b}.`}]},
+       {tipo:'ligar',instr:`<b class="n">Passo 2</b> Faça o mesmo em cima: ligue o <b>${A}</b> ao <b>?</b> e divida pelo mesmo número.`,erro:'Agora ligue os <b>numeradores</b>.',pares:[{p:['A','x'],cor:1,conta:`${A} ÷ ${k}`,resp:a,rot:'÷'+k,rotIni:'÷'+k,enche:{x:a}}]}],
+    barras:(it)=>`<div class="barras"><div class="rot"><span>${A}/${B}</span></div>${barraFina(A,B,'#60A5FA')}<div class="rot"><span>${it.V.x!=null?a:'?'}/${b}</span></div>${barraFina(it.V.x!=null?a:0,b,'#4ADE80')}</div>`,
+    resumo:()=>`${A}/${B} = <b>${a}/${b}</b>: dividimos o numerador e o denominador por <b>${k}</b>. Isso é <b>simplificar</b>.`});
+}
+function lousaSimplificar(){
+  const b=pick([3,4,5,7]), a=rnd(1,b-1), k=pick([4,6,8,9,10]); const n=a*k, d=b*k;
+  const it=novaLousa({cat:'equiv',enun:`Simplifique <b>${n}/${d}</b> até não dar mais.`,L:[[{f:['n0','d0']}]],V:{n0:n,d0:d},Q:[],res:['n0','d0'],P:[{tipo:'simp'}],
+    resumo:(it,x,y)=>`${n}/${d} = <b>${x}/${y}</b>. Dividimos em cima e embaixo pelo mesmo número até não haver mais divisor comum. Dica: dá para ir de uma vez dividindo por ${mdc(n,d)}.`});
+  return it;
+}
+/* ================= problemas ================= */
+function gProblema(){
+  const t=pick(['soma','sub','mult','quant','div']);
+  if(t==='soma'){ const [a,b,c,d]=gSomaSub('+'); return lousaSomaSub(a,b,c,d,'+','problemas',`🍕 Ana comeu <b>${a}/${b}</b> de uma pizza e Beto comeu <b>${c}/${d}</b> da mesma pizza. Que fração da pizza os dois comeram juntos?`); }
+  if(t==='sub'){ const [a,b,c,d]=gSomaSub('-'); return lousaSomaSub(a,b,c,d,'-','problemas',`🧃 Uma jarra tinha <b>${a}/${b}</b> de suco. A turma bebeu <b>${c}/${d}</b> da jarra. Que fração da jarra sobrou?`); }
+  if(t==='mult'){ const b=rnd(2,5), a=rnd(1,b-1), d=rnd(2,5), c=rnd(1,d-1); return lousaMult(a,b,c,d,'problemas',`🥬 Na horta da escola, <b>${a}/${b}</b> do canteiro é de alface. Dessa parte, <b>${c}/${d}</b> já foi colhida. Que fração do canteiro foi colhida?`); }
+  if(t==='quant'){ const b=pick([2,3,4,5]), a=rnd(1,b-1), N=b*rnd(4,9); return lousaMult(a,b,N,1,'problemas',`🚌 Uma turma tem <b>${N}</b> estudantes e <b>${a}/${b}</b> deles vão de ônibus. Quantos estudantes vão de ônibus? (Escreva ${N} como ${N}/1.)`,true); }
+  const b=pick([2,3,4]), a=rnd(1,b-1)||1, d=b*pick([2,3]); return lousaDiv(a,b,1,d,'problemas',`🥤 Quantos copinhos de <b>1/${d}</b> de litro dá para encher com <b>${a}/${b}</b> de litro de suco?`);
+}
+
+const JOGO={
+  NOME:'Laboratório de Frações', CHAVE:'labFracoes.v1', AREA:'MATEMÁTICA',
+  PATENTES:[[0,'🧪 Aprendiz'],[6,'🍕 Repartidor(a)'],[12,'🔗 Mestre das setas'],[18,'🏆 Cientista das frações']],
+  CATS:{figura:'Da figura para a fração (MS.EF05MA03, MS.EF06MA07)',representar:'Da fração para a figura (MS.EF05MA03, MS.EF06MA07)',equiv:'Frações equivalentes e simplificação (MS.EF05MA04, MS.EF06MA07)',somasub:'Adição e subtração de frações (MS.EF06MA10)',mult:'Multiplicação e fração de quantidade (MS.EF07MA11, MS.EF06MA09)',div:'Divisão de frações (MS.EF07MA11)',problemas:'Problemas com frações (MS.EF06MA10, MS.EF07MA12)'},
+  HOME:{h1:'Laboratório de <span>Frações</span>', turma:'ex.: 6º A',
+    lead:'Veja a fração na figura, pinte a figura a partir da fração e faça as quatro operações na lousa: toque nos números para <b>circular</b>, <b>ligue com setas</b>, multiplique e simplifique, passo a passo.',
+    cena:`<div style="background:#14532D;border:8px solid #92400E;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:28px;padding:18px;color:#fff;font:800 34px var(--titulo)"><span style="display:grid;justify-items:center"><span>1</span><i style="display:block;width:40px;height:4px;background:#fff"></i><span style="border:3px solid #60A5FA;border-radius:50%;padding:0 10px">2</span></span><span style="color:#FDE68A">+</span><span style="display:grid;justify-items:center"><span>1</span><i style="display:block;width:40px;height:4px;background:#fff"></i><span style="border:3px solid #60A5FA;border-radius:50%;padding:0 10px">3</span></span><span style="color:#FDE68A">=</span><span style="display:grid;justify-items:center;color:#FDE047"><span>5</span><i style="display:block;width:40px;height:4px;background:#FDE047"></i><span>6</span></span></div>`,
+    info:[['7','missões'],['5º ao 7º','anos'],['🔗','circule e ligue']],
+    rodape:'Matemática · 5º ao 7º ano · Habilidades <b>MS.EF05MA03</b>, <b>MS.EF05MA04</b>, <b>MS.EF06MA07</b>, <b>MS.EF06MA09</b>, <b>MS.EF06MA10</b>, <b>MS.EF07MA11</b> e <b>MS.EF07MA12</b>'},
+  AJUDA:['🔗 Na lousa, toque em um número para <b>circular</b> e depois em outro para <b>ligar com uma seta</b>. Depois digite o resultado da conta.','➕ Soma, subtração e divisão: <b>1)</b> multiplique os denominadores; <b>2)</b> em cruz, o denominador de uma pelo numerador da outra; <b>3)</b> opere os numeradores; <b>4)</b> simplifique.','✖️ Multiplicação: numerador × numerador e denominador × denominador.','💡 Errou duas vezes no mesmo passo? Aparece o botão <b>Me mostra este passo</b>.','👩‍🏫 Professor(a): as contas mudam a cada partida. O relatório separa cada tipo de conta.'],
+  MISSOES:[
+    {id:'m1',titulo:'Da figura para a fração',ic:'🍕',hab:'MS.EF05MA03 · MS.EF06MA07',desc:'Olhe a figura e monte a fração.',gerar:()=>[itMontar(),itMontar(),itMontar(),itMontar(),itMontar(),itMontarMaior()],intro:'<p>O <b>denominador</b> (embaixo) diz em quantas partes <b>iguais</b> o inteiro foi dividido. O <b>numerador</b> (em cima) diz quantas partes pegamos.</p>'},
+    {id:'m2',titulo:'Da fração para a figura',ic:'🖍️',hab:'MS.EF05MA03 · MS.EF06MA07',desc:'Divida e pinte a figura.',gerar:()=>[itPintar(),itPintar(),itPintar('dividir'),itPintar('dividir'),itPintar('equiv'),itPintar()],intro:'<p>Para representar <b>3/4</b>: divida em <b>4</b> partes iguais e pinte <b>3</b>.</p>'},
+    {id:'m3',titulo:'Frações equivalentes',ic:'🟰',hab:'MS.EF05MA04 · MS.EF06MA07',desc:'Multiplique ou divida em cima e embaixo pelo mesmo número.',gerar:()=>[lousaEquiv(),lousaEquiv(),lousaEquiv(),lousaEquiv(),lousaSimplificar(),lousaSimplificar()],intro:'<p>Frações <b>equivalentes</b> representam a mesma parte. O segredo: o que fizer <b>embaixo</b>, faça <b>em cima</b>. <b>1/2 = 2/4 = 3/6</b>.</p>'},
+    {id:'m4',titulo:'Somar e subtrair',ic:'➕',hab:'MS.EF06MA10',desc:'A regrinha: denominadores, cruz, operar e simplificar.',gerar:()=>[...[0,1,2,3].map(()=>{ const [a,b,c,d]=gSomaSub('+'); return lousaSomaSub(a,b,c,d,'+'); }),...[0,1].map(()=>{ const [a,b,c,d]=gSomaSub('-'); return lousaSomaSub(a,b,c,d,'-'); })],intro:'<p><b>1)</b> Ligue e multiplique os <b>denominadores</b>. <b>2)</b> Em <b>cruz</b>: denominador de uma × numerador da outra. <b>3)</b> Com denominadores iguais, opere só os numeradores. <b>4)</b> Simplifique.</p>'},
+    {id:'m5',titulo:'Multiplicar',ic:'✖️',hab:'MS.EF07MA11 · MS.EF06MA09',desc:'Em cima com em cima, embaixo com embaixo. E fração de quantidade.',gerar:()=>{ const it=[]; for(let k=0;k<4;k++){ const b=rnd(2,6), a=rnd(1,b-1), d=rnd(2,6), c=rnd(1,d-1); it.push(lousaMult(a,b,c,d)); } for(let k=0;k<2;k++){ const b=pick([2,3,4,5]), a=rnd(1,b-1), N=b*rnd(2,6); it.push(lousaMult(a,b,N,1,'mult',`Calcule <b>${a}/${b} de ${N}</b> (é o mesmo que ${a}/${b} × ${N}/1).`,true)); } return it; },intro:'<p>Na multiplicação é direto: <b>numerador × numerador</b> e <b>denominador × denominador</b>. Para calcular <b>2/3 de 12</b>, faça 2/3 × 12/1.</p>'},
+    {id:'m6',titulo:'Dividir',ic:'➗',hab:'MS.EF07MA11',desc:'Mesmo denominador e depois divide os numeradores.',gerar:()=>{ const it=[]; for(let k=0;k<6;k++){ const b=rnd(2,6), a=rnd(1,b-1), d=rnd(2,6), c=rnd(1,d-1); if(b*d>36){ k--; continue; } it.push(lousaDiv(a,b,c,d)); } return it; },intro:'<p>Use a mesma regrinha da soma para deixar os <b>denominadores iguais</b>. Depois, é só dividir os <b>numeradores</b>: o da 1ª fica em cima, o da 2ª embaixo.</p>'},
+    {id:'m7',titulo:'Problemas com frações',ic:'🧩',hab:'MS.EF06MA10 · MS.EF07MA12',desc:'Pizza, suco, horta e ônibus: qual conta usar?',gerar:()=>[0,1,2,3,4,5].map(gProblema),intro:'<p>Leia o problema, descubra a operação e resolva na lousa, passo a passo.</p>'}
+  ],
+  TIPOS:{montar:MONTAR,pintar:PINTAR,lousa:LOUSA}
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>
