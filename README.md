@@ -40,7 +40,7 @@ O site é publicado pelo GitHub Pages: **Settings → Pages → Branch `main` / 
 
 ## Quiz STE ao vivo (`quiz/`)
 
-Versão on-line do Quiz STE do Prof. José Rene: o professor abre `quiz/` e projeta, os estudantes entram em `quiz/jogar.html` com o PIN.
+Versão on-line do Quiz STE: o professor abre `quiz/` e projeta, os estudantes entram em `quiz/jogar.html` com o PIN.
 
 - `rede.js`: conexão com o Firebase Realtime Database (ou modo de teste local com `?teste=1`).
 - `config.js`: configuração do app Web do Firebase (não é senha).
