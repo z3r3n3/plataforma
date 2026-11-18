@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Física na Bancada</title>
+<meta name="description" content="Simulador de Ciências do 6º ao 9º ano com os experimentos do laboratório móvel: condução do calor no fio de cobre e na madeira, correntes de convecção, condutores e isolantes no estojo de multirreações, pilha de limão, prisma e disco de Newton e a câmara escura.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#1E40AF;--agua2:#2563EB;--agua-claro:#DBEAFE;--mata2:#EA580C}
+body{background:linear-gradient(160deg,#DBEAFE 0%,#F8FAFC 50%,#FFEDD5 100%)}
+.topo{background:#EFF6FFee;border-bottom-color:#BFDBFE}
+.trilho{background:#BFDBFE}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #EA580C33}
+.amostra-el{display:grid;justify-items:center;gap:2px;min-width:78px}
+.amostra-el .ic{font-size:34px;line-height:1}
+.amostra-el small{font-size:12px;font-weight:800;color:#334155}
+.gira-lento{animation:giraD 3s linear infinite;transform-origin:center;transform-box:fill-box}
+.bancada.escura{background:linear-gradient(#1E293B,#0F172A)}
+.bancada.escura .rotulo{color:#E2E8F0}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   FÍSICA NA BANCADA — Ciências · 6º ao 9º ano
+   Atividades do manual do laboratório móvel: condução (34), condutores e
+   isolantes (35), convecção (36), pilha de limão e batata (65),
+   disco de Newton (99), câmara escura (102) e prisma (104).
+   ========================================================= */
+/* =========================================================
+   LABIB — bancada virtual dos jogos de laboratório (Ciências)
+   Tipos: 'bancada'    prever → fazer os passos → observar → explicar
+          'classificar' cada item recebe um rótulo (tocar troca o rótulo)
+          'ordem'      tocar nos cartões na sequência certa
+          'ponto'      tocar na parte certa de uma figura
+   ========================================================= */
+const E=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
+let _uid=0; const uid=()=>'u'+(++_uid);
+/* ---------- vidrarias em SVG ---------- */
+function svgTubo(cor,nivel=.45,rot='',extra='',h=110){ const id=uid(), y0=8+(1-nivel)*(h-22);
+  return `<svg width="40" height="${h+(rot?22:6)}" viewBox="0 0 40 ${h+(rot?22:6)}" aria-hidden="true">
+    <defs><clipPath id="${id}"><path d="M8 4 V${h-14} a12 12 0 0 0 24 0 V4 Z"/></clipPath></defs>
+    ${cor?`<rect x="6" y="${y0}" width="28" height="${h}" fill="${cor}" clip-path="url(#${id})" class="liq"/>`:''}${extra}
+    <path d="M8 2 V${h-14} a12 12 0 0 0 24 0 V2" fill="#FFFFFF55" stroke="#475569" stroke-width="3"/><path d="M4 2 H36" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+    ${rot?`<text x="20" y="${h+18}" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${rot}</text>`:''}</svg>`; }
+function svgBequer(cor,nivel=.5,rot='',extra='',w=90){ const h=Math.round(w*1.05), top=10, base=h-4, ly=top+(1-nivel)*(base-top-6);
+  return `<svg width="${w+10}" height="${h+(rot?22:4)}" viewBox="0 0 ${w+10} ${h+(rot?22:4)}" aria-hidden="true">
+    ${cor?`<path d="M10 ${ly} H${w} V${base-6} q0 6 -6 6 H16 q-6 0 -6 -6 Z" fill="${cor}" class="liq"/>`:''}${extra}
+    <path d="M4 6 q6 0 6 6 V${base-6} q0 6 6 6 H${w-6} q6 0 6 -6 V12 q0 -6 6 -6" fill="none" stroke="#475569" stroke-width="3"/>
+    ${[.25,.5,.75].map(f=>`<line x1="${w-14}" x2="${w}" y1="${top+(1-f)*(base-top)}" y2="${top+(1-f)*(base-top)}" stroke="#94A3B8" stroke-width="2"/>`).join('')}
+    ${rot?`<text x="${(w+10)/2}" y="${h+18}" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${rot}</text>`:''}</svg>`; }
+/* proveta com camadas [{cor,frac,nome}] de baixo para cima */
+function svgProveta(camadas,extra='',alt=230){ const x=34,w=40,top=20,base=alt-18; let y=base, s='';
+  camadas.forEach(c=>{ const h=c.frac*(base-top); s+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${c.cor}" class="liq"/>${c.nome?`<text x="${x+w+8}" y="${y-h/2+5}" font-size="13" font-weight="700" fill="#1F2937">${c.nome}</text>`:''}`; y-=h; });
+  return `<svg width="170" height="${alt+6}" viewBox="0 0 170 ${alt+6}" aria-hidden="true">${s}${extra}
+    <path d="M${x-2} ${top-10} V${base} H${x+w+2} V${top-10}" fill="none" stroke="#475569" stroke-width="3"/><path d="M${x-14} ${base+4} H${x+w+14}" stroke="#475569" stroke-width="6" stroke-linecap="round"/></svg>`; }
+const chama=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 C-12 -10 -8 -26 0 -40 C8 -26 12 -10 0 0Z" fill="#F97316"/><path d="M0 -2 C-6 -8 -4 -18 0 -26 C4 -18 6 -8 0 -2Z" fill="#FDE047"/></g>`;
+/* ---------- alvo da bancada (pisca depois de 2 erros no mesmo passo) ---------- */
+function passoAtual(it){ return it.passos&&it.passos[it.pi||0]; }
+function alvo(it,id,inner,rot){ const P=passoAtual(it); const d=it.fase==='agir'&&(it.errN||0)>=2&&P&&(P.em===id||P.alvo===id||(P.alvos&&P.alvos.includes(id)&&!(it.feitos||{})[id]));
+  return `<button class="alvo ${d?'pisca':''}" data-x="${id}" aria-label="${(rot||id).replace(/<[^>]+>/g,'')}" ${it.fase!=='agir'?'tabindex="-1"':''}>${inner}${rot?`<span class="rotulo">${rot}</span>`:''}</button>`; }
+/* ---------- bancada ---------- */
+const exec=(it,P)=>{ if(P.alvos&&P.cada) P.alvos.forEach(a=>{ if(!(it.feitos||{})[a]) P.cada(it,a); }); it.feitos={}; if(P.fazer) P.fazer(it); };
+const BANCADA={
+  desenhar(it){
+    if(!it.fase) it.fase=it.prever?'prever':'agir';
+    const h=`<div class="bancada">${it.cena(it)}</div>`;
+    if(it.fase==='prever') return h+`<div class="passo-lab"><b class="tag">🤔 Antes de testar</b> ${it.prever.perg}<br><span class="mini">Escolha o seu palpite. Não vale ponto: é só para comparar depois!</span></div><div class="opcoes grandes">${it.prever.ops.map((o,j)=>`<button class="op" data-x="pv:${j}"><b>${'ABCD'[j]}</b><span>${o}</span></button>`).join('')}</div>`;
+    if(it.fase==='agir'){ const P=passoAtual(it);
+      return h+`<div class="passo-lab"><b class="tag">🧪 Passo ${(it.pi||0)+1} de ${it.passos.length}</b> ${P.instr}</div>${it.err?`<div class="err-lab">${it.err}</div>`:''}${(it.ferr||[]).length?`<div class="ferramentas">${it.ferr.map(f=>{ const d=(it.errN||0)>=2&&(P.f===f.id||P.alvo==='f:'+f.id); return `<button class="btn ferr ${it.selF===f.id?'sel':''} ${d?'pisca':''}" data-x="f:${f.id}">${f.ic} ${f.nome}</button>`; }).join('')}</div>`:''}`; }
+    const obs=it.obs?(typeof it.obs==='function'?it.obs(it):it.obs):'';
+    const pv=it.palpite!=null?`<br><span class="mini">Seu palpite: <b>${it.prever.ops[it.palpite]}</b>${it.prever.certa!=null?(it.palpite===it.prever.certa?' — ✔ acertou a previsão!':' — o resultado foi outro. Tudo bem: é testando que a ciência avança!'):''}</span>`:'';
+    return h+(obs||pv?`<div class="obs-lab"><b class="tag">👀 Observação</b> ${obs}${pv}</div>`:'')+(it.perg?`<p class="enunciado" style="margin-top:12px">${it.perg}</p>${mcHtml(it)}`:'');
+  },
+  acao(it,x){
+    if(x.startsWith('pv:')){ if(it.fase!=='prever') return; it.palpite=+x.slice(3); it.fase='agir'; it.pi=0; som('bip'); return desenhar(); }
+    if(it.fase!=='agir') return;
+    const P=passoAtual(it); if(!P) return;
+    const nomeF=id=>(it.ferr.find(f=>f.id===id)||{}).nome||'';
+    const erro=m=>{ it.err=m; it.errN=(it.errN||0)+1; it.errTot=(it.errTot||0)+1; som('erro'); desenhar(); };
+    if(x.startsWith('f:')){ const id=x.slice(2);
+      if(P.alvo&&P.alvo.startsWith('f:')) return 'f:'+id===P.alvo?BANCADA.fazer(it,P):erro(P.dica||'Esse não é o material deste passo. Leia o passo de novo.');
+      it.selF=it.selF===id?null:id; it.err=''; som('bip'); return desenhar(); }
+    if(P.alvos){ if(P.f&&!it.selF) return erro(`Primeiro toque no material: <b>${nomeF(P.f)}</b>.`);
+      if(P.f&&it.selF!==P.f) return erro(P.dicaF||`Material errado para este passo. Use: <b>${nomeF(P.f)}</b>.`);
+      if(!P.alvos.includes(x)) return erro(P.dica||'Não é aí. Leia o passo com atenção.');
+      it.feitos=it.feitos||{}; if(it.feitos[x]) return; it.feitos[x]=1; if(P.cada) P.cada(it,x);
+      if(P.alvos.every(a=>it.feitos[a])){ it.feitos={}; return BANCADA.fazer(it,P); }
+      it.err=''; it.errN=0; som('bip'); return desenhar(); }
+    if(P.em){ if(!it.selF) return erro(`Primeiro toque no material: <b>${nomeF(P.f)}</b>.`);
+      if(it.selF!==P.f) return erro(P.dicaF||`Material errado para este passo. Use: <b>${nomeF(P.f)}</b>.`);
+      return x===P.em?BANCADA.fazer(it,P):erro(P.dica||'Não é aí. Leia o passo com atenção.'); }
+    return x===P.alvo?BANCADA.fazer(it,P):erro(P.dica||'Não é aí. Leia o passo com atenção.');
+  },
+  fazer(it,P){ if(P.fazer) P.fazer(it); it.selF=null; it.err=''; it.errN=0; it.pi=(it.pi||0)+1; som('ok');
+    if(it.pi>=it.passos.length){ it.fase='pergunta'; if(!it.perg){ registrar('i'+M.i,it.cat,!it.errTot); return responder(true); } }
+    desenhar(); },
+  auto(it){ if(it.prever) it.palpite=0; if(it.fase!=='pergunta'){ it.passos.slice(it.pi||0).forEach(P=>exec(it,P)); } it.pi=it.passos.length; it.fase='pergunta'; if(it.perg) return responderMC(it.certo); responder(true); },
+  revelar(it){ if(it.fase!=='pergunta'){ it.passos.slice(it.pi||0).forEach(P=>exec(it,P)); it.pi=it.passos.length; it.fase='pergunta'; } }
+};
+/* monta um item de bancada; com perg/certa/erradas termina em múltipla escolha */
+function banc(o){
+  const b=Object.assign({tipo:'bancada',grandes:true,dica:'Volte à observação: o que você viu acontecer na bancada?'},o);
+  if(o.real) b.x=(o.x||'')+`<div class="real-lab">🧰 <b>No laboratório móvel:</b> ${o.real}</div>`;
+  if(o.init) o.init(b);
+  if(o.perg){ const r=mc(b,o.certa,o.erradas); r.mostrar=o.certa; return r; }
+  b.mostrar='os passos na ordem indicada'; return b;
+}
+/* ---------- classificar ---------- */
+const CLASSIFICAR={
+  desenhar(it){ return `${it.cena?`<div class="bancada">${it.cena(it)}</div>`:''}<div class="classes">${it.alvos.map((a,i)=>{ const v=it.esc[i]; const errou=!it.feito&&(it.marcErr||[]).includes(i);
+      return `<div class="classe ${errou?'errou':''}"><div class="nome">${a.nome}</div><button class="btn rot ${v==null?'':'c'+((it.cls||[])[v]??v)}" data-x="c:${i}" ${it.feito?'disabled':''}>${v==null?'Toque para escolher':it.rotulos[v]}</button></div>`; }).join('')}</div>
+    ${it.feito?'':'<div class="seguir"><button class="btn agua" data-acao="conferir">Conferir</button></div>'}`; },
+  acao(it,x){ const i=+x.slice(2); it.esc[i]=it.esc[i]==null?0:(it.esc[i]+1)%it.rotulos.length; it.marcErr=(it.marcErr||[]).filter(k=>k!==i); som('bip'); desenhar(); },
+  conferir(it){ if(it.esc.some(v=>v==null)) return toast('Escolha uma opção para todos.');
+    const errs=it.alvos.map((a,i)=>it.esc[i]===a.c?-1:i).filter(i=>i>=0); it.marcErr=errs;
+    if(!errs.length) return responder(true);
+    responder(false,`${errs.length===1?'Uma escolha não está certa':`${errs.length} escolhas não estão certas`} (em vermelho). ${it.dicaErr||''}`); },
+  revelar(it){ it.esc=it.alvos.map(a=>a.c); }, auto(it){ it.esc=it.alvos.map(a=>a.c); CLASSIFICAR.conferir(it); }
+};
+const classif=(cat,enun,rotulos,alvos,extra={})=>{ const a=embaralhar(alvos); return Object.assign({tipo:'classificar',cat,enun,rotulos,alvos:a,esc:a.map(()=>null),mostrar:a.map(v=>v.nome.replace(/<[^>]+>/g,'')+' → '+rotulos[v.c]).join('; ')},extra); };
+/* ---------- ordem ---------- */
+const ORDEM={
+  desenhar(it){ const f=it.seq||[]; return `${it.cena?`<div class="bancada">${it.cena(it)}</div>`:''}${f.length?`<ol class="seq-ok">${f.map(i=>`<li>${it.itens[i]}</li>`).join('')}</ol>`:''}
+    ${it.feito?'':`<div class="cartoes">${it.ordemTela.filter(i=>!f.includes(i)).map(i=>`<button class="btn cartao-o" data-x="o:${i}">${it.itens[i]}</button>`).join('')}</div>`}`; },
+  acao(it,x){ const i=+x.slice(2); it.seq=it.seq||[];
+    if(i!==it.seq.length) return responder(false, (it.dicas&&it.dicas[it.seq.length])||'Pense no que precisa acontecer antes.');
+    it.seq.push(i); it.msg=''; if(it.seq.length===it.itens.length) return responder(true); som('bip'); desenhar(); },
+  revelar(it){ it.seq=it.itens.map((_,i)=>i); }, auto(it){ it.seq=it.itens.map((_,i)=>i); responder(true); }
+};
+const ordem=(cat,enun,itens,extra={})=>Object.assign({tipo:'ordem',cat,enun,itens,ordemTela:embaralhar(itens.map((_,i)=>i)),mostrar:itens.join(' → ')},extra);
+/* ---------- ponto: figura SVG com elementos data-x="p:id" ---------- */
+const PONTO={
+  desenhar(it){ return `<div class="bancada fig-ponto">${it.svg(it)}</div><p class="mini" style="text-align:center">Toque na parte da figura.</p>`; },
+  acao(it,x){ const id=x.slice(2); it.marca=id; responder(id===it.alvo, typeof it.dica==='function'?it.dica(id):it.dica); },
+  revelar(it){ it.marca=it.alvo; }, auto(it){ it.marca=it.alvo; responder(true); }
+};
+const TIPOS_LAB={bancada:BANCADA,classificar:CLASSIFICAR,ordem:ORDEM,ponto:PONTO};
+document.head.insertAdjacentHTML('beforeend',`<style>
+.bancada{background:linear-gradient(#F8FAFC,#E2E8F0);border:3px solid #CBD5E1;border-radius:18px;padding:14px 8px 16px;display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;align-items:flex-end;position:relative;overflow:hidden;min-height:120px}
+.bancada::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:#94A3B8}
+.bancada .alvo{background:none;border:3px dashed transparent;border-radius:14px;padding:2px 4px;cursor:pointer;display:grid;justify-items:center;font:inherit;color:inherit;position:relative;z-index:1}
+.bancada .alvo:hover{border-color:#F59E0B88;background:#FEF3C788}
+.pisca{animation:piscaL 1s infinite;border-color:#F59E0B!important}
+@keyframes piscaL{50%{box-shadow:0 0 0 6px #F59E0B66;background:#FEF3C7}}
+.bancada .rotulo{font-size:13px;font-weight:700;color:#334155;text-align:center;max-width:120px;line-height:1.2;margin-top:2px}
+.passo-lab,.obs-lab{background:#fff;border:2px solid #CBD5E1;border-left:8px solid var(--mata2);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:17px;line-height:1.45}
+.obs-lab{border-left-color:#16A34A;background:#F0FDF4}
+.passo-lab .tag,.obs-lab .tag{display:inline-block;background:var(--mata2);color:#fff;border-radius:999px;padding:0 10px;margin-right:6px;font-size:13px}
+.obs-lab .tag{background:#16A34A}
+.err-lab{background:#FEE2E2;border:2px solid #FCA5A5;border-radius:12px;padding:8px 12px;margin-top:8px}
+.real-lab{margin-top:8px;background:#EFF6FF;border:2px dashed #93C5FD;border-radius:12px;padding:8px 12px;font-size:15px}
+.ferramentas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.ferramentas .btn{font-size:15px;padding:8px 10px;min-height:46px;justify-content:flex-start;text-align:left;line-height:1.2}
+.ferr.sel{border-color:#F59E0B;background:#FEF3C7;box-shadow:0 0 0 4px #F59E0B44}
+.liq{transition:fill .8s}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+.classe{background:#fff;border:2px solid #E2E8F0;border-radius:14px;padding:8px;display:grid;gap:6px;text-align:center;align-content:space-between}
+.classe.errou{border-color:#F87171;background:#FEF2F2}
+.classe .nome{font-weight:700;font-size:15px;line-height:1.3}
+.btn.rot{min-height:44px;font-size:15px;width:100%;justify-content:center}
+.btn.rot.c0{background:#DCFCE7;border-color:#4ADE80}.btn.rot.c1{background:#FEE2E2;border-color:#F87171}.btn.rot.c2{background:#EDE9FE;border-color:#A78BFA}.btn.rot.c3{background:#DBEAFE;border-color:#60A5FA}
+.cartoes{display:grid;gap:8px;margin-top:10px}
+.cartao-o{text-align:left;justify-content:flex-start;white-space:normal;line-height:1.3}
+.seq-ok{margin:10px 0 0;padding-left:28px}
+.seq-ok li{background:#DCFCE7;border-radius:10px;padding:5px 10px;margin:4px 0;font-weight:700}
+.fig-ponto svg [data-x]{cursor:pointer}
+.fig-ponto svg [data-x]:hover{filter:drop-shadow(0 0 4px #F59E0B)}
+.bolha{animation:sobeB 1.4s linear infinite}
+@keyframes sobeB{from{transform:translateY(0);opacity:1}to{transform:translateY(-50px);opacity:0}}
+.gira{animation:giraD .25s linear infinite;transform-origin:center;transform-box:fill-box}
+@keyframes giraD{to{transform:rotate(360deg)}}
+.vis svg{max-width:100%;height:auto}
+</style>`);
+
+const lamp=(x,y,fogo,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M-24 40 Q-28 6 0 2 Q28 6 24 40Z" fill="#E0F2FE" stroke="#334155" stroke-width="3"/><path d="M-26 28 H26 L25 40 H-25Z" fill="#FDE68A"/><rect x="-8" y="-10" width="16" height="13" fill="#94A3B8" stroke="#334155" stroke-width="2"/><rect x="-2" y="-18" width="4" height="9" fill="#57534E"/>${fogo?chama(0,-16,1.1):''}</g>`;
+
+/* ---------- MISSÃO 1: condução ---------- */
+function conducao(mat){
+  const cobre=mat==='cobre';
+  const cena=it=>{ const d=it.d||0;
+    const gotas=[90,140,190,240].map((x,i)=>{ const der=cobre&&i<d; return der?`<ellipse cx="${x}" cy="128" rx="9" ry="3" fill="#F5F5F4" stroke="#A8A29E"/><path d="M${x-6} 76 h12" stroke="#E7E5E4" stroke-width="3"/>`:`<ellipse cx="${x}" cy="${cobre?72:68}" rx="7" ry="6" fill="#FAFAF9" stroke="#A8A29E" stroke-width="2"/>`; }).join('');
+    const haste=cobre?'<path d="M30 78 H270" stroke="#C2410C" stroke-width="5" stroke-linecap="round"/>':'<rect x="30" y="72" width="240" height="10" rx="3" fill="#B45309"/><rect x="26" y="70" width="34" height="14" rx="3" fill="#CBD5E1" stroke="#94A3B8"/>';
+    const pinca=it.seg?'<g transform="rotate(-8 280 78)"><rect x="252" y="68" width="46" height="8" rx="2" fill="#D97706" stroke="#334155"/><rect x="252" y="80" width="46" height="8" rx="2" fill="#D97706" stroke="#334155"/></g>':'';
+    const quente=cobre&&it.fogo?`<path d="M30 78 H${60+d*50}" stroke="#EF4444" stroke-width="5" stroke-linecap="round" opacity=".75"/>`:'';
+    return alvo(it,'fio',`<svg viewBox="0 0 300 170" width="300" height="170" aria-hidden="true">${lamp(44,124,it.fogo)}${haste}${quente}${gotas}${pinca}</svg>`,(cobre?'fio de cobre':'palito de madeira')+' com gotas de parafina e lamparina')+`<div style="width:100%;text-align:center;font-weight:800">⏱️ ${(it.t||0)} min</div>`; };
+  const esperar=(n,dd)=>({instr:n===1?'Agora é só observar. Toque em <b>Esperar 1 minuto</b>.':'Mais <b>1 minuto</b>…',alvo:'f:tempo',fazer:it=>{ it.t=n; it.d=dd; }});
+  return banc({cat:'calor',enun:cobre?'🔥 Quatro gotas de parafina de vela foram pingadas em um <b>fio de cobre</b>, a cada 5 cm.':'🪵 Agora as gotas de parafina estão em um <b>palito de madeira</b>. A ponta que vai ao fogo foi coberta com papel-alumínio.',init:b=>{b.d=0;b.t=0;},
+    cena, ferr:[{id:'pinca',ic:'🪵',nome:'Pinça de madeira'},{id:'tempo',ic:'⏱️',nome:'Esperar 1 minuto'}],
+    prever:cobre?{perg:'Quando a ponta do fio for aquecida, qual gota vai derreter <b>primeiro</b>?',ops:['A mais perto da chama','A mais longe da chama','Todas ao mesmo tempo','Nenhuma vai derreter'],certa:0}:{perg:'E na madeira, as gotas vão derreter como no cobre?',ops:['Não: quase nada vai acontecer com as gotas','Sim, igualzinho ao cobre','Vão derreter mais rápido','Vão derreter só as do meio'],certa:0},
+    passos:[{instr:`Segure a ponta ${cobre?'do fio':'do palito'} <b>sem alumínio</b> com a <b>pinça de madeira</b>.`,f:'pinca',em:'fio',fazer:it=>it.seg=1},
+      {instr:'O professor acende a lamparina. Leve a outra ponta até a <b>chama</b>: toque na montagem.',alvo:'fio',fazer:it=>it.fogo=1},
+      esperar(1,1),esperar(2,2),esperar(3,4)],
+    obs:cobre?'As gotas derreteram <b>uma de cada vez</b>: primeiro a mais perto da chama, por último a mais longe.':'Depois de 3 minutos, as gotas no palito de madeira <b>continuaram inteiras</b>.',
+    perg:cobre?'Por que as gotas derreteram uma de cada vez, da mais perto para a mais longe?':'O que esse resultado mostra sobre a madeira?',
+    certa:cobre?'O calor passou pelo metal aos poucos, da parte quente para a fria (condução)':'Ela conduz muito mal o calor: é um isolante térmico',
+    erradas:cobre?['A chama soprou as gotas','As gotas mais longe eram maiores','O fio esfriou a chama']:['Ela conduz o calor melhor que o cobre','A madeira estava molhada','A parafina não derrete'],
+    x:cobre?'Na <b>condução</b>, o calor passa de partícula em partícula, sem que o material saia do lugar. Os <b>metais</b> são ótimos condutores de calor.':'Madeira, plástico e isopor são <b>isolantes térmicos</b>: por isso cabos de panela e colheres de pau. O alumínio na ponta impede que o palito pegue fogo.',
+    real:'vela, fio de cobre de 40 cm (ou palito de madeira com papel-alumínio), pinça de madeira e lamparina, sobre uma folha de papel. Nunca toque no fio aquecido.'});
+}
+const CALQ=[
+  ()=>classif('calor','Este material é <b>bom condutor</b> de calor ou <b>isolante térmico</b>?',['🔥 Bom condutor','🧤 Isolante'],embaralhar([{nome:'Panela de alumínio',c:0},{nome:'Fio de cobre',c:0},{nome:'Colher de aço',c:0},{nome:'Cabo de madeira',c:1},{nome:'Isopor',c:1},{nome:'Luva de lã',c:1},{nome:'Cabo de plástico',c:1}]).slice(0,5),{cls:[1,3],x:'Metais conduzem bem o calor. Madeira, plástico, isopor e lã são isolantes.'}),
+  ()=>q('calor','Por que o cobertor de lã nos deixa aquecidos no inverno?','Ele é isolante: segura o calor do nosso corpo',['Ele produz calor sozinho','Ele puxa o calor do ar','Ele tem fogo por dentro'],'O cobertor não “esquenta”: ele <b>dificulta a saída</b> do calor que o corpo produz.',{corpo:E('🛌🧣')}),
+  ()=>q('calor','Por que a pinça usada para segurar o tubo aquecido é de <b>madeira</b>?','A madeira conduz mal o calor e não queima a mão',['A madeira é mais bonita','A madeira esquenta mais rápido','Porque é mais pesada'],'Com um isolante entre a mão e o objeto quente, o calor quase não chega até você.',{corpo:E('🪵🧪🔥')}),
+  ()=>q('calor','Temperatura e calor são a mesma coisa?','Não: calor é energia passando do mais quente para o mais frio',['Sim, são sinônimos','Não: calor é o frio ao contrário','Sim, os dois medem o tamanho do objeto'],'<b>Temperatura</b> indica o quanto as partículas se agitam; <b>calor</b> é a energia que passa de um corpo mais quente para um mais frio, até as temperaturas se igualarem.',{corpo:E('🌡️☕➡️🥶')})
+];
+const gerarConducao=()=>{ const c=sortear(CALQ,3); return [conducao('cobre'),c[0],conducao('madeira'),c[1],c[2]]; };
+
+/* ---------- MISSÃO 2: convecção ---------- */
+function conveccao(){
+  const cena=it=>{ const q=it.q, f=it.f;
+    return alvo(it,'tanque',`<svg viewBox="0 0 300 210" width="300" height="210" aria-hidden="true"><rect x="20" y="30" width="260" height="170" rx="8" fill="#E0F2FE" stroke="#334155" stroke-width="3"/>
+      <path d="M262 4 V186" stroke="#CBD5E1" stroke-width="8" fill="none"/><path d="M262 4 V186" stroke="#F8FAFC" stroke-width="4" fill="none"/>
+      ${q?'<path d="M262 186 C200 190 230 120 200 80 C180 50 120 46 90 42" stroke="#EF4444" stroke-width="16" fill="none" stroke-linecap="round" opacity=".75"/><path d="M95 30 l-12 12 12 12" stroke="#B91C1C" stroke-width="4" fill="none"/><path d="M214 130 l0 -16 m-8 8 l8 -8 8 8" stroke="#B91C1C" stroke-width="4" fill="none"/>':''}
+      ${f?'<path d="M40 40 C70 90 40 150 120 186" stroke="#3B82F6" stroke-width="16" fill="none" stroke-linecap="round" opacity=".75"/><path d="M58 120 l0 16 m-8 -8 l8 8 8 -8" stroke="#1D4ED8" stroke-width="4" fill="none"/>':''}
+      <text x="270" y="22" text-anchor="end" font-size="12" font-weight="700" fill="#334155">mangueira</text></svg>`,'recipiente grande com água'); };
+  return banc({cat:'calor',enun:'🌊 Um recipiente grande com água. Vamos colocar <b>água quente com corante vermelho</b> no fundo e <b>água gelada com corante azul</b> na superfície.',init:b=>{},
+    cena, ferr:[{id:'quente',ic:'🔴',nome:'Água quente vermelha (mangueira)'},{id:'fria',ic:'🔵',nome:'Água gelada azul'}],
+    prever:{perg:'A água <b>quente vermelha</b> sai da mangueira lá no fundo. Para onde ela vai?',ops:['Sobe até a superfície','Fica parada no fundo','Desce mais','Desaparece na hora'],certa:0},
+    passos:[{instr:'O professor despeja a <b>água quente vermelha</b> pela mangueira, até o fundo.',f:'quente',em:'tanque',fazer:it=>it.q=1},{instr:'Ao mesmo tempo, um estudante despeja a <b>água gelada azul</b> na superfície, do outro lado.',f:'fria',em:'tanque',fazer:it=>it.f=1}],
+    obs:'A água vermelha <b>subiu</b> e se espalhou por cima; a azul <b>desceu</b> para o fundo. Formou-se uma <b>circulação</b>.',
+    perg:'Por que a água quente sobe e a fria desce?',certa:'A água quente fica menos densa e sobe; a fria é mais densa e desce',erradas:['A água quente é mais pesada','O corante vermelho é leve','A mangueira empurra a água para cima'],
+    x:'Isso é a <b>convecção</b>: o calor é levado pelo movimento do próprio líquido ou gás. Ela só acontece em <b>fluidos</b> (líquidos e gases).',
+    real:'recipiente de vidro grande, mangueira cristal de 30 cm, anilinas azul e vermelha, gelo e o sistema de aquecimento. O aquecimento é feito pelo professor.'});
+}
+const CONVQ=[
+  ()=>q('calor','Em qual parte da parede é melhor instalar o <b>ar-condicionado</b>?','No alto, porque o ar frio desce',['Perto do chão, porque o ar frio sobe','Tanto faz','Atrás do armário'],'O ar frio é mais denso e <b>desce</b>, empurrando o ar quente para cima: a sala toda esfria por convecção.',{corpo:E('❄️⬇️🛋️')}),
+  ()=>q('calor','Urubus e gaviões sobem muito alto quase sem bater as asas. Eles aproveitam:','Correntes de ar quente que sobem (convecção)',['O vento que sopra para baixo','A atração da Lua','O calor das próprias penas'],'O chão aquecido pelo Sol esquenta o ar, que fica menos denso e sobe: as <b>térmicas</b>.',{corpo:E('🦅⬆️☀️')}),
+  ()=>q('calor','O calor do Sol chega até a Terra atravessando o espaço vazio. Esse processo é a:','Radiação',['Condução','Convecção','Evaporação'],'No vácuo não há partículas para conduzir nem fluido para circular: o calor viaja como <b>radiação</b>.',{corpo:E('☀️〰️🌍')}),
+  ()=>classif('calor','Condução, convecção ou radiação?',['🥄 Condução','🌊 Convecção','☀️ Radiação'],[{nome:'Colher esquentando dentro da panela de sopa',c:0},{nome:'Ar quente subindo da fogueira',c:1},{nome:'Calor do Sol na pele',c:2},{nome:'Água circulando na panela no fogo',c:1},{nome:'Mão quente encostada no gelo',c:0},{nome:'Calor que sentimos perto de uma fogueira, de lado',c:2}],{cls:[1,3,0],x:'<b>Condução</b>: por contato. <b>Convecção</b>: o fluido se movimenta. <b>Radiação</b>: ondas, até no vácuo.'})
+];
+const gerarConv=()=>[conveccao(),...CONVQ.map(f=>f())];
+
+/* ---------- MISSÃO 3: condutores e isolantes (multirreações) ---------- */
+const AM_EL=[{id:'dest',ic:'💧',nome:'Água destilada',n:0},{id:'sal',ic:'🧂',nome:'Água com sal',n:2},{id:'torn',ic:'🚰',nome:'Água da torneira',n:1},{id:'lapis',ic:'✏️',nome:'Madeira do lápis',n:0},{id:'borr',ic:'<span style="display:inline-block;width:34px;height:20px;background:#F9A8D4;border:2px solid #9D174D;border-radius:5px;margin:6px 0"></span>',nome:'Borracha',n:0},{id:'clipe',ic:'📎',nome:'Clipe de metal',n:2}];
+const NIV=['apagada','fraca','forte'];
+const bulbo=n=>`<svg width="36" height="44" viewBox="0 0 36 44" aria-hidden="true">${n===2?'<circle cx="18" cy="16" r="17" fill="#FDE04766"/>':''}<circle cx="18" cy="16" r="11" fill="${['#E5E7EB','#FEF08A','#FACC15'][n]}" stroke="#334155" stroke-width="2"/><rect x="12" y="27" width="12" height="9" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.5"/></svg>`;
+function multirreacoes(){
+  return banc({cat:'eletricidade',enun:'💡 O estojo de <b>multirreações</b> tem duas pontas de prova e uma lâmpada: se o material conduz eletricidade, a lâmpada acende.',init:b=>{b.r={};},
+    cena:it=>AM_EL.map(a=>alvo(it,a.id,`<span class="amostra-el"><span class="ic">${a.ic}</span>${it.r[a.id]!=null?bulbo(a.n):bulbo(0).replace('#E5E7EB','#F8FAFC')}<small>${it.r[a.id]!=null?'lâmpada '+NIV[a.n]:'não testado'}</small></span>`,a.nome)).join(''),
+    ferr:[{id:'pontas',ic:'🔌',nome:'Pontas de prova'}],
+    prever:{perg:'A <b>água destilada</b> (bem pura) vai acender a lâmpada?',ops:['Não, ou só bem fraquinho','Sim, com força','Vai queimar a lâmpada','Vai virar gelo'],certa:0},
+    passos:[{instr:'Toque nas <b>pontas de prova</b> e encoste-as em <b>cada amostra</b> (sem deixar uma ponta encostar na outra).',f:'pontas',alvos:AM_EL.map(a=>a.id),cada:(it,x)=>{ it.r[x]=1; }}],
+    obs:'Acendeu <b>forte</b> com a água com sal e o clipe; <b>fraca</b> com a água da torneira; <b>não acendeu</b> com a água destilada, a madeira e a borracha.',
+    perg:'Por que a água <b>com sal</b> acendeu a lâmpada e a água destilada quase nada?',certa:'O sal dissolvido solta partículas com carga elétrica (íons), que levam a corrente',erradas:['O sal é feito de metal','A água destilada estava gelada','O sal aumenta o volume da água'],
+    x:'Na água, o sal se separa em <b>íons</b>, partículas com carga que se movem e conduzem a corrente. A água da torneira tem um pouco de sais minerais, por isso acende fraco. Nos metais, quem leva a corrente são os <b>elétrons livres</b>.',
+    real:'estojo de multirreações ligado ao painel do LDM, béqueres, água destilada, sal, lápis e borracha. O professor supervisiona cada grupo.'});
+}
+const ELQ=[
+  ()=>classif('eletricidade','Este material é <b>condutor</b> ou <b>isolante</b> elétrico?',['⚡ Condutor','🚫 Isolante'],embaralhar([{nome:'Fio de cobre',c:0},{nome:'Papel-alumínio',c:0},{nome:'Água com sal',c:0},{nome:'Borracha',c:1},{nome:'Plástico',c:1},{nome:'Vidro',c:1},{nome:'Madeira seca',c:1}]).slice(0,5),{cls:[3,1],x:'Metais e soluções com sais conduzem. Borracha, plástico, vidro e madeira seca são isolantes.'}),
+  ()=>q('eletricidade','Por que é perigoso ligar aparelhos com as <b>mãos molhadas</b>?','A água com os sais do suor conduz eletricidade e pode causar choque',['A água estraga a tomada só por fora','Porque a mão escorrega, só isso','Não tem perigo nenhum'],'A água do dia a dia quase nunca é pura: com sais, ela <b>conduz</b> a corrente até o corpo.',{corpo:E('💧✋🔌⚡')}),
+  ()=>q('eletricidade','Os fios elétricos da casa são de cobre <b>cobertos de plástico</b>. Por quê?','O cobre conduz a corrente e o plástico isola, protegendo quem toca',['O plástico conduz melhor que o cobre','Só para ficar colorido','O cobre é isolante'],'<b>Condutor</b> por dentro, <b>isolante</b> por fora.',{corpo:E('🔌〰️')}),
+  ()=>q('eletricidade','Eletricistas usam luvas e botas de:','Borracha',['Metal','Papel-alumínio','Tecido molhado'],'A <b>borracha</b> é isolante: dificulta a passagem da corrente pelo corpo.',{corpo:E('🧤👢')})
+];
+const gerarEl=()=>{ const e=sortear(ELQ,4); return [multirreacoes(),e[0],e[1],e[2],e[3]]; };
+
+/* ---------- MISSÃO 4: pilha de limão ---------- */
+function pilha(){
+  const cena=it=>{ const v=it.v||0, dois=it.dois;
+    const limao=(x,cu,zn)=>`<ellipse cx="${x}" cy="120" rx="44" ry="32" fill="#FDE047" stroke="#A16207" stroke-width="3"/><ellipse cx="${x-44}" cy="120" rx="6" ry="5" fill="#A16207"/>${cu?`<rect x="${x-20}" y="70" width="10" height="44" fill="#EA580C" stroke="#7C2D12"/>`:''}${zn?`<rect x="${x+12}" y="70" width="10" height="44" fill="#9CA3AF" stroke="#374151"/>`:''}`;
+    const fios=it.lig?(dois?'<path d="M85 70 C85 30 160 30 160 20" stroke="#DC2626" stroke-width="3" fill="none"/><path d="M117 70 C117 50 175 50 191 70" stroke="#111" stroke-width="3" fill="none"/><path d="M222 70 C222 30 190 30 190 20" stroke="#111" stroke-width="3" fill="none"/>':'<path d="M85 70 C85 30 160 30 160 20" stroke="#DC2626" stroke-width="3" fill="none"/><path d="M117 70 C117 30 190 30 190 20" stroke="#111" stroke-width="3" fill="none"/>'):'';
+    return alvo(it,'limao',`<svg viewBox="0 0 300 170" width="300" height="170" aria-hidden="true">${limao(105,it.cu,it.zn)}${dois?limao(205,1,1):''}${fios}</svg>`,dois?'duas pilhas de limão em série':'limão')+
+      alvo(it,'multi',`<svg viewBox="0 0 110 80" width="110" height="80" aria-hidden="true"><rect x="4" y="4" width="102" height="72" rx="10" fill="#FACC15" stroke="#334155" stroke-width="3"/><rect x="14" y="12" width="82" height="30" rx="4" fill="#D9F99D" stroke="#334155" stroke-width="2"/><text x="55" y="34" text-anchor="middle" font-family="monospace" font-size="20" font-weight="800" fill="#1F2937">${nf(v).replace(/^(\d)$/,'$1,00').replace(/,(\d)$/,',$10')} V</text><circle cx="55" cy="58" r="10" fill="#334155"/></svg>`,'multímetro (voltímetro)'); };
+  return banc({cat:'eletricidade',enun:'🍋 Uma <b>pilha de limão</b>: uma lâmina de <b>cobre</b> e uma de <b>zinco</b> espetadas no limão, ligadas a um multímetro.',init:b=>{b.v=0;},
+    cena, ferr:[{id:'cu',ic:'🟧',nome:'Lâmina de cobre'},{id:'zn',ic:'⬜',nome:'Lâmina de zinco'},{id:'lim2',ic:'🍋',nome:'Outra pilha de limão'}],
+    prever:{perg:'Se ligarmos <b>duas</b> pilhas de limão em série, a tensão (voltagem) vai…',ops:['Somar: fica mais ou menos o dobro','Ficar igual','Cair pela metade','Zerar'],certa:0},
+    passos:[{instr:'Espete a <b>lâmina de cobre</b> no limão.',f:'cu',em:'limao',fazer:it=>it.cu=1},{instr:'Espete a <b>lâmina de zinco</b>, a uns 2 cm da outra, sem encostar.',f:'zn',em:'limao',fazer:it=>it.zn=1},
+      {instr:'Ligue as lâminas ao <b>multímetro</b> (na função de voltímetro).',alvo:'multi',fazer:it=>{ it.lig=1; it.v=.95; },dica:'Toque no multímetro.'},
+      {instr:'Agora ligue <b>outra pilha de limão</b> em série: o cobre de uma no zinco da outra.',f:'lim2',em:'limao',fazer:it=>{ it.dois=1; it.v=1.9; }}],
+    obs:'Uma pilha de limão marcou cerca de <b>0,95 V</b>. Duas em série marcaram cerca de <b>1,9 V</b>.',
+    perg:'O que aconteceu com a tensão quando as pilhas foram ligadas em <b>série</b>?',certa:'Somou: ficou perto do dobro',erradas:['Ficou igual','Diminuiu','Zerou'],
+    x:'O suco ácido do limão e os dois metais diferentes produzem uma reação que gera corrente: energia <b>química</b> vira energia <b>elétrica</b>. Em <b>série</b>, as tensões se <b>somam</b>.',
+    real:'limões e batatas, lâminas de cobre e zinco, fios com garras e multímetro digital na escala de 20 V.'});
+}
+const PILQ=[
+  ()=>q('eletricidade','Na pilha de limão, a energia se transforma de:','Química em elétrica',['Elétrica em química','Luminosa em sonora','Térmica em nuclear'],'A reação entre os metais e o suco do limão libera elétrons que formam a corrente.',{corpo:E('🍋⚗️➡️⚡')}),
+  ()=>q('eletricidade','Uma pilha de batata marcou um pouco menos que a de limão. Segundo o roteiro do laboratório, isso acontece porque:','O suco do limão é mais ácido que o da batata',['A batata é maior','A batata está crua','O limão é amarelo'],'Com as mesmas lâminas e a mesma distância, o eletrólito mais ácido do limão dá uma tensão um pouco maior.',{corpo:E('🍋🆚🥔')}),
+  ()=>q('eletricidade','Uma pilha de limão consegue acender uma lâmpada da sala de aula?','Não: a corrente é muito pequena; várias juntas acendem um LED',['Sim, com folga','Sim, mas só de dia','Só se o limão for grande'],'Ela produz pouca tensão e corrente muito pequena. Com várias pilhas em série, dá para acender um <b>LED</b>.',{corpo:E('🍋🍋🍋➡️🔴')}),
+  ()=>{ const n=pick([2,3,4]); return {tipo:'num',cat:'eletricidade',enun:`Cada pilha de limão dá cerca de <b>0,9 V</b>. Quantos volts dão <b>${n} pilhas</b> ligadas em série?`,corpo:E('🍋'.repeat(n)),resp:Math.round(n*9)/10,un:'V',mostrar:nf(n*.9)+' V',x:`Em série as tensões se somam: ${n} × 0,9 = <b>${nf(n*.9)} V</b>.`,dica:'Em série, some as tensões (ou multiplique 0,9 pelo número de pilhas). Use vírgula.'}; }
+];
+const gerarPilha=()=>[pilha(),...PILQ.map(f=>f())];
+
+/* ---------- MISSÃO 5: luz e cores ---------- */
+const ARCO=['#DC2626','#F97316','#FACC15','#16A34A','#2563EB','#4338CA','#7C3AED'];
+function prisma(){
+  const cena=it=>`<div class="bancada escura" style="width:100%;border:none;padding:0;min-height:0">${alvo(it,'lanterna','<div style="font-size:40px">🔦</div>','lanterna')}${alvo(it,'prisma',`<svg viewBox="0 0 260 160" width="260" height="160" aria-hidden="true">${it.luz?'<path d="M0 82 L112 82" stroke="#fff" stroke-width="6"/>':''}<path d="M110 30 L150 110 L70 110Z" fill="#BAE6FD55" stroke="#E0F2FE" stroke-width="2" ${it.gira?'':'transform="rotate(14 110 80)"'}/>${it.gira?ARCO.map((c,i)=>`<path d="M126 86 L258 ${50+i*12}" stroke="${c}" stroke-width="5"/>`).join('')+'<rect x="252" y="40" width="8" height="96" fill="#F8FAFC"/>':''}</svg>`,'prisma')}</div>`;
+  return banc({cat:'luz',enun:'🌈 Sala escura, uma lanterna forte e um <b>prisma</b> de acrílico.',init:b=>{},cena,
+    prever:{perg:'O que vai aparecer na parede quando a luz branca atravessar o prisma?',ops:['Uma faixa com as cores do arco-íris','Só uma luz branca','Uma sombra preta','Nada'],certa:0},
+    passos:[{instr:'Acenda a <b>lanterna</b> e aponte para o prisma.',alvo:'lanterna',fazer:it=>it.luz=1},{instr:'<b>Gire o prisma</b> devagar até a luz sair do outro lado.',alvo:'prisma',fazer:it=>it.gira=1}],
+    obs:'Apareceu uma faixa colorida: <b>vermelho, laranja, amarelo, verde, azul, anil e violeta</b>. O violeta foi o que mais se desviou.',
+    perg:'Qual cor sofreu o <b>maior desvio</b> ao atravessar o prisma?',certa:'Violeta',erradas:['Vermelho','Amarelo','Verde'],
+    x:'A luz branca é a <b>mistura</b> de todas as cores. No prisma, cada cor se desvia um pouco diferente (refração): o <b>violeta</b> desvia mais e o <b>vermelho</b>, menos. O arco-íris acontece do mesmo jeito, nas gotas de chuva.',
+    real:'prisma triangular de acrílico, lanterna ou projetor e uma parede clara como anteparo, com a sala bem escura.'});
+}
+function discoNewton(){
+  const setores=ARCO.map((c,i)=>{ const a0=i/7*2*Math.PI, a1=(i+1)/7*2*Math.PI, r=60; return `<path d="M0 0 L${r*Math.cos(a0)} ${r*Math.sin(a0)} A${r} ${r} 0 0 1 ${r*Math.cos(a1)} ${r*Math.sin(a1)}Z" fill="${c}"/>`; }).join('');
+  const cena=it=>alvo(it,'disco',`<svg viewBox="-70 -70 140 140" width="170" height="170" aria-hidden="true">${it.v===2?'<circle r="60" fill="#E7E5E4"/><circle r="60" fill="none" stroke="#D6D3D1" stroke-width="2"/><circle r="5" fill="#57534E"/>':`<g class="${it.v===1?'gira-lento':''}">${setores}</g><circle r="5" fill="#334155"/>`}</svg>`,it.v===2?'disco girando rápido':'disco de Newton');
+  return banc({cat:'luz',enun:'🎨 O <b>disco de Newton</b> é pintado com as cores do arco-íris e tem um motorzinho.',init:b=>{b.v=0;},cena,
+    ferr:[{id:'motor',ic:'🔌',nome:'Ligar o motor'}],
+    prever:{perg:'Quando o disco girar <b>bem rápido</b>, que cor você acha que vai ver?',ops:['Quase branco (acinzentado)','Preto','Só vermelho','Um arco-íris girando'],certa:0},
+    passos:[{instr:'Gire o disco <b>devagar</b> com a mão: toque nele.',alvo:'disco',fazer:it=>it.v=1},{instr:'Agora ligue o <b>motor</b> para ele girar rápido.',alvo:'f:motor',fazer:it=>it.v=2,dica:'Use o botão para ligar o motor.'}],
+    obs:'Girando devagar, as cores aparecem separadas. Girando rápido, o disco parece <b>branco acinzentado</b>.',
+    perg:'O que o disco de Newton mostra?',certa:'Que a luz branca é a mistura de todas as cores',erradas:['Que o branco é a falta de cor','Que o motor tira a tinta','Que o vermelho é mais forte'],
+    x:'Nossos olhos não acompanham a troca rápida das cores e as <b>misturam</b>. Fica acinzentado (e não branco puro) porque as tintas absorvem parte da luz.',
+    real:'disco de Newton ligado à fonte do painel do LDM.'});
+}
+const LUZQ=[
+  ()=>q('luz','Uma maçã parece vermelha porque:','Reflete a luz vermelha e absorve as outras cores',['Produz luz vermelha','Absorve só a luz vermelha','É pintada por dentro'],'A cor de um objeto depende da luz que ele <b>reflete</b>. Sob luz azul, a maçã pareceria bem escura.',{corpo:E('🍎💡')}),
+  ()=>q('luz','O arco-íris aparece quando há sol e chuva ao mesmo tempo porque:','As gotas de chuva funcionam como pequenos prismas',['As nuvens são coloridas','O sol muda de cor','A chuva é colorida'],'Cada gota separa a luz branca do Sol nas suas cores, como o prisma.',{corpo:E('🌦️🌈')}),
+  ()=>q('luz','As três <b>cores primárias da luz</b>, que misturadas formam o branco nas telas, são:','Vermelho, verde e azul',['Amarelo, azul e vermelho','Preto, branco e cinza','Laranja, roxo e verde'],'Telas de celular e TV usam pontinhos <b>vermelhos, verdes e azuis</b> (RGB). Na tinta, as misturas funcionam de outro jeito.',{corpo:E('🔴🟢🔵➡️⚪')})
+];
+const gerarLuz=()=>{ const l=sortear(LUZQ,3); return [prisma(),l[0],discoNewton(),l[1],l[2]]; };
+
+/* ---------- MISSÃO 6: câmara escura ---------- */
+function camara(){
+  const vela=(inv)=>`<g ${inv?'transform="translate(0 0) scale(1 -1)"':''}><rect x="-7" y="-10" width="14" height="40" fill="#FEF3C7" stroke="#A16207" stroke-width="2"/>${chama(0,-10,.7)}</g>`;
+  const cena=it=>`<div class="bancada escura" style="width:100%;border:none;padding:0;min-height:0">${alvo(it,'obj',`<svg viewBox="-30 -50 60 90" width="44" height="66" aria-hidden="true">${it.acesa?vela(0):'<rect x="-7" y="-10" width="14" height="40" fill="#FEF3C7" stroke="#A16207" stroke-width="2"/>'}</svg>`,'vela')}${alvo(it,'tela',`<svg viewBox="0 0 220 120" width="196" height="107" aria-hidden="true"><rect x="10" y="10" width="200" height="100" fill="#334155" stroke="#94A3B8" stroke-width="3"/><circle cx="12" cy="60" r="3" fill="#FDE047"/><rect x="196" y="16" width="10" height="88" fill="#F5F5F4"/>${it.olhou?`<path d="M-40 25 L12 60 L200 92 M-40 95 L12 60 L200 28" stroke="#FDE04788" stroke-width="2" fill="none"/><g transform="translate(201 60) scale(.8)">${vela(1)}</g>`:''}</svg>`,'câmara escura (furo e tela)')}</div>`;
+  return banc({cat:'luz',enun:'📦 A <b>câmara escura</b> é uma caixa fechada com um <b>furinho</b> na frente e uma tela de papel vegetal no fundo.',init:b=>{},cena,
+    prever:{perg:'Como você acha que a imagem da vela vai aparecer na tela do fundo?',ops:['De cabeça para baixo','Igualzinha, em pé','Só uma mancha de luz','Não vai aparecer nada'],certa:0},
+    passos:[{instr:'Acenda a <b>vela</b> (o professor) bem na frente do furinho.',alvo:'obj',fazer:it=>it.acesa=1},{instr:'Agora observe a <b>tela</b> no fundo da caixa.',alvo:'tela',fazer:it=>it.olhou=1}],
+    obs:'Na tela apareceu a imagem da vela <b>invertida</b>: a chama ficou embaixo!',
+    perg:'Por que a imagem fica de cabeça para baixo?',certa:'A luz anda em linha reta e os raios se cruzam no furinho',erradas:['A caixa vira a vela','A tela é um espelho','A luz faz curvas dentro da caixa'],
+    x:'Os raios que saem do <b>alto</b> da vela passam pelo furo e chegam <b>embaixo</b> na tela, e vice-versa: a luz se propaga em <b>linha reta</b>.',
+    real:'câmara escura e projetores (ou vela) do LDM, com a sala escura.'});
+}
+const CAMQ=[
+  ()=>q('luz','O olho humano funciona parecido com a câmara escura. A imagem que se forma na <b>retina</b> é:','Invertida, e o cérebro “desvira” a imagem',['Sempre em pé','Colorida só de um lado','Formada no nariz'],'A <b>pupila</b> faz o papel do furinho, o <b>cristalino</b> é uma lente e a <b>retina</b> é a tela. O cérebro interpreta a imagem na posição certa.',{corpo:E('👁️🧠')}),
+  ()=>q('luz','O <b>periscópio</b> usa dois espelhos inclinados a 45°. Ele mostra que:','A luz se propaga em linha reta e muda de direção ao refletir',['A luz faz curvas sozinha','O espelho cria luz','A luz atravessa paredes'],'A luz entra em cima, reflete no primeiro espelho, depois no segundo e chega ao olho: um caminho em forma de “Z”.',{corpo:E('🪞↘️🪞👀')}),
+  ()=>q('luz','Se o furinho da câmara escura ficar <b>muito maior</b>, a imagem fica:','Mais clara, porém borrada',['Mais nítida','De cabeça para cima','Menor e escura'],'Por um furo grande passam raios de vários pontos misturados: entra mais luz, mas a imagem perde nitidez.',{corpo:E('📦🕳️')})
+];
+const gerarCam=()=>[camara(),...CAMQ.map(f=>f())];
+
+/* ---------- JOGO ---------- */
+const JOGO={
+  NOME:'Física na Bancada', CHAVE:'fisicaBancada.v1', AREA:'CIÊNCIAS', TIPOS:TIPOS_LAB,
+  TXT:{missao:'Experimento',missoes:'Experimentos',mapa:'Experimentos da bancada',entrar:'Começar os experimentos ⚡',valendo:'Mãos à obra! 🔧',fim:'Experimento concluído! 🎉'},
+  PATENTES:[[0,'🔦 Curioso'],[5,'🔥 Investigador do calor'],[10,'⚡ Eletricista de bancada'],[15,'🏆 Mestre da física']],
+  CATS:{calor:'Calor: condução, convecção e radiação (MS.EF07CI02, MS.EF07CI03)',eletricidade:'Condutores, isolantes e pilhas (MS.EF05CI01, MS.EF08CI01, MS.EF08CI02)',luz:'Luz, cores e imagens (MS.EF09CI04, MS.EF06CI08)'},
+  HOME:{h1:'Física na <span>Bancada</span>', turma:'ex.: 9º A',
+    lead:'Parafina derretendo no fio de cobre, água quente que sobe, lâmpada que acende na água com sal, limão que vira pilha, luz branca que vira arco-íris e uma caixa que vira a imagem de cabeça para baixo. Faça o palpite e teste na bancada virtual.',
+    cena:'<div style="background:#fff;display:grid;place-items:center;padding:20px"><div class="emoji-g">🔥🌊💡<br>🍋🌈📦</div></div>',
+    info:[['6','experimentos'],['6º–9º','anos'],['🤔','palpite antes de testar']],
+    rodape:'Ciências · 6º ao 9º ano · experimentos do laboratório móvel · Habilidades <b>MS.EF07CI02</b>, <b>MS.EF07CI03</b>, <b>MS.EF08CI01</b>, <b>MS.EF08CI02</b>, <b>MS.EF09CI04</b>, <b>MS.EF06CI08</b>'},
+  AJUDA:['🤔 Antes do experimento, dê o seu palpite. Ele não vale ponto.','🔧 Toque no material e depois no lugar da bancada onde ele vai.','🔁 Errou duas vezes no mesmo passo? O lugar certo começa a piscar.','👩‍🏫 Professor(a): chama, água quente e ligação do estojo de multirreações ficam com o professor na aula prática.'],
+  MISSOES:[
+    {id:'m1',titulo:'Calor no fio de cobre',ic:'🔥',hab:'MS.EF07CI02.s.02 · MS.EF07CI03.s.03',desc:'Condução: o calor passa pelo metal, mas não pela madeira.',gerar:gerarConducao,intro:'<p>Por que o cabo da panela é de madeira ou plástico? Vamos ver o calor <b>andando</b> pelo metal.</p>'},
+    {id:'m2',titulo:'Correntes de convecção',ic:'🌊',hab:'MS.EF07CI02.s.02 · MS.EF07CI03.s.03',desc:'Água quente sobe, água fria desce.',gerar:gerarConv,intro:'<p>Nos líquidos e gases, o calor viaja junto com o próprio fluido: é a <b>convecção</b>.</p>'},
+    {id:'m3',titulo:'Acende ou não acende?',ic:'💡',hab:'MS.EF08CI02.s.02 · MS.EF05CI01.s.01',desc:'Teste condutores e isolantes com o estojo de multirreações.',gerar:gerarEl,intro:'<p>A lâmpada só acende se a corrente conseguir passar pelo material. Quem é <b>condutor</b> e quem é <b>isolante</b>?</p>'},
+    {id:'m4',titulo:'Pilha de limão',ic:'🍋',hab:'MS.EF08CI01.s.01 · MS.EF08CI02.s.02',desc:'Cobre, zinco e limão geram eletricidade.',gerar:gerarPilha,intro:'<p>Com duas lâminas de metais diferentes e um limão, dá para fazer uma <b>pilha</b>. Vamos medir com o multímetro!</p>'},
+    {id:'m5',titulo:'Prisma e disco de Newton',ic:'🌈',hab:'MS.EF09CI04.s.04',desc:'A luz branca se separa em cores e as cores se juntam em branco.',gerar:gerarLuz,intro:'<p>A luz branca esconde um <b>arco-íris</b>. O prisma separa as cores e o disco de Newton junta de novo.</p>'},
+    {id:'m6',titulo:'Câmara escura',ic:'📦',hab:'MS.EF06CI08.s.08',desc:'Uma caixa com um furinho mostra a imagem de cabeça para baixo.',gerar:gerarCam,intro:'<p>A luz anda em <b>linha reta</b>. Uma caixa escura com um furinho prova isso e mostra como o olho forma imagens.</p>'}
+  ]
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>

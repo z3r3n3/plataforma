@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bancada do Laboratório</title>
+<meta name="description" content="Simulador de Ciências do 6º ao 9º ano para usar antes do laboratório móvel: conheça as vidrarias e para que servem, leia volumes sem erro de paralaxe, aprenda as regras de segurança e os primeiros socorros atualizados e monte o aquecimento e a filtração na bancada virtual.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#0E7490;--agua2:#0891B2;--agua-claro:#CFFAFE;--mata2:#7C3AED}
+body{background:linear-gradient(160deg,#CFFAFE 0%,#F0F9FF 55%,#EDE9FE 100%)}
+.topo{background:#ECFEFFee;border-bottom-color:#A5F3FC}
+.trilho{background:#A5F3FC}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #7C3AED33}
+.opic{display:inline-grid;place-items:center;width:46px;height:52px;flex:none;margin-right:6px}
+.opic svg{width:46px;height:52px}
+.op span{display:flex;align-items:center}
+.icg svg{width:150px;height:180px}
+.picto{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   BANCADA DO LABORATÓRIO — Ciências · 6º ao 9º ano
+   Preparação para usar o Laboratório Didático Móvel (LDM):
+   vidrarias, medidas, segurança, primeiros socorros e montagens.
+   Primeiros socorros seguem orientações atuais (água corrente em abundância,
+   sem pomadas, sem "antídoto universal" e sem neutralizar na pele).
+   ========================================================= */
+/* =========================================================
+   LABIB — bancada virtual dos jogos de laboratório (Ciências)
+   Tipos: 'bancada'    prever → fazer os passos → observar → explicar
+          'classificar' cada item recebe um rótulo (tocar troca o rótulo)
+          'ordem'      tocar nos cartões na sequência certa
+          'ponto'      tocar na parte certa de uma figura
+   ========================================================= */
+const E=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
+let _uid=0; const uid=()=>'u'+(++_uid);
+/* ---------- vidrarias em SVG ---------- */
+function svgTubo(cor,nivel=.45,rot='',extra='',h=110){ const id=uid(), y0=8+(1-nivel)*(h-22);
+  return `<svg width="40" height="${h+(rot?22:6)}" viewBox="0 0 40 ${h+(rot?22:6)}" aria-hidden="true">
+    <defs><clipPath id="${id}"><path d="M8 4 V${h-14} a12 12 0 0 0 24 0 V4 Z"/></clipPath></defs>
+    ${cor?`<rect x="6" y="${y0}" width="28" height="${h}" fill="${cor}" clip-path="url(#${id})" class="liq"/>`:''}${extra}
+    <path d="M8 2 V${h-14} a12 12 0 0 0 24 0 V2" fill="#FFFFFF55" stroke="#475569" stroke-width="3"/><path d="M4 2 H36" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+    ${rot?`<text x="20" y="${h+18}" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${rot}</text>`:''}</svg>`; }
+function svgBequer(cor,nivel=.5,rot='',extra='',w=90){ const h=Math.round(w*1.05), top=10, base=h-4, ly=top+(1-nivel)*(base-top-6);
+  return `<svg width="${w+10}" height="${h+(rot?22:4)}" viewBox="0 0 ${w+10} ${h+(rot?22:4)}" aria-hidden="true">
+    ${cor?`<path d="M10 ${ly} H${w} V${base-6} q0 6 -6 6 H16 q-6 0 -6 -6 Z" fill="${cor}" class="liq"/>`:''}${extra}
+    <path d="M4 6 q6 0 6 6 V${base-6} q0 6 6 6 H${w-6} q6 0 6 -6 V12 q0 -6 6 -6" fill="none" stroke="#475569" stroke-width="3"/>
+    ${[.25,.5,.75].map(f=>`<line x1="${w-14}" x2="${w}" y1="${top+(1-f)*(base-top)}" y2="${top+(1-f)*(base-top)}" stroke="#94A3B8" stroke-width="2"/>`).join('')}
+    ${rot?`<text x="${(w+10)/2}" y="${h+18}" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${rot}</text>`:''}</svg>`; }
+/* proveta com camadas [{cor,frac,nome}] de baixo para cima */
+function svgProveta(camadas,extra='',alt=230){ const x=34,w=40,top=20,base=alt-18; let y=base, s='';
+  camadas.forEach(c=>{ const h=c.frac*(base-top); s+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${c.cor}" class="liq"/>${c.nome?`<text x="${x+w+8}" y="${y-h/2+5}" font-size="13" font-weight="700" fill="#1F2937">${c.nome}</text>`:''}`; y-=h; });
+  return `<svg width="170" height="${alt+6}" viewBox="0 0 170 ${alt+6}" aria-hidden="true">${s}${extra}
+    <path d="M${x-2} ${top-10} V${base} H${x+w+2} V${top-10}" fill="none" stroke="#475569" stroke-width="3"/><path d="M${x-14} ${base+4} H${x+w+14}" stroke="#475569" stroke-width="6" stroke-linecap="round"/></svg>`; }
+const chama=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 C-12 -10 -8 -26 0 -40 C8 -26 12 -10 0 0Z" fill="#F97316"/><path d="M0 -2 C-6 -8 -4 -18 0 -26 C4 -18 6 -8 0 -2Z" fill="#FDE047"/></g>`;
+/* ---------- alvo da bancada (pisca depois de 2 erros no mesmo passo) ---------- */
+function passoAtual(it){ return it.passos&&it.passos[it.pi||0]; }
+function alvo(it,id,inner,rot){ const P=passoAtual(it); const d=it.fase==='agir'&&(it.errN||0)>=2&&P&&(P.em===id||P.alvo===id||(P.alvos&&P.alvos.includes(id)&&!(it.feitos||{})[id]));
+  return `<button class="alvo ${d?'pisca':''}" data-x="${id}" aria-label="${(rot||id).replace(/<[^>]+>/g,'')}" ${it.fase!=='agir'?'tabindex="-1"':''}>${inner}${rot?`<span class="rotulo">${rot}</span>`:''}</button>`; }
+/* ---------- bancada ---------- */
+const exec=(it,P)=>{ if(P.alvos&&P.cada) P.alvos.forEach(a=>{ if(!(it.feitos||{})[a]) P.cada(it,a); }); it.feitos={}; if(P.fazer) P.fazer(it); };
+const BANCADA={
+  desenhar(it){
+    if(!it.fase) it.fase=it.prever?'prever':'agir';
+    const h=`<div class="bancada">${it.cena(it)}</div>`;
+    if(it.fase==='prever') return h+`<div class="passo-lab"><b class="tag">🤔 Antes de testar</b> ${it.prever.perg}<br><span class="mini">Escolha o seu palpite. Não vale ponto: é só para comparar depois!</span></div><div class="opcoes grandes">${it.prever.ops.map((o,j)=>`<button class="op" data-x="pv:${j}"><b>${'ABCD'[j]}</b><span>${o}</span></button>`).join('')}</div>`;
+    if(it.fase==='agir'){ const P=passoAtual(it);
+      return h+`<div class="passo-lab"><b class="tag">🧪 Passo ${(it.pi||0)+1} de ${it.passos.length}</b> ${P.instr}</div>${it.err?`<div class="err-lab">${it.err}</div>`:''}${(it.ferr||[]).length?`<div class="ferramentas">${it.ferr.map(f=>{ const d=(it.errN||0)>=2&&(P.f===f.id||P.alvo==='f:'+f.id); return `<button class="btn ferr ${it.selF===f.id?'sel':''} ${d?'pisca':''}" data-x="f:${f.id}">${f.ic} ${f.nome}</button>`; }).join('')}</div>`:''}`; }
+    const obs=it.obs?(typeof it.obs==='function'?it.obs(it):it.obs):'';
+    const pv=it.palpite!=null?`<br><span class="mini">Seu palpite: <b>${it.prever.ops[it.palpite]}</b>${it.prever.certa!=null?(it.palpite===it.prever.certa?' — ✔ acertou a previsão!':' — o resultado foi outro. Tudo bem: é testando que a ciência avança!'):''}</span>`:'';
+    return h+(obs||pv?`<div class="obs-lab"><b class="tag">👀 Observação</b> ${obs}${pv}</div>`:'')+(it.perg?`<p class="enunciado" style="margin-top:12px">${it.perg}</p>${mcHtml(it)}`:'');
+  },
+  acao(it,x){
+    if(x.startsWith('pv:')){ if(it.fase!=='prever') return; it.palpite=+x.slice(3); it.fase='agir'; it.pi=0; som('bip'); return desenhar(); }
+    if(it.fase!=='agir') return;
+    const P=passoAtual(it); if(!P) return;
+    const nomeF=id=>(it.ferr.find(f=>f.id===id)||{}).nome||'';
+    const erro=m=>{ it.err=m; it.errN=(it.errN||0)+1; it.errTot=(it.errTot||0)+1; som('erro'); desenhar(); };
+    if(x.startsWith('f:')){ const id=x.slice(2);
+      if(P.alvo&&P.alvo.startsWith('f:')) return 'f:'+id===P.alvo?BANCADA.fazer(it,P):erro(P.dica||'Esse não é o material deste passo. Leia o passo de novo.');
+      it.selF=it.selF===id?null:id; it.err=''; som('bip'); return desenhar(); }
+    if(P.alvos){ if(P.f&&!it.selF) return erro(`Primeiro toque no material: <b>${nomeF(P.f)}</b>.`);
+      if(P.f&&it.selF!==P.f) return erro(P.dicaF||`Material errado para este passo. Use: <b>${nomeF(P.f)}</b>.`);
+      if(!P.alvos.includes(x)) return erro(P.dica||'Não é aí. Leia o passo com atenção.');
+      it.feitos=it.feitos||{}; if(it.feitos[x]) return; it.feitos[x]=1; if(P.cada) P.cada(it,x);
+      if(P.alvos.every(a=>it.feitos[a])){ it.feitos={}; return BANCADA.fazer(it,P); }
+      it.err=''; it.errN=0; som('bip'); return desenhar(); }
+    if(P.em){ if(!it.selF) return erro(`Primeiro toque no material: <b>${nomeF(P.f)}</b>.`);
+      if(it.selF!==P.f) return erro(P.dicaF||`Material errado para este passo. Use: <b>${nomeF(P.f)}</b>.`);
+      return x===P.em?BANCADA.fazer(it,P):erro(P.dica||'Não é aí. Leia o passo com atenção.'); }
+    return x===P.alvo?BANCADA.fazer(it,P):erro(P.dica||'Não é aí. Leia o passo com atenção.');
+  },
+  fazer(it,P){ if(P.fazer) P.fazer(it); it.selF=null; it.err=''; it.errN=0; it.pi=(it.pi||0)+1; som('ok');
+    if(it.pi>=it.passos.length){ it.fase='pergunta'; if(!it.perg){ registrar('i'+M.i,it.cat,!it.errTot); return responder(true); } }
+    desenhar(); },
+  auto(it){ if(it.prever) it.palpite=0; if(it.fase!=='pergunta'){ it.passos.slice(it.pi||0).forEach(P=>exec(it,P)); } it.pi=it.passos.length; it.fase='pergunta'; if(it.perg) return responderMC(it.certo); responder(true); },
+  revelar(it){ if(it.fase!=='pergunta'){ it.passos.slice(it.pi||0).forEach(P=>exec(it,P)); it.pi=it.passos.length; it.fase='pergunta'; } }
+};
+/* monta um item de bancada; com perg/certa/erradas termina em múltipla escolha */
+function banc(o){
+  const b=Object.assign({tipo:'bancada',grandes:true,dica:'Volte à observação: o que você viu acontecer na bancada?'},o);
+  if(o.real) b.x=(o.x||'')+`<div class="real-lab">🧰 <b>No laboratório móvel:</b> ${o.real}</div>`;
+  if(o.init) o.init(b);
+  if(o.perg){ const r=mc(b,o.certa,o.erradas); r.mostrar=o.certa; return r; }
+  b.mostrar='os passos na ordem indicada'; return b;
+}
+/* ---------- classificar ---------- */
+const CLASSIFICAR={
+  desenhar(it){ return `${it.cena?`<div class="bancada">${it.cena(it)}</div>`:''}<div class="classes">${it.alvos.map((a,i)=>{ const v=it.esc[i]; const errou=!it.feito&&(it.marcErr||[]).includes(i);
+      return `<div class="classe ${errou?'errou':''}"><div class="nome">${a.nome}</div><button class="btn rot ${v==null?'':'c'+((it.cls||[])[v]??v)}" data-x="c:${i}" ${it.feito?'disabled':''}>${v==null?'Toque para escolher':it.rotulos[v]}</button></div>`; }).join('')}</div>
+    ${it.feito?'':'<div class="seguir"><button class="btn agua" data-acao="conferir">Conferir</button></div>'}`; },
+  acao(it,x){ const i=+x.slice(2); it.esc[i]=it.esc[i]==null?0:(it.esc[i]+1)%it.rotulos.length; it.marcErr=(it.marcErr||[]).filter(k=>k!==i); som('bip'); desenhar(); },
+  conferir(it){ if(it.esc.some(v=>v==null)) return toast('Escolha uma opção para todos.');
+    const errs=it.alvos.map((a,i)=>it.esc[i]===a.c?-1:i).filter(i=>i>=0); it.marcErr=errs;
+    if(!errs.length) return responder(true);
+    responder(false,`${errs.length===1?'Uma escolha não está certa':`${errs.length} escolhas não estão certas`} (em vermelho). ${it.dicaErr||''}`); },
+  revelar(it){ it.esc=it.alvos.map(a=>a.c); }, auto(it){ it.esc=it.alvos.map(a=>a.c); CLASSIFICAR.conferir(it); }
+};
+const classif=(cat,enun,rotulos,alvos,extra={})=>{ const a=embaralhar(alvos); return Object.assign({tipo:'classificar',cat,enun,rotulos,alvos:a,esc:a.map(()=>null),mostrar:a.map(v=>v.nome.replace(/<[^>]+>/g,'')+' → '+rotulos[v.c]).join('; ')},extra); };
+/* ---------- ordem ---------- */
+const ORDEM={
+  desenhar(it){ const f=it.seq||[]; return `${it.cena?`<div class="bancada">${it.cena(it)}</div>`:''}${f.length?`<ol class="seq-ok">${f.map(i=>`<li>${it.itens[i]}</li>`).join('')}</ol>`:''}
+    ${it.feito?'':`<div class="cartoes">${it.ordemTela.filter(i=>!f.includes(i)).map(i=>`<button class="btn cartao-o" data-x="o:${i}">${it.itens[i]}</button>`).join('')}</div>`}`; },
+  acao(it,x){ const i=+x.slice(2); it.seq=it.seq||[];
+    if(i!==it.seq.length) return responder(false, (it.dicas&&it.dicas[it.seq.length])||'Pense no que precisa acontecer antes.');
+    it.seq.push(i); it.msg=''; if(it.seq.length===it.itens.length) return responder(true); som('bip'); desenhar(); },
+  revelar(it){ it.seq=it.itens.map((_,i)=>i); }, auto(it){ it.seq=it.itens.map((_,i)=>i); responder(true); }
+};
+const ordem=(cat,enun,itens,extra={})=>Object.assign({tipo:'ordem',cat,enun,itens,ordemTela:embaralhar(itens.map((_,i)=>i)),mostrar:itens.join(' → ')},extra);
+/* ---------- ponto: figura SVG com elementos data-x="p:id" ---------- */
+const PONTO={
+  desenhar(it){ return `<div class="bancada fig-ponto">${it.svg(it)}</div><p class="mini" style="text-align:center">Toque na parte da figura.</p>`; },
+  acao(it,x){ const id=x.slice(2); it.marca=id; responder(id===it.alvo, typeof it.dica==='function'?it.dica(id):it.dica); },
+  revelar(it){ it.marca=it.alvo; }, auto(it){ it.marca=it.alvo; responder(true); }
+};
+const TIPOS_LAB={bancada:BANCADA,classificar:CLASSIFICAR,ordem:ORDEM,ponto:PONTO};
+document.head.insertAdjacentHTML('beforeend',`<style>
+.bancada{background:linear-gradient(#F8FAFC,#E2E8F0);border:3px solid #CBD5E1;border-radius:18px;padding:14px 8px 16px;display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;align-items:flex-end;position:relative;overflow:hidden;min-height:120px}
+.bancada::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:#94A3B8}
+.bancada .alvo{background:none;border:3px dashed transparent;border-radius:14px;padding:2px 4px;cursor:pointer;display:grid;justify-items:center;font:inherit;color:inherit;position:relative;z-index:1}
+.bancada .alvo:hover{border-color:#F59E0B88;background:#FEF3C788}
+.pisca{animation:piscaL 1s infinite;border-color:#F59E0B!important}
+@keyframes piscaL{50%{box-shadow:0 0 0 6px #F59E0B66;background:#FEF3C7}}
+.bancada .rotulo{font-size:13px;font-weight:700;color:#334155;text-align:center;max-width:120px;line-height:1.2;margin-top:2px}
+.passo-lab,.obs-lab{background:#fff;border:2px solid #CBD5E1;border-left:8px solid var(--mata2);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:17px;line-height:1.45}
+.obs-lab{border-left-color:#16A34A;background:#F0FDF4}
+.passo-lab .tag,.obs-lab .tag{display:inline-block;background:var(--mata2);color:#fff;border-radius:999px;padding:0 10px;margin-right:6px;font-size:13px}
+.obs-lab .tag{background:#16A34A}
+.err-lab{background:#FEE2E2;border:2px solid #FCA5A5;border-radius:12px;padding:8px 12px;margin-top:8px}
+.real-lab{margin-top:8px;background:#EFF6FF;border:2px dashed #93C5FD;border-radius:12px;padding:8px 12px;font-size:15px}
+.ferramentas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.ferramentas .btn{font-size:15px;padding:8px 10px;min-height:46px;justify-content:flex-start;text-align:left;line-height:1.2}
+.ferr.sel{border-color:#F59E0B;background:#FEF3C7;box-shadow:0 0 0 4px #F59E0B44}
+.liq{transition:fill .8s}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+.classe{background:#fff;border:2px solid #E2E8F0;border-radius:14px;padding:8px;display:grid;gap:6px;text-align:center;align-content:space-between}
+.classe.errou{border-color:#F87171;background:#FEF2F2}
+.classe .nome{font-weight:700;font-size:15px;line-height:1.3}
+.btn.rot{min-height:44px;font-size:15px;width:100%;justify-content:center}
+.btn.rot.c0{background:#DCFCE7;border-color:#4ADE80}.btn.rot.c1{background:#FEE2E2;border-color:#F87171}.btn.rot.c2{background:#EDE9FE;border-color:#A78BFA}.btn.rot.c3{background:#DBEAFE;border-color:#60A5FA}
+.cartoes{display:grid;gap:8px;margin-top:10px}
+.cartao-o{text-align:left;justify-content:flex-start;white-space:normal;line-height:1.3}
+.seq-ok{margin:10px 0 0;padding-left:28px}
+.seq-ok li{background:#DCFCE7;border-radius:10px;padding:5px 10px;margin:4px 0;font-weight:700}
+.fig-ponto svg [data-x]{cursor:pointer}
+.fig-ponto svg [data-x]:hover{filter:drop-shadow(0 0 4px #F59E0B)}
+.bolha{animation:sobeB 1.4s linear infinite}
+@keyframes sobeB{from{transform:translateY(0);opacity:1}to{transform:translateY(-50px);opacity:0}}
+.gira{animation:giraD .25s linear infinite;transform-origin:center;transform-box:fill-box}
+@keyframes giraD{to{transform:rotate(360deg)}}
+.vis svg{max-width:100%;height:auto}
+</style>`);
+
+const G='fill="#E0F2FE" stroke="#334155" stroke-width="3" stroke-linejoin="round"', L='#93C5FD';
+const ICON={
+  bequer:`<path d="M26 66 H80 V104 Q80 108 76 108 H30 Q26 108 26 104Z" fill="${L}"/><path d="M16 22 Q24 22 24 30 V104 Q24 110 30 110 H76 Q82 110 82 104 V30 Q82 22 90 22" fill="none" stroke="#334155" stroke-width="3"/><path d="M66 50H80M66 70H80M66 90H80" stroke="#64748B" stroke-width="2"/>`,
+  erlenmeyer:`<path d="M24.5 80 H75.5 L85 102 Q88 108 80 108 H20 Q12 108 15 102Z" fill="${L}"/><path d="M40 12 V46 L14 102 Q11 110 20 110 H80 Q89 110 86 102 L60 46 V12" fill="none" stroke="#334155" stroke-width="3" stroke-linejoin="round"/><path d="M34 12H66" stroke="#334155" stroke-width="3" stroke-linecap="round"/>`,
+  tubo:`<path d="M40 60 H60 V96 a10 10 0 0 1 -20 0Z" fill="${L}"/><path d="M38 8 V96 a12 12 0 0 0 24 0 V8" fill="none" stroke="#334155" stroke-width="3"/><path d="M33 8H67" stroke="#334155" stroke-width="3" stroke-linecap="round"/>`,
+  proveta:`<rect x="42" y="52" width="16" height="54" fill="${L}"/><path d="M38 6 H62 M40 6 V108 H60 V6" fill="none" stroke="#334155" stroke-width="3"/><path d="M24 112H76" stroke="#334155" stroke-width="6" stroke-linecap="round"/><path d="M50 20H58M50 36H58M50 52H58M50 68H58M50 84H58M50 100H58" stroke="#64748B" stroke-width="2"/>`,
+  balao:`<path d="M22 84 H78 C77 96 74 102 69 106 H31 C26 102 23 96 22 84Z" fill="${L}"/><path d="M44 8 V50 C20 56 16 92 30 108 H70 C84 92 80 56 56 50 V8" fill="none" stroke="#334155" stroke-width="3" stroke-linejoin="round"/><path d="M40 8H60" stroke="#334155" stroke-width="3" stroke-linecap="round"/>`,
+  funil:`<path d="M14 18 H86 L56 64 V112 H44 V64 Z" ${G}/>`,
+  petri:`<path d="M8 74 V86 A42 12 0 0 0 92 86 V74" ${G}/><ellipse cx="50" cy="74" rx="42" ry="12" fill="#F0F9FF" stroke="#334155" stroke-width="3"/><circle cx="40" cy="76" r="5" fill="#A3E635"/><circle cx="58" cy="72" r="3" fill="#A3E635"/><path d="M6 48 V56 A44 12 0 0 0 94 56 V48" fill="#E0F2FE99" stroke="#334155" stroke-width="3"/><ellipse cx="50" cy="48" rx="44" ry="12" fill="#E0F2FE99" stroke="#334155" stroke-width="3"/>`,
+  vidroRel:`<path d="M6 60 Q50 100 94 60" fill="#E0F2FE" stroke="#334155" stroke-width="3"/><path d="M34 76 Q50 84 66 76 Q50 70 34 76Z" fill="#FBBF24"/>`,
+  almofariz:`<path d="M58 70 L84 14" stroke="#334155" stroke-width="12" stroke-linecap="round"/><path d="M58 70 L84 14" stroke="#F5F5F4" stroke-width="6" stroke-linecap="round"/><path d="M10 60 H90 Q88 96 62 102 L66 112 H34 L38 102 Q12 96 10 60Z" fill="#F5F5F4" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>`,
+  pisseta:`<path d="M50 30 V14 Q50 8 58 8 H78 L90 20" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/><rect x="40" y="28" width="20" height="14" rx="2" fill="#3B82F6" stroke="#334155" stroke-width="2"/><path d="M30 48 Q30 42 38 42 H62 Q70 42 70 48 V108 Q70 112 66 112 H34 Q30 112 30 108Z" fill="#F8FAFC" stroke="#334155" stroke-width="3"/><rect x="33" y="72" width="34" height="37" fill="#BFDBFE"/>`,
+  pinca:`<g transform="rotate(-20 50 60)"><rect x="6" y="48" width="88" height="11" rx="3" fill="#D97706" stroke="#334155" stroke-width="2"/><rect x="6" y="62" width="88" height="11" rx="3" fill="#D97706" stroke="#334155" stroke-width="2"/><rect x="58" y="42" width="10" height="38" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="2"/></g>`,
+  lamparina:`<path d="M24 112 Q18 76 50 70 Q82 76 76 112Z" fill="#E0F2FE" stroke="#334155" stroke-width="3"/><path d="M22 98 H78 L77 110 H23Z" fill="#FDE68A"/><rect x="42" y="58" width="16" height="14" fill="#94A3B8" stroke="#334155" stroke-width="2"/><rect x="48" y="50" width="4" height="10" fill="#57534E"/>${chama(50,52,.9)}`,
+  pipeta:`<path d="M46 4 V96 L50 116 L54 96 V4Z" fill="#E0F2FE" stroke="#334155" stroke-width="3" stroke-linejoin="round"/><rect x="48" y="58" width="4" height="38" fill="${L}"/><path d="M54 16H62M54 28H60M54 40H62M54 52H60M54 64H62M54 76H60M54 88H62" stroke="#64748B" stroke-width="2"/>`,
+  bastao:`<path d="M22 108 L80 12" stroke="#334155" stroke-width="11" stroke-linecap="round"/><path d="M22 108 L80 12" stroke="#E0F2FE" stroke-width="6" stroke-linecap="round"/>`,
+  suporte:`<rect x="10" y="104" width="80" height="10" rx="2" fill="#475569"/><rect x="22" y="6" width="7" height="100" fill="#94A3B8" stroke="#334155" stroke-width="2"/><path d="M29 50 H54" stroke="#475569" stroke-width="5"/><ellipse cx="70" cy="50" rx="16" ry="5" fill="none" stroke="#475569" stroke-width="4"/>`,
+  tela:`<path d="M8 66 L50 48 L92 66 L50 84Z" fill="#CBD5E1" stroke="#334155" stroke-width="3" stroke-linejoin="round"/><path d="M22 60 L64 78 M36 54 L78 72 M22 72 L64 54 M36 78 L78 60" stroke="#94A3B8" stroke-width="1.5"/><ellipse cx="50" cy="66" rx="20" ry="8" fill="#F5F5F4" stroke="#94A3B8" stroke-width="2"/>`,
+  estante:`<rect x="20" y="20" width="10" height="70" rx="4" fill="#E0F2FE" stroke="#334155" stroke-width="2"/><rect x="45" y="30" width="10" height="70" rx="4" fill="#E0F2FE" stroke="#334155" stroke-width="2"/><rect x="70" y="20" width="10" height="70" rx="4" fill="#E0F2FE" stroke="#334155" stroke-width="2"/><rect x="6" y="46" width="88" height="9" fill="#D97706" stroke="#334155" stroke-width="2"/><rect x="6" y="98" width="88" height="9" fill="#D97706" stroke="#334155" stroke-width="2"/><rect x="8" y="55" width="6" height="43" fill="#B45309"/><rect x="86" y="55" width="6" height="43" fill="#B45309"/>`,
+  bureta:`<rect x="44" y="4" width="12" height="90" fill="#E0F2FE" stroke="#334155" stroke-width="3"/><rect x="46" y="30" width="8" height="64" fill="${L}"/><rect x="32" y="94" width="36" height="7" rx="3" fill="#3B82F6" stroke="#334155" stroke-width="2"/><path d="M47 101 V108 L50 116 L53 108 V101" fill="#E0F2FE" stroke="#334155" stroke-width="2"/><path d="M56 14H62M56 26H62M56 38H62M56 50H62M56 62H62M56 74H62" stroke="#64748B" stroke-width="2"/>`,
+  capsula:`<path d="M8 58 H92 Q90 92 50 96 Q10 92 8 58Z" fill="#F5F5F4" stroke="#334155" stroke-width="3" stroke-linejoin="round"/><path d="M8 58 L2 54" stroke="#334155" stroke-width="3" stroke-linecap="round"/><path d="M16 66 H84 Q80 86 50 88 Q20 86 16 66Z" fill="#BFDBFE"/>`
+};
+const NOME={bequer:'Béquer',erlenmeyer:'Erlenmeyer',tubo:'Tubo de ensaio',proveta:'Proveta',balao:'Balão de fundo chato',funil:'Funil',petri:'Placa de Petri',vidroRel:'Vidro de relógio',almofariz:'Almofariz e pistilo',pisseta:'Pisseta (frasco lavador)',pinca:'Pinça de madeira',lamparina:'Lamparina',pipeta:'Pipeta graduada',bastao:'Bastão de vidro',suporte:'Suporte universal com argola',tela:'Tela refratária',estante:'Estante para tubos de ensaio',bureta:'Bureta',capsula:'Cápsula de porcelana'};
+const FUNC={bequer:'dissolver substâncias, fazer reações e aquecer líquidos. Suas marcas de volume são só uma estimativa.',erlenmeyer:'dissolver, aquecer e agitar líquidos: a boca estreita evita respingos.',tubo:'fazer pequenas reações com pouco material.',proveta:'medir volumes de líquidos.',balao:'aquecer líquidos e soluções.',funil:'filtrar (com papel de filtro) e transferir líquidos sem derramar.',petri:'fazer culturas de microrganismos e pequenas reações.',vidroRel:'pesar pequenas quantidades e cobrir recipientes.',almofariz:'triturar e transformar sólidos em pó.',pisseta:'lavar materiais e completar soluções com um jato de água.',pinca:'segurar o tubo de ensaio durante o aquecimento.',lamparina:'aquecer, fazer teste de chama e queimar materiais (só com o professor).',pipeta:'medir e transferir volumes de líquido com precisão (sempre com pera ou seringa, nunca com a boca).',bastao:'agitar misturas e guiar o líquido ao despejar.',suporte:'montar aparelhos: segura funil, argola, garras e buretas.',tela:'apoiar o recipiente sobre a chama e espalhar o calor.',estante:'guardar os tubos de ensaio em pé.',bureta:'medir com precisão o volume de líquido que escoa.',capsula:'evaporar o solvente de uma solução para recuperar o sólido.'};
+const ic=(k,w=100)=>`<svg viewBox="0 0 100 120" width="${w}" height="${Math.round(w*1.2)}" aria-hidden="true">${ICON[k]}</svg>`;
+const opI=k=>`<span class="opic">${ic(k,46)}</span>${NOME[k]}`;
+const CH=Object.keys(ICON);
+
+/* ---------- MISSÃO 1: quem é quem ---------- */
+function gerarNomes(){
+  return embaralhar(CH).slice(0,8).map(k=>{ const outras=embaralhar(CH.filter(o=>o!==k)).slice(0,3).map(o=>NOME[o]);
+    return q('vidrarias','Qual é o nome deste material de laboratório?',NOME[k],outras,`<b>${NOME[k]}</b>: serve para ${FUNC[k]}`,{corpo:`<div class="vis icg">${ic(k,150)}</div>`}); });
+}
+/* ---------- MISSÃO 2: para que serve ---------- */
+const SITU=[
+  ['Você precisa medir <b>25 mL de água</b> para um experimento. O mais indicado é:','proveta',['bequer','erlenmeyer','vidroRel'],'A <b>proveta</b> tem escala para medir volume. As marcas do béquer e do erlenmeyer são só uma estimativa.'],
+  ['Transformar <b>cascas de ovo</b> em pó bem fino:','almofariz',['capsula','vidroRel','petri'],'No <b>almofariz</b>, o <b>pistilo</b> esmaga e tritura os sólidos.'],
+  ['Segurar um <b>tubo de ensaio</b> enquanto ele é aquecido na chama:','pinca',['estante','suporte','bastao'],'A <b>pinça de madeira</b> não esquenta como o metal e mantém a mão longe da chama.'],
+  ['Separar a <b>areia</b> misturada com <b>água</b>:','funil',['pipeta','proveta','vidroRel'],'Com <b>papel de filtro</b> dentro do <b>funil</b>, a água passa e a areia fica retida: é a <b>filtração</b>.'],
+  ['Mexer o <b>sal</b> na água até dissolver:','bastao',['pipeta','pinca','funil'],'O <b>bastão de vidro</b> agita sem reagir com a mistura. No laboratório não se usa colher de cozinha.'],
+  ['Lavar a vidraria com um <b>jatinho de água</b>:','pisseta',['bureta','pipeta','balao'],'A <b>pisseta</b> solta um jato fino quando é apertada.'],
+  ['Observar o <b>bolor</b> crescendo em um pedaço de pão úmido por alguns dias:','petri',['tubo','bequer','capsula'],'A <b>placa de Petri</b> é rasa e tem tampa: ótima para culturas de microrganismos. Ela fica <b>fechada</b> e vai para o descarte orientado pelo professor.'],
+  ['Transferir <b>exatamente 5 mL</b> de um líquido para outro tubo:','pipeta',['bequer','funil','erlenmeyer'],'A <b>pipeta</b> mede e transfere volumes pequenos com precisão. Sempre use pera ou seringa: <b>nunca puxe o líquido com a boca</b>.'],
+  ['Evaporar a água do <b>soro caseiro</b> para recuperar o sal:','capsula',['proveta','petri','pisseta'],'A <b>cápsula de porcelana</b> aguenta o aquecimento e é rasa: a água evapora e o sal fica.'],
+  ['Apoiar o béquer sobre a chama para o calor se <b>espalhar</b> no fundo do vidro:','tela',['vidroRel','pinca','estante'],'A <b>tela refratária</b> distribui o calor e evita que o vidro esquente só em um ponto e trinque.'],
+  ['Aquecer e agitar um líquido com <b>menos risco de respingar</b>:','erlenmeyer',['vidroRel','capsula','petri'],'A <b>boca estreita</b> do erlenmeyer segura o líquido quando ele é agitado.'],
+  ['Deixar os <b>tubos de ensaio</b> em pé, sem rolar pela bancada:','estante',['suporte','pinca','tela'],'A <b>estante</b> (suporte para tubos) mantém os tubos organizados e seguros.']
+];
+function gerarFuncao(){
+  const its=sortear(SITU,7).map(([e,c,er,x])=>q('vidrarias',e,opI(c),er.map(opI),x,{html:true,grandes:false}));
+  its.splice(rnd(2,5),0,classif('medidas','Este material <b>mede</b> volume ou só dá uma <b>estimativa</b>? Toque para escolher.',['📏 Mede volume','≈ Só estimativa'],
+    [{nome:opI('proveta'),c:0},{nome:opI('pipeta'),c:0},{nome:opI('bureta'),c:0},{nome:opI('bequer'),c:1},{nome:opI('erlenmeyer'),c:1}],{x:'<b>Proveta, pipeta e bureta</b> têm escala para medir. No <b>béquer</b> e no <b>erlenmeyer</b> as marcas servem só para ter uma ideia do volume.'}));
+  return its;
+}
+/* ---------- MISSÃO 3: leitura do menisco ---------- */
+function svgEscala(lo,hi,passo,rot,V){ // proveta ampliada: de lo a hi; tracinho a cada 'passo'; número a cada 'rot'
+  const n=Math.round((hi-lo)/passo), H=260, top=20, y=v=>top+H-(v-lo)/(hi-lo)*H, x0=70, x1=190;
+  let t=''; for(let i=0;i<=n;i++){ const v=lo+i*passo, lab=Math.abs(v/rot-Math.round(v/rot))<1e-6; t+=`<line x1="${x0}" x2="${x0+(lab?34:20)}" y1="${y(v)}" y2="${y(v)}" stroke="#1F2937" stroke-width="${lab?2.5:1.5}"/>${lab?`<text x="${x0+40}" y="${y(v)+6}" font-size="17" font-weight="800" fill="#1F2937">${nf(Math.round(v*100)/100)}</text>`:''}`; }
+  const yv=y(V), cur=Math.min(14,H/n*.9);
+  return `<svg viewBox="0 0 260 ${H+40}" width="260" height="${H+40}" aria-label="Proveta ampliada">
+    <rect x="${x0-10}" y="0" width="${x1-x0+20}" height="${H+40}" fill="#F8FAFC" stroke="#475569" stroke-width="3"/>
+    <path d="M${x0-8} ${yv-cur} Q${x0-6} ${yv} ${(x0+x1)/2} ${yv} Q${x1+6} ${yv} ${x1+8} ${yv-cur} V${H+38} H${x0-8}Z" fill="#7DD3FC" opacity=".75"/>
+    <path d="M${x0-8} ${yv-cur} Q${x0-6} ${yv} ${(x0+x1)/2} ${yv} Q${x1+6} ${yv} ${x1+8} ${yv-cur}" fill="none" stroke="#0369A1" stroke-width="3"/>${t}
+    <text x="${x1-4}" y="${H+30}" text-anchor="end" font-size="14" font-weight="700" fill="#0369A1">mL</text></svg>`; }
+function leitura100(){ const V=rnd(14,88), lo=V-rnd(4,8); return {tipo:'num',cat:'medidas',enun:'Leia o volume desta <b>proveta</b> (a escala está ampliada). Olhe a <b>parte de baixo</b> da curva do líquido.',corpo:`<div class="vis">${svgEscala(lo,lo+12,1,5,V)}</div>`,resp:V,un:'mL',mostrar:V+' mL',x:`A parte de baixo do <b>menisco</b> está em <b>${V} mL</b>. Cada tracinho vale 1 mL.`,dica:v=>Math.abs(v-V)<=1.5?'Quase! Conte os tracinhos a partir do número mais próximo, olhando a parte de <b>baixo</b> da curva.':'Ache o número escrito logo abaixo do líquido e conte os tracinhos: cada um vale 1 mL.'}; }
+function leitura10(){ const k=rnd(12,44), V=k/5, lo=Math.floor(V)-1; return {tipo:'num',cat:'medidas',enun:'Agora uma proveta pequena, de <b>10 mL</b>. Qual é o volume? (use vírgula)',corpo:`<div class="vis">${svgEscala(lo,lo+3,.2,1,V)}</div>`,resp:Math.round(V*10)/10,un:'mL',mostrar:nf(V)+' mL',x:`Entre um número e outro há 5 espaços, então cada tracinho vale <b>0,2 mL</b>. O volume é <b>${nf(V)} mL</b>.`,dica:'Entre 1 mL e o próximo número há 5 espaços: cada tracinho vale 0,2 mL. Conte de 0,2 em 0,2.'}; }
+function valorTraco(){ const c=pick([[10,20,10,'1 mL'],[0,1,5,'0,2 mL'],[50,100,5,'10 mL'],[20,30,5,'2 mL']]); const [a,b,div,r]=c; const alt={'1 mL':['10 mL','0,1 mL','2 mL'],'0,2 mL':['1 mL','0,5 mL','0,1 mL'],'10 mL':['5 mL','50 mL','1 mL'],'2 mL':['1 mL','5 mL','10 mL']}[r];
+  return q('medidas',`Entre as marcas <b>${a} mL</b> e <b>${b} mL</b> desta escala há <b>${div} espaços</b> iguais. Quanto vale cada tracinho?`,r,alt,`(${b} − ${a}) ÷ ${div} = <b>${r}</b>. Antes de ler qualquer escala, descubra quanto vale cada tracinho!`,{corpo:`<div class="vis">${svgEscala(a,b,(b-a)/div,b-a,a+(b-a)*.35)}</div>`}); }
+const olhos=it=>{ const m=it.marca; const olho=(id,y,cor)=>`<g data-x="p:${id}" role="button" aria-label="Olho ${id}"><rect x="170" y="${y-26}" width="80" height="52" fill="#fff0"/><ellipse cx="205" cy="${y}" rx="26" ry="15" fill="#fff" stroke="${m===id?(id===it.alvo?'#16A34A':'#DC2626'):'#334155'}" stroke-width="${m===id?5:3}"/><circle cx="199" cy="${y}" r="8" fill="${cor}"/><circle cx="196" cy="${y-3}" r="2.5" fill="#fff"/></g>`;
+  return `<svg viewBox="0 0 260 240" width="280" height="258" aria-label="Proveta e três olhos"><rect x="40" y="20" width="60" height="200" fill="#F8FAFC" stroke="#475569" stroke-width="3"/><path d="M40 130 Q42 138 70 138 Q98 138 100 130 V220 H40Z" fill="#7DD3FC"/><path d="M40 130 Q42 138 70 138 Q98 138 100 130" fill="none" stroke="#0369A1" stroke-width="3"/>
+  ${[50,80,110,140,170,200].map(y=>`<line x1="40" x2="56" y1="${y}" y2="${y}" stroke="#1F2937" stroke-width="2"/>`).join('')}
+  <path d="M100 138 L170 138" stroke="#16A34A" stroke-width="2" stroke-dasharray="6 5" opacity=".0"/>
+  ${olho('cima',60,'#92400E')}${olho('nivel',138,'#1D4ED8')}${olho('baixo',205,'#15803D')}</svg>`; };
+const ITENS_MEN=[
+  leitura100, leitura100, leitura10, leitura10, valorTraco,
+  ()=>({tipo:'ponto',cat:'medidas',enun:'Três estudantes vão ler o volume. Toque no olho que está na <b>posição certa</b>.',svg:olhos,alvo:'nivel',mostrar:'o olho na altura do menisco',dica:id=>id==='cima'?'Olhando de cima, a leitura fica <b>maior</b> do que o volume real. Esse é o erro de paralaxe.':'Olhando de baixo, a leitura fica <b>menor</b> do que o volume real. Esse é o erro de paralaxe.',x:'O olho deve ficar <b>na altura da parte de baixo do menisco</b>, olhando reto (perpendicular à proveta). Assim se evita o <b>erro de paralaxe</b>.'}),
+  ()=>q('medidas','Um estudante leu a proveta com o olho <b>acima</b> do nível do líquido. A leitura dele ficou:','Maior do que o volume real',['Menor do que o volume real','Igual ao volume real','Impossível de fazer'],'Olhando de cima, a linha de visão cruza a escala <b>acima</b> do líquido: a leitura fica maior. Esse engano é o <b>erro de paralaxe</b>.',{corpo:E('👁️⬇️🧪')}),
+  ()=>q('medidas','A superfície da água na proveta fica curvada, como um sorriso. Essa curva se chama:','Menisco',['Paralaxe','Graduação','Densidade'],'A curva é o <b>menisco</b>. Com água, lemos o volume pela <b>parte de baixo</b> da curva.',{corpo:`<div class="vis">${svgEscala(20,26,1,5,23)}</div>`})
+];
+const gerarMenisco=()=>ITENS_MEN.map(f=>f());
+/* ---------- MISSÃO 4: regras de ouro ---------- */
+const PODE=['Prender o cabelo comprido','Usar óculos de segurança','Usar sapato fechado','Ler o roteiro antes de começar','Avisar o professor se algo quebrar','Lavar as mãos ao sair','Montar tudo no centro da bancada','Abanar o ar com a mão para sentir um cheiro'];
+const NAO=['Provar uma substância para saber o gosto','Comer lanche na bancada','Misturar substâncias por conta própria','Cheirar o frasco direto no nariz','Encher o tubo de ensaio até a boca','Ligar aparelho elétrico com a mão molhada','Apontar a boca do tubo aquecido para um colega','Jogar restos sólidos na pia','Deixar álcool aberto perto da chama','Correr no laboratório'];
+const regras=()=>classif('seguranca','No laboratório, isto <b>pode</b> ou <b>não pode</b>? Toque para escolher.',['✅ Pode','❌ Não pode'],embaralhar([...embaralhar(PODE).slice(0,2).map(n=>({nome:n,c:0})),...embaralhar(NAO).slice(0,3).map(n=>({nome:n,c:1}))]),{x:'Estas regras existem para proteger você e os colegas. Na dúvida, <b>pergunte ao professor antes</b>.'});
+const losango=(simb,cor='#DC2626')=>`<svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true"><rect x="22" y="22" width="76" height="76" transform="rotate(45 60 60)" fill="#fff" stroke="${cor}" stroke-width="8"/>${simb}</svg>`;
+const S_FOGO=`<path d="M60 88 C40 84 40 60 54 46 C54 58 62 60 62 52 C70 60 82 72 70 86Z" fill="#111"/><rect x="40" y="88" width="40" height="5" fill="#111"/>`;
+const S_CAV=`<circle cx="60" cy="52" r="16" fill="#111"/><circle cx="54" cy="50" r="4" fill="#fff"/><circle cx="66" cy="50" r="4" fill="#fff"/><rect x="54" y="62" width="12" height="8" fill="#111"/><path d="M40 76 L80 90 M80 76 L40 90" stroke="#111" stroke-width="6" stroke-linecap="round"/>`;
+const S_EXC=`<rect x="55" y="36" width="10" height="34" rx="4" fill="#111"/><circle cx="60" cy="82" r="6" fill="#111"/>`;
+const S_COR=`<path d="M38 40 l6 14 M56 40 l6 14" stroke="#111" stroke-width="4"/><circle cx="46" cy="62" r="3" fill="#111"/><circle cx="64" cy="62" r="3" fill="#111"/><rect x="40" y="76" width="16" height="5" fill="#111"/><path d="M66 82 h18 v6 h-18z" fill="#111"/><path d="M40 72 q10 -6 18 2 M66 74 q8 -6 18 2" stroke="#111" stroke-width="3" fill="none"/>`;
+const REGRAS_MC=[
+  ()=>q('seguranca','Ao aquecer um tubo de ensaio, a boca do tubo deve ficar:','Inclinada, virada para onde não há ninguém',['Virada para você, para ver melhor','Virada para o colega do lado','Tampada com uma rolha'],'O líquido pode ferver de repente e espirrar. Por isso a boca do tubo nunca aponta para pessoas, e ele <b>nunca</b> é aquecido tampado.',{corpo:E('🧪🔥↗️')}),
+  ()=>q('seguranca','O tubo de ensaio deve ser enchido até, no máximo:','Cerca de um terço (1/3)',['A metade','Três quartos','A boca, para não faltar'],'Com pouco líquido, sobra espaço e ele não transborda ao agitar ou aquecer.',{corpo:`<div class="vis">${svgTubo('#93C5FD',.33)}</div>`}),
+  ()=>q('seguranca','Para sentir o cheiro de uma substância, o certo é:','Abanar o ar com a mão em direção ao nariz',['Colocar o frasco embaixo do nariz','Respirar fundo dentro do frasco','Provar um pouquinho'],'Alguns vapores irritam ou são tóxicos. Abanando, só um pouco do cheiro chega até você.',{corpo:E('✋〰️👃')}),
+  ()=>q('seguranca','Por que um recipiente <b>nunca</b> deve ser aquecido totalmente fechado?','O gás e o vapor aumentam a pressão e ele pode estourar',['Porque o vidro fica mais bonito aberto','Porque a chama apaga','Porque o líquido congela'],'Aquecidos, os gases se expandem. Sem saída, a pressão sobe e o recipiente pode explodir.',{corpo:E('🫙🔥💥')}),
+  ()=>q('seguranca','O professor vai diluir um ácido. Qual é a ordem certa?','Colocar o ácido aos poucos na água',['Colocar a água no ácido','Misturar tudo de uma vez','Aquecer o ácido antes'],'A mistura libera muito calor. Colocando o <b>ácido na água</b>, devagar, a água absorve o calor e não espirra. Só o professor faz isso.',{corpo:E('🧪➡️💧')}),
+  ()=>q('seguranca','Você notou uma pequena <b>trinca</b> em um béquer. O que fazer?','Separar e avisar o professor: vidro trincado pode quebrar',['Usar mesmo assim, com cuidado','Aquecer para a trinca fechar','Esconder no armário'],'Qualquer marca no vidro é um ponto de quebra, principalmente ao aquecer ou lavar.',{corpo:E('🥛⚡')}),
+  ()=>q('seguranca','Qual material protege os <b>olhos</b> de respingos?','Óculos de segurança',['Luvas','Jaleco','Sapato fechado'],'<b>EPI</b> é o Equipamento de Proteção Individual: óculos (olhos), jaleco (roupa e pele), luvas (mãos) e sapato fechado (pés).',{corpo:E('🥽')}),
+  ()=>q('seguranca','Este símbolo aparece no rótulo do <b>álcool</b>. Ele avisa que o produto é:','Inflamável: pega fogo com facilidade',['Tóxico: é um veneno','Corrosivo: destrói a pele','Explosivo'],'Produto inflamável fica <b>longe da chama</b> e com o frasco fechado.',{corpo:`<div class="vis picto">${losango(S_FOGO)}</div>`}),
+  ()=>q('seguranca','Este símbolo avisa que o produto é:','Tóxico: pode causar envenenamento',['Inflamável','Reciclável','Seguro para provar'],'A caveira indica <b>toxicidade</b>. Nunca leve nenhum produto do laboratório à boca.',{corpo:`<div class="vis picto">${losango(S_CAV)}</div>`}),
+  ()=>q('seguranca','Este símbolo (líquido pingando e “corroendo” a mão e um material) avisa que o produto é:','Corrosivo: pode queimar a pele e os olhos',['Inflamável','Gelado','Radioativo'],'Produtos <b>corrosivos</b>, como ácidos e bases fortes e a água sanitária, pedem óculos e luvas. No LDM, quem manipula é o professor.',{corpo:`<div class="vis picto">${losango(S_COR)}</div>`}),
+  ()=>q('seguranca','O ponto de exclamação no rótulo avisa que o produto:','Pode irritar a pele, os olhos ou causar mal-estar',['É inflamável','É totalmente seguro','É explosivo'],'Mesmo produtos “fracos” pedem cuidado: use luvas e lave as mãos ao terminar.',{corpo:`<div class="vis picto">${losango(S_EXC)}</div>`})
+];
+const gerarRegras=()=>{ const v=sortear(REGRAS_MC,6); v.splice(1,0,regras()); v.splice(5,0,regras()); return v; };
+/* ---------- MISSÃO 5: primeiros socorros (atualizados) ---------- */
+const ANTIGO='<br><span class="mini">⚠️ Manuais antigos falam em pomada, vaselina, “antídoto universal” ou leite de magnésia. <b>Hoje isso não é recomendado</b>: a orientação é água corrente, avisar um adulto e procurar atendimento.</span>';
+const SOCORRO=[
+  ()=>q('socorros','Um colega encostou a mão em um béquer quente e queimou um pouco a pele. O que fazer?','Avisar o professor e deixar a pele sob água corrente fria (não gelada) por vários minutos',['Passar pasta de dente ou manteiga para esfriar a pele','Estourar a bolha para o líquido sair e sarar mais rápido','Colocar gelo direto na pele até parar de arder'],'Água corrente <b>fria, mas não gelada</b>, por cerca de 10 a 20 minutos, alivia e diminui o dano. Pasta de dente, manteiga e gelo pioram a queimadura. Bolhas não devem ser estouradas.'+ANTIGO,{corpo:E('🔥✋🚰')}),
+  ()=>q('socorros','Respingou um produto no <b>olho</b>. O que fazer?','Avisar o professor e lavar no lava-olhos por pelo menos 15 minutos, com o olho aberto',['Esfregar bem o olho com a mão para tirar o produto','Pingar leite ou colírio e esperar a ardência passar','Fechar o olho com força até parar de arder'],'Quanto antes e por mais tempo lavar, melhor. Depois, o estudante precisa de atendimento de saúde, levando o <b>rótulo</b> do produto.',{corpo:E('👁️🚿')}),
+  ()=>q('socorros','Caiu um pouco de <b>ácido</b> na pele. O que fazer?','Lavar com muita água corrente por uns 15 minutos e tirar a roupa atingida',['Jogar bicarbonato em cima para neutralizar o ácido','Secar com papel-toalha e continuar a aula','Passar vinagre por cima para cortar o efeito'],'Na pele, a regra é <b>só água em abundância</b>. Tentar neutralizar libera calor e pode piorar a lesão.'+ANTIGO,{corpo:E('🧪✋🚰')}),
+  ()=>q('socorros','Um estudante <b>engoliu</b> por engano um produto do laboratório. O que fazer?','Avisar o professor, não provocar vômito e ligar 192, com o rótulo em mãos',['Provocar vômito na hora para o produto sair','Dar leite de magnésia para proteger o estômago','Dar o “antídoto universal” de carvão com água'],'Vomitar pode queimar de novo a garganta. Quem orienta é o serviço de saúde: <b>SAMU 192</b> ou o Centro de Informação Toxicológica, com o <b>rótulo</b> em mãos.'+ANTIGO,{corpo:E('🧴☎️🚑')}),
+  ()=>q('socorros','Alguém se sentiu mal depois de cheirar um <b>vapor</b> forte. O que fazer?','Levar a pessoa para um lugar arejado e avisar o professor',['Pedir que respire fundo perto do frasco para se acostumar','Fechar portas e janelas para o cheiro não sair','Dar um copo de leite e voltar ao experimento'],'Ar fresco primeiro. Se houver tontura, falta de ar ou enjoo, a pessoa precisa de atendimento.',{corpo:E('😵‍💫🌬️🪟')}),
+  ()=>q('socorros','Um tubo quebrou e cortou o dedo de um colega. O que fazer?','Avisar o professor, apertar o corte com pano limpo e não pegar os cacos',['Juntar os cacos rapidinho com a mão antes que alguém pise','Lavar o corte com o álcool que está na bancada','Esconder o tubo quebrado para não levar bronca'],'Pressão com um pano limpo controla o sangramento. Os cacos são recolhidos pelo professor, com pá e vassoura, e vão para uma caixa de descarte de vidro.',{corpo:E('🧪💥🩹')}),
+  ()=>ordem('socorros','Respingou um produto no olho de um colega. Toque nas ações <b>na ordem</b> certa.',['Chamar o professor em voz alta','Levar o colega ao lava-olhos (ou à torneira)','Lavar com água corrente por pelo menos 15 minutos, com o olho aberto','Levar ao atendimento de saúde com o rótulo do produto'],{dicas:['Primeiro: peça ajuda de um adulto, em voz alta.','Depois de chamar ajuda, leve o colega até a água.','Agora é hora de lavar, por bastante tempo.'],x:'Pedir ajuda, lavar logo e por bastante tempo, e depois procurar atendimento.'})
+];
+const gerarSocorros=()=>SOCORRO.map(f=>f());
+/* ---------- MISSÃO 6: montagens na bancada ---------- */
+function cenaAquec(it){ const m=it.m||{};
+  return `<svg viewBox="0 0 260 240" width="300" height="277" aria-label="Montagem para aquecimento">
+    ${m.suporte?'<rect x="20" y="222" width="130" height="12" rx="2" fill="#475569"/><rect x="33" y="14" width="8" height="210" fill="#94A3B8" stroke="#334155" stroke-width="2"/>':'<text x="130" y="120" text-anchor="middle" font-size="15" fill="#64748B">bancada vazia</text>'}
+    ${m.argola?'<path d="M41 122 H88" stroke="#475569" stroke-width="6"/><ellipse cx="125" cy="122" rx="38" ry="8" fill="none" stroke="#475569" stroke-width="5"/>':''}
+    ${m.tela?'<path d="M82 118 L125 106 L168 118 L125 130Z" fill="#CBD5E1" stroke="#334155" stroke-width="2"/><ellipse cx="125" cy="118" rx="18" ry="5" fill="#F5F5F4"/>':''}
+    ${m.bequer?`<path d="M102 70 H148 V110 Q148 114 144 114 H106 Q102 114 102 110Z" fill="#93C5FD"/><path d="M96 46 q4 0 4 4 V110 q0 6 6 6 H144 q6 0 6 -6 V50 q0 -4 4 -4" fill="none" stroke="#334155" stroke-width="3"/>${m.fogo?'<circle class="bolha" cx="115" cy="104" r="3" fill="#fff"/><circle class="bolha" cx="132" cy="100" r="2.5" fill="#fff" style="animation-delay:.5s"/><circle class="bolha" cx="124" cy="106" r="3" fill="#fff" style="animation-delay:.9s"/>':''}`:''}
+    ${m.lamp?`<path d="M100 232 Q96 196 125 192 Q154 196 150 232Z" fill="#E0F2FE" stroke="#334155" stroke-width="3"/><path d="M98 220 H152 L151 232 H99Z" fill="#FDE68A"/><rect x="117" y="180" width="16" height="13" fill="#94A3B8" stroke="#334155" stroke-width="2"/><rect x="123" y="172" width="4" height="9" fill="#57534E"/>${m.fogo?chama(125,174,1.1):''}`:''}
+  </svg>`; }
+const aquecimento=()=>banc({cat:'montagem',enun:'🔥 Monte o sistema de <b>aquecimento</b> na bancada, peça por peça.',cena:cenaAquec,init:b=>{b.m={};},
+  ferr:embaralhar([{id:'suporte',ic:'🏗️',nome:'Suporte universal'},{id:'argola',ic:'⭕',nome:'Argola'},{id:'tela',ic:'🔳',nome:'Tela refratária'},{id:'bequer',ic:'🥛',nome:'Béquer com água'},{id:'lamp',ic:'🪔',nome:'Lamparina'},{id:'vidro',ic:'🥣',nome:'Vidro de relógio'},{id:'pinca',ic:'🪵',nome:'Pinça de madeira'}]).concat([{id:'prof',ic:'🙋',nome:'Chamar o professor'}]),
+  passos:[
+    {instr:'Coloque a base que segura tudo: o <b>suporte universal</b>, no centro da bancada.',alvo:'f:suporte',fazer:it=>it.m.suporte=1,dica:'Comece pela peça que vai segurar as outras.'},
+    {instr:'Prenda na haste a peça redonda que vai segurar o recipiente acima da chama.',alvo:'f:argola',fazer:it=>it.m.argola=1,dica:'Procure a peça em forma de anel.'},
+    {instr:'Coloque sobre a argola a peça que <b>espalha o calor</b> e protege o vidro.',alvo:'f:tela',fazer:it=>it.m.tela=1,dica:'O vidro não pode ficar direto no fogo: precisa de uma tela.'},
+    {instr:'Agora coloque o recipiente com o líquido a ser aquecido.',alvo:'f:bequer',fazer:it=>it.m.bequer=1,dica:'Qual recipiente tem água para aquecer?'},
+    {instr:'Coloque a fonte de calor <b>embaixo</b> da tela.',alvo:'f:lamp',fazer:it=>it.m.lamp=1,dica:'Qual material produz a chama?'},
+    {instr:'Tudo montado! Quem acende a chama?',alvo:'f:prof',fazer:it=>it.m.fogo=1,dica:'Estudante não acende a chama: quem faz isso é um adulto.'}],
+  x:'Ordem da montagem: <b>suporte universal → argola → tela refratária → béquer → lamparina</b>. Quem acende é sempre o professor. Ao terminar, a chama é apagada com a tampa da lamparina, nunca com sopro.',
+  real:'suporte universal, argola com mufa, tela refratária, béquer e lamparina. Prenda cabelos, afaste o álcool da chama e deixe o vidro esfriar antes de tocar.'});
+function cenaFiltro(it){ const m=it.m||{};
+  return `<svg viewBox="0 0 260 240" width="300" height="277" aria-label="Montagem para filtração">
+    ${m.suporte?'<rect x="20" y="222" width="130" height="12" rx="2" fill="#475569"/><rect x="33" y="14" width="8" height="210" fill="#94A3B8" stroke="#334155" stroke-width="2"/>':'<text x="130" y="120" text-anchor="middle" font-size="15" fill="#64748B">bancada vazia</text>'}
+    ${m.argola?'<path d="M41 92 H96" stroke="#475569" stroke-width="6"/><ellipse cx="128" cy="92" rx="32" ry="7" fill="none" stroke="#475569" stroke-width="5"/>':''}
+    ${m.funil?`<path d="M90 64 H166 L134 112 V160 H122 V112 Z" fill="#E0F2FE" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>`:''}
+    ${m.papel?`<path d="M96 66 H160 L128 108Z" fill="#FFFFFF" stroke="#A8A29E" stroke-width="2"/>${m.desp?'<path d="M112 84 H144 L128 106Z" fill="#D6A85C"/><circle cx="122" cy="96" r="2" fill="#92400E"/><circle cx="132" cy="92" r="2" fill="#92400E"/>':''}`:''}
+    ${m.bequer?`<path d="M118 196 H178 V218 Q178 222 174 222 H122 Q118 222 118 218Z" fill="${m.desp?'#BFDBFE':'none'}"/><path d="M110 150 q4 0 4 4 V218 q0 6 6 6 H176 q6 0 6 -6 V154 q0 -4 4 -4" fill="none" stroke="#334155" stroke-width="3"/>${m.desp?'<path d="M124 160 V196" stroke="#93C5FD" stroke-width="3" stroke-dasharray="4 4"/>':''}`:''}
+    ${m.desp?'<path d="M200 20 L140 76" stroke="#334155" stroke-width="7" stroke-linecap="round"/><path d="M200 20 L140 76" stroke="#E0F2FE" stroke-width="3" stroke-linecap="round"/>':''}
+  </svg>`; }
+const filtracao=()=>banc({cat:'montagem',enun:'🧻 Monte uma <b>filtração</b> para separar a areia da água.',cena:cenaFiltro,init:b=>{b.m={};},
+  ferr:embaralhar([{id:'suporte',ic:'🏗️',nome:'Suporte universal'},{id:'argola',ic:'⭕',nome:'Argola'},{id:'funil',ic:'🔻',nome:'Funil'},{id:'papel',ic:'📄',nome:'Papel de filtro dobrado'},{id:'bequer',ic:'🥛',nome:'Béquer vazio'},{id:'mist',ic:'🏖️',nome:'Água com areia + bastão'},{id:'lamp',ic:'🪔',nome:'Lamparina'}]),
+  passos:[
+    {instr:'Coloque o <b>suporte universal</b> no centro da bancada.',alvo:'f:suporte',fazer:it=>it.m.suporte=1,dica:'Comece pela base que segura as outras peças.'},
+    {instr:'Prenda a <b>argola</b> na haste.',alvo:'f:argola',fazer:it=>it.m.argola=1,dica:'Procure a peça em forma de anel.'},
+    {instr:'Encaixe o <b>funil</b> na argola.',alvo:'f:funil',fazer:it=>it.m.funil=1,dica:'Qual peça tem forma de cone?'},
+    {instr:'Coloque o <b>papel de filtro</b> dobrado em cone dentro do funil.',alvo:'f:papel',fazer:it=>it.m.papel=1,dica:'É o papel que segura a areia.'},
+    {instr:'Coloque embaixo o recipiente que vai receber a água, com a ponta do funil encostada na parede.',alvo:'f:bequer',fazer:it=>it.m.bequer=1,dica:'Precisamos de um recipiente vazio embaixo do funil.'},
+    {instr:'Despeje a mistura devagar, guiando o líquido com o <b>bastão de vidro</b>.',alvo:'f:mist',fazer:it=>it.m.desp=1,dica:'Nesta separação não precisa aquecer nada.'}],
+  x:'A água atravessa os poros do papel (é o <b>filtrado</b>) e a areia fica retida (é o <b>resíduo</b>). A ponta do funil encostada no béquer faz o líquido escorrer pela parede, sem respingar.',
+  real:'suporte universal, argola, funil de vidro, papel de filtro, béquer e bastão de vidro. Ideias para testar: água com areia, água com terra, café coado.'});
+const gerarMontagem=()=>[aquecimento(),
+  q('montagem','Por que o béquer fica sobre a <b>tela refratária</b>, e não direto na chama?','Para espalhar o calor e o vidro não esquentar só em um ponto',['Para o béquer ficar mais bonito','Para a água ferver mais devagar de propósito','Porque a chama precisa de apoio'],'Aquecido só num ponto, o vidro se dilata de forma desigual e pode trincar.',{corpo:`<div class="vis">${ic('tela',110)}</div>`}),
+  filtracao(),
+  q('montagem','Na filtração, por que a ponta do funil fica <b>encostada</b> na parede do béquer?','Para o líquido escorrer pela parede, sem respingar',['Para o funil não cair','Para o filtro secar mais rápido','Porque assim a areia passa'],'Escorrendo pela parede, o filtrado não espirra e a filtração fica mais rápida.',{corpo:`<div class="vis">${ic('funil',90)}${ic('bequer',90)}</div>`}),
+  ordem('montagem','Acabou a aula prática. Toque nas ações <b>na ordem</b> certa.',['Desligar os aparelhos e apagar a chama','Descartar os restos onde o professor indicar','Lavar e guardar as vidrarias','Limpar a bancada','Lavar bem as mãos'],{dicas:['Primeiro, deixe tudo desligado e sem fogo.','Antes de lavar, os restos vão para o lugar certo de descarte.','Com a vidraria vazia, lave e guarde.','Com tudo guardado, limpe a bancada.'],x:'Ao sair: aparelhos desligados, resíduos no descarte certo, vidraria lavada, bancada limpa e mãos lavadas.'})];
+
+/* ---------- JOGO ---------- */
+const JOGO={
+  NOME:'Bancada do Laboratório', CHAVE:'bancadaLab.v1', AREA:'CIÊNCIAS', TIPOS:TIPOS_LAB,
+  TXT:{missao:'Estação',missoes:'Estações',mapa:'Estações da bancada',entrar:'Entrar no laboratório 🥽',valendo:'Mãos à obra! 🧪',fim:'Estação concluída! 🎉'},
+  PATENTES:[[0,'🧑‍🔬 Visitante'],[5,'🥽 Auxiliar de laboratório'],[10,'🧪 Técnico de bancada'],[15,'🏅 Responsável pelo laboratório']],
+  CATS:{vidrarias:'Vidrarias e equipamentos',medidas:'Medidas e leitura de volume',seguranca:'Normas de segurança e símbolos de risco',socorros:'Primeiros socorros',montagem:'Montagens na bancada'},
+  HOME:{h1:'Bancada do <span>Laboratório</span>', turma:'ex.: 7º A',
+    lead:'Antes de usar o laboratório móvel de verdade, treine aqui: conheça cada vidraria, leia volumes como um cientista, aprenda as regras de segurança e o que fazer em caso de acidente, e monte o aquecimento e a filtração na bancada virtual.',
+    cena:`<div style="background:#fff;display:flex;gap:6px;justify-content:center;align-items:flex-end;padding:14px">${ic('erlenmeyer',70)}${ic('bequer',80)}${ic('tubo',50)}${ic('proveta',60)}</div>`,
+    info:[['6','estações'],['6º–9º','anos'],['🥽','segurança em 1º lugar']],
+    rodape:'Ciências · 6º ao 9º ano · preparação para as atividades práticas do laboratório móvel'},
+  AJUDA:['🧪 Na bancada, leia o passo, toque no material certo e veja o que acontece.','🤔 Em alguns experimentos você dá um palpite antes. Palpite não vale ponto: é para comparar com o resultado.','🔁 Errou duas vezes no mesmo passo? O material certo começa a piscar.','👩‍🏫 Professor(a): use as estações na sala de tecnologia antes da aula prática com o laboratório móvel. A estação de primeiros socorros segue as orientações atuais (água corrente em abundância, sem pomadas nem “antídotos” caseiros).'],
+  MISSOES:[
+    {id:'m1',titulo:'Quem é quem na bancada',ic:'🧫',hab:'Vidrarias',desc:'Reconheça as vidrarias e os equipamentos pelo formato.',gerar:gerarNomes,intro:'<p>Cada vidraria tem um <b>formato</b> pensado para uma tarefa. Observe a figura e descubra o nome.</p>'},
+    {id:'m2',titulo:'Para que serve?',ic:'🔧',hab:'Vidrarias',desc:'Escolha o material certo para cada tarefa.',gerar:gerarFuncao,intro:'<p>Medir, misturar, filtrar, aquecer, triturar… Escolha o material certo para cada <b>tarefa</b>.</p>'},
+    {id:'m3',titulo:'Leitura do menisco',ic:'📏',hab:'Medidas',desc:'Leia volumes na proveta sem cair no erro de paralaxe.',gerar:gerarMenisco,intro:'<p>A água forma uma curva na proveta: o <b>menisco</b>. Lemos o volume pela <b>parte de baixo</b> da curva, com o olho <b>na mesma altura</b>.</p>'},
+    {id:'m4',titulo:'Regras de ouro',ic:'⚠️',hab:'Segurança',desc:'O que pode e o que não pode no laboratório, EPI e símbolos de risco.',gerar:gerarRegras,intro:'<p>No laboratório, a <b>segurança vem primeiro</b>. Conheça as regras, os <b>EPI</b> e os símbolos dos rótulos.</p>'},
+    {id:'m5',titulo:'Primeiros socorros',ic:'🩹',hab:'Segurança',desc:'O que fazer em caso de queimadura, respingo, corte ou intoxicação.',gerar:gerarSocorros,intro:'<p>Em <b>qualquer</b> acidente, o primeiro passo é <b>avisar o professor</b>. Depois, quase sempre, vem a <b>água corrente em abundância</b>.</p>'},
+    {id:'m6',titulo:'Monte na bancada',ic:'🔥',hab:'Montagens',desc:'Monte o aquecimento e a filtração peça por peça.',gerar:gerarMontagem,intro:'<p>Hora de montar! Escolha as peças <b>na ordem certa</b>, de baixo para cima.</p>'}
+  ]
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>

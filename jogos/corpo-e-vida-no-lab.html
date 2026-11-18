@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corpo e Vida no Lab</title>
+<meta name="description" content="Simulador de Ciências do 5º ao 8º ano com os experimentos do laboratório móvel: partes do microscópio, microscópio virtual com cebola, bochecha e elódea, amido com lugol, a saliva digerindo o amido, o detergente imitando a bile e o modelo do diafragma.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --agua:#0B5563; --agua2:#0E7490; --agua-claro:#CFF0F2; --mata:#2F6B2A; --mata2:#4D8B31; --ipe:#F5B700; --ipe-e:#C78F00;
+  --terra:#9A3412; --creme:#FFFBF0; --borda:#E6DABC; --tinta:#1B2A26; --suave:#56645E;
+  --ok:#15803D; --ok-f:#DCFCE7; --erro:#DC2626; --erro-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;overflow-x:hidden;font-family:var(--texto);font-size:17px;color:var(--tinta);-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;background:linear-gradient(180deg,#E3F4EE 0%,#F6F1DF 100%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.btn{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;transition:transform .12s;text-decoration:none;color:var(--tinta)}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ipe{background:var(--ipe);border-color:var(--ipe-e);box-shadow:0 4px 0 var(--ipe-e)}
+.btn.agua{background:var(--agua2);border-color:var(--agua);color:#fff;box-shadow:0 4px 0 var(--agua)}
+.btn.grande{font-size:20px;padding:16px 26px;font-family:var(--titulo)}
+.btn.icone{padding:10px 14px}
+.selo{display:inline-block;font-family:var(--titulo);font-weight:800;letter-spacing:2px;font-size:12px;color:var(--terra);background:#9A341214;padding:5px 12px;border-radius:30px}
+
+/* HOME */
+.home{max-width:1100px;margin:auto;padding:22px 20px 34px}
+.voltar-plat{font-weight:700;color:var(--agua);text-decoration:none;font-size:15px}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:center;margin-top:10px}
+.hero h1{font-size:clamp(44px,7vw,76px);font-weight:800;margin:12px 0 8px;letter-spacing:-1px;color:var(--agua)}
+.hero h1 span{color:var(--mata2)}
+.lead{font-size:19px;line-height:1.6;max-width:540px;margin:0 0 16px;color:#34463F}
+.campos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.campos label{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:700;color:var(--suave)}
+.campos input{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px 12px;width:190px;font-size:17px}
+.campos label:last-child input{width:110px}
+.acoes{display:flex;flex-wrap:wrap;gap:10px}
+.cena{border-radius:26px;overflow:hidden;border:4px solid #fff;box-shadow:0 14px 40px #0b556333}
+.cena svg{display:block;width:100%;height:auto}
+.info{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 8px}
+.info div{flex:1;min-width:150px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 16px;font-size:14px;color:var(--suave)}
+.info b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.rodape{font-size:13px;color:var(--suave);line-height:1.6;margin-top:12px}
+
+/* TOPO */
+.topo{position:sticky;top:0;z-index:25;background:#F2F8F2ee;backdrop-filter:blur(6px);border-bottom:2px solid #CFE3D6;display:flex;align-items:center;gap:10px;padding:10px 16px}
+.topo .tit{flex:1;min-width:0}
+.topo h2{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topo small{color:var(--suave);font-size:13px}
+.topo .btn{min-height:42px;padding:8px 12px}
+.chip-topo{font-family:var(--titulo);font-weight:800;background:#fff;border:2px solid var(--borda);border-radius:12px;padding:6px 12px;white-space:nowrap}
+
+/* MAPA */
+.mapa{max-width:1000px;margin:auto;padding:22px 16px 40px}
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.missao{position:relative;text-align:left;background:#fff;border:3px solid var(--borda);border-radius:22px;padding:18px;min-height:210px;display:flex;flex-direction:column;gap:6px;transition:transform .12s}
+.missao:hover:not(:disabled){transform:translateY(-3px)}
+.missao:disabled{opacity:.5;cursor:not-allowed}
+.missao .ic{font-size:40px;line-height:1}
+.missao .num{font-family:var(--titulo);font-weight:800;color:var(--terra);letter-spacing:1px;font-size:14px}
+.missao h3{font-size:24px}
+.missao p{margin:0;color:var(--suave);font-size:15px}
+.missao .hab{font-size:12px;color:var(--suave)}
+.missao .est{margin-top:auto;font-size:22px;letter-spacing:3px;color:#E2D8C2}
+.missao .est .on{color:var(--ipe)}
+.missao .cad{position:absolute;top:14px;right:16px;font-size:20px}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #4D8B3133}
+.nota{color:var(--suave);font-size:13px;margin-top:16px;line-height:1.5}
+
+/* JOGO */
+.jogo{max-width:880px;margin:auto;padding:14px 16px 40px}
+.barra{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--suave)}
+.trilho{flex:1;height:10px;border-radius:10px;background:#D9E7DD;overflow:hidden}
+.trilho i{display:block;height:100%;background:var(--mata2);transition:width .3s}
+.painel{background:var(--creme);border:3px solid var(--borda);border-radius:22px;padding:18px}
+.enunciado{font-family:var(--titulo);font-size:22px;margin:0 0 4px}
+.legenda{font-size:14px;color:var(--suave);margin:0 0 12px}
+
+/* cadeia */
+.cadeia{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px}
+.elo{width:118px;min-height:118px;border-radius:16px;border:3px dashed #B9CBBE;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;text-align:center;font-weight:700;font-size:14px;line-height:1.2}
+.elo .em{font-size:38px;line-height:1.1}
+.elo.sol{border-style:solid;border-color:#F6D776;background:#FFF8DA}
+.elo.cheio{border-style:solid;border-color:var(--agua2)}
+.elo.certo{border-color:var(--ok);background:var(--ok-f)}
+.elo.errado{border-color:var(--erro);background:var(--erro-f);animation:treme .3s}
+.elo .papel{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.3px}
+.elo .vz{font-size:30px;color:#B9CBBE}
+.seta{display:flex;align-items:center;font-size:26px;color:var(--agua2);font-weight:800}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;border-radius:18px;background:#EEF6F0;border:2px solid #D3E6D8}
+.carta{width:118px;min-height:110px;border-radius:16px;border:2px solid var(--borda);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font-weight:700;font-size:14px;line-height:1.2;text-align:center;box-shadow:0 4px 0 #E2D6BB;transition:transform .1s}
+.carta .em{font-size:38px;line-height:1.1}
+.carta:hover:not(:disabled){transform:translateY(-3px)}
+.carta:disabled{visibility:hidden}
+.decomp{margin-top:12px;font-size:15px;background:#F3EBDD;border-radius:12px;padding:10px 12px}
+@keyframes treme{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* classificar / situação */
+.ficha{display:flex;gap:16px;align-items:center;background:#fff;border:2px solid var(--borda);border-radius:18px;padding:18px;margin-bottom:14px}
+.ficha .em{font-size:56px;line-height:1;flex:none}
+.ficha .txt{font-size:clamp(20px,3vw,25px);font-weight:700;line-height:1.35}
+.biomas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bioma{border:0;border-radius:16px;padding:14px 10px;color:#fff;font-family:var(--titulo);font-weight:800;font-size:22px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 0 #0003;transition:transform .1s}
+.bioma small{font-family:var(--texto);font-weight:400;font-size:12px;opacity:.9}
+.bioma:hover:not(:disabled){transform:translateY(-3px)}
+.bioma.p{background:var(--agua2)}.bioma.c{background:#B45309}.bioma.d{background:var(--mata)}
+.bioma:disabled{opacity:.4;cursor:default}
+.bioma.marcado{opacity:1;outline:4px solid #fff;box-shadow:0 0 0 7px var(--ok)}
+.contexto{background:#E6F2F4;border-left:6px solid var(--agua2);border-radius:0 16px 16px 0;padding:14px 16px;margin-bottom:12px;font-size:18px;line-height:1.5}
+.contexto b.ev{display:block;font-family:var(--titulo);font-size:21px;color:var(--agua);margin-bottom:2px}
+.teia{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0;font-size:15px}
+.teia span{background:#fff;border:1.5px solid #B7D3DA;border-radius:10px;padding:2px 8px;white-space:nowrap}
+.pergunta{font-family:var(--titulo);font-size:21px;margin:6px 0 10px}
+.opcoes{display:grid;gap:8px}
+.op{text-align:left;border:2px solid var(--borda);background:#fff;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.4;display:flex;gap:10px;align-items:flex-start}
+.op b{flex:none;width:28px;height:28px;border-radius:8px;background:#EEF6F0;display:grid;place-items:center;font-family:var(--titulo)}
+.op:hover:not(:disabled){border-color:var(--agua2)}
+.op.certa{border-color:var(--ok);background:var(--ok-f)}
+.op.errada{border-color:var(--erro);background:var(--erro-f);text-decoration:line-through;opacity:.8}
+.op:disabled{cursor:default}
+.retorno{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;border:2px solid var(--borda);background:#fff}
+.retorno.ok{border-color:#86EFAC;background:#F0FDF4}
+.retorno.no{border-color:#FCA5A5;background:#FFF5F5}
+.retorno .t{display:block;font-family:var(--titulo);font-size:21px;margin-bottom:4px}
+.seguir{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:50;background:#0b2a2ab8;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal{background:var(--creme);border-radius:24px;max-width:660px;width:100%;max-height:92vh;overflow:auto;padding:24px;border:3px solid var(--borda);box-shadow:0 30px 80px #0006}
+.modal h2{font-size:30px;margin-bottom:8px}
+.modal p{line-height:1.6;margin:8px 0}
+.modal .acoes{margin-top:18px}
+.lista{display:grid;gap:8px;margin-top:10px}
+.lista div{background:#fff;border:2px solid var(--borda);border-radius:12px;padding:9px 12px;line-height:1.45}
+.mini{font-size:13px;color:var(--suave)}
+.big-est{font-size:58px;letter-spacing:8px;text-align:center}
+.big-est span{display:inline-block;color:#E2D8C2;opacity:0;transform:scale(.4);animation:surge .5s forwards}
+.big-est span.on{color:var(--ipe)}
+.big-est span:nth-child(2){animation-delay:.25s}.big-est span:nth-child(3){animation-delay:.5s}
+@keyframes surge{to{opacity:1;transform:scale(1)}}
+.resumo{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.resumo div{background:#fff;border:2px solid var(--borda);border-radius:14px;padding:8px 14px;text-align:center;font-size:13px;color:var(--suave)}
+.resumo b{display:block;font-family:var(--titulo);font-size:24px;color:var(--tinta)}
+.cfg-linha{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px 14px;margin:8px 0}
+.cfg-linha small{display:block;color:var(--suave);font-size:13px}
+.troca{position:relative;width:56px;height:32px;flex:none;border-radius:20px;border:0;background:#D6CAB5}
+.troca::after{content:"";position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.troca[aria-checked="true"]{background:var(--ok)}
+.troca[aria-checked="true"]::after{left:28px}
+
+/* RELATÓRIO */
+.pg{max-width:860px;margin:auto;padding:20px 16px 40px}
+.cartao{background:#fff;border:3px solid var(--borda);border-radius:20px;padding:18px;margin-bottom:16px}
+.cartao h3{font-size:22px;margin-bottom:10px}
+.cat{display:grid;grid-template-columns:minmax(190px,1.3fr) 2fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borda);font-size:15px}
+.cat:last-child{border-bottom:0}
+.bar{height:14px;border-radius:10px;background:#EEE6D3;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:10px;background:var(--mata2)}
+.cat .n{font-weight:700;white-space:nowrap}
+
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:var(--tinta);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;max-width:90vw;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .cena{order:-1}
+  .topo{padding:8px 10px;gap:6px}
+  .topo small{display:none}
+  .topo h2{font-size:17px}
+  .chip-topo{padding:4px 8px;font-size:14px}
+  .elo,.carta{width:96px;min-height:96px;font-size:13px}
+  .elo .em,.carta .em{font-size:30px}
+  .seta{font-size:20px}
+  .biomas{grid-template-columns:1fr}
+  .bioma{min-height:60px;flex-direction:row;gap:10px;font-size:20px}
+  .ficha{padding:14px;gap:12px}
+  .ficha .em{font-size:44px}
+  .cat{grid-template-columns:1fr auto}
+  .cat .bar{grid-column:1/-1;order:3}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---- motor da matemática ---- */
+.enun-linha{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.enun-linha .enunciado{margin:4px 0 0}
+.falar{flex:none}
+.vis{background:#fff;border:2px solid var(--borda);border-radius:18px;padding:14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center}
+.vis svg{max-width:100%;height:auto}
+.vis .grande{font-family:var(--titulo);font-weight:800;font-size:clamp(34px,7vw,56px);line-height:1.1}
+.emojis{display:flex;flex-wrap:wrap;gap:4px 6px;justify-content:center;font-size:clamp(30px,6vw,42px);line-height:1.15;max-width:560px}
+.emojis .grupo{display:inline-flex;gap:2px;padding:2px 6px;border-radius:12px;background:#F6F1DF}
+.emojis .riscado{opacity:.35;position:relative}
+.emojis .riscado::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;border-top:4px solid var(--erro);transform:rotate(-30deg)}
+.opcoes.grade{grid-template-columns:repeat(4,1fr)}
+.opcoes.grade .op{justify-content:center;text-align:center;font-family:var(--titulo);font-weight:800;font-size:clamp(24px,4.4vw,32px);padding:12px 6px;min-height:72px;align-items:center}
+.opcoes.grandes .op{font-size:20px}
+.resp-num{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--borda);border-radius:16px;padding:12px}
+.resp-num input{width:180px;max-width:48vw;font-family:var(--titulo);font-weight:800;font-size:30px;text-align:center;border:3px solid var(--agua2);border-radius:14px;padding:4px 10px;background:#F8FFFE}
+.resp-num input:disabled{border-color:var(--ok);background:var(--ok-f);color:var(--tinta)}
+.resp-num .un{font-family:var(--titulo);font-weight:800;font-size:24px}
+.niveis{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.niveis button{border:2px solid var(--borda);background:#fff;border-radius:14px;padding:8px 16px;font-weight:700;display:flex;flex-direction:column;align-items:flex-start;line-height:1.2}
+.niveis button small{font-weight:400;color:var(--suave);font-size:12px}
+.niveis button[aria-checked="true"]{border-color:var(--agua2);background:var(--agua-claro);box-shadow:0 0 0 3px #0E749033}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1;font-weight:800;margin:0 2px}
+.fr i{font-style:normal;padding:0 3px}
+.fr i:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fr i:last-child{padding-top:2px}
+.pot sup{font-size:.6em}
+mark{background:#FDE68A;border-radius:4px;padding:0 3px;color:inherit;font-weight:700}
+.frase-toque{font-size:clamp(22px,4.6vw,28px);line-height:2.1;margin:0;text-align:center}
+.frase-toque .pal{font:inherit;border:2px solid var(--borda);background:#fff;border-radius:10px;padding:0 8px;line-height:1.5;cursor:pointer;color:var(--tinta);transition:transform .1s}
+.frase-toque .pal:hover:not(:disabled){transform:translateY(-2px);border-color:var(--agua2)}
+.frase-toque .pal.sel{background:var(--agua-claro);border-color:var(--agua2);box-shadow:0 0 0 2px var(--agua2)}
+.frase-toque .pal.errada{background:var(--erro-f,#FEE2E2);border-color:var(--erro);text-decoration:line-through}
+.frase-toque .pal.certa{background:var(--ok-f);border-color:var(--ok);font-weight:700}
+.frase-toque .pal:disabled{cursor:default}
+.frase-toque .pont{margin-left:2px}
+.frase-toque.junto{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
+.frase-toque.junto .pal{font-family:var(--titulo);font-weight:800;font-size:clamp(28px,7vw,40px);padding:4px 14px;min-width:64px}
+@media (max-width:820px){
+  .opcoes.grade{grid-template-columns:repeat(2,1fr)}
+}
+.citacao{font-size:clamp(19px,4.2vw,24px);font-weight:700;text-align:center;line-height:1.5;margin:0}
+.emoji-g{font-size:clamp(48px,11vw,72px);line-height:1.1;text-align:center}
+.tabela-s{border-collapse:collapse;margin:auto;font-size:17px}
+.tabela-s td,.tabela-s th{border:2px solid var(--borda);padding:6px 10px;text-align:center}
+.tabela-s th{background:var(--agua-claro)}
+
+:root{--agua:#9F1239;--agua2:#E11D48;--agua-claro:#FFE4E6;--mata2:#15803D}
+body{background:linear-gradient(160deg,#FFE4E6 0%,#FFF7ED 50%,#DCFCE7 100%)}
+.topo{background:#FFF1F2ee;border-bottom-color:#FECDD3}
+.trilho{background:#FECDD3}
+.trilho i,.bar i{background:var(--mata2)}
+.missao.atual{border-color:var(--mata2);box-shadow:0 0 0 4px #15803D33}
+.fig-ponto .pt.ok{filter:drop-shadow(0 0 6px #16A34A) drop-shadow(0 0 3px #16A34A)}
+.fig-ponto .pt.no{filter:drop-shadow(0 0 6px #DC2626) drop-shadow(0 0 3px #DC2626)}
+.mic-ctrl{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;width:100%}
+.bancada .mic-ctrl .alvo{background:#fff;border:3px solid #CBD5E1;border-radius:14px;min-width:64px;padding:6px 8px}
+.bancada .mic-ctrl .alvo.on{border-color:#15803D;background:#DCFCE7}
+.bancada .mic-ctrl .alvo.pisca{border-color:#F59E0B}
+.mic-ctrl .ico{font-size:24px;line-height:1}
+.prato{position:relative;display:grid;place-items:center;width:62px;height:62px;border-radius:50%;background:#fff;border:3px solid #CBD5E1;font-size:32px}
+.prato i{position:absolute;width:30px;height:22px;border-radius:50%;opacity:.9;right:4px;bottom:6px;border:2px solid #fff}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="overlay" class="overlay hidden" role="dialog" aria-modal="true"><div class="modal" id="modal"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   MOTOR DOS JOGOS DE MATEMÁTICA — JRM • Aventuras Educativas
+   Cada jogo define o objeto JOGO e chama iniciarJogo().
+   ========================================================= */
+const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
+const app=$('#app');
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function embaralhar(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const nf=n=>{ const r=Math.round(n*1e6)/1e6; return String(r).replace('-','−').replace('.',','); };
+const real=v=>'R$ '+v.toFixed(2).replace('.',',');
+const mdc=(a,b)=>b?mdc(b,a%b):Math.abs(a);
+/* monta uma questão de múltipla escolha: certo + erradas (sem repetir) */
+function mc(base, certo, erradas){
+  const vistos=new Set([String(certo)]); const err=[];
+  for(const e of erradas){ const k=String(e); if(!vistos.has(k)&&err.length<3){ vistos.add(k); err.push(e); } }
+  const op=embaralhar([certo,...err]);
+  return Object.assign({tipo:'mc'}, base, {op, certo:op.indexOf(certo)});
+}
+/* atalhos para bancos de questões: q(cat, enunciado, certa, erradas, explicação, extras) */
+function q(cat,enun,certo,err,x,extra={}){ return mc(Object.assign({cat,grandes:true,enun,x,dica:extra.dica||'Releia com calma e elimine as alternativas que não fazem sentido.'},extra),certo,err); }
+/* sorteia n questões de um banco (itens podem ser funções que geram a questão) */
+const sortear=(banco,n=8)=>embaralhar(banco).slice(0,n).map(f=>typeof f==='function'?f():f);
+/* distratores numéricos próximos */
+function vizinhos(n, deltas=[1,-1,2,-2,10,-10,3,5], min=0){ return embaralhar(deltas).map(d=>n+d).filter(v=>v>=min); }
+
+/* ---------- ESTADO ---------- */
+let S;
+function padrao(){ return {nome:'',turma:'',nivel:JOGO.NIVEIS?JOGO.NIVEIS[0].k:null,missoes:{},stats:{},cfg:{som:true,livre:false}}; }
+function carregar(){ S=padrao(); try{ const g=JSON.parse(localStorage.getItem(JOGO.CHAVE)); if(g&&typeof g==='object') S=Object.assign(padrao(),g,{cfg:Object.assign(padrao().cfg,g.cfg||{})}); }catch(e){} }
+function salvar(){ try{ localStorage.setItem(JOGO.CHAVE,JSON.stringify(S)); }catch(e){} }
+
+/* ---------- UTIL ---------- */
+let toastT; function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+function estrelasHtml(n){ return [0,1,2].map(i=>`<span class="${i<n?'on':''}">★</span>`).join(''); }
+const totalEst=()=>JOGO.MISSOES.reduce((a,m)=>a+((S.missoes[m.id]||{}).estrelas||0),0);
+const maxEst=()=>JOGO.MISSOES.length*3;
+function patente(){ const e=totalEst(); let p=JOGO.PATENTES[0][1]; JOGO.PATENTES.forEach(([min,n])=>{ if(e>=min) p=n; }); return p; }
+const liberada=m=>S.cfg.livre||m.idx===0||!!(S.missoes[JOGO.MISSOES[m.idx-1].id]||{}).feita;
+
+let AC=null;
+function som(t){ if(!S.cfg.som) return; try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume();
+  const N={ok:[[523,.07],[659,.07],[784,.14]],erro:[[220,.12],[180,.18]],bip:[[880,.06]],moeda:[[1319,.05],[1760,.12]],fim:[[392,.09],[523,.09],[659,.09],[784,.09],[1047,.28]]}[t]||[];
+  let x=AC.currentTime; N.forEach(([f,d])=>{ const o=AC.createOscillator(),g=AC.createGain(); o.type=t==='erro'?'triangle':'sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,x); g.gain.exponentialRampToValueAtTime(.001,x+d); o.connect(g); g.connect(AC.destination); o.start(x); o.stop(x+d+.02); x+=d*.9; }); }catch(e){} }
+/* leitura em voz alta (útil para quem ainda está aprendendo a ler) */
+function falar(txt){ try{ if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined') return toast('Seu navegador não tem leitura em voz alta.');
+  speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(txt.replace(/R\$\s?/g,'').replace(/−/g,'menos ')); u.lang='pt-BR'; u.rate=.92;
+  const v=speechSynthesis.getVoices().find(v=>/^pt(-|_)BR/i.test(v.lang)); if(v) u.voice=v; speechSynthesis.speak(u); }catch(e){} }
+const semTags=h=>{ const d=document.createElement('div'); d.innerHTML=h; return d.textContent.replace(/\s+/g,' ').trim(); };
+
+function abrirModal(h){ $('#modal').innerHTML=h; $('#overlay').classList.remove('hidden'); const b=$('#modal [data-foco]')||$('#modal button'); if(b) b.focus(); }
+function fecharModal(){ $('#overlay').classList.add('hidden'); $('#modal').innerHTML=''; }
+const modalAberto=()=>!$('#overlay').classList.contains('hidden');
+$('#overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') fecharModal(); });
+
+/* ---------- NAVEGAÇÃO ---------- */
+let TELA='home';
+function ir(t,arg){ TELA=t; window.scrollTo(0,0); try{ speechSynthesis.cancel(); }catch(e){}
+  if(t==='home') telaHome(); else if(t==='mapa') telaMapa(); else if(t==='missao') iniciar(arg); else if(t==='relatorio') telaRelatorio(); }
+const T_=k=>Object.assign({missao:'Missão',missoes:'Missões',mapa:'Mapa das missões',entrar:'Começar 🚀',icMapa:'🗺️',valendo:'Valendo! 🚀',fim:'Missão cumprida! 🎉'},JOGO.TXT||{})[k];
+
+function telaHome(){
+  const H=JOGO.HOME;
+  app.innerHTML=`<section class="home"><a class="voltar-plat" href="../index.html">← Todos os jogos</a><div class="hero"><div>
+    <span class="selo">JRM • AVENTURAS EDUCATIVAS · ${JOGO.AREA||'MATEMÁTICA'}</span>
+    <h1>${H.h1}</h1><p class="lead">${H.lead}</p>
+    <div class="campos"><label>Seu primeiro nome<input id="in-nome" maxlength="20" autocomplete="off" value="${esc(S.nome)}"></label><label>Turma<input id="in-turma" maxlength="10" autocomplete="off" placeholder="${H.turma||'ex.: 7º A'}" value="${esc(S.turma)}"></label></div>
+    ${JOGO.NIVEIS?`<div class="niveis" role="radiogroup" aria-label="Nível">${JOGO.NIVEIS.map(n=>`<button role="radio" aria-checked="${S.nivel===n.k}" data-nivel="${n.k}">${n.n}${n.d?`<small>${n.d}</small>`:''}</button>`).join('')}</div>`:''}
+    <div class="acoes"><button class="btn ipe grande" data-ir="mapa">${T_('entrar')}</button><button class="btn" data-ir="relatorio">📊 Desempenho</button><button class="btn" data-acao="ajuda">❓ Como jogar</button><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></div>
+  </div><div class="cena">${H.cena}</div></div>
+  <div class="info">${H.info.map(([b,t])=>`<div><b>${b}</b>${t}</div>`).join('')}<div><b>${patente()}</b>★ ${totalEst()}/${maxEst()}</div></div>
+  <p class="rodape">${H.rodape} · Progresso salvo neste navegador.</p></section>`;
+  $('#in-nome').oninput=e=>{S.nome=e.target.value.trim();salvar();};
+  $('#in-turma').oninput=e=>{S.turma=e.target.value.trim();salvar();};
+}
+function telaMapa(){
+  const atual=JOGO.MISSOES.find(m=>liberada(m)&&!(S.missoes[m.id]||{}).feita);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>${T_('mapa')}</h2><small>${patente()}${niv?' · '+niv.n:''}</small></div><span class="chip-topo">★ ${totalEst()}/${maxEst()}</span><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="mapa"><div class="missoes">${JOGO.MISSOES.map(m=>{ const r=S.missoes[m.id]||{}; const lib=liberada(m);
+    return `<button class="missao ${atual&&atual.id===m.id?'atual':''}" data-missao="${m.idx}" ${lib?'':'disabled'}>${lib?'':'<span class="cad">🔒</span>'}
+      <span class="ic" aria-hidden="true">${m.ic}</span><span class="num">${T_('missao').toUpperCase()} ${m.idx+1}</span><h3>${esc(m.titulo)}</h3><p>${esc(m.desc)}</p><span class="hab">${m.hab}</span>
+      <span class="est">${estrelasHtml(r.estrelas||0)}</span></button>`; }).join('')}</div>
+  <p class="nota">Complete uma ${T_('missao').toLowerCase()} para liberar a próxima. Professor(a): em ⚙️ dá para liberar todas.${JOGO.NIVEIS?' O nível muda na tela inicial.':''}</p></section>`;
+}
+
+/* ---------- MISSÃO ---------- */
+let M=null;
+function iniciar(idx){
+  const m=JOGO.MISSOES[idx];
+  M={m, itens:m.gerar(S.nivel), i:0, ok:0, total:0, primeira:{}};
+  telaMissao();
+  abrirModal(`<span class="selo">${T_('missao').toUpperCase()} ${m.idx+1} · ${m.hab}</span><h2 style="margin-top:10px">${m.ic} ${esc(m.titulo)}</h2>${m.intro||`<p>${esc(m.desc)}</p>`}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>${T_('valendo')}</button></div>`);
+}
+function registrar(chave, cat, ok){
+  if(M.primeira[chave]!=null) return; M.primeira[chave]=ok; M.total++; if(ok) M.ok++;
+  S.stats[cat]=S.stats[cat]||{ok:0,total:0}; S.stats[cat].total++; if(ok) S.stats[cat].ok++; salvar();
+}
+function telaMissao(){
+  const m=M.m;
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="mapa" aria-label="Voltar">←</button><div class="tit"><h2>${m.ic} ${esc(m.titulo)}</h2><small>${T_('missao')} ${m.idx+1} · ${m.hab}</small></div><button class="btn icone" data-acao="config" aria-label="Configurações">⚙️</button></header>
+  <section class="jogo"><div class="barra"><span id="cont"></span><div class="trilho"><i id="trilho"></i></div></div><div class="painel" id="area"></div></section>`;
+  desenhar();
+}
+const item=()=>M.itens[M.i];
+const tipoDe=it=>(JOGO.TIPOS&&JOGO.TIPOS[it.tipo])||TIPOS_BASE[it.tipo]||{};
+function desenhar(){
+  const it=item();
+  $('#cont').textContent=`${M.i+1}/${M.itens.length}`; $('#trilho').style.width=(100*M.i/M.itens.length)+'%';
+  const T=tipoDe(it);
+  const resp=it.tipo==='mc'?mcHtml(it):it.tipo==='num'?numHtml(it):T.desenhar(it);
+  $('#area').innerHTML=`<div class="enun-linha"><p class="enunciado">${it.enun}</p>${JOGO.FALA?`<button class="btn icone falar" data-acao="falar" aria-label="Ouvir a pergunta">🔊</button>`:''}</div>${it.corpo||''}${resp}<div id="ret">${it.feito?okBox(it):(it.msg||'')}</div>`;
+  if(T.depois) T.depois(it);
+  const b=$('[data-acao="seguir"]'); if(b) b.focus({preventScroll:true});
+  else if(it.tipo==='num'&&!it.feito&&matchMedia('(pointer:fine)').matches){ const n=$('#num'); if(n) n.focus({preventScroll:true}); }
+}
+function botaoSeguir(){ return `<div class="seguir"><button class="btn agua" data-acao="seguir">${M.i<M.itens.length-1?'Próximo ➔':'Concluir ✔'}</button></div>`; }
+function okBox(it){ return `<div class="retorno ok"><span class="t">${it.revelado?'👀 Veja a resposta':'✅ '+(it.okt||'Isso mesmo!')}</span>${it.x||''}</div>${botaoSeguir()}`; }
+function seguir(){ M.i++; if(M.i>=M.itens.length) return concluir(); desenhar(); window.scrollTo(0,0); }
+const ELOGIOS=['Isso mesmo!','Muito bem!','Mandou bem!','Certinho!','Excelente!','Perfeito!'];
+/* ponto único de correção para todos os tipos de questão */
+function responder(ok, dica){
+  const it=item(); if(it.feito) return;
+  registrar('i'+M.i, it.cat, ok);
+  if(ok){ it.feito=true; it.msg=''; it.okt=pick(ELOGIOS); som('ok'); }
+  else { it.tent=(it.tent||0)+1; som('erro');
+    const rev=it.tipo!=='mc'&&it.tent>=2&&it.mostrar!=null;
+    it.msg=`<div class="retorno no"><span class="t">Ainda não.</span>${dica||(typeof it.dica==='string'?it.dica:'')||'Confira com calma e tente de novo.'}${rev?`<div class="seguir" style="justify-content:flex-start"><button class="btn" data-acao="revelar">👀 Ver a resposta</button></div>`:''}</div>`; }
+  desenhar();
+}
+function revelar(){ const it=item(); it.feito=true; it.revelado=true; it.msg=''; if(it.tipo==='num') it.dig=String([].concat(it.resp)[0]).replace('.',','); it.x=`A resposta é <b>${it.mostrar}</b>. ${it.x||''}`; const T=tipoDe(it); if(T.revelar) T.revelar(it); desenhar(); }
+
+/* múltipla escolha */
+function mcHtml(it){
+  return `<div class="opcoes ${it.grade?'grade':''} ${it.grandes?'grandes':''}">${it.op.map((o,j)=>{ const er=(it.err||[]).includes(j);
+    return `<button class="op ${er?'errada':''} ${it.feito&&j===it.certo?'certa':''}" data-op="${j}" ${er||it.feito?'disabled':''}>${it.grade?'':`<b>${'ABCDEF'[j]}</b>`}<span>${it.html?o:esc(o)}</span></button>`; }).join('')}</div>`;
+}
+function responderMC(j){ const it=item(); if(it.feito) return; if(j!==it.certo) it.err=(it.err||[]).concat(j); responder(j===it.certo, typeof it.dica==='function'?it.dica(it.op[j]):null); }
+
+/* resposta numérica */
+function numHtml(it){
+  return `<div class="resp-num">${it.antes?`<span class="un">${it.antes}</span>`:''}<input id="num" type="text" inputmode="${it.sinal?'text':'decimal'}" autocomplete="off" aria-label="Sua resposta" ${it.feito?'disabled':''} value="${esc(it.dig||'')}" placeholder="?">${it.un?`<span class="un">${it.un}</span>`:''}
+    ${it.feito?'':`${it.sinal?'<button class="btn" data-acao="sinal" aria-label="Trocar o sinal">±</button>':''}<button class="btn agua" data-acao="conferir">Conferir</button>`}</div>`;
+}
+function lerNum(s){ s=String(s).trim().replace(/R\$|\s/g,'').replace(/[−–]/g,'-').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'); if(!/^-?\d*\.?\d+$/.test(s)) return NaN; return Number(s); }
+function conferirNum(){
+  const it=item(), el=$('#num'); if(!el) return; it.dig=el.value; const v=lerNum(el.value);
+  if(isNaN(v)){ toast('Digite um número.'); el.focus(); return; }
+  const aceitas=[].concat(it.resp); const ok=aceitas.some(r=>Math.abs(r-v)<1e-9);
+  responder(ok, typeof it.dica==='function'?it.dica(v):null);
+}
+
+function concluir(){
+  const acc=M.total? M.ok/M.total : 1; const est=acc>=.9?3:acc>=.7?2:1;
+  const m=M.m, a=S.missoes[m.id]||{}; S.missoes[m.id]={feita:true, estrelas:Math.max(a.estrelas||0,est), vezes:(a.vezes||0)+1}; salvar();
+  som('fim');
+  const prox=m.idx<JOGO.MISSOES.length-1;
+  abrirModal(`<h2 style="text-align:center">${T_('fim')}</h2><div class="big-est">${estrelasHtml(est)}</div>
+    <div class="resumo"><div><b>${M.ok}/${M.total}</b>acertos de primeira</div><div><b>${patente().split(' ').slice(1).join(' ')}</b>seu título</div></div>
+    <p class="mini" style="text-align:center">3 estrelas: 90% ou mais de primeira · 2 estrelas: 70% ou mais. As questões mudam a cada vez que você joga.</p>
+    <div class="acoes" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn" data-acao="repetir">↻ De novo</button>
+      ${prox?`<button class="btn ipe" data-acao="prox" data-foco>Próxima ${T_('missao').toLowerCase()} ➔</button>`:'<button class="btn ipe" data-ir="relatorio" data-foco>📊 Desempenho</button>'}</div>`);
+}
+
+/* ---------- RELATÓRIO ---------- */
+function linhasRel(){ return Object.keys(JOGO.CATS).filter(k=>S.stats[k]&&S.stats[k].total).map(k=>({k,nome:JOGO.CATS[k],ok:S.stats[k].ok,total:S.stats[k].total,pct:Math.round(100*S.stats[k].ok/S.stats[k].total)})); }
+function textoRel(){ const L=linhasRel(); const f=JOGO.MISSOES.filter(m=>(S.missoes[m.id]||{}).feita).length; const ret=L.filter(l=>l.total>=3&&l.pct<60).map(l=>l.nome);
+  const niv=JOGO.NIVEIS?JOGO.NIVEIS.find(n=>n.k===S.nivel):null;
+  return [JOGO.NOME.toUpperCase()+' — Relatório',`Estudante: ${S.nome||'(sem nome)'} · Turma: ${S.turma||'-'} · ${new Date().toLocaleDateString('pt-BR')}`,`Título: ${patente().replace(/^\S+\s/,'')} · Estrelas: ${totalEst()}/${maxEst()} · ${T_('missoes')}: ${f}/${JOGO.MISSOES.length}${niv?' · Nível: '+niv.n:''}`,'Acertos na 1ª tentativa:',
+    ...(L.length?L.map(l=>`- ${l.nome}: ${l.ok}/${l.total} (${l.pct}%)`):['- (ainda sem dados)']),`Retomar: ${ret.length?ret.join('; '):'nada urgente'}`].join('\n'); }
+function telaRelatorio(){
+  const L=linhasRel(); const ret=L.filter(l=>l.total>=3&&l.pct<60);
+  app.innerHTML=`<header class="topo"><button class="btn" data-ir="home" aria-label="Início">←</button><div class="tit"><h2>Meu desempenho</h2><small>${S.nome?esc(S.nome):'Estudante'}${S.turma?' · '+esc(S.turma):''}</small></div><button class="btn" data-ir="mapa">${T_('icMapa')} ${T_('missoes')}</button></header>
+  <section class="pg"><div class="resumo" style="justify-content:flex-start"><div><b>${patente()}</b>título</div><div><b>★ ${totalEst()}/${maxEst()}</b>estrelas</div></div>
+    <div class="cartao"><h3>Acertos na 1ª tentativa</h3>${L.length?L.map(l=>`<div class="cat"><span>${esc(l.nome)}</span><div class="bar"><i style="width:${l.pct}%"></i></div><span class="n">${l.ok}/${l.total} · ${l.pct}%</span></div>`).join(''):'<p class="mini">Jogue algumas missões para ver seus resultados aqui.</p>'}</div>
+    ${ret.length?`<div class="cartao" style="background:#FFF7D6;border-color:#F6D776"><b>Para treinar mais:</b> ${ret.map(l=>esc(l.nome)).join(', ')}.</div>`:''}
+    <div class="cartao"><h3>Enviar para o professor</h3><p class="mini">Copie o relatório e cole no grupo da turma ou onde o professor indicar.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px"><button class="btn ipe" data-acao="copiar-rel">📋 Copiar relatório</button><button class="btn" data-acao="apagar" id="btn-apagar">🗑️ Apagar meu progresso</button></div></div></section>`;
+}
+
+/* ---------- CONFIG / AJUDA ---------- */
+function telaConfig(){
+  const l=(k,t,d)=>`<div class="cfg-linha"><span>${t}<small>${d}</small></span><button class="troca" role="switch" aria-checked="${!!S.cfg[k]}" data-cfg="${k}" aria-label="${t}"></button></div>`;
+  abrirModal(`<h2>Configurações</h2>${l('som','Efeitos sonoros','')}${l('livre','Liberar todas as '+T_('missoes').toLowerCase(),'Para o professor escolher a da aula.')}<div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Pronto</button></div>`);
+}
+function telaAjuda(){ abrirModal(`<h2>Como jogar</h2><div class="lista">${JOGO.AJUDA.map(t=>`<div>${t}</div>`).join('')}</div><div class="acoes"><button class="btn ipe" data-acao="fechar" data-foco>Entendi!</button></div>`); }
+function copiar(txt){ const okk=()=>toast('Copiado! 📋'); const fb=()=>{ const t=document.createElement('textarea'); t.value=txt; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');okk();}catch(e){toast('Não deu para copiar.');} t.remove(); };
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(okk).catch(fb); else fb(); }
+
+/* ---------- EVENTOS ---------- */
+let armado=false;
+document.addEventListener('click',e=>{
+  const q=s=>{ const el=e.target.closest(s); return el&&!el.disabled?el:null; };
+  let el;
+  if(el=e.target.closest('[data-ir]')){ if(modalAberto()) fecharModal(); ir(el.dataset.ir); return; }
+  if(el=q('[data-missao]')){ ir('missao',+el.dataset.missao); return; }
+  if(el=q('[data-nivel]')){ const v=el.dataset.nivel; S.nivel=isNaN(+v)?v:+v; salvar(); $$('[data-nivel]').forEach(b=>b.setAttribute('aria-checked',b===el)); return; }
+  if(el=q('[data-op]')){ responderMC(+el.dataset.op); return; }
+  if(el=q('[data-x]')){ const it=item(); const T=tipoDe(it); if(T.acao&&!it.feito) T.acao(it, el.dataset.x, el); return; }
+  if(el=e.target.closest('[data-cfg]')){ const k=el.dataset.cfg; S.cfg[k]=!S.cfg[k]; el.setAttribute('aria-checked',S.cfg[k]); salvar(); if(TELA==='mapa') telaMapa(); return; }
+  const ac=q('[data-acao]'); if(!ac) return; const a=ac.dataset.acao;
+  if(a==='fechar') fecharModal();
+  else if(a==='ajuda') telaAjuda();
+  else if(a==='config') telaConfig();
+  else if(a==='seguir') seguir();
+  else if(a==='conferir'){ const it=item(); if(it.tipo==='num') conferirNum(); else { const T=tipoDe(it); if(T.conferir) T.conferir(it); } }
+  else if(a==='revelar') revelar();
+  else if(a==='sinal'){ const n=$('#num'); n.value=n.value.trim().startsWith('-')?n.value.trim().slice(1):'-'+n.value.trim(); n.focus(); }
+  else if(a==='falar'){ const it=item(); falar(it.fala||semTags(it.enun)); }
+  else if(a==='repetir'){ fecharModal(); ir('missao', M.m.idx); }
+  else if(a==='prox'){ fecharModal(); ir('missao', M.m.idx+1); }
+  else if(a==='copiar-rel') copiar(textoRel());
+  else if(a==='apagar'){ if(!armado){ armado=true; ac.textContent='⚠️ Clique de novo para confirmar'; setTimeout(()=>{armado=false; const b=$('#btn-apagar'); if(b) b.textContent='🗑️ Apagar meu progresso';},3500); } else { const c=S.cfg; S=padrao(); S.cfg=c; salvar(); armado=false; toast('Progresso apagado.'); telaRelatorio(); } }
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&modalAberto()) return fecharModal();
+  if(e.key==='Enter'&&e.target.id==='num'){ e.preventDefault(); conferirNum(); }
+});
+
+/* ---------- TIPO EMBUTIDO: tocar palavras (ou sílabas) ----------
+   frase('O [tuiuiú] voou.') → {tokens, alvo}; colchetes marcam a resposta. */
+function frase(txt){ const tokens=[], alvo=[]; let dentro=false; const L='A-Za-zÀ-ÖØ-öø-ÿ0-9';
+  const re=new RegExp(`\\[|\\]|[${L}][${L}\\-]*|[^\\s${L}\\[\\]]+`,'g'); let m;
+  while((m=re.exec(txt))){ const t=m[0]; if(t==='[') dentro=true; else if(t===']') dentro=false; else { const w=new RegExp(`[${L}]`).test(t); if(w&&dentro) alvo.push(tokens.length); tokens.push({t,w}); } }
+  return {tokens, alvo}; }
+const PALAVRAS={
+  desenhar(it){ it.sel=it.sel||[]; const ok=new Set(it.alvo);
+    const h=it.tokens.map((k,i)=>{ if(!k.w) return `<span class="pont">${esc(k.t)}</span>`;
+      const c=it.feito?(ok.has(i)?'certa':''):(it.sel.includes(i)?(it.multi?'sel':'errada'):'');
+      return `${it.junto||i===0?'':' '}<button class="pal ${c}" data-x="${i}" ${it.feito?'disabled':''}>${esc(k.t)}</button>`; }).join('');
+    return `<div class="vis"><p class="frase-toque ${it.junto?'junto':''}">${h}</p></div>${it.multi&&!it.feito?'<div class="seguir"><button class="btn" data-x="limpar">↺ Limpar</button><button class="btn agua" data-acao="conferir">Conferir</button></div>':''}`; },
+  acao(it,x){ if(x==='limpar'){ it.sel=[]; return desenhar(); } const i=+x;
+    if(!it.multi){ it.sel=[i]; return PALAVRAS.conferir(it); }
+    it.sel=it.sel.includes(i)?it.sel.filter(v=>v!==i):it.sel.concat(i); som('bip'); desenhar(); },
+  conferir(it){ if(!it.sel||!it.sel.length) return toast(it.junto?'Toque em uma sílaba.':'Toque nas palavras.');
+    const a=[...it.sel].sort((x,y)=>x-y).join(), b=[...it.alvo].sort((x,y)=>x-y).join();
+    if(it.mostrar==null) it.mostrar=it.alvo.map(i=>it.tokens[i].t).join(it.junto?'':' ');
+    responder(a===b, typeof it.dica==='function'?it.dica(it.sel.map(i=>it.tokens[i].t).join(' ')):null); },
+  revelar(it){ it.sel=it.alvo.slice(); },
+  auto(it){ it.sel=it.alvo.slice(); PALAVRAS.conferir(it); }
+};
+const TIPOS_BASE={palavras:PALAVRAS};
+/* ---------- AUTOTESTE (usado pelos testes automáticos) ---------- */
+window.__auto=function(errar){
+  const it=item(); if(it.feito) return;
+  if(it.tipo==='mc') return responderMC(errar?(it.certo+1)%it.op.length:it.certo);
+  if(it.tipo==='num'){ $('#num').value=errar?'98765':String([].concat(it.resp)[0]).replace('.',','); return conferirNum(); }
+  const T=tipoDe(it); if(errar) return responder(false); return T.auto(it);
+};
+
+function iniciarJogo(){ JOGO.MISSOES.forEach((m,i)=>m.idx=i); carregar(); telaHome(); }
+
+/* =========================================================
+   CORPO E VIDA NO LAB — Ciências · 5º ao 8º ano
+   Atividades do manual do laboratório móvel: microscópio (11, 12, 13),
+   amilase (16), bile (17), diafragma (18) e amido com lugol (53).
+   Correção: no modelo do diafragma, puxar a borracha para baixo simula a
+   CONTRAÇÃO do diafragma (inspiração), e não o relaxamento.
+   ========================================================= */
+/* =========================================================
+   LABIB — bancada virtual dos jogos de laboratório (Ciências)
+   Tipos: 'bancada'    prever → fazer os passos → observar → explicar
+          'classificar' cada item recebe um rótulo (tocar troca o rótulo)
+          'ordem'      tocar nos cartões na sequência certa
+          'ponto'      tocar na parte certa de uma figura
+   ========================================================= */
+const E=e=>`<div class="vis"><div class="emoji-g">${e}</div></div>`;
+let _uid=0; const uid=()=>'u'+(++_uid);
+/* ---------- vidrarias em SVG ---------- */
+function svgTubo(cor,nivel=.45,rot='',extra='',h=110){ const id=uid(), y0=8+(1-nivel)*(h-22);
+  return `<svg width="40" height="${h+(rot?22:6)}" viewBox="0 0 40 ${h+(rot?22:6)}" aria-hidden="true">
+    <defs><clipPath id="${id}"><path d="M8 4 V${h-14} a12 12 0 0 0 24 0 V4 Z"/></clipPath></defs>
+    ${cor?`<rect x="6" y="${y0}" width="28" height="${h}" fill="${cor}" clip-path="url(#${id})" class="liq"/>`:''}${extra}
+    <path d="M8 2 V${h-14} a12 12 0 0 0 24 0 V2" fill="#FFFFFF55" stroke="#475569" stroke-width="3"/><path d="M4 2 H36" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+    ${rot?`<text x="20" y="${h+18}" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${rot}</text>`:''}</svg>`; }
+function svgBequer(cor,nivel=.5,rot='',extra='',w=90){ const h=Math.round(w*1.05), top=10, base=h-4, ly=top+(1-nivel)*(base-top-6);
+  return `<svg width="${w+10}" height="${h+(rot?22:4)}" viewBox="0 0 ${w+10} ${h+(rot?22:4)}" aria-hidden="true">
+    ${cor?`<path d="M10 ${ly} H${w} V${base-6} q0 6 -6 6 H16 q-6 0 -6 -6 Z" fill="${cor}" class="liq"/>`:''}${extra}
+    <path d="M4 6 q6 0 6 6 V${base-6} q0 6 6 6 H${w-6} q6 0 6 -6 V12 q0 -6 6 -6" fill="none" stroke="#475569" stroke-width="3"/>
+    ${[.25,.5,.75].map(f=>`<line x1="${w-14}" x2="${w}" y1="${top+(1-f)*(base-top)}" y2="${top+(1-f)*(base-top)}" stroke="#94A3B8" stroke-width="2"/>`).join('')}
+    ${rot?`<text x="${(w+10)/2}" y="${h+18}" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${rot}</text>`:''}</svg>`; }
+/* proveta com camadas [{cor,frac,nome}] de baixo para cima */
+function svgProveta(camadas,extra='',alt=230){ const x=34,w=40,top=20,base=alt-18; let y=base, s='';
+  camadas.forEach(c=>{ const h=c.frac*(base-top); s+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${c.cor}" class="liq"/>${c.nome?`<text x="${x+w+8}" y="${y-h/2+5}" font-size="13" font-weight="700" fill="#1F2937">${c.nome}</text>`:''}`; y-=h; });
+  return `<svg width="170" height="${alt+6}" viewBox="0 0 170 ${alt+6}" aria-hidden="true">${s}${extra}
+    <path d="M${x-2} ${top-10} V${base} H${x+w+2} V${top-10}" fill="none" stroke="#475569" stroke-width="3"/><path d="M${x-14} ${base+4} H${x+w+14}" stroke="#475569" stroke-width="6" stroke-linecap="round"/></svg>`; }
+const chama=(x,y,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 C-12 -10 -8 -26 0 -40 C8 -26 12 -10 0 0Z" fill="#F97316"/><path d="M0 -2 C-6 -8 -4 -18 0 -26 C4 -18 6 -8 0 -2Z" fill="#FDE047"/></g>`;
+/* ---------- alvo da bancada (pisca depois de 2 erros no mesmo passo) ---------- */
+function passoAtual(it){ return it.passos&&it.passos[it.pi||0]; }
+function alvo(it,id,inner,rot){ const P=passoAtual(it); const d=it.fase==='agir'&&(it.errN||0)>=2&&P&&(P.em===id||P.alvo===id||(P.alvos&&P.alvos.includes(id)&&!(it.feitos||{})[id]));
+  return `<button class="alvo ${d?'pisca':''}" data-x="${id}" aria-label="${(rot||id).replace(/<[^>]+>/g,'')}" ${it.fase!=='agir'?'tabindex="-1"':''}>${inner}${rot?`<span class="rotulo">${rot}</span>`:''}</button>`; }
+/* ---------- bancada ---------- */
+const exec=(it,P)=>{ if(P.alvos&&P.cada) P.alvos.forEach(a=>{ if(!(it.feitos||{})[a]) P.cada(it,a); }); it.feitos={}; if(P.fazer) P.fazer(it); };
+const BANCADA={
+  desenhar(it){
+    if(!it.fase) it.fase=it.prever?'prever':'agir';
+    const h=`<div class="bancada">${it.cena(it)}</div>`;
+    if(it.fase==='prever') return h+`<div class="passo-lab"><b class="tag">🤔 Antes de testar</b> ${it.prever.perg}<br><span class="mini">Escolha o seu palpite. Não vale ponto: é só para comparar depois!</span></div><div class="opcoes grandes">${it.prever.ops.map((o,j)=>`<button class="op" data-x="pv:${j}"><b>${'ABCD'[j]}</b><span>${o}</span></button>`).join('')}</div>`;
+    if(it.fase==='agir'){ const P=passoAtual(it);
+      return h+`<div class="passo-lab"><b class="tag">🧪 Passo ${(it.pi||0)+1} de ${it.passos.length}</b> ${P.instr}</div>${it.err?`<div class="err-lab">${it.err}</div>`:''}${(it.ferr||[]).length?`<div class="ferramentas">${it.ferr.map(f=>{ const d=(it.errN||0)>=2&&(P.f===f.id||P.alvo==='f:'+f.id); return `<button class="btn ferr ${it.selF===f.id?'sel':''} ${d?'pisca':''}" data-x="f:${f.id}">${f.ic} ${f.nome}</button>`; }).join('')}</div>`:''}`; }
+    const obs=it.obs?(typeof it.obs==='function'?it.obs(it):it.obs):'';
+    const pv=it.palpite!=null?`<br><span class="mini">Seu palpite: <b>${it.prever.ops[it.palpite]}</b>${it.prever.certa!=null?(it.palpite===it.prever.certa?' — ✔ acertou a previsão!':' — o resultado foi outro. Tudo bem: é testando que a ciência avança!'):''}</span>`:'';
+    return h+(obs||pv?`<div class="obs-lab"><b class="tag">👀 Observação</b> ${obs}${pv}</div>`:'')+(it.perg?`<p class="enunciado" style="margin-top:12px">${it.perg}</p>${mcHtml(it)}`:'');
+  },
+  acao(it,x){
+    if(x.startsWith('pv:')){ if(it.fase!=='prever') return; it.palpite=+x.slice(3); it.fase='agir'; it.pi=0; som('bip'); return desenhar(); }
+    if(it.fase!=='agir') return;
+    const P=passoAtual(it); if(!P) return;
+    const nomeF=id=>(it.ferr.find(f=>f.id===id)||{}).nome||'';
+    const erro=m=>{ it.err=m; it.errN=(it.errN||0)+1; it.errTot=(it.errTot||0)+1; som('erro'); desenhar(); };
+    if(x.startsWith('f:')){ const id=x.slice(2);
+      if(P.alvo&&P.alvo.startsWith('f:')) return 'f:'+id===P.alvo?BANCADA.fazer(it,P):erro(P.dica||'Esse não é o material deste passo. Leia o passo de novo.');
+      it.selF=it.selF===id?null:id; it.err=''; som('bip'); return desenhar(); }
+    if(P.alvos){ if(P.f&&!it.selF) return erro(`Primeiro toque no material: <b>${nomeF(P.f)}</b>.`);
+      if(P.f&&it.selF!==P.f) return erro(P.dicaF||`Material errado para este passo. Use: <b>${nomeF(P.f)}</b>.`);
+      if(!P.alvos.includes(x)) return erro(P.dica||'Não é aí. Leia o passo com atenção.');
+      it.feitos=it.feitos||{}; if(it.feitos[x]) return; it.feitos[x]=1; if(P.cada) P.cada(it,x);
+      if(P.alvos.every(a=>it.feitos[a])){ it.feitos={}; return BANCADA.fazer(it,P); }
+      it.err=''; it.errN=0; som('bip'); return desenhar(); }
+    if(P.em){ if(!it.selF) return erro(`Primeiro toque no material: <b>${nomeF(P.f)}</b>.`);
+      if(it.selF!==P.f) return erro(P.dicaF||`Material errado para este passo. Use: <b>${nomeF(P.f)}</b>.`);
+      return x===P.em?BANCADA.fazer(it,P):erro(P.dica||'Não é aí. Leia o passo com atenção.'); }
+    return x===P.alvo?BANCADA.fazer(it,P):erro(P.dica||'Não é aí. Leia o passo com atenção.');
+  },
+  fazer(it,P){ if(P.fazer) P.fazer(it); it.selF=null; it.err=''; it.errN=0; it.pi=(it.pi||0)+1; som('ok');
+    if(it.pi>=it.passos.length){ it.fase='pergunta'; if(!it.perg){ registrar('i'+M.i,it.cat,!it.errTot); return responder(true); } }
+    desenhar(); },
+  auto(it){ if(it.prever) it.palpite=0; if(it.fase!=='pergunta'){ it.passos.slice(it.pi||0).forEach(P=>exec(it,P)); } it.pi=it.passos.length; it.fase='pergunta'; if(it.perg) return responderMC(it.certo); responder(true); },
+  revelar(it){ if(it.fase!=='pergunta'){ it.passos.slice(it.pi||0).forEach(P=>exec(it,P)); it.pi=it.passos.length; it.fase='pergunta'; } }
+};
+/* monta um item de bancada; com perg/certa/erradas termina em múltipla escolha */
+function banc(o){
+  const b=Object.assign({tipo:'bancada',grandes:true,dica:'Volte à observação: o que você viu acontecer na bancada?'},o);
+  if(o.real) b.x=(o.x||'')+`<div class="real-lab">🧰 <b>No laboratório móvel:</b> ${o.real}</div>`;
+  if(o.init) o.init(b);
+  if(o.perg){ const r=mc(b,o.certa,o.erradas); r.mostrar=o.certa; return r; }
+  b.mostrar='os passos na ordem indicada'; return b;
+}
+/* ---------- classificar ---------- */
+const CLASSIFICAR={
+  desenhar(it){ return `${it.cena?`<div class="bancada">${it.cena(it)}</div>`:''}<div class="classes">${it.alvos.map((a,i)=>{ const v=it.esc[i]; const errou=!it.feito&&(it.marcErr||[]).includes(i);
+      return `<div class="classe ${errou?'errou':''}"><div class="nome">${a.nome}</div><button class="btn rot ${v==null?'':'c'+((it.cls||[])[v]??v)}" data-x="c:${i}" ${it.feito?'disabled':''}>${v==null?'Toque para escolher':it.rotulos[v]}</button></div>`; }).join('')}</div>
+    ${it.feito?'':'<div class="seguir"><button class="btn agua" data-acao="conferir">Conferir</button></div>'}`; },
+  acao(it,x){ const i=+x.slice(2); it.esc[i]=it.esc[i]==null?0:(it.esc[i]+1)%it.rotulos.length; it.marcErr=(it.marcErr||[]).filter(k=>k!==i); som('bip'); desenhar(); },
+  conferir(it){ if(it.esc.some(v=>v==null)) return toast('Escolha uma opção para todos.');
+    const errs=it.alvos.map((a,i)=>it.esc[i]===a.c?-1:i).filter(i=>i>=0); it.marcErr=errs;
+    if(!errs.length) return responder(true);
+    responder(false,`${errs.length===1?'Uma escolha não está certa':`${errs.length} escolhas não estão certas`} (em vermelho). ${it.dicaErr||''}`); },
+  revelar(it){ it.esc=it.alvos.map(a=>a.c); }, auto(it){ it.esc=it.alvos.map(a=>a.c); CLASSIFICAR.conferir(it); }
+};
+const classif=(cat,enun,rotulos,alvos,extra={})=>{ const a=embaralhar(alvos); return Object.assign({tipo:'classificar',cat,enun,rotulos,alvos:a,esc:a.map(()=>null),mostrar:a.map(v=>v.nome.replace(/<[^>]+>/g,'')+' → '+rotulos[v.c]).join('; ')},extra); };
+/* ---------- ordem ---------- */
+const ORDEM={
+  desenhar(it){ const f=it.seq||[]; return `${it.cena?`<div class="bancada">${it.cena(it)}</div>`:''}${f.length?`<ol class="seq-ok">${f.map(i=>`<li>${it.itens[i]}</li>`).join('')}</ol>`:''}
+    ${it.feito?'':`<div class="cartoes">${it.ordemTela.filter(i=>!f.includes(i)).map(i=>`<button class="btn cartao-o" data-x="o:${i}">${it.itens[i]}</button>`).join('')}</div>`}`; },
+  acao(it,x){ const i=+x.slice(2); it.seq=it.seq||[];
+    if(i!==it.seq.length) return responder(false, (it.dicas&&it.dicas[it.seq.length])||'Pense no que precisa acontecer antes.');
+    it.seq.push(i); it.msg=''; if(it.seq.length===it.itens.length) return responder(true); som('bip'); desenhar(); },
+  revelar(it){ it.seq=it.itens.map((_,i)=>i); }, auto(it){ it.seq=it.itens.map((_,i)=>i); responder(true); }
+};
+const ordem=(cat,enun,itens,extra={})=>Object.assign({tipo:'ordem',cat,enun,itens,ordemTela:embaralhar(itens.map((_,i)=>i)),mostrar:itens.join(' → ')},extra);
+/* ---------- ponto: figura SVG com elementos data-x="p:id" ---------- */
+const PONTO={
+  desenhar(it){ return `<div class="bancada fig-ponto">${it.svg(it)}</div><p class="mini" style="text-align:center">Toque na parte da figura.</p>`; },
+  acao(it,x){ const id=x.slice(2); it.marca=id; responder(id===it.alvo, typeof it.dica==='function'?it.dica(id):it.dica); },
+  revelar(it){ it.marca=it.alvo; }, auto(it){ it.marca=it.alvo; responder(true); }
+};
+const TIPOS_LAB={bancada:BANCADA,classificar:CLASSIFICAR,ordem:ORDEM,ponto:PONTO};
+document.head.insertAdjacentHTML('beforeend',`<style>
+.bancada{background:linear-gradient(#F8FAFC,#E2E8F0);border:3px solid #CBD5E1;border-radius:18px;padding:14px 8px 16px;display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;align-items:flex-end;position:relative;overflow:hidden;min-height:120px}
+.bancada::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:#94A3B8}
+.bancada .alvo{background:none;border:3px dashed transparent;border-radius:14px;padding:2px 4px;cursor:pointer;display:grid;justify-items:center;font:inherit;color:inherit;position:relative;z-index:1}
+.bancada .alvo:hover{border-color:#F59E0B88;background:#FEF3C788}
+.pisca{animation:piscaL 1s infinite;border-color:#F59E0B!important}
+@keyframes piscaL{50%{box-shadow:0 0 0 6px #F59E0B66;background:#FEF3C7}}
+.bancada .rotulo{font-size:13px;font-weight:700;color:#334155;text-align:center;max-width:120px;line-height:1.2;margin-top:2px}
+.passo-lab,.obs-lab{background:#fff;border:2px solid #CBD5E1;border-left:8px solid var(--mata2);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:17px;line-height:1.45}
+.obs-lab{border-left-color:#16A34A;background:#F0FDF4}
+.passo-lab .tag,.obs-lab .tag{display:inline-block;background:var(--mata2);color:#fff;border-radius:999px;padding:0 10px;margin-right:6px;font-size:13px}
+.obs-lab .tag{background:#16A34A}
+.err-lab{background:#FEE2E2;border:2px solid #FCA5A5;border-radius:12px;padding:8px 12px;margin-top:8px}
+.real-lab{margin-top:8px;background:#EFF6FF;border:2px dashed #93C5FD;border-radius:12px;padding:8px 12px;font-size:15px}
+.ferramentas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.ferramentas .btn{font-size:15px;padding:8px 10px;min-height:46px;justify-content:flex-start;text-align:left;line-height:1.2}
+.ferr.sel{border-color:#F59E0B;background:#FEF3C7;box-shadow:0 0 0 4px #F59E0B44}
+.liq{transition:fill .8s}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+.classe{background:#fff;border:2px solid #E2E8F0;border-radius:14px;padding:8px;display:grid;gap:6px;text-align:center;align-content:space-between}
+.classe.errou{border-color:#F87171;background:#FEF2F2}
+.classe .nome{font-weight:700;font-size:15px;line-height:1.3}
+.btn.rot{min-height:44px;font-size:15px;width:100%;justify-content:center}
+.btn.rot.c0{background:#DCFCE7;border-color:#4ADE80}.btn.rot.c1{background:#FEE2E2;border-color:#F87171}.btn.rot.c2{background:#EDE9FE;border-color:#A78BFA}.btn.rot.c3{background:#DBEAFE;border-color:#60A5FA}
+.cartoes{display:grid;gap:8px;margin-top:10px}
+.cartao-o{text-align:left;justify-content:flex-start;white-space:normal;line-height:1.3}
+.seq-ok{margin:10px 0 0;padding-left:28px}
+.seq-ok li{background:#DCFCE7;border-radius:10px;padding:5px 10px;margin:4px 0;font-weight:700}
+.fig-ponto svg [data-x]{cursor:pointer}
+.fig-ponto svg [data-x]:hover{filter:drop-shadow(0 0 4px #F59E0B)}
+.bolha{animation:sobeB 1.4s linear infinite}
+@keyframes sobeB{from{transform:translateY(0);opacity:1}to{transform:translateY(-50px);opacity:0}}
+.gira{animation:giraD .25s linear infinite;transform-origin:center;transform-box:fill-box}
+@keyframes giraD{to{transform:rotate(360deg)}}
+.vis svg{max-width:100%;height:auto}
+</style>`);
+
+/* ---------- MICROSCÓPIO: partes ---------- */
+const PARTES={ocular:['Ocular','é onde você coloca o olho; ela também aumenta a imagem (em geral, 10 vezes)'],objetivas:['Objetivas','são as lentes perto da lâmina, com aumentos diferentes (4x, 10x, 40x)'],revolver:['Revólver','gira para trocar a objetiva'],platina:['Platina','é a “mesa” onde fica a lâmina'],charriot:['Charriot','move a lâmina para frente, para trás e para os lados'],macro:['Parafuso macrométrico','faz o ajuste grosso do foco'],micro:['Parafuso micrométrico','faz o ajuste fino do foco'],condensador:['Condensador','concentra a luz sobre a amostra'],diafragma:['Diafragma','controla quanta luz passa'],lampada:['Fonte de luz','ilumina a amostra por baixo'],braco:['Braço','segura as partes; é por ele que se carrega o microscópio'],pe:['Base (pé)','sustenta o microscópio']};
+const FUNCAO={ocular:'é onde você coloca o olho',objetivas:'são as lentes de 4x, 10x e 40x perto da lâmina',revolver:'gira para trocar a objetiva',platina:'é a mesa onde se apoia a lâmina',charriot:'move a lâmina sobre a mesa',macro:'faz o ajuste grosso do foco',micro:'faz o ajuste fino do foco',condensador:'concentra a luz sobre a amostra',diafragma:'controla quanta luz passa',lampada:'ilumina a amostra',braco:'serve para segurar e carregar o microscópio',pe:'é a base que sustenta tudo'};
+function svgMicro(it){ const g=(id,el)=>`<g data-x="p:${id}" class="pt ${it.marca===id?(id===it.alvo?'ok':'no'):''}" role="button" aria-label="parte">${el}</g>`;
+  return `<svg viewBox="0 0 300 340" width="300" height="340" aria-label="Microscópio óptico">
+  ${g('braco','<path d="M196 300 C214 250 214 170 168 118" stroke="#64748B" stroke-width="30" fill="none" stroke-linecap="round"/>')}
+  ${g('pe','<rect x="50" y="300" width="200" height="30" rx="10" fill="#475569" stroke="#1F2937" stroke-width="2"/>')}
+  <rect x="112" y="60" width="36" height="92" fill="#E2E8F0" stroke="#334155" stroke-width="2"/>
+  ${g('ocular','<rect x="104" y="0" width="52" height="64" fill="#fff0"/><rect x="118" y="14" width="24" height="48" rx="3" fill="#475569"/><rect x="114" y="8" width="32" height="10" rx="3" fill="#1F2937"/>')}
+  ${g('revolver','<path d="M98 150 H162 L172 170 H88Z" fill="#94A3B8" stroke="#334155" stroke-width="2"/>')}
+  ${g('objetivas','<rect x="98" y="168" width="62" height="44" fill="#fff0"/><rect x="104" y="170" width="13" height="34" fill="#CBD5E1" stroke="#334155" stroke-width="2"/><rect x="104" y="190" width="13" height="4" fill="#DC2626"/><rect x="123" y="170" width="13" height="40" fill="#CBD5E1" stroke="#334155" stroke-width="2"/><rect x="123" y="196" width="13" height="4" fill="#2563EB"/><rect x="142" y="170" width="13" height="28" fill="#CBD5E1" stroke="#334155" stroke-width="2"/><rect x="142" y="184" width="13" height="4" fill="#EAB308"/>')}
+  ${g('platina','<rect x="62" y="216" width="150" height="15" rx="2" fill="#1F2937"/><rect x="95" y="211" width="70" height="5" fill="#BAE6FD" stroke="#0369A1"/>')}
+  ${g('condensador','<rect x="110" y="232" width="40" height="22" rx="3" fill="#CBD5E1" stroke="#334155" stroke-width="2"/>')}
+  ${g('diafragma','<rect x="96" y="256" width="68" height="9" rx="3" fill="#94A3B8" stroke="#334155" stroke-width="2"/><rect x="164" y="257" width="22" height="6" fill="#334155"/>')}
+  ${g('lampada','<rect x="104" y="270" width="52" height="30" fill="#fff0"/><rect x="108" y="284" width="44" height="16" fill="#334155"/><circle cx="130" cy="284" r="11" fill="#FDE047" stroke="#334155" stroke-width="2"/>')}
+  ${g('charriot','<rect x="56" y="226" width="34" height="48" fill="#fff0"/><rect x="66" y="231" width="8" height="28" fill="#334155"/><circle cx="70" cy="263" r="9" fill="#475569" stroke="#1F2937" stroke-width="2"/>')}
+  ${g('macro','<circle cx="216" cy="176" r="21" fill="#475569" stroke="#1F2937" stroke-width="3"/><path d="M204 166 L228 186 M228 166 L204 186" stroke="#94A3B8" stroke-width="2"/>')}
+  ${g('micro','<circle cx="216" cy="224" r="12" fill="#64748B" stroke="#1F2937" stroke-width="3"/>')}
+  </svg>`; }
+const tocarParte=id=>({tipo:'ponto',cat:'microscopio',enun:`Toque na parte do microscópio que <b>${FUNCAO[id]}</b>.`,svg:svgMicro,alvo:id,mostrar:PARTES[id][0],
+  dica:t=>`Você tocou em: <b>${PARTES[t][0]}</b> — ${PARTES[t][1]}. Procure outra parte.`,x:`É o(a) <b>${PARTES[id][0]}</b>: ${PARTES[id][1]}.`});
+const MIC_MC=[
+  ()=>q('microscopio','Com a <b>ocular de 10x</b> e a <b>objetiva de 40x</b>, a imagem fica aumentada quantas vezes?','400 vezes',['50 vezes','40 vezes','4 000 vezes'],'Aumento total = <b>ocular × objetiva</b> = 10 × 40 = <b>400 vezes</b>.',{corpo:E('🔬 10 × 40')}),
+  ()=>q('microscopio','Ao carregar o microscópio, o certo é:','Segurar pelo braço, com a outra mão embaixo da base',['Segurar pela ocular','Carregar pela platina, com uma mão só','Puxar pelo fio da lâmpada'],'O microscópio é pesado e delicado: <b>braço e base</b>, sempre com as duas mãos.',{corpo:E('🔬🤲')}),
+  ()=>q('microscopio','O microscópio óptico precisa que a amostra seja <b>bem fina</b>. Por quê?','Porque a luz precisa atravessar a amostra para formar a imagem',['Para caber na caixa','Para a amostra não pesar','Porque o microscópio só vê coisas pretas'],'A luz vem de baixo, atravessa a amostra e chega às lentes. Amostra grossa não deixa a luz passar.',{corpo:E('💡⬆️🧫')}),
+  ()=>q('microscopio','O cientista que, em 1665, observou cortiça e chamou as “caixinhas” que viu de <b>células</b> foi:','Robert Hooke',['Isaac Newton','Charles Darwin','Albert Einstein'],'Hooke viu as paredes de células mortas da cortiça e usou a palavra “cell” (cela, pequeno compartimento).',{corpo:E('🔬📜')})
+];
+const gerarPartes=()=>{ const ids=embaralhar(Object.keys(PARTES)).slice(0,7); const m=sortear(MIC_MC,2); return [tocarParte(ids[0]),tocarParte(ids[1]),tocarParte(ids[2]),m[0],tocarParte(ids[3]),tocarParte(ids[4]),tocarParte(ids[5]),m[1],tocarParte(ids[6])]; };
+
+/* ---------- MICROSCÓPIO VIRTUAL ---------- */
+const rngS=s=>()=>(s=(s*16807)%2147483647)/2147483647;
+function desenhoCebola(z){ const u=6*z, W=3*u, cols=Math.ceil(240/W)+2, rows=Math.ceil(240/u)+2, r=rngS(7); let s='';
+  for(let j=0;j<rows;j++) for(let i=0;i<cols;i++){ const x=110-cols*W/2+i*W+(j%2?W/2:0), y=110-rows*u/2+j*u;
+    s+=`<rect x="${x}" y="${y}" width="${W}" height="${u}" fill="#FDE68A" stroke="#A16207" stroke-width="${Math.max(.8,z*.7)}"/><ellipse cx="${x+W*(.3+r()*.4)}" cy="${y+u/2}" rx="${u*.2}" ry="${u*.17}" fill="#92400E"/>`; }
+  return s; }
+function desenhoMucosa(z){ const u=7*z, d=4.6*u, n=Math.ceil(120/d)+1, r=rngS(11); let s='';
+  for(let j=-n;j<=n;j++) for(let i=-n;i<=n;i++){ const x=110+i*d+(r()-.5)*u, y=110+j*d+(r()-.5)*u, a=Math.round(r()*180), k=.8+r()*.4;
+    s+=`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M${-2.1*u*k} 0 Q${-1.6*u} ${-1.7*u} 0 ${-1.6*u*k} Q${1.9*u} ${-1.4*u} ${2*u*k} ${.2*u} Q${1.4*u} ${1.7*u} 0 ${1.5*u*k} Q${-1.8*u} ${1.4*u} ${-2.1*u*k} 0Z" fill="#DBEAFE" stroke="#60A5FA" stroke-width="${Math.max(.8,z*.5)}"/><circle r="${.36*u}" fill="#1D4ED8"/></g>`; }
+  return s; }
+function desenhoElodea(z){ const u=6*z, W=2.2*u, cols=Math.ceil(240/W)+2, rows=Math.ceil(240/u)+2, r=rngS(5); let s='';
+  for(let j=0;j<rows;j++) for(let i=0;i<cols;i++){ const x=110-cols*W/2+i*W+(j%2?W*.4:0), y=110-rows*u/2+j*u;
+    s+=`<rect x="${x}" y="${y}" width="${W}" height="${u}" fill="#ECFCCB" stroke="#15803D" stroke-width="${Math.max(.8,z*.6)}"/>`;
+    for(let k=0;k<7;k++){ const t=r(); const px=k<4?x+W*(.12+t*.76):x+W*(.12+r()*.76), py=k<4?y+u*.18:y+u*.82; s+=`<circle cx="${px}" cy="${py}" r="${u*.11}" fill="#16A34A"/>`; } }
+  return s; }
+const AMOSTRAS={
+  cebola:{nome:'Epiderme de cebola com lugol',lam:'🧅',des:desenhoCebola,perg:'As células da cebola ficaram lado a lado, como tijolinhos, com um contorno grosso e firme. Esse contorno é a:',certa:'Parede celular, típica das células vegetais',erradas:['Pele da cebola','Membrana do núcleo','Gordura da cebola'],x:'As células vegetais têm <b>parede celular</b>, que dá forma firme. O <b>núcleo</b> aparece como uma bolinha escura em cada célula, destacada pelo lugol.',real:'microscópio, lâmina, lamínula, uma película fininha da parte de dentro da cebola, lugol e conta-gotas.'},
+  mucosa:{nome:'Células da bochecha com azul de metileno',lam:'👄',des:desenhoMucosa,perg:'Nas células da bochecha, qual estrutura ficou <b>azul-escura</b>, bem no meio de cada célula?',certa:'O núcleo',erradas:['A parede celular','O cloroplasto','O vacúolo de água'],x:'O azul de metileno se liga ao material genético e destaca o <b>núcleo</b>. As células da bochecha são <b>animais</b>: não têm parede celular, por isso têm formas irregulares e ficam soltas.',real:'haste de algodão (cada um raspa a própria bochecha, com cuidado), lâmina, lamínula e azul de metileno. Use luvas e descarte as hastes no lixo.'},
+  elodea:{nome:'Folha de elódea (planta aquática)',lam:'🌿',des:desenhoElodea,perg:'Os pontinhos <b>verdes</b> dentro das células da elódea são:',certa:'Cloroplastos, onde acontece a fotossíntese',erradas:['Núcleos','Gotas de tinta','Bactérias'],x:'Os <b>cloroplastos</b> têm clorofila e fazem a <b>fotossíntese</b>. Só células de plantas e algas têm cloroplastos.',real:'folha de elódea (planta de aquário) com uma gota de água, lâmina e lamínula. Não precisa de corante.'}
+};
+function visor(it,a){ const z={4:1,10:2.5,40:6}[it.obj]; const bl=it.lam?[8,2.6,0][it.foco]:0;
+  return `<svg viewBox="0 0 220 230" width="220" height="230" aria-label="O que se vê pela ocular"><defs><clipPath id="${it.idc}"><circle cx="110" cy="110" r="100"/></clipPath><filter id="${it.idf}" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${bl}"/></filter></defs>
+    <circle cx="110" cy="110" r="106" fill="#1F2937"/><g clip-path="url(#${it.idc})"><rect width="220" height="220" fill="${it.luz?'#FEFCE8':'#0F172A'}"/>${it.lam&&it.luz?`<g filter="url(#${it.idf})">${a.des(z)}</g>`:''}</g>
+    <text x="110" y="228" text-anchor="middle" font-size="14" font-weight="800" fill="#1F2937">${it.luz?(it.lam?`aumento ${it.obj*10}x`:'sem lâmina'):'luz apagada'}</text></svg>`; }
+function microVirtual(chave,curto){ const a=AMOSTRAS[chave];
+  const P=[{instr:`Coloque a lâmina (<b>${a.nome.toLowerCase()}</b>) sobre a <b>platina</b>: toque na lâmina e depois na platina.`,f:'lamina',em:'platina',fazer:it=>it.lam=1},
+    {instr:'Acenda a <b>luz</b>.',alvo:'luz',fazer:it=>it.luz=1,dica:'Sem luz não se vê nada: procure o botão da luz.'},
+    {instr:'Gire o revólver para a objetiva de <b>menor aumento</b>.',alvo:'o4',fazer:it=>it.obj=4,dica:'Comece sempre pela objetiva de <b>menor</b> aumento: o campo de visão é maior e fica fácil achar a amostra.'},
+    {instr:'Olhando pela ocular, gire devagar o parafuso <b>macrométrico</b> até a imagem aparecer.',alvo:'macro',fazer:it=>it.foco=1,dica:'Primeiro o ajuste grosso: o parafuso maior.'},
+    {instr:'Agora deixe a imagem nítida com o ajuste fino: parafuso <b>micrométrico</b>.',alvo:'micro',fazer:it=>it.foco=2,dica:'O ajuste fino é o parafuso menor.'}];
+  if(!curto) P.push({instr:'Para ver mais detalhes, gire o revólver para a objetiva de <b>40x</b>.',alvo:'o40',fazer:it=>{ it.obj=40; it.foco=1; },dica:'Qual objetiva aumenta mais?'},
+    {instr:'Acerte o foco usando <b>só o micrométrico</b>.',alvo:'micro',fazer:it=>it.foco=2,dica:'Com a objetiva de 40x, o macrométrico pode encostar a lente na lâmina e quebrá-la! Use só o <b>micrométrico</b>.'});
+  else P.splice(2,1,{instr:'Gire o revólver para a objetiva de <b>10x</b>.',alvo:'o10',fazer:it=>it.obj=10,dica:'Procure a objetiva de 10x.'});
+  return banc({cat:'microscopio',enun:`🔬 Microscópio virtual: <b>${a.nome}</b>.`,init:b=>{ b.obj=curto?40:40; b.foco=0; b.idc=uid(); b.idf=uid(); },
+    cena:it=>{ const c=(id,ico,rot,on)=>alvo(it,id,`<span class="ico">${ico}</span>`,rot).replace('class="alvo','class="alvo'+(on?' on':''));
+      return `${visor(it,a)}<div class="mic-ctrl">${c('platina','🔲','platina',it.lam)}${c('luz','💡','luz',it.luz)}${c('o4','4x','objetiva',it.lam&&it.obj===4)}${c('o10','10x','objetiva',it.lam&&it.obj===10)}${c('o40','40x','objetiva',it.lam&&it.obj===40)}${c('macro','⚙️','macro',0)}${c('micro','🔩','micro',0)}</div>`; },
+    ferr:[{id:'lamina',ic:a.lam,nome:'Lâmina com a amostra'}],
+    passos:P,
+    obs:it=>`Aumento total: ocular 10x × objetiva ${it.obj}x = <b>${it.obj*10} vezes</b>.`,
+    perg:a.perg,certa:a.certa,erradas:a.erradas,x:a.x,real:a.real}); }
+const gerarMicro=()=>[microVirtual('cebola'),MIC_MC[0](),microVirtual('mucosa'),
+  q('microscopio','A célula da cebola tem parede celular e a da bochecha não. Isso acontece porque:','A cebola é uma planta e a bochecha é de um animal',['A bochecha é maior','A cebola estava com lugol','As duas são iguais'],'<b>Célula vegetal</b>: parede celular, e muitas têm cloroplastos. <b>Célula animal</b>: sem parede, formato mais variado.',{corpo:E('🧅🆚👄')}),
+  microVirtual('elodea',true),
+  q('microscopio','Por que se usam corantes como o <b>lugol</b> e o <b>azul de metileno</b>?','Para destacar estruturas quase transparentes, como o núcleo',['Para deixar a lâmina bonita','Para matar as células','Para aumentar a imagem'],'Muitas estruturas da célula são transparentes. O corante dá contraste e deixa ver o <b>núcleo</b> e os contornos.',{corpo:E('💧🔵🟤')})];
+
+/* ---------- AMIDO E LUGOL ---------- */
+const COM='#1E1B4B', SEM='#B45309';
+function amido(){
+  const A=[{id:'bat',ic:'🥔',nome:'Batata',s:1},{id:'pao',ic:'🍞',nome:'Pão',s:1},{id:'arr',ic:'🍚',nome:'Arroz cozido',s:1},{id:'mai',ic:'🌽',nome:'Maisena',s:1},{id:'far',ic:'🟫',nome:'Farinha de mandioca',s:1},{id:'acu',ic:'🍬',nome:'Açúcar',s:0},{id:'sal',ic:'🧂',nome:'Sal',s:0}];
+  return banc({cat:'nutrientes',enun:'🍞 O <b>lugol</b> (solução de iodo, cor de chá) fica <b>azul-escuro, quase preto</b> quando encontra <b>amido</b>. Teste os alimentos da bandeja!',init:b=>{b.cor={};},
+    cena:it=>A.map(a=>alvo(it,a.id,`<span class="prato">${a.ic}${it.cor[a.id]?`<i style="background:${it.cor[a.id]}"></i>`:''}</span>`,a.nome)).join(''),
+    ferr:[{id:'lug',ic:'💧',nome:'Conta-gotas com lugol'}],
+    prever:{perg:'Qual destes você acha que <b>não</b> tem amido?',ops:['Açúcar','Pão','Batata','Arroz'],certa:0},
+    passos:[{instr:'Pingue <b>2 gotas de lugol</b> em cada alimento da bandeja.',f:'lug',alvos:A.map(a=>a.id),cada:(it,x)=>{ it.cor[x]=A.find(a=>a.id===x).s?COM:SEM; }}],
+    obs:`Batata, pão, arroz, maisena e farinha ficaram <b>azul-escuros</b>. No açúcar e no sal, o lugol continuou <b>cor de chá</b>.`,
+    perg:'Quais alimentos <b>não</b> têm amido?',certa:'Açúcar e sal',erradas:['Batata e pão','Arroz e maisena','Nenhum: todos têm amido'],
+    x:'O <b>amido</b> é a reserva de energia das plantas, formado por muitas moléculas de <b>glicose</b> unidas. Está no trigo, no arroz, no milho, na mandioca e na batata. O açúcar é doce, mas não é amido.',
+    real:'bandejas forradas com plástico, pequenas porções dos alimentos e lugol com micropipeta (quem pinga é o professor). Os alimentos testados <b>não podem ser comidos</b>: vão para o lixo.'});
+}
+const AM_S=['Batata-doce','Mandioca cozida','Milho','Bolacha de água e sal','Macarrão cozido','Inhame'], AM_N=['Óleo de soja','Açúcar','Sal de cozinha','Clara de ovo cozida','Água'];
+const tem=()=>classif('nutrientes','Com o lugol, este alimento ficaria <b>azul-escuro</b> (tem amido) ou <b>não</b>?',['⚫ Tem amido','🟤 Não tem amido'],embaralhar([...embaralhar(AM_S).slice(0,3).map(n=>({nome:n,c:0})),...embaralhar(AM_N).slice(0,2).map(n=>({nome:n,c:1}))]),{cls:[2,1],x:'Raízes, tubérculos, grãos e farinhas são ricos em <b>amido</b>. Óleo, açúcar, sal e clara de ovo não têm amido.'});
+const AMQ=[
+  ()=>q('nutrientes','Para a planta, o amido serve como:','Reserva de energia',['Proteção contra o sol','Cor das folhas','Água guardada'],'A planta produz glicose na <b>fotossíntese</b> e guarda o excesso como <b>amido</b>, principalmente em raízes, tubérculos e sementes.',{corpo:E('🌿☀️➡️🥔')}),
+  ()=>q('nutrientes','O amido é formado pela união de muitas moléculas de:','Glicose',['Sal','Proteína','Gordura'],'O amido é um <b>carboidrato</b>: uma longa corrente de glicoses.',{corpo:E('🔗🔗🔗')}),
+  ()=>q('nutrientes','Para que serve o lugol neste experimento?','Para revelar a presença de amido pela mudança de cor',['Para temperar o alimento','Para cozinhar o alimento','Para matar os germes do alimento'],'O lugol é um <b>reagente indicador</b>: azul-escuro = tem amido.',{corpo:E('💧🟤➡️⚫')}),
+  ()=>q('nutrientes','Os alimentos ricos em amido, como arroz, pão e mandioca, dão ao corpo principalmente:','Energia',['Cálcio para os ossos','Vitamina C','Água'],'Carboidratos são a principal fonte de <b>energia</b>. Um cardápio equilibrado também tem proteínas, gorduras boas, vitaminas e minerais.',{corpo:E('🍚⚡')})
+];
+const gerarAmido=()=>{ const m=sortear(AMQ,3); return [amido(),tem(),m[0],m[1],tem(),m[2]]; };
+
+/* ---------- SALIVA DIGERE AMIDO ---------- */
+const FADE=['#1E1B4B','#4C1D95','#A16207','#FDE68A'];
+function saliva(){
+  const T=[{id:'t1',nome:'1 · amido + água'},{id:'t2',nome:'2 · amido + saliva'},{id:'t3',nome:'3 · amido + saliva fervida'}];
+  return banc({cat:'digestao',enun:'⏱️ Três tubos com <b>solução de amido</b>. No tubo 1 colocamos água; no 2, saliva; no 3, saliva que foi <b>fervida</b> e esfriou.',init:b=>{b.lt={};b.t=0;},
+    cena:it=>T.map(t=>alvo(it,t.id,svgTubo(it.lt[t.id]?(t.id==='t2'?FADE[it.t]:COM):'#F5F5F4',.45),t.nome)).join('')+`<div style="width:100%;text-align:center;font-weight:800">⏱️ ${it.t*10} min</div>`,
+    ferr:[{id:'lug',ic:'💧',nome:'Lugol'},{id:'tempo',ic:'⏱️',nome:'Esperar 10 minutos'}],
+    prever:{perg:'Depois de um tempo, o que você acha que vai acontecer com a cor do <b>tubo 2</b> (com saliva)?',ops:['Vai perder a cor azul-escura','Vai ficar ainda mais azul','Vai ficar igual ao tubo 1','Vai ficar verde'],certa:0},
+    passos:[{instr:'Pingue <b>3 gotas de lugol</b> em cada tubo.',f:'lug',alvos:['t1','t2','t3'],cada:(it,x)=>{ it.lt[x]=1; }},
+      {instr:'Agora é preciso esperar: toque em <b>Esperar 10 minutos</b>.',alvo:'f:tempo',fazer:it=>it.t=1},{instr:'Mais <b>10 minutos</b>…',alvo:'f:tempo',fazer:it=>it.t=2},{instr:'Mais <b>10 minutos</b>…',alvo:'f:tempo',fazer:it=>it.t=3}],
+    obs:'Os tubos 1 e 3 continuaram <b>azul-escuros</b>. O tubo 2 foi <b>perdendo a cor</b> até ficar amarelado.',
+    perg:'Por que o tubo 2 perdeu a cor azul-escura?',certa:'A amilase da saliva quebrou o amido em açúcares menores',erradas:['A saliva é um corante amarelo','O lugol evaporou','A água da saliva lavou a cor'],
+    x:'A saliva tem a enzima <b>amilase</b>, que quebra o amido em açúcares menores (maltose). Sem amido, o lugol não fica azul. No tubo 3 o <b>calor destruiu a enzima</b>, e no tubo 1 não havia enzima: ele é o <b>controle</b>, para comparar.',
+    real:'tubos de ensaio, estante, solução de amido (farinha de trigo fervida e filtrada), lugol e micropipeta. Cada estudante usa só a própria saliva, num tubo etiquetado. O manual sugere observar a cada 10 minutos, por 30 a 50 minutos.'});
+}
+const SAL=[
+  ()=>q('digestao','No experimento, o <b>tubo 1</b> (amido + água) serve para:','Comparar: mostra o que acontece sem a saliva',['Enfeitar a estante','Gastar o lugol que sobrou','Esquentar os outros tubos'],'É o <b>tubo controle</b>: sem ele, não daria para ter certeza de que foi a saliva que fez a diferença.',{corpo:`<div class="vis">${svgTubo(COM,.45,'1')}</div>`}),
+  ()=>q('digestao','Se você mastigar um pedaço de pão por uns 3 minutos, ele começa a ficar:','Adocicado',['Mais salgado','Azedo','Sem nenhum gosto'],'A amilase da saliva transforma parte do amido em açúcares: a <b>digestão começa na boca</b>.',{corpo:E('🍞😋')}),
+  ()=>q('digestao','Por que a saliva <b>fervida</b> (tubo 3) não digeriu o amido?','O calor destruiu a enzima amilase',['A saliva fervida ficou salgada','Ela evaporou toda','O lugol não funciona quente'],'Enzimas são proteínas: o calor muito alto muda sua forma e elas param de funcionar.',{corpo:`<div class="vis">${svgTubo(COM,.45,'3')}</div>`}),
+  ()=>ordem('digestao','Toque nos órgãos na ordem em que o alimento passa por eles.',['Boca','Faringe','Esôfago','Estômago','Intestino delgado','Intestino grosso'],{dicas:['Tudo começa onde mastigamos.','Depois da boca, o alimento passa pela garganta.','Da faringe, um tubo leva o alimento até o estômago.','Agora o órgão em forma de bolsa, com suco ácido.','Depois do estômago vem o intestino mais comprido.'],x:'Boca → faringe → esôfago → estômago → intestino delgado (onde a maior parte dos nutrientes é absorvida) → intestino grosso.'})
+];
+const gerarSaliva=()=>[saliva(),...SAL.map(f=>f())];
+
+/* ---------- BILE: detergente e óleo ---------- */
+function bile(){
+  const frasco=it=>{ const e=it.e; let liq='';
+    if(e==='agua') liq='<rect x="22" y="70" width="76" height="80" fill="#BFDBFE"/>';
+    else if(e==='sep') liq='<rect x="22" y="86" width="76" height="64" fill="#BFDBFE"/><rect x="22" y="70" width="76" height="16" fill="#FCD34D"/>';
+    else if(e==='gotas') liq='<rect x="22" y="70" width="76" height="80" fill="#BFDBFE"/>'+[[34,80],[60,96],[82,84],[44,120],[72,128],[52,74],[86,110],[30,104]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#FCD34D"/>`).join('');
+    else if(e==='det') liq='<rect x="22" y="86" width="76" height="64" fill="#BFDBFE"/><rect x="22" y="70" width="76" height="16" fill="#FCD34D"/><path d="M60 86 v40" stroke="#22C55E" stroke-width="4" stroke-dasharray="3 5"/>';
+    else if(e==='emul') liq='<rect x="22" y="70" width="76" height="80" fill="#FEF9C3"/>'+Array.from({length:40},(_,i)=>`<circle cx="${26+(i*37)%70}" cy="${74+(i*53)%72}" r="1.6" fill="#EAB308"/>`).join('');
+    return `<svg viewBox="0 0 120 170" width="130" height="184" aria-hidden="true">${liq}<path d="M44 8 H76 V30 Q100 40 100 60 V150 Q100 160 90 160 H30 Q20 160 20 150 V60 Q20 40 44 30Z" fill="none" stroke="#334155" stroke-width="3"/>${it.tampa?'<rect x="40" y="0" width="40" height="12" rx="3" fill="#E11D48"/>':''}</svg>`; };
+  return banc({cat:'digestao',enun:'🧴 Vamos imitar a digestão das <b>gorduras</b>: um frasco com água, um pouco de óleo… e detergente.',init:b=>{b.e='agua';},
+    cena:it=>alvo(it,'frasco',frasco(it),'frasco de coleta'),
+    ferr:[{id:'oleo',ic:'🫒',nome:'Óleo de soja'},{id:'det',ic:'🧽',nome:'Detergente'},{id:'agita',ic:'🫨',nome:'Tampar e agitar'}],
+    prever:{perg:'Depois de agitar o frasco com água e óleo, o que vai acontecer quando ele ficar parado?',ops:['O óleo volta a ficar em cima','O óleo se mistura de vez com a água','O óleo afunda','O óleo some'],certa:0},
+    passos:[{instr:'Coloque <b>uma colher de óleo</b> no frasco com água.',f:'oleo',em:'frasco',fazer:it=>it.e='sep'},
+      {instr:'Tampe e <b>agite</b> bem.',alvo:'f:agita',fazer:it=>{ it.e='sep'; it.tampa=1; },dica:'Agora é hora de agitar.'},
+      {instr:'O óleo voltou para cima! Agora pingue <b>10 gotas de detergente</b>.',f:'det',em:'frasco',fazer:it=>{ it.e='det'; it.tampa=0; }},
+      {instr:'Tampe e <b>agite</b> de novo.',alvo:'f:agita',fazer:it=>{ it.e='emul'; it.tampa=1; },dica:'Agite de novo para ver a diferença.'}],
+    obs:'Sem detergente, o óleo sempre voltava para cima. Com detergente, a mistura ficou <b>leitosa</b>: o óleo se dividiu em <b>gotinhas</b> que não voltam a se juntar.',
+    perg:'No nosso corpo, o que faz com a gordura o mesmo que o detergente fez com o óleo?',certa:'A bile, produzida pelo fígado',erradas:['A saliva','O suco do estômago','O sangue'],
+    x:'A <b>bile</b> é feita no <b>fígado</b>, guardada na <b>vesícula biliar</b> e lançada no intestino. Ela separa a gordura em gotinhas (<b>emulsão</b>), como o detergente. Gotinhas pequenas facilitam o trabalho das enzimas (lipases).',
+    real:'frasco de coleta com tampa, água, óleo de soja e detergente de louça.'});
+}
+const BIQ=[
+  ()=>q('digestao','A bile é produzida no fígado e fica guardada:','Na vesícula biliar',['No estômago','Na bexiga','No pulmão'],'Depois de uma refeição gordurosa, a <b>vesícula biliar</b> lança a bile no intestino delgado.',{corpo:E('🫀➡️🟢')}),
+  ()=>q('digestao','Por que é bom quebrar a gordura em <b>gotinhas</b> pequenas?','Porque as enzimas têm mais superfície para agir',['Porque a gordura some do corpo','Porque gotas pequenas são mais gostosas','Porque assim a gordura vira água'],'Muitas gotinhas têm muito mais <b>superfície</b> do que uma gota grande: as lipases trabalham mais rápido.',{corpo:E('🟡➡️•••')}),
+  ()=>q('digestao','A bile <b>não</b> é uma enzima. O que ela faz, então?','Separa a gordura em gotinhas, para as enzimas agirem',['Quebra o amido em açúcar','Produz ácido no estômago','Leva o oxigênio para o sangue'],'Quem quebra a gordura quimicamente são as <b>lipases</b> (do pâncreas). A bile só <b>emulsiona</b>.',{corpo:E('🧴🫧')})
+];
+BIQ.push(()=>q('digestao','Em que órgão a maior parte dos nutrientes passa para o sangue?','Intestino delgado',['Estômago','Esôfago','Boca'],'As paredes do <b>intestino delgado</b> têm milhões de dobrinhas (vilosidades) que absorvem os nutrientes já digeridos.',{corpo:E('🌀🩸')}));
+const gerarBile=()=>[bile(),...BIQ.map(f=>f())];
+
+/* ---------- DIAFRAGMA ---------- */
+function diafragma(){
+  const mod=it=>{ const s=it.s; const r=s==='ins'?30:s==='exp'?14:18, by=s==='ins'?196:s==='exp'?162:176;
+    return `<svg viewBox="0 0 160 210" width="170" height="223" aria-hidden="true"><path d="M60 10 H100 V34 Q130 46 130 74 V160 H30 V74 Q30 46 60 34Z" fill="#F8FAFC88" stroke="#334155" stroke-width="3"/>
+      <rect x="76" y="0" width="8" height="${110-r}" fill="#FDA4AF" stroke="#BE123C" stroke-width="1.5"/><rect x="58" y="6" width="44" height="12" rx="3" fill="#A8A29E"/>
+      <ellipse cx="80" cy="${120}" rx="${r*.85}" ry="${r}" fill="#FB7185" stroke="#BE123C" stroke-width="2"/>
+      <path d="M30 160 Q80 ${by} 130 160" fill="#93C5FD" stroke="#1D4ED8" stroke-width="3"/>${s==='ins'?'<path d="M80 200 v8 M74 202 l6 6 6 -6" stroke="#1D4ED8" stroke-width="3" fill="none"/>':''}
+      ${s==='ins'?'<path d="M96 2 l-12 10 M96 2 l-2 8 M96 2 l-8 0" stroke="#16A34A" stroke-width="3"/>':''}</svg>`; };
+  return banc({cat:'respiracao',enun:'🫁 Modelo de respiração: garrafa sem fundo, um balão pequeno preso ao canudo (dentro) e um balão médio fechando a base.',init:b=>{b.s='rep';},
+    cena:it=>alvo(it,'memb',mod(it),'balão da base'),
+    prever:{perg:'Se <b>puxarmos</b> o balão da base para baixo, o que acontece com o balão de dentro?',ops:['Ele enche de ar','Ele murcha','Nada acontece','Ele estoura'],certa:0},
+    passos:[{instr:'<b>Puxe</b> o balão da base para baixo: toque nele.',alvo:'memb',fazer:it=>it.s='ins'},{instr:'Agora <b>solte</b> o balão da base: toque nele de novo.',alvo:'memb',fazer:it=>it.s='exp'}],
+    obs:'Ao <b>puxar</b> a base, o balão de dentro <b>encheu</b>. Ao <b>soltar</b>, ele <b>esvaziou</b>.',
+    perg:'No corpo, o balão da base representa o <b>diafragma</b>. Quando o diafragma <b>se contrai e desce</b>, acontece:',certa:'A inspiração: o ar entra nos pulmões',erradas:['A expiração: o ar sai dos pulmões','O coração para de bater','A digestão dos alimentos'],
+    x:'Na <b>inspiração</b>, o diafragma <b>se contrai e desce</b>: o espaço no tórax aumenta, a pressão interna diminui e o ar entra. Na <b>expiração</b>, ele <b>relaxa e sobe</b>, e o ar sai. Puxar o balão da base imita a contração.',
+    real:'garrafa PET de 500 mL sem o fundo, canudo, um balão pequeno, um balão médio, massa de modelar e fita adesiva.'});
+}
+const RESQ=[
+  ()=>q('respiracao','No modelo da garrafa, o <b>balão pequeno</b> de dentro representa:','O pulmão',['O diafragma','A traqueia','O coração'],'Balão pequeno = <b>pulmão</b>; canudo = <b>traqueia</b>; garrafa = <b>caixa torácica</b>; balão da base = <b>diafragma</b>.',{corpo:E('🎈🫁')}),
+  ()=>ordem('respiracao','Toque nas partes na ordem em que o ar passa quando inspiramos.',['Nariz','Faringe','Laringe','Traqueia','Brônquios','Alvéolos dos pulmões'],{dicas:['O ar entra por onde?','Depois do nariz, o ar passa pela garganta.','Em seguida, a parte onde ficam as pregas vocais.','Agora o tubo com anéis de cartilagem.','A traqueia se divide em dois tubos.'],x:'Nariz → faringe → laringe → traqueia → brônquios → bronquíolos → <b>alvéolos</b>, onde acontecem as trocas de gases.'}),
+  ()=>q('respiracao','Nos <b>alvéolos</b> dos pulmões acontece:','A troca de gases: o oxigênio vai para o sangue e o gás carbônico sai dele',['A digestão do ar','A produção de saliva','A filtração da urina'],'O sangue leva o <b>oxigênio</b> para as células e traz o <b>gás carbônico</b> para ser eliminado na expiração.',{corpo:E('🫁🩸')}),
+  ()=>q('respiracao','Por que os sistemas digestório e respiratório trabalham juntos na <b>nutrição</b>?','As células precisam dos nutrientes e do oxigênio para obter energia',['Porque os dois ficam na barriga','Porque o pulmão digere alimentos','Porque o estômago respira'],'Os nutrientes da digestão e o oxigênio da respiração chegam às células pelo <b>sangue</b>. Nas células, eles liberam a energia que usamos.',{corpo:E('🍎+🫁➡️⚡')})
+];
+const gerarResp=()=>[diafragma(),...RESQ.map(f=>f())];
+
+/* ---------- JOGO ---------- */
+const JOGO={
+  NOME:'Corpo e Vida no Lab', CHAVE:'corpoVidaLab.v1', AREA:'CIÊNCIAS', TIPOS:TIPOS_LAB,
+  TXT:{missao:'Experimento',missoes:'Experimentos',mapa:'Experimentos',entrar:'Começar 🔬',valendo:'Mãos à obra! 🔬',fim:'Experimento concluído! 🎉'},
+  PATENTES:[[0,'🔍 Observador'],[5,'🔬 Microscopista'],[10,'🧫 Biólogo de bancada'],[15,'🏆 Cientista da vida']],
+  CATS:{microscopio:'Microscópio e células (MS.EF05CI13, MS.EF06CI05)',nutrientes:'Amido e nutrientes (MS.EF05CI08)',digestao:'Digestão (MS.EF05CI06)',respiracao:'Respiração e nutrição (MS.EF05CI06, MS.EF05CI07)'},
+  HOME:{h1:'Corpo e Vida <span>no Lab</span>', turma:'ex.: 6º A',
+    lead:'Conheça o microscópio peça por peça, focalize células de cebola, da bochecha e de uma planta aquática, descubra onde há amido com o lugol, veja a saliva digerindo o amido, o detergente imitando a bile e o modelo do diafragma.',
+    cena:'<div style="background:#fff;display:grid;place-items:center;padding:20px"><div class="emoji-g">🔬🧅👄<br>🍞🫁🧴</div></div>',
+    info:[['6','experimentos'],['5º–8º','anos'],['🔬','microscópio virtual']],
+    rodape:'Ciências · 5º ao 8º ano · experimentos do laboratório móvel · Habilidades <b>MS.EF05CI06</b>, <b>MS.EF05CI08</b>, <b>MS.EF05CI13</b>, <b>MS.EF06CI05</b>'},
+  AJUDA:['🤔 Antes de alguns experimentos você dá um palpite. Ele não vale ponto.','🔬 No microscópio virtual, siga os passos: lâmina, luz, objetiva de menor aumento, macrométrico e micrométrico.','🔁 Errou duas vezes no mesmo passo? O lugar certo começa a piscar.','👩‍🏫 Professor(a): no modelo do diafragma, puxar o balão da base imita a <b>contração</b> do diafragma (inspiração). Alguns roteiros antigos trazem essa relação invertida.'],
+  MISSOES:[
+    {id:'m1',titulo:'Partes do microscópio',ic:'🔬',hab:'MS.EF05CI13.s.13 · MS.EF06CI05.s.05',desc:'Toque em cada parte do microscópio e descubra para que serve.',gerar:gerarPartes,intro:'<p>O <b>microscópio óptico</b> usa lentes e luz para ampliar coisas muito pequenas. Cada parte tem uma função.</p>'},
+    {id:'m2',titulo:'Microscópio virtual',ic:'🧅',hab:'MS.EF06CI05.s.05',desc:'Focalize células de cebola, da bochecha e da elódea.',gerar:gerarMicro,intro:'<p>Coloque a lâmina, acenda a luz e focalize, como um cientista. Compare <b>células vegetais</b> e <b>animais</b>.</p>'},
+    {id:'m3',titulo:'Caça ao amido',ic:'🍞',hab:'MS.EF05CI08.s.08',desc:'O lugol fica azul-escuro onde há amido.',gerar:gerarAmido,intro:'<p>O <b>lugol</b> é cor de chá, mas fica <b>azul-escuro</b> quando encontra <b>amido</b>. Quais alimentos têm amido?</p>'},
+    {id:'m4',titulo:'A saliva trabalhando',ic:'⏱️',hab:'MS.EF05CI06.s.06',desc:'Veja a amilase da saliva digerir o amido no tubo de ensaio.',gerar:gerarSaliva,intro:'<p>A digestão começa na <b>boca</b>! A saliva tem uma enzima que quebra o amido. Vamos provar com o lugol.</p>'},
+    {id:'m5',titulo:'Detergente e bile',ic:'🧴',hab:'MS.EF05CI06.s.06',desc:'O detergente imita o que a bile faz com a gordura.',gerar:gerarBile,intro:'<p>Óleo e água não se misturam… até chegar o <b>detergente</b>. No corpo, quem faz esse papel é a <b>bile</b>.</p>'},
+    {id:'m6',titulo:'Modelo do diafragma',ic:'🫁',hab:'MS.EF05CI06.s.06 · MS.EF05CI07.s.07',desc:'Uma garrafa e dois balões mostram como respiramos.',gerar:gerarResp,intro:'<p>O <b>diafragma</b> é o músculo da respiração. Com uma garrafa e dois balões, dá para ver como ele funciona.</p>'}
+  ]
+};
+iniciarJogo();
+
+</script>
+</body>
+</html>
