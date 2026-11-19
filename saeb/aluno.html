@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prova SAEB · Estudante</title>
+<meta name="description" content="Responda a prova no formato SAEB que o professor liberou para a sua turma.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='6' y='4' width='28' height='32' rx='5' fill='%232B2F66'/%3E%3Cpath d='M12 14h16M12 20h16M12 26h10' stroke='%23E8A93B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="saeb.css">
+</head>
+<body class="aluno">
+<header class="barra-topo"><a class="marca" href="../index.html">📝 <b>Prova SAEB</b></a><span id="quem" class="mini"></span></header>
+<main id="app"><p class="carregando">Carregando…</p></main>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="caixa" id="modal-c"></div></div>
+<script src="matriz.js"></script>
+<script type="module">
+import { rede, msgErro, limpar, esc, banco, enunciadoHtml, alternativaHtml, TS, DISC, TIPOS, pct } from './comum.js';
+const $ = s => document.querySelector(s), app = $('#app');
+const ST = 'saeb.aluno.v1';
+let R, PIN, INF, AID, NOME, Q = [], RESP = {}, GAB = null, ATUAL = 0, ENTREGUE = false, desligar = [];
+const teste = new URLSearchParams(location.search).has('teste');
+const toast = m => { const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); };
+const modal = h => { $('#modal-c').innerHTML = h; $('#modal').classList.remove('hidden'); };
+const fecharModal = () => $('#modal').classList.add('hidden');
+const guardar = () => { try{ sessionStorage.setItem(ST, JSON.stringify({pin:PIN, aid:AID, nome:NOME})); }catch(e){} };
+const lerGuardado = () => { try{ return JSON.parse(sessionStorage.getItem(ST)) || null; }catch(e){ return null; } };
+const erroTela = (t, d) => { app.innerHTML = `<section class="cartao centro"><h1>${t}</h1><p>${d||''}</p><button class="btn" data-a="inicio">Voltar</button></section>`; };
+
+async function iniciar(){
+  try { R = await rede(); }
+  catch(e){ return erroTela('Sem conexão', msgErro(e)==='config' ? 'A configuração do servidor não foi encontrada.' : 'Verifique a internet e recarregue a página.'); }
+  const g = lerGuardado(), c = limpar(new URLSearchParams(location.search).get('c') || '', 5);
+  if (g && g.pin && g.aid && (!c || c === g.pin)) return retomar(g);
+  telaCodigo(c);
+}
+function telaCodigo(c=''){
+  desligar.forEach(f => f && f()); desligar = [];
+  $('#quem').textContent = '';
+  app.innerHTML = `<section class="cartao centro entrada">
+    <h1>Entrar na prova</h1>
+    <p>Digite o <b>código da prova</b> que o professor mostrou no quadro.</p>
+    <form id="f-cod" class="linha-cod"><input id="cod" value="${esc(c)}" maxlength="5" autocomplete="off" autocapitalize="characters" placeholder="ex.: KTRWB" aria-label="Código da prova" required><button class="btn pri grande">Entrar ➔</button></form>
+    <p class="mini">O código tem 5 letras. Ele é diferente do PIN do Quiz.</p></section>`;
+  $('#f-cod').onsubmit = e => { e.preventDefault(); abrirProva(limpar($('#cod').value, 5)); };
+  if (!c) $('#cod').focus();
+}
+async function abrirProva(pin){
+  if (pin.length !== 5) return toast('O código tem 5 letras.');
+  app.innerHTML = '<p class="carregando">Procurando a prova…</p>';
+  let inf;
+  try { inf = await R.get(`saeb/a/${pin}/info`); } catch(e){ return erroTela('Não consegui abrir', 'Verifique a internet e tente de novo.'); }
+  if (!inf) { telaCodigo(pin); return toast('Não encontrei uma prova com esse código.'); }
+  if (!inf.aberta) return erroTela('Prova fechada', 'Esta prova não está recebendo respostas agora. Fale com o professor.');
+  PIN = pin; INF = inf;
+  const al = (await R.get(`saeb/c/${inf.cad}/alunos/${inf.tid}`)) || {};
+  const lista = Object.entries(al).map(([aid, a]) => ({aid, nome:a.nome})).sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
+  app.innerHTML = `<section class="cartao"><p class="selo">${esc(TIPOS[inf.tipo]||'')} · ${esc(inf.turma)}</p><h1>${esc(inf.titulo)}</h1>
+    <p>${DISC[inf.disc]} · ${inf.ano}º ano · ${inf.qs.length} questões</p>
+    <h2 class="sub">Toque no seu nome</h2>
+    <div class="nomes">${lista.map(a => `<button class="btn nome" data-nome="${a.aid}">${esc(a.nome)}</button>`).join('') || '<p>Nenhum estudante cadastrado nesta turma ainda.</p>'}</div>
+    <button class="btn fant" data-a="inicio">← Outro código</button></section>`;
+  app.querySelectorAll('[data-nome]').forEach(b => b.onclick = () => pedirSenha(b.dataset.nome, b.textContent));
+}
+function pedirSenha(aid, nome){
+  let s = '';
+  const des = () => { $('#pontos').innerHTML = [0,1,2,3].map(i => `<i class="${i < s.length ? 'on' : ''}"></i>`).join(''); };
+  modal(`<h2>Olá, ${esc(nome)}!</h2><p>Digite a sua <b>senha de 4 números</b> (está no cartão que o professor entregou).</p>
+    <div id="pontos" class="pontos"></div>
+    <div class="teclado">${[1,2,3,4,5,6,7,8,9,'⌫',0,'✓'].map(k => `<button class="btn tecla" data-k="${k}">${k}</button>`).join('')}</div>
+    <p id="erro-s" class="erro"></p><button class="btn fant" data-a="fechar">Não sou eu</button>`);
+  des();
+  const tentar = async () => {
+    if (s.length !== 4) return;
+    $('#erro-s').textContent = 'Conferindo…';
+    try {
+      if (R.tipo === 'teste' && (await R.get(`saeb/s/${INF.cad}/${aid}`)) !== s) throw {code:'PERMISSION_DENIED'};
+      await R.set(`saeb/a/${PIN}/sess/${R.uid}`, {a:aid, s});
+      AID = aid; NOME = nome; guardar(); fecharModal(); carregarProva();
+    } catch(e){ s = ''; des(); $('#erro-s').textContent = msgErro(e) === 'permissao' ? 'Senha errada. Tente de novo ou peça ajuda ao professor.' : 'Sem conexão. Tente de novo.'; }
+  };
+  $('#modal-c').querySelectorAll('[data-k]').forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    if (k === '⌫') s = s.slice(0, -1); else if (k === '✓') return tentar(); else if (s.length < 4) s += k;
+    des(); if (s.length === 4) tentar();
+  });
+}
+async function retomar(g){
+  PIN = g.pin; AID = g.aid; NOME = g.nome;
+  try {
+    INF = await R.get(`saeb/a/${PIN}/info`);
+    const se = await R.get(`saeb/a/${PIN}/sess/${R.uid}`);
+    if (!INF || !se || se.a !== AID) throw 0;
+  } catch(e){ try{ sessionStorage.removeItem(ST); }catch(_){} return telaCodigo(PIN||''); }
+  carregarProva();
+}
+async function carregarProva(){
+  $('#quem').textContent = NOME;
+  app.innerHTML = '<p class="carregando">Abrindo as questões…</p>';
+  const B = await banco(INF.disc, INF.ano);
+  Q = INF.qs.map(id => B.mapa[id]).filter(Boolean);
+  const meu = (await R.get(`saeb/a/${PIN}/r/${AID}`)) || {};
+  RESP = meu.r || {}; ENTREGUE = !!meu.fim;
+  if (!meu.ini && !ENTREGUE) R.set(`saeb/a/${PIN}/r/${AID}/ini`, TS).catch(()=>{});
+  desligar.push(R.on(`saeb/a/${PIN}/info`, v => {
+    const antes = INF; INF = v || INF;
+    if (v && !v.aberta && antes.aberta && !ENTREGUE) { toast('O professor fechou a prova.'); fim(); }
+    if (v && v.correcao && !antes.correcao && ENTREGUE) fim();
+  }));
+  if (INF.tipo === 'treino' || INF.correcao) { try { GAB = await R.get(`saeb/a/${PIN}/gab`); } catch(e){ GAB = null; } }
+  if (ENTREGUE) return fim();
+  ATUAL = Math.max(0, Q.findIndex((_, i) => !RESP['i'+i])); if (ATUAL < 0) ATUAL = 0;
+  questao();
+}
+function questao(){
+  const q = Q[ATUAL], marc = RESP['i'+ATUAL], treino = INF.tipo === 'treino' && GAB, certo = treino ? GAB['i'+ATUAL] : null, travada = treino && marc;
+  const feitas = Q.filter((_, i) => RESP['i'+i]).length;
+  app.innerHTML = `<section class="prova">
+    <div class="prog"><span>Questão <b>${ATUAL+1}</b> de ${Q.length}</span><span class="mini">${feitas} respondida${feitas===1?'':'s'}</span><button class="btn peq" data-a="mapa">🗂️ Ver todas</button></div>
+    <div class="bar"><i style="width:${100*feitas/Q.length}%"></i></div>
+    <article class="questao cartao"><div class="num">${ATUAL+1}</div>${enunciadoHtml(q)}
+      <div class="alts">${[...'ABCD'].map(L => { let cl = marc === L ? 'marcada' : ''; if (travada){ if (L === certo) cl += ' certa'; else if (L === marc) cl += ' errada'; }
+        return `<button class="alt ${cl}" data-l="${L}" ${travada?'disabled':''}><b>${L}</b><div>${alternativaHtml(q, L)}</div></button>`; }).join('')}</div>
+      ${travada ? `<div class="fb ${marc===certo?'ok':'no'}">${marc===certo?'✅ Você acertou!':`❌ A resposta certa é a <b>${certo}</b>.`}</div>` : ''}
+    </article>
+    <div class="nav"><button class="btn" data-a="ant" ${ATUAL===0?'disabled':''}>← Anterior</button>
+      ${ATUAL < Q.length-1 ? `<button class="btn pri" data-a="prox">Próxima →</button>` : `<button class="btn pri" data-a="entregar">Entregar a prova ✔</button>`}</div></section>`;
+  app.querySelectorAll('[data-l]').forEach(b => b.onclick = () => marcar(b.dataset.l));
+  window.scrollTo(0, 0);
+}
+async function marcar(L){
+  if (ENTREGUE) return;
+  const k = 'i'+ATUAL, antes = RESP[k];
+  if (INF.tipo === 'treino' && GAB && antes) return;
+  RESP[k] = L; questao();
+  try { await R.set(`saeb/a/${PIN}/r/${AID}/r/${k}`, L); }
+  catch(e){ RESP[k] = antes; questao(); toast(msgErro(e) === 'permissao' ? 'A prova foi fechada pelo professor.' : 'Sem conexão: a resposta não foi salva. Tente de novo.'); }
+}
+function mapa(){
+  modal(`<h2>Todas as questões</h2><p class="mini">Toque em um número para ir até a questão.</p>
+    <div class="grade-q">${Q.map((_, i) => `<button class="btn qn ${RESP['i'+i]?'feita':''} ${i===ATUAL?'atual':''}" data-ir="${i}">${i+1}</button>`).join('')}</div>
+    <button class="btn" data-a="fechar">Fechar</button>`);
+  $('#modal-c').querySelectorAll('[data-ir]').forEach(b => b.onclick = () => { ATUAL = +b.dataset.ir; fecharModal(); questao(); });
+}
+function entregar(){
+  const brancas = Q.map((_, i) => i).filter(i => !RESP['i'+i]);
+  modal(`<h2>Entregar a prova?</h2>${brancas.length ? `<p>Você deixou <b>${brancas.length}</b> questão(ões) em branco: ${brancas.map(i => i+1).join(', ')}.</p>` : '<p>Você respondeu todas as questões.</p>'}
+    <p>Depois de entregar, não dá para mudar as respostas.</p>
+    <div class="nav"><button class="btn" data-a="fechar">Voltar e revisar</button><button class="btn pri" data-a="confirmar">Entregar ✔</button></div>`);
+}
+async function confirmar(){
+  try { await R.set(`saeb/a/${PIN}/r/${AID}/fim`, TS); ENTREGUE = true; fecharModal(); fim(); }
+  catch(e){ toast(msgErro(e) === 'permissao' ? 'A prova já foi fechada pelo professor.' : 'Sem conexão. Tente de novo.'); }
+}
+async function fim(){
+  ENTREGUE = true;
+  if (INF.correcao && !GAB) { try { GAB = await R.get(`saeb/a/${PIN}/gab`); } catch(e){} }
+  let corr = '';
+  if (GAB && (INF.correcao || INF.tipo === 'treino')) {
+    const ok = Q.filter((_, i) => RESP['i'+i] && RESP['i'+i] === GAB['i'+i]).length;
+    corr = `<div class="placar"><b>${ok}</b> de ${Q.length} acertos (${pct(ok, Q.length)}%)</div>
+      <div class="grade-q res">${Q.map((_, i) => { const v = RESP['i'+i], g = GAB['i'+i]; return `<span class="qn ${v===g?'ok':'no'}" title="Sua resposta: ${v||'em branco'} · certa: ${g}">${i+1}<small>${v||'–'}${v===g?'':'→'+g}</small></span>`; }).join('')}</div>`;
+  }
+  app.innerHTML = `<section class="cartao centro"><div class="grande-emoji">🎉</div><h1>Prova entregue!</h1>
+    <p>Obrigado, ${esc(NOME)}. Suas respostas foram enviadas para o professor.</p>${corr ||'<p class="mini">O professor vai mostrar a correção depois.</p>'}
+    <button class="btn" data-a="sair">Sair</button></section>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const a = b.dataset.a;
+  if (a === 'inicio') telaCodigo();
+  else if (a === 'fechar') fecharModal();
+  else if (a === 'ant' && ATUAL > 0) { ATUAL--; questao(); }
+  else if (a === 'prox' && ATUAL < Q.length-1) { ATUAL++; questao(); }
+  else if (a === 'mapa') mapa();
+  else if (a === 'entregar') entregar();
+  else if (a === 'confirmar') confirmar();
+  else if (a === 'sair') { try{ sessionStorage.removeItem(ST); }catch(_){} R.remove(`saeb/a/${PIN}/sess/${R.uid}`).catch(()=>{}); PIN = AID = null; telaCodigo(); }
+});
+iniciar();
+</script>
+</body>
+</html>

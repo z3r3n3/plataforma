@@ -82,6 +82,88 @@
           }
         }
       }
+    },
+    "saeb": {
+      "k": {
+        "$cad": {
+          ".write": "auth != null && !data.exists() && newData.isString() && newData.val().length >= 6 && newData.val().length <= 12"
+        }
+      },
+      "s": {
+        "$cad": {
+          ".read": "auth != null && root.child('saeb/c/'+$cad+'/donos/'+auth.uid).exists()",
+          "$aid": {
+            ".write": "auth != null && root.child('saeb/c/'+$cad+'/donos/'+auth.uid).exists()",
+            ".validate": "newData.isString() && newData.val().length <= 8"
+          }
+        }
+      },
+      "c": {
+        "$cad": {
+          ".read": "auth != null && data.child('donos').child(auth.uid).exists()",
+          ".write": "auth != null && data.child('donos').child(auth.uid).exists()",
+          "info": {
+            ".read": "auth != null",
+            ".write": "auth != null && !data.exists() && newData.child('dono').val() === auth.uid",
+            ".validate": "newData.child('nome').isString() && newData.child('nome').val().length <= 40"
+          },
+          "donos": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && newData.val() === root.child('saeb/k/'+$cad).val()"
+            }
+          },
+          "alunos": {
+            ".read": "auth != null"
+          }
+        }
+      },
+      "a": {
+        "$pin": {
+          ".read": "auth != null && root.child('saeb/c/'+data.child('cad').val()+'/donos/'+auth.uid).exists()",
+          ".write": "auth != null && ((data.exists() && root.child('saeb/c/'+data.child('cad').val()+'/donos/'+auth.uid).exists()) || (!data.exists() && root.child('saeb/c/'+newData.child('cad').val()+'/donos/'+auth.uid).exists()))",
+          ".validate": "$pin.length === 5",
+          "cad": {
+            ".write": "auth != null && !data.exists() && root.child('saeb/c/'+newData.val()+'/donos/'+auth.uid).exists()",
+            ".validate": "newData.isString()"
+          },
+          "info": {
+            ".read": "auth != null"
+          },
+          "gab": {
+            ".read": "auth != null && (root.child('saeb/a/'+$pin+'/info/correcao').val() === true || root.child('saeb/a/'+$pin+'/info/tipo').val() === 'treino')"
+          },
+          "sess": {
+            "$uid": {
+              ".read": "auth != null && auth.uid === $uid",
+              ".write": "auth != null && auth.uid === $uid",
+              ".validate": "newData.hasChildren(['a','s']) && newData.child('a').isString() && newData.child('s').val() === root.child('saeb/s/'+root.child('saeb/a/'+$pin+'/cad').val()+'/'+newData.child('a').val()).val()"
+            }
+          },
+          "r": {
+            "$aid": {
+              ".read": "auth != null && root.child('saeb/a/'+$pin+'/sess/'+auth.uid+'/a').val() === $aid",
+              ".write": "auth != null && root.child('saeb/a/'+$pin+'/sess/'+auth.uid+'/a').val() === $aid && root.child('saeb/a/'+$pin+'/info/aberta').val() === true && !data.child('fim').exists()",
+              "r": {
+                "$i": {
+                  ".validate": "newData.isString() && newData.val().matches(/^[ABCD]$/)"
+                }
+              },
+              "ini": {
+                ".validate": "newData.isNumber()"
+              },
+              "fim": {
+                ".validate": "newData.isNumber()"
+              },
+              "papel": {
+                ".validate": "newData.isBoolean()"
+              },
+              "$outro": {
+                ".validate": false
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

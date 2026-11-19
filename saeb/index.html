@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avaliação SAEB · Professor</title>
+<meta name="description" content="Monte provas no formato SAEB por descritor, aplique on-line ou no papel e acompanhe a turma em um mapa de descritores.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='6' y='4' width='28' height='32' rx='5' fill='%232B2F66'/%3E%3Cpath d='M12 14h16M12 20h16M12 26h10' stroke='%23E8A93B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="saeb.css">
+</head>
+<body class="prof">
+<header class="barra-topo"><a class="marca" href="../professor.html">← <b>Avaliação SAEB</b> <span class="mini">· área do professor</span></a><span id="cad-topo" class="mini"></span></header>
+<main id="app"><p class="carregando">Carregando…</p></main>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="caixa" id="modal-c"></div></div>
+<script src="matriz.js"></script>
+<script type="module" src="professor.js"></script>
+</body>
+</html>

@@ -93,9 +93,9 @@
     <h1>Aprender <span>jogando</span>, do 1º ao 9º ano.</h1>
     <p>Jogos e desafios para o estudante ser protagonista da própria aprendizagem.</p>
     <a class="btn ipe" href="#catalogo">Escolher um jogo ↓</a>
-    <form class="pin-box" action="quiz/jogar.html" method="get">
-      <label for="pin-home">⚡ <b>Quiz ao vivo:</b> o professor passou um PIN? Digite aqui.</label>
-      <div class="pin-linha"><input id="pin-home" name="pin" inputmode="numeric" autocomplete="off" maxlength="7" size="6" placeholder="PIN da sala" required><button class="btn ipe" type="submit">Entrar ➔</button></div>
+    <form class="pin-box" action="quiz/jogar.html" method="get" onsubmit="var v=this.pin.value.trim();if(/[a-z]/i.test(v)){location.href='saeb/aluno.html?c='+encodeURIComponent(v.toUpperCase());return false}">
+      <label for="pin-home">⚡ <b>Quiz ou prova:</b> o professor passou um código? Digite aqui.</label>
+      <div class="pin-linha"><input id="pin-home" name="pin" autocomplete="off" autocapitalize="characters" maxlength="7" size="6" placeholder="PIN ou código" required><button class="btn ipe" type="submit">Entrar ➔</button></div>
     </form>
     <div class="selos" style="margin-top:16px"><span>🚫 Sem anúncios</span><span>🙅 Sem cadastro</span><span>🔒 Nenhum dado coletado</span><span>📱 Celular, tablet e PC</span></div>
   </div>

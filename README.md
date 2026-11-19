@@ -60,3 +60,10 @@ Registros e indicadores de aprendizagem baseados no Currículo de Referência de
 - Relatórios: por atividade (estilo Kahoot: pergunta mais difícil, alternativa errada mais escolhida, tempo médio, tabela por estudante) e por turma (habilidades a retomar/consolidadas, mapa estudantes × habilidades, texto pronto para o formulário de acompanhamento). Exporta CSV e imprime.
 - Níveis padrão: Abaixo do básico (<40%), Básico (40–69%), Adequado (70–89%), Avançado (≥90%) — editáveis em Configurações.
 - Os dados ficam no navegador do professor: use **Configurações → Baixar backup** para guardar ou levar a outro computador.
+
+## Avaliação SAEB por descritor (`saeb/`)
+
+- `saeb/index.html` (professor) e `saeb/aluno.html` (estudante). Código comum em `saeb/comum.js`; painel em `saeb/professor.js`; matriz do SAEB em `saeb/matriz.js` (LP D1–D15 / D1–D21, MAT D1–D28 / D1–D37).
+- Banco em `saeb/banco/{mat5,lp5,mat9,lp9}.json` (sem gabaritos) e `saeb/banco/gabaritos.json`. Imagens em `saeb/banco/img/`. Questões com defeito da importação têm o campo `prob` e não entram nas provas.
+- O professor cria um **caderno** (código + chave), turmas com senhas de 4 números, monta a prova por descritor (marca o gabarito que faltar) e libera um código de 5 letras. O estudante entra pela página inicial (o campo de PIN aceita o código) ou por `saeb/aluno.html?c=CÓDIGO`.
+- Dados no Firebase do quiz, nó `saeb/`. **Cole de novo as regras de `quiz/regras-firebase.json` no console** sempre que elas mudarem.
