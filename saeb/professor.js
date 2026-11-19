@@ -21,7 +21,7 @@ const turmas = () => Object.entries(D.turmas || {}).map(([tid, t]) => ({tid, ...
 const alunosDe = tid => Object.entries((D.alunos || {})[tid] || {}).map(([aid, a]) => ({aid, ...a})).sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
 const apls = () => Object.entries(D.apl || {}).map(([pin, a]) => ({pin, ...a})).sort((a, b) => (b.criada||0) - (a.criada||0));
 const gabDe = qid => (D.gab && D.gab[qid] && D.gab[qid].g) || (GB[qid] && GB[qid].g) || null;
-const origemGab = qid => (D.gab && D.gab[qid] && D.gab[qid].g) ? 'prof' : (GB[qid] ? 'base' : null);
+const origemGab = qid => (D.gab && D.gab[qid] && D.gab[qid].g) ? 'prof' : (GB[qid] ? (GB[qid].o === 'sugerido' ? 'sug' : 'base') : null);
 const descDe = q => (D.gab && D.gab[q.id] && D.gab[q.id].desc) || q.desc;
 const desligada = q => !!(D.gab && D.gab[q.id] && D.gab[q.id].off);
 const usavel = q => !q.prob && !desligada(q);
@@ -180,10 +180,11 @@ async function desenharMontagem(){
   el.innerHTML = `<section class="cartao"><h2>Revise a prova</h2>
     <div class="linha"><label>Título<input id="m-tit" value="${esc(N.titulo)}" maxlength="60"></label></div>
     <p class="mini">${N.qs.length} questões · ${esc(t.nome)} · ${DISC[N.disc]} · ${TIPOS[N.tipo]}. Use “Trocar” para sortear outra questão do mesmo descritor.</p>
+    ${N.qs.some(id => origemGab(id)==='sug' && N.gab[id]===gabDe(id)) ? `<p class="aviso">🔎 Questões com o selo <b>sugerido · confira</b> têm gabarito proposto pelo assistente. Confira antes de liberar: se estiver certo, não precisa fazer nada; se estiver errado, toque na letra certa.</p>` : ''}
     ${falta ? `<p class="aviso">⚠️ ${falta} questão(ões) ainda sem gabarito: toque na letra certa em cada uma. O gabarito fica salvo no seu caderno para as próximas provas.</p>` : ''}
     ${N.qs.map((id, i) => { const q = B.mapa[id], d = descDe(q);
       return `<div class="prev-q"><div class="cab"><b>${i+1}</b>${chip('sd', d)}<span class="mini" style="flex:1">${esc(descTexto(N.disc, ano, d)).slice(0, 90)}…</span>
-        <span class="gab-ls" title="Gabarito">${[...'ABCD'].map(L => `<button data-mgab="${id}:${L}" class="${N.gab[id]===L?'on':''}">${L}</button>`).join('')}</span>
+        ${origemGab(id)==='sug' && N.gab[id]===gabDe(id) ? chip('med', GB[id].b ? 'sugerido · confira com atenção' : 'sugerido · confira') : ''}<span class="gab-ls" title="Gabarito">${[...'ABCD'].map(L => `<button data-mgab="${id}:${L}" class="${N.gab[id]===L?'on':''}">${L}</button>`).join('')}</span>
         <button class="btn peq" data-trocar="${i}">↻ Trocar</button><button class="btn peq perigo" data-tirar="${i}">✕</button></div>
         <div class="corpo">${enunciadoHtml(q)}<div class="alts">${[...'ABCD'].map(L => `<div class="alt"><b>${L}</b><div>${alternativaHtml(q, L)}</div></div>`).join('')}</div></div>
         <button class="btn fant peq" data-expandir>ver inteira</button></div>`; }).join('')}
@@ -374,22 +375,23 @@ async function abaBanco(){
   if (BQ.desc) l = l.filter(q => descDe(q) === BQ.desc);
   if (BQ.st === 'prontas') l = l.filter(q => usavel(q) && gabDe(q.id));
   if (BQ.st === 'semgab') l = l.filter(q => usavel(q) && !gabDe(q.id));
+  if (BQ.st === 'sug') l = l.filter(q => usavel(q) && origemGab(q.id) === 'sug');
   if (BQ.st === 'prob') l = l.filter(q => q.prob);
   if (BQ.st === 'off') l = l.filter(desligada);
   if (BQ.busca) { const b = BQ.busca.toLowerCase(); l = l.filter(q => JSON.stringify(q.p).toLowerCase().includes(b)); }
   const POR = 15, pags = Math.max(1, Math.ceil(l.length / POR)); BQ.pag = Math.min(BQ.pag, pags - 1);
   const ver = l.slice(BQ.pag * POR, BQ.pag * POR + POR);
-  const ativos = B.lista.filter(usavel), prontas = ativos.filter(q => gabDe(q.id)).length;
+  const ativos = B.lista.filter(usavel), prontas = ativos.filter(q => gabDe(q.id)).length, sugs = ativos.filter(q => origemGab(q.id) === 'sug').length;
   $('#aba').innerHTML = `<section class="cartao"><h2>Banco de questões</h2>
-    <p class="mini">${B.lista.length} questões neste banco · <b>${prontas}</b> prontas (com gabarito) · ${ativos.length - prontas} sem gabarito · ${B.lista.filter(q => q.prob).length} com defeito da importação (desativadas).</p>
+    <p class="mini">${B.lista.length} questões neste banco · <b>${prontas}</b> prontas (com gabarito${sugs ? `, sendo ${sugs} sugeridos para conferir` : ''}) · ${ativos.length - prontas} sem gabarito · ${B.lista.filter(q => q.prob).length} com defeito da importação (desativadas).</p>
     <div class="linha"><label>Banco<select id="b-ch">${['mat5','lp5','mat9','lp9'].map(k => `<option value="${k}" ${BQ.chave===k?'selected':''}>${matriz(k.replace(/\d/g,''), +k.replace(/\D/g,'')).nome}</option>`).join('')}</select></label>
       <label>Descritor<select id="b-desc"><option value="">Todos</option>${[...Object.keys(M.d), '?'].map(d => `<option value="${d}" ${BQ.desc===d?'selected':''}>${d === '?' ? 'Sem descritor' : d + ' · ' + esc(M.d[d]).slice(0, 60)}</option>`).join('')}</select></label>
-      <label>Situação<select id="b-st">${[['todas','Todas'],['prontas','Prontas'],['semgab','Sem gabarito'],['prob','Com defeito'],['off','Desativadas por mim']].map(([k, v]) => `<option value="${k}" ${BQ.st===k?'selected':''}>${v}</option>`).join('')}</select></label>
+      <label>Situação<select id="b-st">${[['todas','Todas'],['prontas','Prontas'],['sug','Sugeridos (conferir)'],['semgab','Sem gabarito'],['prob','Com defeito'],['off','Desativadas por mim']].map(([k, v]) => `<option value="${k}" ${BQ.st===k?'selected':''}>${v}</option>`).join('')}</select></label>
       <label>Buscar no texto<input id="b-busca" value="${esc(BQ.busca)}" placeholder="palavra do enunciado"></label></div>
     <p class="mini">${l.length} encontrada(s). Toque na letra para gravar o gabarito; mude o descritor se estiver errado. As correções valem para o seu caderno.</p>
     ${ver.map(q => { const g = gabDe(q.id), o = origemGab(q.id), d = descDe(q);
-      return `<div class="prev-q"><div class="cab">${q.prob ? chip('crit', 'defeito: ' + q.prob.join(', ')) : desligada(q) ? chip('sd', 'desativada') : g ? chip('ok', o === 'prof' ? 'gabarito seu' : 'gabarito do banco') : chip('med', 'sem gabarito')}
-        <select data-bdesc="${q.id}">${[...Object.keys(M.d), '?'].map(x => `<option value="${x}" ${d===x?'selected':''}>${x === '?' ? 'sem descritor' : x}</option>`).join('')}</select>
+      return `<div class="prev-q"><div class="cab">${q.prob ? chip('crit', 'defeito: ' + q.prob.join(', ')) : desligada(q) ? chip('sd', 'desativada') : g ? (o === 'sug' ? chip('med', GB[q.id].b ? 'gabarito sugerido · conferir com atenção' : 'gabarito sugerido · conferir') + ` <button class="btn peq" data-bconf="${q.id}:${g}">✔ Confirmar ${g}</button>` : chip('ok', o === 'prof' ? 'gabarito seu' : 'gabarito do banco')) : chip('med', 'sem gabarito')}
+        ${q.dsug && !(D.gab && D.gab[q.id] && D.gab[q.id].desc) ? chip('med','descritor sugerido') : ''}<select data-bdesc="${q.id}">${[...Object.keys(M.d), '?'].map(x => `<option value="${x}" ${d===x?'selected':''}>${x === '?' ? 'sem descritor' : x}</option>`).join('')}</select>
         <span class="mini" style="flex:1">${esc(q.fonte)}</span>
         ${q.prob ? '' : `<span class="gab-ls">${[...'ABCD'].map(L => `<button data-bgab="${q.id}:${L}" class="${g===L?'on':''}">${L}</button>`).join('')}</span>`}
         <button class="btn peq" data-boff="${q.id}">${desligada(q) ? 'Reativar' : 'Desativar'}</button></div>
@@ -465,6 +467,7 @@ document.addEventListener('click', async e => {
     if (ds.a === 'csv') return csv();
     if (ds.a === 'imprimir-rel') return print();
     if (ds.verq) return verQuestao(ds.verq);
+    if (ds.bconf) { const [id, L] = ds.bconf.split(':'); await gravarGab(id, L); return abaBanco(); }
     if (ds.bgab) { const [id, L] = ds.bgab.split(':'); await gravarGab(id, L); return abaBanco(); }
     if (ds.boff) { const off = !desligada({id:ds.boff}); await R.update(`saeb/c/${CAD}/gab/${ds.boff}`, {off}); return abaBanco(); }
     if (ds.bpag) { BQ.pag += +ds.bpag; abaBanco(); return window.scrollTo(0, 0); }
