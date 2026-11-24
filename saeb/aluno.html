@@ -54,12 +54,12 @@ async function abrirProva(pin){
   let inf;
   try { inf = await R.get(`saeb/a/${pin}/info`); } catch(e){ return erroTela('Não consegui abrir', 'Verifique a internet e tente de novo.'); }
   if (!inf) { telaCodigo(pin); return toast('Não encontrei uma prova com esse código.'); }
-  if (!inf.aberta && !inf.correcao) return erroTela('Prova fechada', 'Esta prova não está recebendo respostas agora. Fale com o professor.');
   PIN = pin; INF = inf;
   const al = (await R.get(`saeb/c/${inf.cad}/alunos/${inf.tid}`)) || {};
   const lista = Object.entries(al).map(([aid, a]) => ({aid, nome:a.nome})).sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
   app.innerHTML = `<section class="cartao"><p class="selo">${esc(TIPOS[inf.tipo]||'')} · ${esc(inf.turma)}</p><h1>${esc(inf.titulo)}</h1>
     <p>${DISC[inf.disc]} · ${inf.ano}º ano · ${inf.qs.length} questões</p>
+    ${inf.aberta ? '' : `<p class="aviso">${typeof inf.ao === 'number' ? '🎯 O professor está corrigindo a prova com a turma. Entre com o seu nome e a sua senha para acompanhar.' : 'Esta prova já foi fechada. Entre com o seu nome e a sua senha para ver as suas respostas e a correção (quando o professor liberar).'}</p>`}
     <h2 class="sub">Toque no seu nome</h2>
     <div class="nomes">${lista.map(a => `<button class="btn nome" data-nome="${a.aid}">${esc(a.nome)}</button>`).join('') || '<p>Nenhum estudante cadastrado nesta turma ainda.</p>'}</div>
     <button class="btn fant" data-a="inicio">← Outro código</button></section>`;
@@ -115,6 +115,7 @@ async function carregarProva(){
   }));
   if (INF.tipo === 'treino' || INF.correcao) { try { GAB = await R.get(`saeb/a/${PIN}/gab`); } catch(e){ GAB = null; } }
   if (typeof INF.ao === 'number') { ENTREGUE = true; return corrAoVivo(); }
+  if (!INF.aberta && !ENTREGUE && !Object.keys(RESP).length) return erroTela('Prova fechada', 'Você não respondeu esta prova e ela já foi fechada pelo professor.');
   if (ENTREGUE || !INF.aberta) return fim();
   ATUAL = Math.max(0, Q.findIndex((_, i) => !RESP['i'+i])); if (ATUAL < 0) ATUAL = 0;
   questao();
