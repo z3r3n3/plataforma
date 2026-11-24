@@ -188,8 +188,11 @@ async function desenharMontagem(){
         <button class="btn peq" data-trocar="${i}">↻ Trocar</button><button class="btn peq perigo" data-tirar="${i}">✕</button></div>
         <div class="corpo">${enunciadoHtml(q)}<div class="alts">${[...'ABCD'].map(L => `<div class="alt"><b>${L}</b><div>${alternativaHtml(q, L)}</div></div>`).join('')}</div></div>
         <button class="btn fant peq" data-expandir>ver inteira</button></div>`; }).join('')}
-    <div class="nav"><button class="btn" data-a="m-voltar">← Descritores</button><button class="btn pri" data-a="m-liberar" ${falta||!N.qs.length?'disabled':''}>Liberar para a turma ✔</button></div></section>`;
+    ${turmas().length > 1 ? `<h3>Liberar para</h3><p class="mini">A prova vai para <b>${esc(t.nome)}</b>. Quer usar a mesma prova em outras turmas? Marque abaixo — cada turma recebe um código próprio.</p>
+      <div class="desc-ck">${turmas().filter(x => x.tid !== N.tid).map(x => `<label><input type="checkbox" data-alvo="${x.tid}" ${(N.alvos||new Set()).has(x.tid)?'checked':''}><span><b>${esc(x.nome)}</b> <span class="mini">(${x.ano}º)</span></span></label>`).join('')}</div>` : ''}
+    <div class="nav"><button class="btn" data-a="m-voltar">← Descritores</button><button class="btn pri" data-a="m-liberar" ${falta||!N.qs.length?'disabled':''}>Liberar ✔</button></div></section>`;
   el.querySelector('#m-tit').oninput = e => N.titulo = e.target.value;
+  el.querySelectorAll('[data-alvo]').forEach(c => c.onchange = () => { N.alvos = N.alvos || new Set(); c.checked ? N.alvos.add(c.dataset.alvo) : N.alvos.delete(c.dataset.alvo); });
 }
 async function montar(){
   const N = NOVA; if (!N.sel.size) return toast('Escolha pelo menos um descritor.');
@@ -211,19 +214,61 @@ async function trocar(i){
   const q = op[0]; N.qs[i] = q.id; if (gabDe(q.id)) N.gab[q.id] = gabDe(q.id);
   desenharMontagem();
 }
-async function liberar(){
-  const N = NOVA, t = D.turmas[N.tid], B = await banco(N.disc, t.ano);
+async function criarApl(base, tid){
+  const t = D.turmas[tid];
   let pin; for (let k = 0; k < 8; k++){ const p = gerarPin(); if (!(await R.get(`saeb/a/${p}/info`).catch(() => null))) { pin = p; break; } }
-  if (!pin) return toast('Tente de novo.');
-  const qd = N.qs.map(id => descDe(B.mapa[id])), gab = {}; N.qs.forEach((id, i) => gab['i'+i] = N.gab[id]);
-  const titulo = (N.titulo || 'Prova').trim().slice(0, 60);
-  const info = {cad:CAD, titulo, tid:N.tid, turma:t.nome, disc:N.disc, ano:t.ano, tipo:N.tipo, qs:N.qs, qd, aberta:true, correcao:false, criada:TS};
-  for (const id of N.qs) if (N.gab[id] && N.gab[id] !== gabDe(id)) await R.update(`saeb/c/${CAD}/gab/${id}`, {g:N.gab[id]});
+  if (!pin) throw new Error('pin');
+  const info = {cad:CAD, titulo:base.titulo, tid, turma:t.nome, disc:base.disc, ano:base.ano, tipo:base.tipo, qs:base.qs, qd:base.qd, aberta:true, correcao:false, criada:TS};
+  if (base.orig) info.orig = base.orig;
   await R.set(`saeb/a/${pin}/cad`, CAD);
   await R.set(`saeb/a/${pin}/info`, info);
-  await R.set(`saeb/a/${pin}/gab`, gab);
-  await R.set(`saeb/c/${CAD}/apl/${pin}`, {titulo, tid:N.tid, turma:t.nome, disc:N.disc, ano:t.ano, tipo:N.tipo, qs:N.qs, aberta:true, criada:TS});
-  NOVA = null; desenhar(); abrirApl(pin);
+  await R.set(`saeb/a/${pin}/gab`, base.gab);
+  const resumo = {titulo:base.titulo, tid, turma:t.nome, disc:base.disc, ano:base.ano, tipo:base.tipo, qs:base.qs, aberta:true, criada:TS};
+  if (base.orig) resumo.orig = base.orig;
+  await R.set(`saeb/c/${CAD}/apl/${pin}`, resumo);
+  return pin;
+}
+function codigosCriados(lista){
+  modal(`<h2>Prova liberada ✔</h2><p>Cada turma tem o seu código. Passe para os estudantes o código da turma deles:</p>
+    <div class="tab-w"><table class="t"><thead><tr><th>Turma</th><th>Código</th><th></th></tr></thead><tbody>
+    ${lista.map(([tid, pin]) => `<tr><td>${esc(D.turmas[tid].nome)}</td><td class="codigo">${pin}</td><td><button class="btn peq" data-apl="${pin}">Abrir</button></td></tr>`).join('')}</tbody></table></div>
+    <p class="mini">O resultado de cada turma aparece separado na aba Resultados.</p><div class="nav"><button class="btn pri" data-a="fechar">OK</button></div>`);
+}
+async function liberar(){
+  const N = NOVA, t = D.turmas[N.tid], B = await banco(N.disc, t.ano);
+  const alvos = [N.tid, ...[...(N.alvos || [])].filter(x => x !== N.tid && D.turmas[x])];
+  const qd = N.qs.map(id => descDe(B.mapa[id])), gab = {}; N.qs.forEach((id, i) => gab['i'+i] = N.gab[id]);
+  const base = {titulo:(N.titulo || 'Prova').trim().slice(0, 60), disc:N.disc, ano:t.ano, tipo:N.tipo, qs:N.qs, qd, gab};
+  for (const id of N.qs) if (N.gab[id] && N.gab[id] !== gabDe(id)) await R.update(`saeb/c/${CAD}/gab/${id}`, {g:N.gab[id]});
+  const feitos = [];
+  for (const tid of alvos){
+    const pin = await criarApl(base, tid);
+    if (!base.orig) base.orig = pin;
+    feitos.push([tid, pin]);
+  }
+  NOVA = null; desenhar();
+  if (feitos.length === 1) abrirApl(feitos[0][1]); else codigosCriados(feitos);
+}
+/* ---------- aplicar uma prova já montada em outras turmas ---------- */
+function reaplicar(pin){
+  if (desligarApl) { desligarApl(); desligarApl = null; }
+  const a = D.apl[pin], orig = a.orig || pin;
+  const ja = new Set(apls().filter(x => x.pin === orig || x.orig === orig).map(x => x.tid));
+  const ts = turmas().filter(t => t.tid !== a.tid);
+  modal(`<h2>Aplicar “${esc(a.titulo)}” em outras turmas</h2>
+    <p class="mini">As mesmas ${(a.qs||[]).length} questões, com o mesmo gabarito. Cada turma recebe um código próprio e o resultado de cada uma fica separado.</p>
+    ${ts.length ? `<div class="desc-ck">${ts.map(t => `<label><input type="checkbox" data-reap="${t.tid}"><span><b>${esc(t.nome)}</b> <span class="mini">(${t.ano}º)${ja.has(t.tid) ? ' · já recebeu esta prova' : ''}${String(t.ano) !== String(a.ano) ? ` · a prova é de ${a.ano}º ano` : ''}</span></span></label>`).join('')}</div>`
+      : '<p class="aviso">Você ainda não tem outra turma. Crie na aba Turmas.</p>'}
+    <div class="nav"><button class="btn" data-apl="${pin}">← Voltar</button><button class="btn pri" data-reap-ok="${pin}" ${ts.length?'':'disabled'}>Liberar para as turmas marcadas ✔</button></div>`, true);
+}
+async function reaplicarOk(pin){
+  const alvos = [...document.querySelectorAll('[data-reap]:checked')].map(c => c.dataset.reap);
+  if (!alvos.length) return toast('Marque pelo menos uma turma.');
+  const v = await R.get(`saeb/a/${pin}`), inf = v.info;
+  const base = {titulo:inf.titulo, disc:inf.disc, ano:inf.ano, tipo:inf.tipo, qs:inf.qs, qd:inf.qd, gab:v.gab || {}, orig:inf.orig || pin};
+  const feitos = [];
+  for (const tid of alvos) feitos.push([tid, await criarApl(base, tid)]);
+  codigosCriados(feitos);
 }
 /* ---------- detalhes de uma prova ---------- */
 function abrirApl(pin){
@@ -242,7 +287,7 @@ function abrirApl(pin){
         <div class="caixa-cod"><div class="mini">Código para os estudantes</div><div class="codigo">${pin}</div><div class="mini">${esc(URL_ALUNO.replace(/^https?:\/\//,''))}</div></div></div>
       <div class="linha">${inf.aberta ? `<button class="btn" data-fechar-apl="${pin}">🔒 Fechar (não aceitar mais respostas)</button>` : `<button class="btn" data-abrir-apl="${pin}">🔓 Reabrir</button>`}
         ${inf.correcao ? `<button class="btn" data-corr="${pin}:0">🙈 Ocultar correção</button>` : `<button class="btn" data-corr="${pin}:1">👁️ Liberar correção para os estudantes</button>`}
-        <button class="btn" data-papel="${pin}">✍️ Lançar respostas do papel</button><button class="btn" data-imprimir="${pin}">🖨️ Imprimir prova</button><button class="btn" data-ver-res="${pin}">📊 Resultado</button></div>
+        <button class="btn" data-papel="${pin}">✍️ Lançar respostas do papel</button><button class="btn" data-imprimir="${pin}">🖨️ Imprimir prova</button><button class="btn" data-reaplicar="${pin}">➕ Aplicar em outra turma</button><button class="btn" data-ver-res="${pin}">📊 Resultado</button></div>
       <h3>Acompanhamento ao vivo <span class="mini">· ${entregues} de ${al.length} entregaram</span></h3>
       <div class="tab-w ao-vivo"><table class="t"><thead><tr><th>Estudante</th><th>Situação</th><th>Acertos</th><th></th></tr></thead><tbody>${lin || '<tr><td colspan="4">Sem estudantes na turma.</td></tr>'}</tbody></table></div>
       <div class="nav"><button class="btn perigo peq" data-apagar-apl="${pin}">Excluir prova e respostas</button><button class="btn pri" data-a="fechar">Fechar</button></div>`;
@@ -301,9 +346,10 @@ async function abaRes(){
   $('#aba').querySelectorAll('[data-rpin]').forEach(c => c.onchange = () => { RES.pins = new Set([...$('#aba').querySelectorAll('[data-rpin]:checked')].map(x => x.dataset.rpin)); abaRes(); });
   if (!pins.length) return;
   const dados = await Promise.all(pins.map(async pin => ({pin, ...(await R.get(`saeb/a/${pin}`) || {})})));
-  const validos = dados.filter(x => x.info).sort((a, b) => (a.info.criada||0) - (b.info.criada||0));
+  let validos = dados.filter(x => x.info).sort((a, b) => (a.info.criada||0) - (b.info.criada||0));
   if (!validos.length) return;
-  const t = D.turmas[RES.tid], ano = t.ano, B = await banco(RES.disc, ano), M = matriz(RES.disc, ano);
+  { const a0 = validos[0].info.ano; validos = validos.filter(v => String(v.info.ano) === String(a0)); }
+  const t = D.turmas[RES.tid], ano = validos[0].info.ano || t.ano, B = await banco(RES.disc, ano), M = matriz(RES.disc, ano);
   validos.forEach(v => { v.info.qd = v.info.qs.map((id, i) => B.mapa[id] ? descDe(B.mapa[id]) : v.info.qd[i]); });
   const C = consolidar(validos), al = alunosDe(RES.tid), nomes = Object.fromEntries(al.map(a => [a.aid, a.nome]));
   const avaliados = Object.keys(C.alunos).filter(a => C.alunos[a].n);
@@ -462,6 +508,8 @@ document.addEventListener('click', async e => {
     if (ds.papel) return lancarPapel(ds.papel);
     if (ds.salvarPapel) return salvarPapel(ds.salvarPapel);
     if (ds.imprimir) return imprimir(ds.imprimir);
+    if (ds.reaplicar) return reaplicar(ds.reaplicar);
+    if (ds.reapOk) { b.disabled = true; return reaplicarOk(ds.reapOk); }
     if (ds.verRes) { const a = D.apl[ds.verRes]; RES = {tid:a.tid, disc:a.disc, pins:new Set([ds.verRes])}; fecharModal(); ABA = 'res'; return desenhar(); }
     if (ds.apagarApl) { if (confirm('Excluir esta prova e todas as respostas? Não dá para desfazer.')) { await R.remove(`saeb/a/${ds.apagarApl}`); await R.remove(`saeb/c/${CAD}/apl/${ds.apagarApl}`); fecharModal(); } return; }
     if (ds.a === 'csv') return csv();
