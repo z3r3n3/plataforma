@@ -141,3 +141,22 @@ table.t{width:100%;border-collapse:collapse;font-size:15px}
   body{background:#fff}.cartao{border:none;padding:0}
 }
 .papel td:first-child,.papel th:first-child{position:sticky;left:0;background:#fff;z-index:1;white-space:nowrap}
+
+/* ---- correção ao vivo ---- */
+.alt{position:relative}
+.tag-sua{position:absolute;right:10px;top:-10px;background:var(--indigo);color:#fff;font:700 11px/1 var(--texto);padding:4px 8px;border-radius:999px}
+.fb.espera{background:#EEF0FA;color:var(--indigo);font-weight:600}
+.corr-vivo .alt{cursor:default}
+.proj{position:fixed;inset:0;z-index:60;background:var(--papel);overflow:auto;padding:14px 18px 24px}
+.proj-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.proj-nums{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.proj-nums button{min-width:36px;height:36px;border-radius:10px;border:2px solid var(--linha);background:#fff;font-weight:700;cursor:pointer}
+.proj-nums button.on{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+.proj-corpo{max-width:980px;margin:0 auto}
+.proj-corpo .questao{font-size:20px}
+.proj-corpo .alt{font-size:20px;cursor:default;flex-wrap:wrap}
+.proj-pct{flex:1 1 100%;display:flex;align-items:center;gap:8px;margin-left:46px}
+.proj-pct i{display:block;height:10px;border-radius:6px;background:var(--indigo);opacity:.55;min-width:2px}
+.proj-pct em{font-style:normal;font-weight:700;font-size:15px;color:var(--indigo)}
+.proj-nav{display:flex;justify-content:center;gap:12px;margin:16px 0 6px}
+.proj .alt:not(.certa):hover,.corr-vivo .alt:not(.certa):not(.errada):not(.marcada):hover{border-color:var(--linha)}

@@ -249,6 +249,61 @@ async function liberar(){
   NOVA = null; desenhar();
   if (feitos.length === 1) abrirApl(feitos[0][1]); else codigosCriados(feitos);
 }
+/* ---------- correção ao vivo com a turma (projetor + telas dos estudantes) ---------- */
+let PROJ = null;
+async function correcaoTurma(pin){
+  const a = D.apl[pin];
+  if (a.aberta && !confirm('Para começar a correção, a prova será FECHADA (ninguém poderá mudar respostas). Os estudantes que ainda não entregaram terão as respostas marcadas até agora corrigidas. Continuar?')) return;
+  if (desligarApl) { desligarApl(); desligarApl = null; }
+  fecharModal();
+  const inf0 = await R.get(`saeb/a/${pin}/info`), B = await banco(inf0.disc, inf0.ano);
+  await R.update(`saeb/a/${pin}/info`, {aberta:false, correcao:true, ao:(typeof inf0.ao === 'number' ? inf0.ao : 0), aorev:false});
+  await R.set(`saeb/c/${CAD}/apl/${pin}/aberta`, false);
+  const el = document.createElement('div'); el.className = 'proj'; document.body.appendChild(el);
+  PROJ = {pin, el, B, v:null, al:alunosDe(a.tid)};
+  PROJ.off = R.on(`saeb/a/${pin}`, v => { if (PROJ && v && v.info) { PROJ.v = v; desenharProj(); } });
+  PROJ.tecla = e => { if (!PROJ) return; if (e.key === 'ArrowRight') projIr(1); else if (e.key === 'ArrowLeft') projIr(-1); else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); projRevelar(); } else if (e.key === 'Escape' && !document.fullscreenElement) sairProj(false); };
+  document.addEventListener('keydown', PROJ.tecla);
+}
+function desenharProj(){
+  const {el, B, v, al} = PROJ, inf = v.info, n = inf.qs.length, i = Math.min(Math.max(inf.ao || 0, 0), n - 1), rev = !!inf.aorev;
+  const q = B.mapa[inf.qs[i]], g = (v.gab || {})['i'+i], rr = v.r || {};
+  const quem = al.filter(x => rr[x.aid]);
+  const cont = {A:0, B:0, C:0, D:0, '':0};
+  quem.forEach(x => { const L = respostasDe(rr[x.aid])(i) || ''; cont[L] = (cont[L] || 0) + 1; });
+  const tot = quem.length, ac = cont[g] || 0;
+  const conectados = Object.keys(v.sess || {}).length;
+  el.innerHTML = `<div class="proj-top"><div><span class="selo">Correção com a turma</span> <b>${esc(inf.titulo)}</b> <span class="mini">· ${esc(inf.turma)}</span></div>
+      <div class="mini">${conectados} tela(s) conectada(s) · código <b class="codigo">${PROJ.pin}</b></div>
+      <div><button class="btn peq" data-proj="tela">⛶ Tela cheia</button> <button class="btn peq" data-proj="sair">Encerrar correção</button></div></div>
+    <div class="proj-nums">${inf.qs.map((_, k) => `<button class="${k===i?'on':''}" data-proj-ir="${k}">${k+1}</button>`).join('')}</div>
+    <div class="proj-corpo"><article class="questao cartao"><div class="num">${i+1}</div>
+      <p class="mini">${esc(inf.qd[i] || '')} · ${esc(descTexto(inf.disc, inf.ano, inf.qd[i] || ''))}</p>${q ? enunciadoHtml(q) : '<p>Questão não encontrada no banco.</p>'}
+      <div class="alts">${[...'ABCD'].map(L => `<div class="alt ${rev && L===g ? 'certa' : ''}"><b>${L}</b><div>${q ? alternativaHtml(q, L) : ''}</div>
+        ${rev ? `<span class="proj-pct" title="${cont[L]||0} estudante(s)"><i style="width:${tot ? 100*(cont[L]||0)/tot : 0}%"></i><em>${tot ? pct(cont[L]||0, tot) : 0}%</em></span>` : ''}</div>`).join('')}</div>
+      ${rev ? `<div class="fb ${tot && ac/tot >= .7 ? 'ok' : 'no'}">Resposta certa: <b>${g}</b> · ${ac} de ${tot} acertaram (${tot ? pct(ac, tot) : 0}%)${cont[''] ? ` · ${cont['']} em branco` : ''}</div>` : `<p class="mini centro">Os estudantes estão vendo a questão e a resposta que marcaram. Quando quiser, mostre a resposta certa.</p>`}
+    </article></div>
+    <div class="proj-nav"><button class="btn" data-proj="ant" ${i===0?'disabled':''}>← Anterior</button>
+      <button class="btn pri" data-proj="rev">${rev ? '🙈 Esconder resposta' : '✅ Mostrar resposta certa'}</button>
+      <button class="btn" data-proj="prox" ${i===n-1?'disabled':''}>Próxima →</button></div>
+    <p class="mini centro">Atalhos: ← → trocam de questão · espaço mostra/esconde a resposta</p>`;
+}
+async function projIr(d, abs){
+  const inf = PROJ.v.info, n = inf.qs.length, i = abs != null ? abs : (inf.ao || 0) + d;
+  if (i < 0 || i >= n) return;
+  await R.update(`saeb/a/${PROJ.pin}/info`, {ao:i, aorev:false});
+}
+async function projRevelar(){ await R.update(`saeb/a/${PROJ.pin}/info`, {aorev:!PROJ.v.info.aorev}); }
+async function sairProj(){
+  if (!PROJ) return;
+  const pin = PROJ.pin;
+  if (!confirm('Encerrar a correção? Os estudantes voltam para a tela com o resumo dos acertos deles.')) return;
+  await R.update(`saeb/a/${pin}/info`, {ao:null, aorev:null});
+  PROJ.off && PROJ.off(); document.removeEventListener('keydown', PROJ.tecla);
+  if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  PROJ.el.remove(); PROJ = null; abrirApl(pin);
+}
+
 /* ---------- aplicar uma prova já montada em outras turmas ---------- */
 function reaplicar(pin){
   if (desligarApl) { desligarApl(); desligarApl = null; }
@@ -287,7 +342,7 @@ function abrirApl(pin){
         <div class="caixa-cod"><div class="mini">Código para os estudantes</div><div class="codigo">${pin}</div><div class="mini">${esc(URL_ALUNO.replace(/^https?:\/\//,''))}</div></div></div>
       <div class="linha">${inf.aberta ? `<button class="btn" data-fechar-apl="${pin}">🔒 Fechar (não aceitar mais respostas)</button>` : `<button class="btn" data-abrir-apl="${pin}">🔓 Reabrir</button>`}
         ${inf.correcao ? `<button class="btn" data-corr="${pin}:0">🙈 Ocultar correção</button>` : `<button class="btn" data-corr="${pin}:1">👁️ Liberar correção para os estudantes</button>`}
-        <button class="btn" data-papel="${pin}">✍️ Lançar respostas do papel</button><button class="btn" data-imprimir="${pin}">🖨️ Imprimir prova</button><button class="btn" data-reaplicar="${pin}">➕ Aplicar em outra turma</button><button class="btn" data-ver-res="${pin}">📊 Resultado</button></div>
+        <button class="btn" data-papel="${pin}">✍️ Lançar respostas do papel</button><button class="btn" data-imprimir="${pin}">🖨️ Imprimir prova</button><button class="btn" data-reaplicar="${pin}">➕ Aplicar em outra turma</button><button class="btn pri" data-corrigir="${pin}">🎯 Correção com a turma</button><button class="btn" data-ver-res="${pin}">📊 Resultado</button></div>
       <h3>Acompanhamento ao vivo <span class="mini">· ${entregues} de ${al.length} entregaram</span></h3>
       <div class="tab-w ao-vivo"><table class="t"><thead><tr><th>Estudante</th><th>Situação</th><th>Acertos</th><th></th></tr></thead><tbody>${lin || '<tr><td colspan="4">Sem estudantes na turma.</td></tr>'}</tbody></table></div>
       <div class="nav"><button class="btn perigo peq" data-apagar-apl="${pin}">Excluir prova e respostas</button><button class="btn pri" data-a="fechar">Fechar</button></div>`;
@@ -509,6 +564,13 @@ document.addEventListener('click', async e => {
     if (ds.salvarPapel) return salvarPapel(ds.salvarPapel);
     if (ds.imprimir) return imprimir(ds.imprimir);
     if (ds.reaplicar) return reaplicar(ds.reaplicar);
+    if (ds.corrigir) return correcaoTurma(ds.corrigir);
+    if (ds.projIr != null) return projIr(0, +ds.projIr);
+    if (ds.proj === 'ant') return projIr(-1);
+    if (ds.proj === 'prox') return projIr(1);
+    if (ds.proj === 'rev') return projRevelar();
+    if (ds.proj === 'sair') return sairProj();
+    if (ds.proj === 'tela') { if (document.fullscreenElement) document.exitFullscreen(); else PROJ.el.requestFullscreen().catch(()=>{}); return; }
     if (ds.reapOk) { b.disabled = true; return reaplicarOk(ds.reapOk); }
     if (ds.verRes) { const a = D.apl[ds.verRes]; RES = {tid:a.tid, disc:a.disc, pins:new Set([ds.verRes])}; fecharModal(); ABA = 'res'; return desenhar(); }
     if (ds.apagarApl) { if (confirm('Excluir esta prova e todas as respostas? Não dá para desfazer.')) { await R.remove(`saeb/a/${ds.apagarApl}`); await R.remove(`saeb/c/${CAD}/apl/${ds.apagarApl}`); fecharModal(); } return; }

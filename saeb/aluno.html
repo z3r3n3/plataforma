@@ -54,7 +54,7 @@ async function abrirProva(pin){
   let inf;
   try { inf = await R.get(`saeb/a/${pin}/info`); } catch(e){ return erroTela('Não consegui abrir', 'Verifique a internet e tente de novo.'); }
   if (!inf) { telaCodigo(pin); return toast('Não encontrei uma prova com esse código.'); }
-  if (!inf.aberta) return erroTela('Prova fechada', 'Esta prova não está recebendo respostas agora. Fale com o professor.');
+  if (!inf.aberta && !inf.correcao) return erroTela('Prova fechada', 'Esta prova não está recebendo respostas agora. Fale com o professor.');
   PIN = pin; INF = inf;
   const al = (await R.get(`saeb/c/${inf.cad}/alunos/${inf.tid}`)) || {};
   const lista = Object.entries(al).map(([aid, a]) => ({aid, nome:a.nome})).sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
@@ -105,13 +105,17 @@ async function carregarProva(){
   const meu = (await R.get(`saeb/a/${PIN}/r/${AID}`)) || {};
   RESP = meu.r || {}; ENTREGUE = !!meu.fim;
   if (!meu.ini && !ENTREGUE) R.set(`saeb/a/${PIN}/r/${AID}/ini`, TS).catch(()=>{});
-  desligar.push(R.on(`saeb/a/${PIN}/info`, v => {
+  desligar.push(R.on(`saeb/a/${PIN}/info`, async v => {
     const antes = INF; INF = v || INF;
-    if (v && !v.aberta && antes.aberta && !ENTREGUE) { toast('O professor fechou a prova.'); fim(); }
-    if (v && v.correcao && !antes.correcao && ENTREGUE) fim();
+    if (!v) return;
+    if (typeof v.ao === 'number') { if (!GAB) { try { GAB = await R.get(`saeb/a/${PIN}/gab`); } catch(e){} } ENTREGUE = true; fecharModal(); return corrAoVivo(); }
+    if (typeof antes.ao === 'number') return fim();
+    if (!v.aberta && antes.aberta && !ENTREGUE) { toast('O professor fechou a prova.'); fim(); }
+    if (v.correcao && !antes.correcao && ENTREGUE) fim();
   }));
   if (INF.tipo === 'treino' || INF.correcao) { try { GAB = await R.get(`saeb/a/${PIN}/gab`); } catch(e){ GAB = null; } }
-  if (ENTREGUE) return fim();
+  if (typeof INF.ao === 'number') { ENTREGUE = true; return corrAoVivo(); }
+  if (ENTREGUE || !INF.aberta) return fim();
   ATUAL = Math.max(0, Q.findIndex((_, i) => !RESP['i'+i])); if (ATUAL < 0) ATUAL = 0;
   questao();
 }
@@ -154,6 +158,21 @@ function entregar(){
 async function confirmar(){
   try { await R.set(`saeb/a/${PIN}/r/${AID}/fim`, TS); ENTREGUE = true; fecharModal(); fim(); }
   catch(e){ toast(msgErro(e) === 'permissao' ? 'A prova já foi fechada pelo professor.' : 'Sem conexão. Tente de novo.'); }
+}
+function corrAoVivo(){
+  const n = Q.length, i = Math.min(Math.max(INF.ao || 0, 0), n - 1), q = Q[i], rev = !!INF.aorev && GAB;
+  const marc = RESP['i'+i], g = rev ? GAB['i'+i] : null;
+  app.innerHTML = `<section class="prova corr-vivo">
+    <div class="prog"><span>🎯 <b>Correção com o professor</b></span><span>Questão <b>${i+1}</b> de ${n}</span></div>
+    <div class="bar"><i style="width:${100*(i+1)/n}%"></i></div>
+    <article class="questao cartao"><div class="num">${i+1}</div>${enunciadoHtml(q)}
+      <div class="alts">${[...'ABCD'].map(L => { let cl = marc === L ? 'marcada' : ''; if (rev){ if (L === g) cl += ' certa'; else if (L === marc) cl += ' errada'; }
+        return `<div class="alt ${cl}"><b>${L}</b><div>${alternativaHtml(q, L)}</div>${marc === L ? '<span class="tag-sua">sua resposta</span>' : ''}</div>`; }).join('')}</div>
+      ${rev ? `<div class="fb ${marc===g?'ok':'no'}">${marc===g ? '✅ Você acertou esta!' : marc ? `❌ Você marcou <b>${marc}</b>. A resposta certa é a <b>${g}</b>.` : `⚪ Você deixou em branco. A resposta certa é a <b>${g}</b>.`}</div>`
+        : `<div class="fb espera">${marc ? `Você marcou a <b>${marc}</b>.` : 'Você deixou esta questão em branco.'} Acompanhe a explicação do professor — a resposta certa aparece quando ele mostrar.</div>`}
+    </article>
+    <p class="mini centro">Esta tela muda sozinha quando o professor passar para a próxima questão.</p></section>`;
+  window.scrollTo(0, 0);
 }
 async function fim(){
   ENTREGUE = true;
