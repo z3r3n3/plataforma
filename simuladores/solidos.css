@@ -1,0 +1,111 @@
+:root{
+  --fundo:#FBF6EA;--papel:#FFFFFF;--borda:#E9DDC4;--tinta:#1C2A22;--suave:#56645B;
+  --mata:#14532D;--mata2:#1F7A45;--ipe:#F5B700;--terra:#9A3412;
+  --base:#F5B700;--lat:#2E9E8F;--curva:#5B8DEF;
+  --ok:#15803D;--ok-f:#DCFCE7;--no:#B91C1C;--no-f:#FEE2E2;
+  --titulo:'Baloo 2','Trebuchet MS',system-ui,sans-serif;
+  --texto:'Atkinson Hyperlegible','Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--texto);font-size:16px;line-height:1.45;color:var(--tinta);background:var(--fundo);display:flex;flex-direction:column}
+h1,h2,h3{font-family:var(--titulo);line-height:1.1;margin:0}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ipe);outline-offset:2px}
+.mini{font-size:13px;color:var(--suave)}
+
+.topo{background:var(--mata);color:#fff;display:flex;align-items:center;gap:14px;padding:8px 16px;flex-wrap:wrap}
+.topo h1{font-size:24px;font-weight:800;flex:1}
+.topo h1 span{font-family:var(--texto);font-weight:400;font-size:14px;opacity:.85;margin-left:6px}
+.volta{color:#fff;text-decoration:none;font-weight:700;opacity:.9}
+.topo .btn{background:transparent;color:#fff;border-color:#ffffff55}
+
+.btn{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:7px 14px;font-weight:700;cursor:pointer}
+.btn:hover{border-color:var(--mata2)}
+.btn.pri{background:var(--mata2);border-color:var(--mata2);color:#fff}
+.btn.peq{padding:4px 10px;font-size:14px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:default}
+
+.grade{flex:1;display:grid;grid-template-columns:250px minmax(0,1fr) 400px;gap:12px;padding:12px;min-height:0}
+.lado,.info,.palco{background:var(--papel);border:2px solid var(--borda);border-radius:18px;min-height:0}
+.lado{padding:12px;overflow:auto}
+.lado h2{font-size:16px;color:var(--mata);margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+.lado h2:first-child{margin-top:0}
+.lista{display:flex;flex-direction:column;gap:4px}
+.lista button{display:flex;align-items:center;gap:10px;text-align:left;border:2px solid transparent;background:#F7F3E8;border-radius:12px;padding:6px 10px;cursor:pointer;font-weight:700}
+.lista button svg{width:30px;height:30px;flex:none}
+.lista button:hover{border-color:var(--borda)}
+.lista button.on{background:#E3F3E9;border-color:var(--mata2)}
+.param{margin:8px 0}
+.param label{display:flex;justify-content:space-between;font-weight:700;font-size:15px}
+.param label b{color:var(--terra)}
+.param input{width:100%;accent-color:var(--mata2)}
+.cks{display:flex;flex-direction:column;gap:4px}
+.cks label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.cks input{width:18px;height:18px;accent-color:var(--mata2)}
+
+.palco{display:flex;flex-direction:column;overflow:hidden}
+.palco-cab{padding:10px 14px 0;font-family:var(--titulo);font-size:22px}
+.palco-cab .mini{font-family:var(--texto)}
+#cena{flex:1;position:relative;min-height:320px;cursor:grab}
+#cena:active{cursor:grabbing}
+#cena canvas{display:block;width:100%;height:100%}
+.dica{position:absolute;left:12px;bottom:8px;font-size:12px;color:var(--suave);pointer-events:none}
+.planif{display:flex;align-items:center;gap:12px;padding:8px 14px}
+.planif .btn{white-space:nowrap}
+.planif input{flex:1;accent-color:var(--mata2);height:28px}
+.planif .mini{min-width:86px;text-align:right}
+.vistas{display:flex;gap:6px;align-items:center;padding:0 14px 10px;flex-wrap:wrap}
+
+.info{display:flex;flex-direction:column;overflow:hidden}
+.abas{display:flex;gap:4px;padding:8px 8px 0;border-bottom:2px solid var(--borda);flex-wrap:wrap}
+.aba{border:none;background:none;padding:8px 10px;font-weight:700;color:var(--suave);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.aba.on{color:var(--mata);border-bottom-color:var(--mata2)}
+#painel{padding:12px 14px 20px;overflow:auto;flex:1}
+#painel h3{font-size:19px;color:var(--mata);margin:14px 0 6px}
+#painel h3:first-child{margin-top:0}
+#painel p{margin:6px 0}
+.def{background:#F1F8F3;border-left:4px solid var(--mata2);padding:8px 10px;border-radius:0 10px 10px 0}
+.elem{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.elem div{background:#FFF8E1;border-radius:12px;padding:8px;text-align:center}
+.elem b{display:block;font-family:var(--titulo);font-size:30px;color:var(--terra);line-height:1}
+.euler{background:#EEF4FF;border-radius:12px;padding:8px 10px;font-weight:700}
+.faces li{margin:4px 0}
+.cor{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px;border:1px solid #0002}
+.tabela{width:100%;border-collapse:collapse;font-size:15px}
+.tabela td{border-bottom:1px solid var(--borda);padding:6px 4px;vertical-align:top}
+.form{background:#FAF7EF;border:2px solid var(--borda);border-radius:14px;padding:10px 12px;margin:8px 0}
+.form h4{margin:0 0 4px;font-size:16px}
+.form .f{font-family:Georgia,'Times New Roman',serif;font-size:19px}
+.form .s{color:var(--suave);font-size:15px}
+.form .r{font-weight:700;color:var(--terra);font-size:18px}
+.net svg{width:100%;height:auto;max-height:420px;background:#fff;border:2px solid var(--borda);border-radius:14px}
+.aviso{background:#FFF4D6;border-radius:12px;padding:8px 10px}
+.ops{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.ops button{border:2px solid var(--borda);background:#fff;border-radius:12px;padding:10px;font-weight:700;cursor:pointer;text-align:left}
+.ops button.certa{border-color:var(--ok);background:var(--ok-f)}
+.ops button.errada{border-color:var(--no);background:var(--no-f)}
+.ops button svg{width:100%;height:auto;max-height:200px}
+.placar{font-weight:700;color:var(--mata)}
+.fb{border-radius:12px;padding:8px 10px;font-weight:700;margin:8px 0}
+.fb.ok{background:var(--ok-f);color:var(--ok)}.fb.no{background:var(--no-f);color:var(--no)}
+
+@media (max-width:1180px){
+  .grade{grid-template-columns:220px minmax(0,1fr);grid-template-rows:auto auto}
+  .info{grid-column:1 / -1;max-height:none}
+  #painel{overflow:visible}
+}
+@media (max-width:1180px){
+  html,body{height:auto}
+  body{display:block}
+  .lado{overflow:visible}
+  .palco{min-height:560px}
+}
+@media (max-width:760px){
+  .topo h1{font-size:20px}
+  .topo h1 span{display:none}
+  .grade{display:flex;flex-direction:column;padding:8px}
+  .palco{order:-1;min-height:500px}
+  #cena{min-height:360px}
+  .lista{flex-direction:row;flex-wrap:wrap}
+}

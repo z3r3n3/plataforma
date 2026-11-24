@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sólidos Geométricos · Simulador</title>
+<meta name="description" content="Simulador 3D de sólidos geométricos para a aula: gire, planifique, veja faces, vértices e arestas, e calcule áreas e volumes passo a passo.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 4 34 12v16L20 36 6 28V12z' fill='%231F7A45'/%3E%3Cpath d='M20 4v16l14-8M20 20 6 12M20 20v16' stroke='%23F5B700' stroke-width='2.5' fill='none'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="solidos.css">
+</head>
+<body>
+<header class="topo">
+  <a class="volta" href="../professor.html">← Área do Professor</a>
+  <h1>Sólidos Geométricos <span>simulador para a aula</span></h1>
+  <button class="btn fant" id="b-tela" title="Tela cheia (bom para o projetor)">⛶ Tela cheia</button>
+</header>
+
+<main class="grade">
+  <aside class="lado" aria-label="Escolha do sólido e medidas">
+    <h2>Poliedros</h2>
+    <div class="lista" id="l-poli"></div>
+    <h2>Corpos redondos</h2>
+    <div class="lista" id="l-red"></div>
+    <h2>Medidas</h2>
+    <div id="params"></div>
+    <h2>Mostrar</h2>
+    <div class="cks">
+      <label><input type="checkbox" id="c-arestas" checked> Arestas</label>
+      <label><input type="checkbox" id="c-vertices" checked> Vértices</label>
+      <label><input type="checkbox" id="c-medidas" checked> Medidas</label>
+      <label><input type="checkbox" id="c-transp"> Transparente</label>
+      <label><input type="checkbox" id="c-girar"> Girar sozinho</label>
+      <label id="lb-cubos"><input type="checkbox" id="c-cubos"> Cubinhos de 1 cm³</label>
+    </div>
+  </aside>
+
+  <section class="palco" aria-label="Sólido em 3D">
+    <div class="palco-cab"><b id="t-nome">Cubo</b> <span id="t-grupo" class="mini"></span></div>
+    <div id="cena"><div class="dica">Arraste para girar · role para aproximar</div></div>
+    <div class="planif">
+      <button class="btn pri" id="b-play">▶ Planificar</button>
+      <input type="range" id="r-t" min="0" max="1000" value="0" aria-label="Abrir a planificação">
+      <span id="t-pct" class="mini">fechado</span>
+    </div>
+    <div class="vistas"><span class="mini">Vista:</span>
+      <button class="btn peq" data-vista="3d">3D</button><button class="btn peq" data-vista="frente">Frente</button><button class="btn peq" data-vista="cima">Cima</button><button class="btn peq" data-vista="lado">Lado</button>
+    </div>
+  </section>
+
+  <section class="info" aria-label="Informações">
+    <nav class="abas" role="tablist">
+      <button class="aba on" data-aba="carac">Características</button>
+      <button class="aba" data-aba="planif">Planificação</button>
+      <button class="aba" data-aba="calc">Área e volume</button>
+      <button class="aba" data-aba="desafio">Desafio</button>
+    </nav>
+    <div id="painel"></div>
+  </section>
+</main>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="solidos.js"></script>
+</body>
+</html>
